@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="public_about">
+
+    <!-- 新增关于 -->
+    <insert id="searchPublicAbout" parameterType="com.vxianjin.gringotts.web.pojo.PublicAbout" useGeneratedKeys="true"
+            keyProperty="id">
+        <![CDATA[
+			insert into public_about 
+			(
+				id,
+				about_content,
+				about_introduce,
+				about_service_tel,
+				about_official_qq_group,
+				about_add_time,
+				about_ip,
+			
+			)
+			values
+			(
+				#{id},
+				#{aboutContent},
+				#{aboutIntroduce},
+				#{aboutServiceTel},
+				#{aboutOfficialQqGroup},
+				#{aboutAddTime},
+				#{aboutIp}
+			)
+		]]>
+    </insert>
+
+    <!-- 查询关于 -->
+    <select id="selectPublicAbout" resultType="com.vxianjin.gringotts.web.pojo.PublicAbout">
+        select
+        id as id,
+        about_content as aboutContent,
+        about_introduce as aboutIntroduce,
+        about_service_tel as aboutServiceTel,
+        about_official_qq_group as aboutOfficialQqGroup,
+        about_add_time as aboutAddTime,
+        about_update_time as aboutUpdateTime,
+        about_ip as aboutIp
+        from public_about limit 1
+    </select>
+
+    <!-- 修改关于 -->
+    <update id="updatePublicAbout" parameterType="com.vxianjin.gringotts.web.pojo.PublicAbout">
+        update public_about
+        <set>
+            <if test="aboutContent != null and aboutContent !=''">
+                <![CDATA[about_content = #{aboutContent},]]>
+            </if>
+            <if test="aboutIntroduce != null and aboutIntroduce !=''">
+                <![CDATA[about_introduce = #{aboutIntroduce},]]>
+            </if>
+            <if test="aboutServiceTel != null and aboutServiceTel !=''">
+                <![CDATA[about_service_tel = #{aboutServiceTel},]]>
+            </if>
+            <if test="aboutOfficialQqGroup != null and aboutOfficialQqGroup !=''">
+                <![CDATA[about_official_qq_group = #{aboutOfficialQqGroup},]]>
+            </if>
+            <if test="aboutUpdateTime != null and aboutUpdateTime !=''">
+                <![CDATA[about_update_time = #{aboutUpdateTime},]]>
+            </if>
+            <if test="aboutIp != null and aboutIp !=''">
+                <![CDATA[about_ip = #{aboutIp},]]>
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

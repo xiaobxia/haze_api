@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IJsDrawrollsRecordDao">
+
+    <sql id="Base_Column_List">
+        a.id AS id, a.periods AS periods,a.user_id AS userId,
+        a.lucky_draw AS luckyDraw, a.add_time AS ADDTIME, a.update_time AS updateTime,
+        a.status AS STATUS,a.isValid AS isValid,a.remark AS remark
+    </sql>
+    <sql id="sysUserInfo">
+
+        su.name as "jsLoanPerson.name",
+        su.phone as "jsLoanPerson.phone",
+        su.id_number as "jsLoanPerson.idNumber"
+    </sql>
+    <sql id="sysstepName">
+        sc.step_name AS stepName, sc.id AS stepId
+    </sql>
+    <sql id="sysstepNameLJ">
+        LEFT JOIN js_step_record sr ON a.step_id = sr.id
+        LEFT JOIN js_step_config sc ON sr.step_id =sc.id
+    </sql>
+    <sql id="sysUserLJ">
+        LEFT JOIN js_loan_person su ON a.user_id = su.id
+    </sql>
+    <sql id="Example_Where_Clause">
+
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+
+    </sql>
+
+
+    <select id="getOne" resultType="JsDrawrollsRecord">
+        select
+        <include refid="Base_Column_List"/>
+        from js_drawrolls_record
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findMaxOne" resultType="JsDrawrollsRecord">
+        select
+        <include refid="Base_Column_List"/>
+        from js_drawrolls_record a
+        where a.periods = #{periods,jdbcType=INTEGER}
+        ORDER BY a.lucky_draw DESC LIMIT 0,1
+    </select>
+
+
+    <select id="get" resultType="JsDrawrollsRecord">
+        select
+        <include refid="Base_Column_List"/>
+        from js_drawrolls_record
+        where 1=1
+        <if test="periods != null and periods != ''">
+            and periods = #{periods,jdbcType=INTEGER}
+        </if>
+        order by lucky_draw desc
+    </select>
+    <select id="findListCount" resultType="JsDrawrollsRecord" parameterType="Map">
+        SELECT
+        COUNT(1)
+        FROM js_drawrolls_record a
+        <include refid="sysUserLJ"/>
+        <include refid="sysstepNameLJ"/>
+        <where>
+            <if test="id != null">
+                and a.id = #{id}
+            </if>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+            <if test="phone != null and phone != ''">
+                and
+                su.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="stepId != null and stepId != ''">
+                and sc.id = #{stepId}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                and a.isValid = #{isValid,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="findList" resultType="JsDrawrollsRecord" parameterType="Map">
+        SELECT
+        <include refid="Base_Column_List"/>,<include refid="sysUserInfo"/>,
+        <include refid="sysstepName"/>
+        FROM js_drawrolls_record a
+        <include refid="sysUserLJ"/>
+        <include refid="sysstepNameLJ"/>
+        <where>
+            <if test="id != null">
+                and a.id = #{id}
+            </if>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+            <if test="phone != null and phone != ''">
+                and
+                su.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="stepId != null and stepId != ''">
+                and sc.id = #{stepId}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                and a.isValid = #{isValid,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by a.status desc, a.lucky_draw desc
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findListByPhoneCount" resultType="INTEGER">
+        SELECT COUNT(1)
+        FROM js_drawrolls_record a
+        LEFT JOIN js_loan_person b ON a.user_id = b.id
+        LEFT JOIN js_step_record c ON a.step_id = c.id
+        LEFT JOIN js_step_config d ON c.step_id = d.id
+        LEFT JOIN js_award_record e ON a.user_id = e.user_id
+        <where>
+            <if test="phone != null">
+                and b.phone = #{phone}
+            </if>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                and a.isValid = #{isValid,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by a.add_time desc
+
+    </select>
+    <select id="findListByPhone" resultType="JsDrawrollsRecord">
+        SELECT a.id AS id ,
+        a.periods AS periods,
+        a.user_id AS userId,
+        a.lucky_draw AS luckyDraw,
+        a.add_time AS ADDTIME,
+        a.update_time AS updateTime,
+        a.status AS STATUS,
+        b.phone AS phone,
+        d.step_name AS stepName,
+        e.award_money AS awardMoney
+        FROM js_drawrolls_record a
+        LEFT JOIN js_loan_person b ON a.user_id = b.id
+        LEFT JOIN js_step_record c ON a.step_id = c.id
+        LEFT JOIN js_step_config d ON c.step_id = d.id
+        LEFT JOIN js_award_record e ON a.user_id = e.user_id
+        <where>
+            <if test="phone != null">
+                and b.phone = #{phone}
+            </if>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                and a.isValid = #{isValid,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by a.add_time desc
+
+    </select>
+
+    <select id="findListTop" resultType="JsDrawrollsRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_drawrolls_record a
+        <where>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                and a.isValid = #{isValid,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by a.add_time desc limit 0,50
+
+    </select>
+
+    <select id="findAllList" resultType="JsDrawrollsRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_drawrolls_record a
+
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from js_drawrolls_record
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="JsDrawrollsRecord">
+        delete from js_drawrolls_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insertP" parameterType="JsDrawrollsRecord">
+        insert into js_drawrolls_record (id, periods, user_id,
+        step_id, lucky_draw, add_time,
+        status, isValid,
+        remark)
+        values (#{id,jdbcType=INTEGER}, #{periods,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+        #{stepId,jdbcType=INTEGER}, #{luckyDraw,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP},
+        #{status,jdbcType=INTEGER}, #{isValid,jdbcType=INTEGER},
+        #{remark,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insert" parameterType="JsDrawrollsRecord">
+        insert into js_drawrolls_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="periods != null">
+                periods,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="stepId != null">
+                step_id,
+            </if>
+            <if test="luckyDraw != null">
+                lucky_draw,
+            </if>
+            <if test="addTime != null">
+                add_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="isValid != null">
+                isValid,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="periods != null">
+                #{periods,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="stepId != null">
+                #{stepId,jdbcType=VARCHAR},
+            </if>
+            <if test="luckyDraw != null">
+                #{luckyDraw,jdbcType=VARCHAR},
+            </if>
+            <if test="addTime != null">
+                #{addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="isValid != null">
+                #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="JsDrawrollsRecord" resultType="java.lang.Integer">
+        select count(*) from js_drawrolls_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateP">
+        update js_drawrolls_record
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.periods != null">
+                periods = #{record.periods,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=INTEGER},
+            </if>
+            <if test="record.stepId != null">
+                step_id = #{record.stepId,jdbcType=INTEGER},
+            </if>
+            <if test="record.luckyDraw != null">
+                lucky_draw = #{record.luckyDraw,jdbcType=VARCHAR},
+            </if>
+            <if test="record.addTime != null">
+                add_time = #{record.addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record.isValid != null">
+                isValid = #{record.isValid,jdbcType=INTEGER},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update js_drawrolls_record
+        set id = #{record.id,jdbcType=INTEGER},
+        periods = #{record.periods,jdbcType=VARCHAR},
+        user_id = #{record.userId,jdbcType=INTEGER},
+        step_id = #{record.stepId,jdbcType=INTEGER},
+        lucky_draw = #{record.luckyDraw,jdbcType=VARCHAR},
+        add_time = #{record.addTime,jdbcType=TIMESTAMP},
+        status = #{record.status,jdbcType=INTEGER},
+        isValid = #{record.isValid,jdbcType=INTEGER},
+        remark = #{record.remark,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="update" parameterType="JsDrawrollsRecord">
+        update js_drawrolls_record
+        <set>
+            <if test="periods != null">
+                periods = #{periods,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="stepId != null">
+                step_id = #{stepId,jdbcType=INTEGER},
+            </if>
+            <if test="luckyDraw != null">
+                lucky_draw = #{luckyDraw,jdbcType=VARCHAR},
+            </if>
+            <if test="addTime != null">
+                add_time = #{addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="isValid != null">
+                isValid = #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updatepp" parameterType="JsDrawrollsRecord">
+        update js_drawrolls_record
+        set periods = #{periods,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=INTEGER},
+        step_id = #{stepId,jdbcType=INTEGER},
+        lucky_draw = #{luckyDraw,jdbcType=VARCHAR},
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+        status = #{status,jdbcType=INTEGER},
+        isValid = #{isValid,jdbcType=INTEGER},
+        remark = #{remark,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

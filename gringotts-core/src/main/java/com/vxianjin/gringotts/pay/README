@@ -1,0 +1,18 @@
+common              公用模块
+component           各支付模块涉及到的远程调用
+controller          控制层
+dao                 dao层
+model               模型
+service             业务处理
+
+
+注：mapping的xml不准备放在该目录,最好放到resource目录中,后续处理
+
+pay模块初步代码规范： service层的进入方法地方必须写log日志，日志级别debug
+                      出现异常的放必须写日志，日志级别error
+                      方法传入参数理论上不能超过5个，5个以上必须使用实体类封装，禁止传入map类似不可知内容参数
+                      方法上必须添加注释,标明传入内容含义和返回内容以及方法作用
+                      controller 不允许出现业务逻辑
+                      controller 不允许直接调用dao层
+                      service 中每个方法必须明确表示一个业务逻辑，不允许流程式写法
+                      返回结果统一用ResultModel<T> PageResultModel<T>封装

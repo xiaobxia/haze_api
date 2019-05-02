@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IJsStepConfigDao">
+
+    <sql id="Example_Where_Clause">
+
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+
+    </sql>
+    <sql id="Base_Column_List">
+        id, step_code as stepCode, step_name as stepName, effective_count as effectiveCount, remark, status, update_time
+    </sql>
+
+    <select id="getOne" resultType="JsStepConfig">
+        select
+        <include refid="Base_Column_List"/>
+        from js_step_config
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findList" resultType="JsStepConfig">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_step_config a
+
+
+        <where>
+
+        </where>
+        order by a.id desc
+
+    </select>
+    <select id="findAllList" resultType="JsAwardRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_new_user_report a
+
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <delete id="delete">
+        delete from js_step_config
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="JsStepConfig">
+        delete from js_step_config
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insertP" parameterType="JsStepConfig">
+        insert into js_step_config (id, step_code, step_name,
+        effective_count, remark, status)
+        values (#{id,jdbcType=INTEGER}, #{stepCode,jdbcType=VARCHAR}, #{stepName,jdbcType=VARCHAR},
+        #{effectiveCount,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insert" parameterType="JsStepConfig">
+        insert into js_step_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="stepCode != null">
+                step_code,
+            </if>
+            <if test="stepName != null">
+                step_name,
+            </if>
+            <if test="effectiveCount != null">
+                effective_count,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="stepCode != null">
+                #{stepCode,jdbcType=VARCHAR},
+            </if>
+            <if test="stepName != null">
+                #{stepName,jdbcType=VARCHAR},
+            </if>
+            <if test="effectiveCount != null">
+                #{effectiveCount,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="JsStepConfig" resultType="java.lang.Integer">
+        select count(*) from js_step_config
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update js_step_config
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.stepCode != null">
+                step_code = #{record.stepCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.stepName != null">
+                step_name = #{record.stepName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.effectiveCount != null">
+                effective_count = #{record.effectiveCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update js_step_config
+        set id = #{record.id,jdbcType=INTEGER},
+        step_code = #{record.stepCode,jdbcType=VARCHAR},
+        step_name = #{record.stepName,jdbcType=VARCHAR},
+        effective_count = #{record.effectiveCount,jdbcType=INTEGER},
+        remark = #{record.remark,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="update" parameterType="JsStepConfig">
+        update js_step_config
+        <set>
+            <if test="stepCode != null">
+                step_code = #{stepCode,jdbcType=VARCHAR},
+            </if>
+            <if test="stepName != null">
+                step_name = #{stepName,jdbcType=VARCHAR},
+            </if>
+            <if test="effectiveCount != null">
+                effective_count = #{effectiveCount,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="JsStepConfig">
+        update js_step_config
+        set step_code = #{stepCode,jdbcType=VARCHAR},
+        step_name = #{stepName,jdbcType=VARCHAR},
+        effective_count = #{effectiveCount,jdbcType=INTEGER},
+        remark = #{remark,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

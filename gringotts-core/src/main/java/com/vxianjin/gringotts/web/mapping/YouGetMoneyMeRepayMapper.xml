@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IYouGetMoneyMeRepayDao">
+    <resultMap id="BaseResultMap" type="YouGetMoneyMeRepayInfo">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_telephone" property="userTelephone"/>
+        <result column="loan_amount" property="loanAmount"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_del" property="isDel"/>
+        <result column="freecharge_date" property="freechargeDate"/>
+    </resultMap>
+
+    <sql id="Base_cloumn_sql">
+        id,user_name,user_telephone,loan_amount,create_date,update_date,is_del,freecharge_date
+    </sql>
+
+    <select id="selectByList" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_cloumn_sql"/>
+        from you_borrow_money_repay_me
+        where is_del='0' and freecharge_date=#{freechargeDate}
+        order by create_date desc
+        limit 0,10
+    </select>
+
+</mapper>

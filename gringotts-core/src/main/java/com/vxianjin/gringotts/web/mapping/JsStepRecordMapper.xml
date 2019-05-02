@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IJsStepRecordDao">
+
+
+    <sql id="Base_Column_List">
+        a.id AS id, a.step_id AS stepId,
+        a.user_id AS userId,
+        a.effective_count AS effectiveCount,
+        a.add_time AS ADDTIME,
+        a.update_time AS updatetime,
+        a.remark AS remark,
+        a.isValid AS isValid
+    </sql>
+    <sql id="Example_Where_Clause">
+
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+
+    </sql>
+    <sql id="sysUserInfo">
+        su.id as "jsLoanPerson.id",
+        su.name as "jsLoanPerson.name",
+        su.phone as "jsLoanPerson.phone",
+        su.id_number as "jsLoanPerson.idNumber"
+    </sql>
+    <sql id="sysUserLJ">
+        LEFT JOIN
+        js_loan_person su
+        ON
+        a.user_id = su.id
+    </sql>
+    <sql id="stepConfig">
+        sc.step_name AS "jsStepConfig.stepName",
+        sc.step_code AS "jsStepConfig.stepCode"
+    </sql>
+    <sql id="stepConfigLj">
+        LEFT JOIN
+        js_step_config sc
+        ON
+        a.step_id = sc.id
+    </sql>
+
+    <sql id="awardRecord">
+        ar.award_money AS "jsAwardRecord.awardMoney",ar.periods AS "jsAwardRecord.periods"
+    </sql>
+    <sql id="awardRecordLj">
+        LEFT JOIN js_drawrolls_record dr ON a.user_id = dr.id
+        LEFT JOIN js_award_record ar ON ar.periods= dr.periods
+    </sql>
+
+    <select id="getOne" resultType="JsStepRecord">
+        select
+        <include refid="Base_Column_List"/>
+        from js_step_record
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="get" resultType="JsStepRecord">
+        select
+        <include refid="Base_Column_List"/>
+        from js_step_record
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findList" resultType="JsStepRecord">
+        SELECT
+        <include refid="Base_Column_List"/>,<include refid="sysUserInfo"/>,<include refid="stepConfig"/>,
+        <include refid="awardRecord"/>
+        FROM js_step_record a
+        <include refid="sysUserLJ"/>
+        <include refid="stepConfigLj"/>
+        <include refid="awardRecordLj"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND su.name like concat('%',#{name},'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND su.phone LIKE concat('%',#{phone},'%')
+            </if>
+            <if test="stepId != null and stepId != ''">
+                AND a.step_id = #{stepId}
+            </if>
+            <if test="beginDate != null and beginDate != ''">
+                <![CDATA[AND DATE_FORMAT(a.add_time, '%Y%m%d') >= DATE_FORMAT(#{beginDate},'%Y%m%d')]]>
+            </if>
+            <if test="endDate != null and endDate != ''">
+                <![CDATA[AND DATE_FORMAT(a.add_time, '%Y%m%d') < DATE_FORMAT(#{endDate},'%Y%m%d')]]>
+            </if>
+        </where>
+        order by a.update_time desc
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findPageList" resultType="JsStepRecord">
+        SELECT
+        <include refid="Base_Column_List"/>,<include refid="sysUserInfo"/>,
+        <include refid="stepConfig"/>
+        FROM js_step_record a
+        <include refid="sysUserLJ"/>
+        <include refid="stepConfigLj"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND su.name LIKE "%#{name}%"
+            </if>
+            <if test="stepId != null and stepId != ''">
+                AND a.step_id = #{stepId}
+            </if>
+            <if test="beginDate != null and beginDate != ''">
+                <![CDATA[AND DATE_FORMAT(a.add_time, '%Y%m%d') >= DATE_FORMAT(#{beginDate},'%Y%m%d')]]>
+            </if>
+            <if test="endDate != null and endDate != ''">
+                <![CDATA[AND DATE_FORMAT(a.add_time, '%Y%m%d') < DATE_FORMAT(#{endDate},'%Y%m%d')]]>
+            </if>
+        </where>
+        order by a.update_time desc
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findAllList" resultType="JsStepRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_step_record a
+
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <delete id="delete">
+        delete from js_step_record
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="JsStepRecord">
+        delete from js_step_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insertP" parameterType="JsStepRecord">
+        insert into js_step_record (id, step_id, user_id,
+        effective_count, add_time,
+        remark, isValid)
+        values (#{id,jdbcType=INTEGER}, #{stepId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+        #{effectiveCount,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP},
+        #{remark,jdbcType=VARCHAR}, #{isValid,jdbcType=INTEGER})
+    </insert>
+    <insert id="insert" parameterType="JsStepRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into js_step_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="stepId != null">
+                step_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="effectiveCount != null">
+                effective_count,
+            </if>
+            <if test="addTime != null">
+                add_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="isValid != null">
+                isValid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="stepId != null">
+                #{stepId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="effectiveCount != null">
+                #{effectiveCount,jdbcType=INTEGER},
+            </if>
+            <if test="addTime != null">
+                #{addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                #{isValid,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="JsStepRecord" resultType="java.lang.Integer">
+        select count(*) from js_step_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update js_step_record
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.stepId != null">
+                step_id = #{record.stepId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.effectiveCount != null">
+                effective_count = #{record.effectiveCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.addTime != null">
+                add_time = #{record.addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isValid != null">
+                isValid = #{record.isValid,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update js_step_record
+        set id = #{record.id,jdbcType=INTEGER},
+        step_id = #{record.stepId,jdbcType=VARCHAR},
+        user_id = #{record.userId,jdbcType=VARCHAR},
+        effective_count = #{record.effectiveCount,jdbcType=INTEGER},
+        add_time = #{record.addTime,jdbcType=TIMESTAMP},
+        remark = #{record.remark,jdbcType=VARCHAR},
+        isValid = #{record.isValid,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="update" parameterType="JsStepRecord">
+        update js_step_record
+        <set>
+            <if test="stepId != null">
+                step_id = #{stepId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="effectiveCount != null">
+                effective_count = #{effectiveCount,jdbcType=INTEGER},
+            </if>
+            <if test="addTime != null">
+                add_time = #{addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                isValid = #{isValid,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="JsStepRecord">
+        update js_step_record
+        set step_id = #{stepId,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=VARCHAR},
+        effective_count = #{effectiveCount,jdbcType=INTEGER},
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+        remark = #{remark,jdbcType=VARCHAR},
+        isValid = #{isValid,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

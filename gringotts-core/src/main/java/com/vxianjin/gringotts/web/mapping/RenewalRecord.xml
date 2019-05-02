@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.pay.dao.IRenewalRecordDao" >
+  <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.RenewalRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="asset_repayment_id" property="assetRepaymentId" jdbcType="INTEGER" />
+    <result column="repayment_principal" property="repaymentPrincipal" jdbcType="BIGINT" />
+    <result column="sum_fee" property="sumFee" jdbcType="BIGINT" />
+    <result column="repayment_interest" property="repaymentInterest" jdbcType="BIGINT" />
+    <result column="plan_late_fee" property="planLateFee" jdbcType="INTEGER" />
+    <result column="renewal_fee" property="renewalFee" jdbcType="INTEGER" />
+    <result column="old_repayment_time" property="oldRepaymentTime" jdbcType="TIMESTAMP" />
+    <result column="renewal_day" property="renewalDay" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="money_amount" property="moneyAmount" jdbcType="BIGINT" />
+    <result column="repayment_time" property="repaymentTime" jdbcType="TIMESTAMP" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="renewal_type" property="renewalType" jdbcType="INTEGER" />
+    <result column="renewal_kind" property="renewalKind" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.vxianjin.gringotts.web.pojo.RenewalRecord" extends="BaseResultMap" >
+    <result column="remark" property="remark" jdbcType="LONGVARCHAR" />
+    <result column="order_id" property="orderId" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, asset_repayment_id, repayment_principal, sum_fee, repayment_interest, 
+    plan_late_fee, renewal_fee, old_repayment_time, renewal_day, updated_at,status
+  </sql>
+  <sql id="Blob_Column_List" >
+    remark,order_id
+  </sql>
+  <sql id="selectSql">
+    from asset_renewal_record
+    where 1 = 1
+    <if test="assetRepaymentId != null and assetRepaymentId != ''">
+      and asset_repayment_id = #{assetRepaymentId}
+    </if>
+    <if test="userId != null and userId != ''">
+      and user_id = #{userId}
+    </if>
+    <if test="status != null">
+      and status = #{status}
+    </if>
+    <if test="order_id != null">
+      and order_id = #{order_id}
+    </if>
+  </sql>
+  <select id="findParamsCount" resultType="int" parameterType="map">
+    select
+    count(1)
+    <include refid="selectSql"/>
+  </select>
+
+  <select id="findParams" resultMap="BaseResultMap"
+          parameterType="map">
+    select
+    *
+    <include refid="selectSql"/>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select *
+    from asset_renewal_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getRenewalRecordByOrderId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from asset_renewal_record
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from asset_renewal_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.RenewalRecord" >
+    insert into asset_renewal_record (id, user_id, asset_repayment_id, 
+      repayment_principal, sum_fee, repayment_interest, 
+      plan_late_fee, renewal_fee, old_repayment_time, 
+      renewal_day, remark,status,renewal_type ,renewal_kind
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{assetRepaymentId,jdbcType=INTEGER}, 
+      #{repaymentPrincipal,jdbcType=BIGINT}, #{sumFee,jdbcType=BIGINT}, #{repaymentInterest,jdbcType=BIGINT}, 
+      #{planLateFee,jdbcType=INTEGER}, #{renewalFee,jdbcType=INTEGER}, #{oldRepaymentTime,jdbcType=TIMESTAMP}, 
+      #{renewalDay,jdbcType=INTEGER}, #{remark,jdbcType=LONGVARCHAR},#{status,jdbcType=INTEGER},
+      #{renewalType,jdbcType=INTEGER},#{renewalKind,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.RenewalRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into asset_renewal_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="assetRepaymentId != null" >
+        asset_repayment_id,
+      </if>
+      <if test="repaymentPrincipal != null" >
+        repayment_principal,
+      </if>
+      <if test="sumFee != null" >
+        sum_fee,
+      </if>
+      <if test="repaymentInterest != null" >
+        repayment_interest,
+      </if>
+      <if test="planLateFee != null" >
+        plan_late_fee,
+      </if>
+      <if test="renewalFee != null" >
+        renewal_fee,
+      </if>
+      <if test="oldRepaymentTime != null" >
+        old_repayment_time,
+      </if>
+      <if test="renewalDay != null" >
+        renewal_day,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="moneyAmount != null" >
+        money_amount,
+      </if>
+      <if test="repaymentTime != null" >
+        repayment_time,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="renewalType != null" >
+        renewal_type,
+      </if>
+      <if test="renewalKind != null" >
+        renewal_kind,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="assetRepaymentId != null" >
+        #{assetRepaymentId,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentPrincipal != null" >
+        #{repaymentPrincipal,jdbcType=BIGINT},
+      </if>
+      <if test="sumFee != null" >
+        #{sumFee,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentInterest != null" >
+        #{repaymentInterest,jdbcType=BIGINT},
+      </if>
+      <if test="planLateFee != null" >
+        #{planLateFee,jdbcType=INTEGER},
+      </if>
+      <if test="renewalFee != null" >
+        #{renewalFee,jdbcType=INTEGER},
+      </if>
+      <if test="oldRepaymentTime != null" >
+        #{oldRepaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="renewalDay != null" >
+        #{renewalDay,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="moneyAmount != null" >
+        #{moneyAmount,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentTime != null" >
+        #{repaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="renewalType != null" >
+        #{renewalType,jdbcType=INTEGER},
+      </if>
+      <if test="renewalKind != null" >
+        #{renewalKind,jdbcType=INTEGER},
+      </if>
+    </trim>
+
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+      select  last_insert_id()
+    </selectKey>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.RenewalRecord" >
+    update asset_renewal_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="assetRepaymentId != null" >
+        asset_repayment_id = #{assetRepaymentId,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentPrincipal != null" >
+        repayment_principal = #{repaymentPrincipal,jdbcType=BIGINT},
+      </if>
+      <if test="sumFee != null" >
+        sum_fee = #{sumFee,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentInterest != null" >
+        repayment_interest = #{repaymentInterest,jdbcType=BIGINT},
+      </if>
+      <if test="planLateFee != null" >
+        plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+      </if>
+      <if test="renewalFee != null" >
+        renewal_fee = #{renewalFee,jdbcType=INTEGER},
+      </if>
+      <if test="oldRepaymentTime != null" >
+        old_repayment_time = #{oldRepaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="renewalDay != null" >
+        renewal_day = #{renewalDay,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="renewalType != null" >
+        renewal_type = #{renewalType,jdbcType=INTEGER},
+      </if>
+      <if test="renewalKind != null" >
+        renewal_kind = #{renewalKind,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.vxianjin.gringotts.web.pojo.RenewalRecord" >
+    update asset_renewal_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      asset_repayment_id = #{assetRepaymentId,jdbcType=INTEGER},
+      repayment_principal = #{repaymentPrincipal,jdbcType=BIGINT},
+      sum_fee = #{sumFee,jdbcType=BIGINT},
+      repayment_interest = #{repaymentInterest,jdbcType=BIGINT},
+      plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+      renewal_fee = #{renewalFee,jdbcType=INTEGER},
+      old_repayment_time = #{oldRepaymentTime,jdbcType=TIMESTAMP},
+      renewal_day = #{renewalDay,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=LONGVARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      renewal_type = #{renewalType,jdbcType=INTEGER},
+      renewal_kind = #{renewalKind,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.RenewalRecord" >
+    update asset_renewal_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      asset_repayment_id = #{assetRepaymentId,jdbcType=INTEGER},
+      repayment_principal = #{repaymentPrincipal,jdbcType=BIGINT},
+      sum_fee = #{sumFee,jdbcType=BIGINT},
+      repayment_interest = #{repaymentInterest,jdbcType=BIGINT},
+      plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+      renewal_fee = #{renewalFee,jdbcType=INTEGER},
+      old_repayment_time = #{oldRepaymentTime,jdbcType=TIMESTAMP},
+      renewal_day = #{renewalDay,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      renewal_type = #{renewalType,jdbcType=INTEGER},
+      renewal_kind = #{renewalKind,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateStatusAndRemark">
+    update asset_renewal_record
+    set
+      status = #{status,jdbcType=INTEGER},
+       remark = #{remark,jdbcType=LONGVARCHAR}
+    where id = #{recordId,jdbcType=INTEGER}
+  </update>
+</mapper>

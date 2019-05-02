@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.pay.dao.IRepaymentDetailDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.RepaymentDetail">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="asset_order_id" property="assetOrderId" jdbcType="INTEGER"/>
+        <result column="asset_repayment_id" property="assetRepaymentId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="repayment_type" property="repaymentType" jdbcType="INTEGER"/>
+        <result column="repayment_channel" property="repaymentChannel" jdbcType="INTEGER"/>
+        <result column="true_repayment_money" property="trueRepaymentMoney" jdbcType="BIGINT"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="card_id" property="cardId" jdbcType="INTEGER"/>
+        <result column="admin_username" property="adminUsername" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.vxianjin.gringotts.web.pojo.RepaymentDetail" extends="BaseResultMap">
+        <result column="repayment_img" property="repaymentImg" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, asset_order_id, asset_repayment_id, user_id, repayment_type, repayment_channel, true_repayment_money,
+    remark, order_id, created_at, updated_at, card_id, admin_username, status
+  </sql>
+    <sql id="Blob_Column_List">
+    repayment_img
+  </sql>
+    <sql id="selectSql">
+        from asset_repayment_detail
+        where 1 = 1
+        <if test="assetRepaymentId != null and assetRepaymentId != ''">
+            and asset_repayment_id = #{assetRepaymentId}
+        </if>
+    </sql>
+    <select id="findParams" resultMap="BaseResultMap"
+            parameterType="map">
+        select
+        *
+        <include refid="selectSql"/>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from asset_repayment_detail
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByOrderId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from asset_repayment_detail
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from asset_repayment_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.RepaymentDetail">
+    insert into asset_repayment_detail (id, asset_order_id, asset_repayment_id,
+    user_id, repayment_type, repayment_channel, true_repayment_money,
+    remark, order_id, created_at,
+    card_id, admin_username,
+    status, repayment_img)
+    values (#{id,jdbcType=INTEGER}, #{assetOrderId,jdbcType=INTEGER}, #{assetRepaymentId,jdbcType=INTEGER},
+    #{userId,jdbcType=INTEGER}, #{repaymentType,jdbcType=INTEGER}, #{repaymentChannel,jdbcType=INTEGER}, #{trueRepaymentMoney,jdbcType=BIGINT},
+    #{remark,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},
+    #{cardId,jdbcType=INTEGER}, #{adminUsername,jdbcType=VARCHAR},
+    #{status,jdbcType=INTEGER}, #{repaymentImg,jdbcType=LONGVARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.RepaymentDetail" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into asset_repayment_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="assetOrderId != null">
+                asset_order_id,
+            </if>
+            <if test="assetRepaymentId != null">
+                asset_repayment_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="repaymentType != null">
+                repayment_type,
+            </if>
+            <if test="repaymentChannel != null">
+                repayment_channel,
+            </if>
+            <if test="trueRepaymentMoney != null">
+                true_repayment_money,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="cardId != null">
+                card_id,
+            </if>
+            <if test="adminUsername != null">
+                admin_username,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="repaymentImg != null">
+                repayment_img,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="assetOrderId != null">
+                #{assetOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="assetRepaymentId != null">
+                #{assetRepaymentId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="repaymentType != null">
+                #{repaymentType,jdbcType=INTEGER},
+            </if>
+            <if test="repaymentChannel != null">
+                #{repaymentChannel,jdbcType=INTEGER},
+            </if>
+            <if test="trueRepaymentMoney != null">
+                #{trueRepaymentMoney,jdbcType=BIGINT},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cardId != null">
+                #{cardId,jdbcType=INTEGER},
+            </if>
+            <if test="adminUsername != null">
+                #{adminUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="repaymentImg != null">
+                #{repaymentImg,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.RepaymentDetail">
+        update asset_repayment_detail
+        <set>
+            <if test="assetOrderId != null">
+                asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="assetRepaymentId != null">
+                asset_repayment_id = #{assetRepaymentId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="repaymentType != null">
+                repayment_type = #{repaymentType,jdbcType=INTEGER},
+            </if>
+            <if test="repaymentChannel != null">
+                repayment_channel = #{repaymentChannel,jdbcType=INTEGER},
+            </if>
+            <if test="trueRepaymentMoney != null">
+                true_repayment_money = #{trueRepaymentMoney,jdbcType=BIGINT},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cardId != null">
+                card_id = #{cardId,jdbcType=INTEGER},
+            </if>
+            <if test="adminUsername != null">
+                admin_username = #{adminUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="repaymentImg != null">
+                repayment_img = #{repaymentImg,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.vxianjin.gringotts.web.pojo.RepaymentDetail">
+    update asset_repayment_detail
+    set asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+    asset_repayment_id = #{assetRepaymentId,jdbcType=INTEGER},
+    user_id = #{userId,jdbcType=INTEGER},
+    repayment_type = #{repaymentType,jdbcType=INTEGER},
+    repayment_channel = #{repaymentChannel,jdbcType=INTEGER},
+    true_repayment_money = #{trueRepaymentMoney,jdbcType=BIGINT},
+    remark = #{remark,jdbcType=VARCHAR},
+    order_id = #{orderId,jdbcType=VARCHAR},
+    created_at = #{createdAt,jdbcType=TIMESTAMP},
+    card_id = #{cardId,jdbcType=INTEGER},
+    admin_username = #{adminUsername,jdbcType=VARCHAR},
+    status = #{status,jdbcType=INTEGER},
+    repayment_img = #{repaymentImg,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.RepaymentDetail">
+    update asset_repayment_detail
+    set asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+      asset_repayment_id = #{assetRepaymentId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      repayment_type = #{repaymentType,jdbcType=INTEGER},
+      repayment_channel = #{repaymentChannel,jdbcType=INTEGER},
+      true_repayment_money = #{trueRepaymentMoney,jdbcType=BIGINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      card_id = #{cardId,jdbcType=INTEGER},
+      admin_username = #{adminUsername,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="queryOrderResult" resultMap="BaseResultMap" parameterType="map">
+        select *
+        from asset_repayment_detail rd
+        where 1=1
+        <if test="begDate != null">
+            and DATE_FORMAT(rd.created_at, "%Y-%m-%d %H-%i-%s") >= DATE_FORMAT(#{begDate}, "%Y-%m-%d %H-%i-%s")
+        </if>
+        <if test="endDate != null">
+            <![CDATA[and DATE_FORMAT(rd.created_at, "%Y-%m-%d %H-%i-%s") <= DATE_FORMAT(#{endDate}, "%Y-%m-%d %H-%i-%s") ]]>
+        </if>
+        <if test="status != null">
+            and rd.status = #{status}
+        </if>
+        <if test="repaymentType != null">
+            and rd.repayment_type = #{repaymentType}
+        </if>
+        <if test="repaymentChannel != null">
+            and rd.repayment_channel = #{repaymentChannel}
+        </if>
+        <if test="baoFuAndRongBao != null">
+            and rd.repayment_type IN (2,3)
+        </if>
+        <if test="id != null and id != ''">
+            and rd.asset_repayment_id = #{id}
+        </if>
+        <if test="csQuery != null and csQuery != ''">
+            and rd.status in (2,30)
+        </if>
+
+    </select>
+
+    <select id="queryOrderResultForSYN" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select *
+        from asset_repayment_detail rd
+        RIGHT JOIN out_orders ot on ot.`order_no` = rd.`order_id`
+        where 1=1
+        <if test="begDate != null">
+            and DATE_FORMAT(rd.created_at, "%Y-%m-%d %H-%i-%s") &gt;= #{begDate}
+        </if>
+        <if test="endDate != null">
+            and DATE_FORMAT(rd.created_at, "%Y-%m-%d %H-%i-%s") &lt;= #{endDate}
+        </if>
+        <if test="status != null">
+            and rd.status = #{status}
+        </if>
+        <if test="orderType !=null and orderType != ''">
+            and ot.order_type = #{orderType}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IUserContactsDao">
+    <!-- 查询通讯录列表 -->
+    <select id="selectUserContactsPage" parameterType="HashMap"
+            resultType="com.vxianjin.gringotts.web.pojo.UserContacts">
+        select
+        uc.id id,
+        uc.user_id userId,
+        uc.user_name userName,
+        uc.contact_name contactName,
+        uc.contact_phone contactPhone,
+        uc.create_time createTime
+        FROM user_contacts uc
+        <where>
+            <if test="userId !=null and userId !=''">
+                uc.user_id=#{userId}
+            </if>
+            <if test="userPhone !=null and userPhone !=''">
+                AND uc.contact_phone=#{userPhone}
+            </if>
+            <if test="contactName !=null and contactName !=''">
+                AND uc.contact_name=#{contactName}
+            </if>
+        </where>
+        order by uc.create_time desc
+    </select>
+    <select id="selectUserContactsCount" resultType="Integer" parameterType="HashMap">
+        select
+        count(1)
+        from user_contacts uc
+        <where>
+            <if test="userId !=null and userId !=''">
+                uc.user_id=#{userId}
+            </if>
+            <if test="userPhone !=null and userPhone !=''">
+                AND uc.contact_phone=#{userPhone}
+            </if>
+            <if test="contactName !=null and contactName !=''">
+                AND uc.contact_name=#{contactName}
+            </if>
+        </where>
+        order by uc.create_time desc
+    </select>
+    <!-- 查询是否用户是否已经添加过此手机号码 -->
+    <select id="findForDel" resultType="com.vxianjin.gringotts.web.pojo.UserContacts" parameterType="Integer">
+        select id,contact_phone as contactPhone from user_contacts where user_id=#{userId}
+    </select>
+
+    <!-- 查询用户通讯录有多少联系人 -->
+    <select id="selectUserContactCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(1) from user_contacts where user_id=#{id}
+    </select>
+
+    <!--新增联系人-->
+    <insert id="saveUserContacts" parameterType="com.vxianjin.gringotts.web.pojo.UserContacts" useGeneratedKeys="true"
+            keyProperty="id">
+        <![CDATA[
+			insert into user_contacts(
+				user_id,
+				user_name,
+				contact_name,
+				contact_phone,
+				create_time
+			)
+			values(
+				#{userId},
+				#{userName},
+				#{contactName},
+				#{contactPhone},
+				NOW()
+			)
+		]]>
+    </insert>
+
+    <!-- 根据用户id删除此用户的所有联系人 -->
+    <delete id="delUserContact" parameterType="java.lang.Integer">
+        delete from user_contacts where user_id=#{id}
+    </delete>
+    <insert id="batchInsertUc" parameterType="HashMap">
+        insert into user_contacts (user_id, user_name, contact_name,contact_phone,create_time)
+        VALUES
+        <foreach collection="concatList" item="concat" open="" close="" separator=",">
+            (#{userId},#{userPhone},#{concat.name},#{concat.mobile},#{createTime})
+        </foreach>
+    </insert>
+    <!-- 根据用户id删除此用户的所有联系人 -->
+    <delete id="deleteRepeat" parameterType="java.lang.String">
+        DELETE FROM user_contacts where id in (${_parameter})
+    </delete>
+</mapper>

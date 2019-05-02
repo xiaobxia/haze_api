@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userCertification">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.UserCertification">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="sequence" property="sequence"/>
+        <result column="logo_img" property="logoImg"/>
+        <result column="must_be" property="mustbe"/>
+        <result column="url" property="url"/>
+        <result column="code" property="code"/>
+        <result column="describe" property="describe"/>
+        <result column="tag" property="tag"/>
+    </resultMap>
+    <!-- 查询用户认证列表 -->
+    <select id="selectCertificationList" parameterType="map"
+            resultType="com.vxianjin.gringotts.web.pojo.UserCertification">
+        select
+        c.title,
+        c.tag,
+        c.logo_img logoImg,
+        c.must_be mustbe,
+        c.url,
+        c.code,
+        c.describe
+        from user_certification_list c order by c.sequence asc
+    </select>
+    <!-- 验证用户认证选项 -->
+    <select id="userCalendar" resultType="map" parameterType="map">
+        <![CDATA[
+		SELECT
+		if(personal.userName is not null && personal.userName <> '' ,1,0) personalInfo,
+	  	if(emergency.userName is not null && emergency.userName <> '' ,1,0) emergencyInfo,
+	  	if(moremore.userName is not null && moremore.userName <> '',1,0) moreInfo,
+	  	if(company.userName is not null && company.userName <> '',1,0) companyInfo,
+	  	if(bankCard.bankId is not null && bankCard.bankId <> '',1,0) cardInfo,
+	  	if(riskCardit.userName is not null && riskCardit.userName <> '',1,0) riskCarditInfo,
+	  	if(pay.userName is not null && pay.userName <> '',1,0) payTreasure,
+	  	if(phone.userName is not null && phone.userName <> '',1,0) phoneInfo,
+	  	if(personal.maritalStatus is not null && personal.presentPeriod is not null && personal.companyName is not null && personal.workIndustry is not null && personal.companyAddress is not null && personal.maritalStatus <> '' && personal.presentPeriod <> '' && personal.companyName <> '' && personal.workIndustry <> '' && personal.companyAddress <> '' ,1,0) scoreInfo
+		FROM (select u.user_name userName from user_info u where u.id=#{id}) userName
+		LEFT JOIN
+		(select u.user_name userName,u.qq qq,u.email email,u.marital_status maritalStatus,u.present_period presentPeriod,u.company_name companyName,u.company_address companyAddress,u.work_industry workIndustry from user_info u where u.id=#{id} AND u.realname IS NOT null and u.id_number IS NOT null AND u.education!=0 AND u.realname_status=1) personal
+		ON(1=1) LEFT JOIN
+    	(select u.user_name userName from user_info u where u.id=#{id} AND u.first_contact_name IS NOT NULL AND u.first_contact_phone IS NOT NULL AND u.second_contact_name IS NOT null AND u.second_contact_phone IS NOT NULL) emergency
+        ON (1=1) LEFT JOIN
+    	(select u.user_name userName from user_info u where u.id=#{id} AND u.qq IS NOT NULL AND u.email IS NOT NULL AND u.taobao_account IS NOT null AND u.wechat_account IS NOT NULL) moremore
+    	ON(1=1) LEFT JOIN
+    	(select u.user_name userName from user_info u where u.id=#{id} AND u.company_address IS NOT null AND u.company_address_distinct IS NOT NULL AND u.company_name IS NOT NULL AND u.company_period IS NOT null AND u.company_phone IS NOT null ) company
+    	ON(1=1) LEFT JOIN
+    	(select card.bank_id bankId from user_card_info card where card.user_id=#{id} and card.status=1 and card_default=1) bankCard
+    	ON(1=1) LEFT JOIN
+    	(select u.user_name userName from user_info u where u.id=#{id} AND u.zm_status=2) riskCardit
+    	ON(1=1)
+    	LEFT JOIN (select u.user_name userName from user_info u where u.id=#{id} AND u.td_status=2) phone
+    	ON(1=1) LEFT JOIN
+    	(select u.user_name userName from user_info u where u.id=#{id} AND u.my_hb_time IS NOT null) pay
+    	ON(1=1)
+    ]]>
+    </select>
+</mapper>

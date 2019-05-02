@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.risk.dao.IRiskManageRuleDao">
+    <resultMap id="BaseResultMap" type="RiskManageRule">
+        <id column="id" property="id"/>
+        <result column="rule_name" property="ruleName"/>
+        <result column="rule_type" property="ruleType"/>
+        <result column="formula" property="formula"/>
+        <result column="formula_show" property="formulaShow"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="rule_desc" property="ruleDesc"/>
+        <result column="root_type" property="rootType"/>
+        <result column="attention_type" property="attentionType"/>
+    </resultMap>
+    <insert id="insert" parameterType="RiskManageRule" useGeneratedKeys="true" keyProperty="id">
+        insert into risk_manage_rule
+        (rule_name,rule_type,formula,formula_show,rule_desc,status,root_type,attention_type)
+        values (#{ruleName},#{ruleType},#{formula},#{formulaShow},#{ruleDesc},#{status},#{rootType},#{attentionType})
+    </insert>
+    <update id="update" parameterType="RiskManageRule">
+        update risk_manage_rule set rule_name = #{ruleName},rule_type=#{ruleType},formula=#{formula}
+        ,formula_show=#{formulaShow}
+        ,status=#{status}
+        ,rule_desc=#{ruleDesc},root_type=#{rootType},attention_type=#{attentionType}
+        where id=#{id}
+    </update>
+    <update id="updateRootType" parameterType="RiskManageRule">
+        update risk_manage_rule set root_type=1 where root_type=#{rootType}
+    </update>
+
+    <select id="findById" resultMap="BaseResultMap" parameterType="Integer">
+        select * from risk_manage_rule where id=#{id}
+    </select>
+    <sql id="sql">
+        from risk_manage_rule
+        <where>
+            <if test="ruleName != null and ruleName != ''">
+                and rule_name like CONCAT('%', #{ruleName}, '%')
+            </if>
+            <if test="ruleType != null and ruleType != ''">
+                and rule_type=#{ruleType}
+            </if>
+            <if test="rootType != null and rootType != ''">
+                and root_type=#{rootType}
+            </if>
+            <if test="status != null and status != ''">
+                and status=#{status}
+            </if>
+            <if test="ruleDesc != null and ruleDesc != ''">
+                and rule_desc like CONCAT('%', #{ruleDesc}, '%')
+            </if>
+        </where>
+    </sql>
+    <select id="findAllCount" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="sql"/>
+    </select>
+    <select id="findAll" resultMap="BaseResultMap" parameterType="HashMap">
+        select *
+        <include refid="sql"/>
+        order by id desc
+    </select>
+    <select id="findAllByRootType" resultMap="BaseResultMap" parameterType="Integer">
+        select * from risk_manage_rule where root_type=#{rootType}
+    </select>
+</mapper>

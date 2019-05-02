@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.pay.dao.IRepaymentDao" >
+  <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.Repayment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="asset_order_id" property="assetOrderId" jdbcType="INTEGER" />
+    <result column="repayment_amount" property="repaymentAmount" jdbcType="BIGINT" />
+    <result column="repaymented_amount" property="repaymentedAmount" jdbcType="BIGINT" />
+    <result column="repayment_principal" property="repaymentPrincipal" jdbcType="BIGINT" />
+    <result column="repayment_interest" property="repaymentInterest" jdbcType="BIGINT" />
+    <result column="plan_late_fee" property="planLateFee" jdbcType="INTEGER" />
+    <result column="true_late_fee" property="trueLateFee" jdbcType="INTEGER" />
+    <result column="late_fee_apr" property="lateFeeApr" jdbcType="INTEGER" />
+    <result column="credit_repayment_time" property="creditRepaymentTime" jdbcType="TIMESTAMP" />
+    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="repayment_time" property="repaymentTime" jdbcType="TIMESTAMP" />
+    <result column="repayment_real_time" property="repaymentRealTime" jdbcType="TIMESTAMP" />
+    <result column="late_fee_start_time" property="lateFeeStartTime" jdbcType="TIMESTAMP" />
+    <result column="interest_update_time" property="interestUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="late_day" property="lateDay" jdbcType="INTEGER" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="auto_debit_fail_times" property="autoDebitFailTimes" jdbcType="INTEGER" />
+    <result column="renewal_count" property="renewalCount" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="collection" property="collection" jdbcType="INTEGER" />
+    <result column="repayment_no" property="repaymentNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.vxianjin.gringotts.web.pojo.Repayment" extends="BaseResultMap" >
+    <result column="remark" property="remark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, asset_order_id, repayment_amount, repaymented_amount, repayment_principal,
+    repayment_interest, plan_late_fee, true_late_fee, late_fee_apr, credit_repayment_time,
+    period, repayment_time, repayment_real_time, late_fee_start_time, interest_update_time,
+    late_day, created_at, updated_at, auto_debit_fail_times, renewal_count, status,collection
+  </sql>
+  <sql id="Blob_Column_List" >
+    remark
+  </sql>
+
+  <sql id="selectSql">
+    from asset_repayment a
+    where 1 = 1
+    <if test="statuses != null and statuses != '' and statuses.length > 0">
+      and a.status in
+      <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
+        ${item}
+      </foreach>
+    </if>
+    <if test="assetOrderId != null and assetOrderId != ''">
+      and a.asset_order_id = #{assetOrderId}
+    </if>
+    <if test="userId != null and userId != ''">
+      and a.user_id = #{userId}
+    </if>
+    <if test="repaymentTimeNow != null and repaymentTimeNow != ''">
+      <![CDATA[ and a.repayment_time < now() ]]>
+    </if>
+    <if test="startCreditRepaymentTime != null and startCreditRepaymentTime != ''">
+      <![CDATA[ and a.credit_repayment_time >= #{startCreditRepaymentTime} ]]>
+    </if>
+    <if test="endCreditRepaymentTime != null and endCreditRepaymentTime != ''">
+      <![CDATA[ and a.credit_repayment_time <= #{endCreditRepaymentTime} ]]>
+    </if>
+  </sql>
+
+  <sql id="selectPageSql">
+    from asset_repayment a LEFT JOIN user_info u on u.id = a.user_id
+    where 1 = 1
+    <if test="statuses != null and statuses != '' and statuses.length > 0">
+      and a.status in
+      <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
+        ${item}
+      </foreach>
+    </if>
+    <if test="assetOrderId != null and asssetOrderId != ''">
+      and a.asset_order_id = #{assetOrderId}
+    </if>
+    <if test="repaymentTimeStart != null and repaymentTimeStart != ''">
+      <![CDATA[    and a.repayment_time >= #{repaymentTimeStart}   ]]>
+    </if>
+    <if test="repaymentTimeEnd != null and repaymentTimeEnd != ''">
+      <![CDATA[    and a.repayment_time < #{repaymentTimeEnd}   ]]>
+    </if>
+    <if test="repaymentedTimeStart != null and repaymentedTimeStart != ''">
+      <![CDATA[ and DATE_FORMAT(a.repayment_real_time,'%Y-%m-%d') >= #{repaymentedTimeStart} ]]>
+    </if>
+    <if test="repaymentedTimeEnd != null and repaymentedTimeEnd != ''">
+      <![CDATA[ and DATE_FORMAT(a.repayment_real_time,'%Y-%m-%d') <= #{repaymentedTimeEnd}  ]]>
+    </if>
+    <if test="userAccountLike != null and userAccountLike != ''">
+      <![CDATA[ and u.realname  LIKE concat(concat('%',#{userAccountLike}),'%') ]]>
+    </if>
+    <if test="userMobileLike != null and userMobileLike != ''">
+      <![CDATA[ and u.user_phone = #{userMobileLike} ]]>
+    </if>
+    <if test="lateDayStart != null and lateDayStart != ''">
+      <![CDATA[ and a.late_day >= #{lateDayStart} ]]>
+    </if>
+    <if test="lateDayEnd != null and lateDayEnd != ''">
+      <![CDATA[ and a.late_day <= #{lateDayEnd} ]]>
+    </if>
+  </sql>
+
+  <select id="findMyLoan" resultType="map" parameterType="map">
+    select id,asset_order_id,(repayment_amount - repaymented_amount) as debt,
+    (repayment_principal + repayment_interest) as principal,
+    repayment_interest as counter_fee,
+    repayment_principal as receipts,
+    plan_late_fee as late_fee,
+    repayment_time as plan_fee_time,
+    status
+    from asset_repayment
+    where user_id = #{userId}
+    <if test="statuses != null and statuses != '' and statuses.length > 0">
+      and status in
+      <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
+        ${item}
+      </foreach>
+    </if>
+    order by id desc
+    <if test="limit != null and limit != ''">
+      limit #{limit}
+    </if>
+  </select>
+	<select id="findAllByBorrowId" parameterType="Integer" resultMap="ResultMapWithBLOBs">
+		select * from asset_repayment where asset_order_id=#{borrowId}
+	</select>
+  <select id="findParamsCount" resultType="int" parameterType="map">
+    select
+    count(1)
+    <include refid="selectSql"/>
+  </select>
+  <select id="findBorrowLoanTerm" resultType="map" parameterType="Integer">
+      select loan_term as loanTerm from asset_borrow_order where id = #{id}
+  </select>
+
+  <select id="findParams" resultMap="BaseResultMap"
+          parameterType="map">
+    select
+    a.*
+    <include refid="selectSql"/>
+  </select>
+
+  <select id="findRepaymentParams" resultMap="BaseResultMap"
+          parameterType="map">
+    select
+    a.*,u.realname as realname,u.user_phone as userPhone,u.customer_type as customerType
+    <include refid="selectPageSql"/>
+    order by id desc
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from asset_repayment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--校验repayment是否有已存在的记录-->
+  <select id="queryCountByAssetOrderId" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select
+      count(1)
+    from asset_repayment
+    where asset_order_id = #{assetOrderId}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from asset_repayment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.Repayment" >
+    insert into asset_repayment (id, user_id, asset_order_id,
+    repayment_amount, repaymented_amount, repayment_principal,
+    repayment_interest, plan_late_fee, true_late_fee,
+    late_fee_apr, credit_repayment_time, period,
+    repayment_time, repayment_real_time, late_fee_start_time,
+    interest_update_time, late_day, created_at,
+    auto_debit_fail_times, renewal_count,
+    status, remark,collection)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{assetOrderId,jdbcType=INTEGER},
+    #{repaymentAmount,jdbcType=BIGINT}, #{repaymentedAmount,jdbcType=BIGINT}, #{repaymentPrincipal,jdbcType=BIGINT},
+    #{repaymentInterest,jdbcType=BIGINT}, #{planLateFee,jdbcType=INTEGER}, #{trueLateFee,jdbcType=INTEGER},
+    #{lateFeeApr,jdbcType=INTEGER}, #{creditRepaymentTime,jdbcType=TIMESTAMP}, #{period,jdbcType=INTEGER},
+    #{repaymentTime,jdbcType=TIMESTAMP}, #{repaymentRealTime,jdbcType=TIMESTAMP}, #{lateFeeStartTime,jdbcType=TIMESTAMP},
+    #{interestUpdateTime,jdbcType=TIMESTAMP}, #{lateDay,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP},
+    #{autoDebitFailTimes,jdbcType=INTEGER}, #{renewalCount,jdbcType=INTEGER},
+    #{status,jdbcType=INTEGER}, #{remark,jdbcType=LONGVARCHAR},#{collection,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.Repayment" >
+    insert into asset_repayment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="assetOrderId != null" >
+        asset_order_id,
+      </if>
+      <if test="repaymentAmount != null" >
+        repayment_amount,
+      </if>
+      <if test="repaymentedAmount != null" >
+        repaymented_amount,
+      </if>
+      <if test="repaymentPrincipal != null" >
+        repayment_principal,
+      </if>
+      <if test="repaymentInterest != null" >
+        repayment_interest,
+      </if>
+      <if test="planLateFee != null" >
+        plan_late_fee,
+      </if>
+      <if test="trueLateFee != null" >
+        true_late_fee,
+      </if>
+      <if test="lateFeeApr != null" >
+        late_fee_apr,
+      </if>
+      <if test="creditRepaymentTime != null" >
+        credit_repayment_time,
+      </if>
+      <if test="period != null" >
+        period,
+      </if>
+      <if test="repaymentTime != null" >
+        repayment_time,
+      </if>
+      <if test="repaymentRealTime != null" >
+        repayment_real_time,
+      </if>
+      <if test="lateFeeStartTime != null" >
+        late_fee_start_time,
+      </if>
+      <if test="interestUpdateTime != null" >
+        interest_update_time,
+      </if>
+      <if test="lateDay != null" >
+        late_day,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="autoDebitFailTimes != null" >
+        auto_debit_fail_times,
+      </if>
+      <if test="renewalCount != null" >
+        renewal_count,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="collection != null" >
+        collection,
+      </if>
+      <if test="firstRepaymentTime != null" >
+        first_repayment_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="assetOrderId != null" >
+        #{assetOrderId,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentAmount != null" >
+        #{repaymentAmount,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentedAmount != null" >
+        #{repaymentedAmount,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentPrincipal != null" >
+        #{repaymentPrincipal,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentInterest != null" >
+        #{repaymentInterest,jdbcType=BIGINT},
+      </if>
+      <if test="planLateFee != null" >
+        #{planLateFee,jdbcType=INTEGER},
+      </if>
+      <if test="trueLateFee != null" >
+        #{trueLateFee,jdbcType=INTEGER},
+      </if>
+      <if test="lateFeeApr != null" >
+        #{lateFeeApr,jdbcType=INTEGER},
+      </if>
+      <if test="creditRepaymentTime != null" >
+        #{creditRepaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="period != null" >
+        #{period,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentTime != null" >
+        #{repaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repaymentRealTime != null" >
+        #{repaymentRealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lateFeeStartTime != null" >
+        #{lateFeeStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="interestUpdateTime != null" >
+        #{interestUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lateDay != null" >
+        #{lateDay,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="autoDebitFailTimes != null" >
+        #{autoDebitFailTimes,jdbcType=INTEGER},
+      </if>
+      <if test="renewalCount != null" >
+        #{renewalCount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="collection != null" >
+        #{collection,jdbcType=INTEGER},
+      </if>
+      <if test="firstRepaymentTime != null" >
+        #{firstRepaymentTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.Repayment" >
+    update asset_repayment
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="assetOrderId != null" >
+        asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentAmount != null" >
+        repayment_amount = #{repaymentAmount,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentedAmount != null" >
+        repaymented_amount = #{repaymentedAmount,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentPrincipal != null" >
+        repayment_principal = #{repaymentPrincipal,jdbcType=BIGINT},
+      </if>
+      <if test="repaymentInterest != null" >
+        repayment_interest = #{repaymentInterest,jdbcType=BIGINT},
+      </if>
+      <if test="planLateFee != null" >
+        plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+      </if>
+      <if test="trueLateFee != null" >
+        true_late_fee = #{trueLateFee,jdbcType=INTEGER},
+      </if>
+      <if test="lateFeeApr != null" >
+        late_fee_apr = #{lateFeeApr,jdbcType=INTEGER},
+      </if>
+      <if test="creditRepaymentTime != null" >
+        credit_repayment_time = #{creditRepaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="period != null" >
+        period = #{period,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentTime != null" >
+        repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repaymentRealTime != null" >
+        repayment_real_time = #{repaymentRealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lateFeeStartTime != null" >
+        late_fee_start_time = #{lateFeeStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="interestUpdateTime != null" >
+        interest_update_time = #{interestUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lateDay != null" >
+        late_day = #{lateDay,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="autoDebitFailTimes != null" >
+        auto_debit_fail_times = #{autoDebitFailTimes,jdbcType=INTEGER},
+      </if>
+      <if test="renewalCount != null" >
+        renewal_count = #{renewalCount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="collection != null" >
+        collection = #{collection,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentNo != null" >
+        repayment_no = #{repaymentNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.vxianjin.gringotts.web.pojo.Repayment" >
+    update asset_repayment
+    set user_id = #{userId,jdbcType=INTEGER},
+    asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+    repayment_amount = #{repaymentAmount,jdbcType=BIGINT},
+    repaymented_amount = #{repaymentedAmount,jdbcType=BIGINT},
+    repayment_principal = #{repaymentPrincipal,jdbcType=BIGINT},
+    repayment_interest = #{repaymentInterest,jdbcType=BIGINT},
+    plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+    true_late_fee = #{trueLateFee,jdbcType=INTEGER},
+    late_fee_apr = #{lateFeeApr,jdbcType=INTEGER},
+    credit_repayment_time = #{creditRepaymentTime,jdbcType=TIMESTAMP},
+    period = #{period,jdbcType=INTEGER},
+    repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+    repayment_real_time = #{repaymentRealTime,jdbcType=TIMESTAMP},
+    late_fee_start_time = #{lateFeeStartTime,jdbcType=TIMESTAMP},
+    interest_update_time = #{interestUpdateTime,jdbcType=TIMESTAMP},
+    late_day = #{lateDay,jdbcType=INTEGER},
+    created_at = #{createdAt,jdbcType=TIMESTAMP},
+    auto_debit_fail_times = #{autoDebitFailTimes,jdbcType=INTEGER},
+    renewal_count = #{renewalCount,jdbcType=INTEGER},
+    status = #{status,jdbcType=INTEGER},
+    remark = #{remark,jdbcType=LONGVARCHAR},
+    collection = #{collection,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.Repayment" >
+    update asset_repayment
+    set user_id = #{userId,jdbcType=INTEGER},
+      asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+      repayment_amount = #{repaymentAmount,jdbcType=BIGINT},
+      repaymented_amount = #{repaymentedAmount,jdbcType=BIGINT},
+      repayment_principal = #{repaymentPrincipal,jdbcType=BIGINT},
+      repayment_interest = #{repaymentInterest,jdbcType=BIGINT},
+      plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+      true_late_fee = #{trueLateFee,jdbcType=INTEGER},
+      late_fee_apr = #{lateFeeApr,jdbcType=INTEGER},
+      credit_repayment_time = #{creditRepaymentTime,jdbcType=TIMESTAMP},
+      period = #{period,jdbcType=INTEGER},
+      repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      repayment_real_time = #{repaymentRealTime,jdbcType=TIMESTAMP},
+      late_fee_start_time = #{lateFeeStartTime,jdbcType=TIMESTAMP},
+      interest_update_time = #{interestUpdateTime,jdbcType=TIMESTAMP},
+      late_day = #{lateDay,jdbcType=INTEGER},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      auto_debit_fail_times = #{autoDebitFailTimes,jdbcType=INTEGER},
+      renewal_count = #{renewalCount,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      collection = #{collection,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateRenewalByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.Repayment" >
+      update asset_repayment
+      set plan_late_fee = #{planLateFee,jdbcType=INTEGER},
+      true_late_fee = #{trueLateFee,jdbcType=INTEGER},
+      repayment_amount = #{repaymentAmount,jdbcType=BIGINT},
+      repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      late_fee_start_time = #{lateFeeStartTime,jdbcType=TIMESTAMP},
+      interest_update_time = #{interestUpdateTime,jdbcType=TIMESTAMP},
+      late_day = #{lateDay,jdbcType=INTEGER},
+      renewal_count = #{renewalCount,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      collection = #{collection,jdbcType=INTEGER}
+      where id = #{id,jdbcType=INTEGER}
+    </update>
+
+  <sql id="selectSqlPrecise">
+    from asset_repayment a LEFT JOIN user_info u on u.id = a.user_id
+    where 1 = 1
+    <if test="statuses != null and statuses != '' and statuses.length > 0">
+      and a.status in
+      <foreach item="item" index="index" collection="statuses" open="(" separator="," close=")">
+        ${item}
+      </foreach>
+    </if>
+    <if test="assetOrderId != null and asssetOrderId != ''">
+      and a.asset_order_id = #{assetOrderId}
+    </if>
+    <!--    <if test="repaymentTimeStart != null and repaymentTimeStart != ''">
+          <![CDATA[    and a.repayment_time >= #{repaymentTimeStart}   ]]>
+        </if>
+        <if test="repaymentTimeEnd != null and repaymentTimeEnd != ''">
+          <![CDATA[    and a.repayment_time < #{repaymentTimeEnd}   ]]>
+        </if>
+        <if test="repaymentedTimeStart != null and repaymentedTimeStart != ''">
+          <![CDATA[ and DATE_FORMAT(a.repayment_real_time,'%Y-%m-%d') >= #{repaymentedTimeStart} ]]>
+        </if>
+        <if test="repaymentedTimeEnd != null and repaymentedTimeEnd != ''">
+          <![CDATA[ and DATE_FORMAT(a.repayment_real_time,'%Y-%m-%d') <= #{repaymentedTimeEnd}  ]]>
+        </if>-->
+    <if test="userAccountLike != null and userAccountLike != ''">
+      <![CDATA[ and u.realname  = #{userAccountLike} ]]>
+    </if>
+    <if test="userMobileLike != null and userMobileLike != ''">
+      <![CDATA[ and u.user_phone = #{userMobileLike} ]]>
+    </if>
+    <!-- <if test="lateDayStart != null and lateDayStart != ''">
+       <![CDATA[ and a.late_day >= #{lateDayStart} ]]>
+     </if>
+     <if test="lateDayEnd != null and lateDayEnd != ''">
+       <![CDATA[ and a.late_day <= #{lateDayEnd} ]]>
+     </if>-->
+  </sql>
+
+  <select id="findParamsCountPrecise" resultType="int" parameterType="map">
+    select
+    count(1)
+    <include refid="selectSqlPrecise"/>
+  </select>
+
+</mapper>

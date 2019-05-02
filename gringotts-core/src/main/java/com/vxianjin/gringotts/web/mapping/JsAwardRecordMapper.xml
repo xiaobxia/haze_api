@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IJsAwardRecordDao">
+    <sql id="Base_Column_List">
+        a.id AS id,
+        a.periods AS periods,
+        a.award_money AS awardMoney,
+        a.user_id AS userId,
+        a.user_name AS userName,
+        a.drawRolls_id AS drawRollsId,
+        a.drawRolls_number AS drawRollsNumber,
+        a.three_index AS threeIndex,
+        a.three_name AS threeName,
+        a.money_update_time AS moneyUpdateTime,
+        a.darw_time AS darwTime,
+        a.award_time AS awardTime,
+        a.remark AS remark,
+        a.status AS STATUS,
+        su.phone AS phone
+    </sql>
+
+    <sql id="Example_Where_Clause">
+
+    </sql>
+
+
+    <sql id="Update_By_Example_Where_Clause">
+
+    </sql>
+
+    <select id="getOne" resultType="JsAwardRecord">
+        select
+        <include refid="Base_Column_List"/>
+        from js_award_record
+        where id = #{id}
+    </select>
+
+    <select id="get" resultType="JsAwardRecord">
+        select
+        a.id AS id,
+        a.periods AS periods,
+        a.award_money AS awardMoney,
+        a.user_id AS userId,
+        a.user_name AS userName,
+        a.drawRolls_id AS drawRollsId,
+        a.drawRolls_number AS drawRollsNumber,
+        a.three_index AS threeIndex,
+        a.three_name AS threeName,
+        a.money_update_time AS moneyUpdateTime,
+        a.darw_time AS darwTime,
+        a.award_time AS awardTime,
+        a.remark AS remark,
+        a.status AS STATUS
+
+        from js_award_record a
+        <where>
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by
+        <if test="darwTime != null and darwTime != ''">
+            a.money_update_time desc,
+        </if>
+        a.periods desc
+
+
+    </select>
+    <sql id="selectSql">
+        FROM js_award_record a
+        LEFT JOIN js_loan_person su ON a.user_id = su.id
+        <where>
+            <if test="status != null">
+                AND a.status= #{status,jdbcType=INTEGER}
+            </if>
+
+            <if test="statusItem != null">
+                AND a.status >0
+            </if>
+            <if test="periods != null and periods != ''">
+                and a.periods = #{periods,jdbcType=INTEGER}
+            </if>
+
+        </where>
+    </sql>
+    <select id="findListCount" resultType="INTEGER">
+        SELECT
+        COUNT(1)
+        <include refid="selectSql"/>
+        order by
+        <if test="darwTime != null and darwTime != ''">
+            a.money_update_time desc,
+        </if>
+        a.periods desc
+
+    </select>
+    <select id="findList" resultType="JsAwardRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <include refid="selectSql"/>
+        order by
+        <if test="darwTime != null and darwTime != ''">
+            a.money_update_time desc,
+        </if>
+        a.periods desc
+
+    </select>
+    <select id="findOne" resultType="JsAwardRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <include refid="selectSql"/>
+
+        order by
+        <if test="darwTime != null and darwTime != ''">
+            a.money_update_time desc,
+        </if>
+        a.periods desc
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="JsAwardRecord">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_award_record a
+
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from js_award_record
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.vxianjin.gringotts.web.pojo.JsAwardRecord">
+        delete from js_award_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.JsAwardRecord">
+        insert into js_award_record (id, periods, award_money,
+        user_id, user_name, drawRolls_id,
+        drawRolls_number, three_index, three_name,
+        money_update_time, darw_time, award_time,
+        remark, status)
+        values (#{id,jdbcType=INTEGER}, #{periods,jdbcType=INTEGER}, #{awardMoney,jdbcType=DECIMAL},
+        #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{drawrollsId,jdbcType=INTEGER},
+        #{drawrollsNumber,jdbcType=VARCHAR}, #{threeIndex,jdbcType=INTEGER}, #{threeName,jdbcType=VARCHAR},
+        #{moneyUpdateTime,jdbcType=TIMESTAMP}, #{darwTime,jdbcType=TIMESTAMP}, #{awardTime,jdbcType=TIMESTAMP},
+        #{remark,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertP" parameterType="JsAwardRecord">
+        insert into js_award_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="periods != null">
+                periods,
+            </if>
+            <if test="awardMoney != null">
+                award_money,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="drawrollsId != null">
+                drawRolls_id,
+            </if>
+            <if test="drawrollsNumber != null">
+                drawRolls_number,
+            </if>
+            <if test="threeIndex != null">
+                three_index,
+            </if>
+            <if test="threeName != null">
+                three_name,
+            </if>
+            <if test="moneyUpdateTime != null">
+                money_update_time,
+            </if>
+            <if test="darwTime != null">
+                darw_time,
+            </if>
+            <if test="awardTime != null">
+                award_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="periods != null">
+                #{periods,jdbcType=INTEGER},
+            </if>
+            <if test="awardMoney != null">
+                #{awardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="drawrollsId != null">
+                #{drawrollsId,jdbcType=INTEGER},
+            </if>
+            <if test="drawrollsNumber != null">
+                #{drawrollsNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="threeIndex != null">
+                #{threeIndex,jdbcType=INTEGER},
+            </if>
+            <if test="threeName != null">
+                #{threeName,jdbcType=VARCHAR},
+            </if>
+            <if test="moneyUpdateTime != null">
+                #{moneyUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="darwTime != null">
+                #{darwTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="awardTime != null">
+                #{awardTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="JsAwardRecord" resultType="java.lang.Integer">
+        select count(*) from js_award_record
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updatePp">
+        update js_award_record
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.periods != null">
+                periods = #{record.periods,jdbcType=INTEGER},
+            </if>
+            <if test="record.awardMoney != null">
+                award_money = #{record.awardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=INTEGER},
+            </if>
+            <if test="record.userName != null">
+                user_name = #{record.userName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.drawrollsId != null">
+                drawRolls_id = #{record.drawrollsId,jdbcType=INTEGER},
+            </if>
+            <if test="record.drawrollsNumber != null">
+                drawRolls_number = #{record.drawrollsNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="record.threeIndex != null">
+                three_index = #{record.threeIndex,jdbcType=INTEGER},
+            </if>
+            <if test="record.threeName != null">
+                three_name = #{record.threeName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.moneyUpdateTime != null">
+                money_update_time = #{record.moneyUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.darwTime != null">
+                darw_time = #{record.darwTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.awardTime != null">
+                award_time = #{record.awardTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update js_award_record
+        set id = #{record.id,jdbcType=INTEGER},
+        periods = #{record.periods,jdbcType=INTEGER},
+        award_money = #{record.awardMoney,jdbcType=DECIMAL},
+        user_id = #{record.userId,jdbcType=INTEGER},
+        user_name = #{record.userName,jdbcType=VARCHAR},
+        drawRolls_id = #{record.drawrollsId,jdbcType=INTEGER},
+        drawRolls_number = #{record.drawrollsNumber,jdbcType=VARCHAR},
+        three_index = #{record.threeIndex,jdbcType=INTEGER},
+        three_name = #{record.threeName,jdbcType=VARCHAR},
+        money_update_time = #{record.moneyUpdateTime,jdbcType=TIMESTAMP},
+        darw_time = #{record.darwTime,jdbcType=TIMESTAMP},
+        award_time = #{record.awardTime,jdbcType=TIMESTAMP},
+        remark = #{record.remark,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="update" parameterType="JsAwardRecord">
+        update js_award_record
+        <set>
+            <if test="periods != null">
+                periods = #{periods,jdbcType=INTEGER},
+            </if>
+            <if test="awardMoney != null">
+                award_money = #{awardMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="drawrollsId != null">
+                drawRolls_id = #{drawrollsId,jdbcType=VARCHAR},
+            </if>
+            <if test="drawrollsNumber != null">
+                drawRolls_number = #{drawrollsNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="threeIndex != null">
+                three_index = #{threeIndex,jdbcType=INTEGER},
+            </if>
+            <if test="threeName != null">
+                three_name = #{threeName,jdbcType=VARCHAR},
+            </if>
+            <if test="moneyUpdateTime != null">
+                money_update_time = #{moneyUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="darwTime != null">
+                darw_time = #{darwTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="awardTime != null">
+                award_time = #{awardTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updatep" parameterType="JsAwardRecord">
+        update js_award_record
+        set periods = #{periods,jdbcType=INTEGER},
+        award_money = #{awardMoney,jdbcType=DECIMAL},
+        user_id = #{userId,jdbcType=INTEGER},
+        user_name = #{userName,jdbcType=VARCHAR},
+        drawRolls_id = #{drawrollsId,jdbcType=INTEGER},
+        drawRolls_number = #{drawrollsNumber,jdbcType=VARCHAR},
+        three_index = #{threeIndex,jdbcType=INTEGER},
+        three_name = #{threeName,jdbcType=VARCHAR},
+        money_update_time = #{moneyUpdateTime,jdbcType=TIMESTAMP},
+        darw_time = #{darwTime,jdbcType=TIMESTAMP},
+        award_time = #{awardTime,jdbcType=TIMESTAMP},
+        remark = #{remark,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

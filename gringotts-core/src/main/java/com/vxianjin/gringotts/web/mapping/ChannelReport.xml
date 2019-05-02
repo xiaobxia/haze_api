@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IChannelReportDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.ChannelReport">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="report_date" property="reportDate"/>
+        <result column="register_count" property="registerCount"/>
+        <result column="attestation_realname_count" property="attestationRealnameCount"/>
+        <result column="attestation_bank_count" property="attestationBankCount"/>
+        <result column="contact_count" property="contactCount"/>
+        <result column="jxl_count" property="jxlCount"/>
+        <result column="alipay_count" property="alipayCount"/>
+        <result column="zhima_count" property="zhimaCount"/>
+        <result column="company_count" property="companyCount"/>
+        <result column="borrow_apply_count" property="borrowApplyCount"/>
+        <result column="borrow_suc_count" property="borrowSucCount"/>
+        <result column="pass_rate" property="passRate"/>
+        <result column="into_money" property="intoMoney"/>
+        <result column="approve_error_count" property="approveErrorCount"/>
+        <result column="channelid" property="channelid"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        report_date,register_count,attestation_realname_count,attestation_bank_count,contact_count,jxl_count,alipay_count,zhima_count,
+        company_count,borrow_apply_count,borrow_suc_count,borrow_suc_count,pass_rate,into_money,approve_error_count,channelid
+    </sql>
+
+
+    <sql id="findSql">
+        FROM
+        user_info a
+        INNER JOIN (
+        SELECT * FROM user_info WHERE id IN(SELECT user_id FROM channel_user_info)
+        )
+        b ON a.invite_userid=b.id
+        LEFT JOIN channel_info d ON d.id = a.user_from
+
+    </sql>
+    <sql id="Sql">
+        <where>
+            <if test="channelid != null and channelid != ''">
+                and a.channelid= #{channelid}
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                and b.channel_code= #{channelCode}
+            </if>
+            <if test="beginTime !=null and beginTime !=''">
+                <![CDATA[	and DATE_FORMAT(a.report_date,'%Y-%m-%d') >=  #{beginTime}  ]]>
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                <![CDATA[	and DATE_FORMAT(a.report_date,'%Y-%m-%d') <=  #{endTime}  ]]>
+            </if>
+        </where>
+    </sql>
+    <select id="findAllCount" resultType="Integer"
+            parameterType="HashMap">
+
+        SELECT COUNT(1) FROM channel_report a
+        LEFT JOIN channel_info b ON a.channelid = b.id
+        <include refid="Sql"/>
+
+    </select>
+    <select id="findAll" resultMap="BaseResultMap"
+            parameterType="HashMap">
+        SELECT a.*,b.channel_name AS channelName FROM channel_report a
+        LEFT JOIN channel_info b ON a.channelid = b.id
+
+        <include refid="Sql"/>
+        ORDER BY a.report_date DESC
+    </select>
+
+    <select id="findPrAllCount" resultType="Integer"
+            parameterType="HashMap">
+
+        SELECT COUNT(1) FROM (SELECT COUNT(1) FROM channel_report a
+        LEFT JOIN channel_info b ON a.channelid = b.id
+        <include refid="Sql"/>
+        GROUP BY b.channel_province,a.report_date
+
+        ) t
+
+
+    </select>
+    <select id="findPrAll" resultMap="BaseResultMap"
+            parameterType="HashMap">
+        SELECT b.channel_name AS channelName,b.channel_province ,
+        report_date,
+        SUM(a.register_count) AS register_count,
+        SUM(a.attestation_realname_count) AS attestation_realname_count,
+        SUM(a.attestation_bank_count) AS attestation_bank_count,
+        SUM(a.contact_count) AS contact_count,
+        SUM(a.jxl_count) AS jxl_count,
+        SUM(a.alipay_count) AS alipay_count,
+        SUM(a.zhima_count) AS zhima_count,
+        SUM(a.company_count) AS company_count,
+        SUM(a.borrow_apply_count) AS borrow_apply_count,
+        SUM(a.borrow_suc_count) AS borrow_suc_count,
+        SUM(a.pass_rate) AS pass_rate,
+        SUM(a.into_money) AS into_money,
+        SUM(a.approve_error_count) AS approve_error_count,
+        channelid,b.channel_province as channelProvince,
+        b.channel_city AS channelCity,b.channel_area as channelArea
+
+        FROM channel_report a
+        LEFT JOIN channel_info b ON a.channelid = b.id
+        <include refid="Sql"/>
+        GROUP BY b.channel_province,a.report_date
+        ORDER BY a.report_date DESC
+    </select>
+    <select id="findChannelId" resultMap="BaseResultMap"
+            parameterType="HashMap">
+
+        SELECT id AS channelId FROM channel_info
+
+    </select>
+
+
+    <select id="findRegisterCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid}
+        <![CDATA[	AND a.create_time >= #{startDate} AND a.create_time <= #{endDate} ]]>
+    </select>
+    <select id="findRealNameCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.realname_status = 1
+        <![CDATA[	AND a.realname_time >= #{startDate} AND a.realname_time <= #{endDate} ]]>
+    </select>
+
+    <select id="findJXLCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.jxl_status = 2
+        <![CDATA[	AND a.jxl_token_time >= #{startDate} AND a.jxl_token_time <= #{endDate} ]]>
+    </select>
+    <select id="findZMCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.zm_status = 2
+        <![CDATA[	AND a.zm_score_time >= #{startDate} AND a.zm_score_time <= #{endDate} ]]>
+    </select>
+    <select id="findCompanyCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.company_address IS NOT null AND a.company_address_distinct IS NOT NULL
+        AND a.company_name IS NOT NULL AND a.company_period IS NOT null AND a.company_phone IS NOT null
+        <![CDATA[	AND a.realname_time >= #{startDate} AND a.realname_time <= #{endDate} ]]>
+    </select>
+    <select id="findContactCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.first_contact_phone IS NOT NULL AND a.second_contact_phone IS NOT NULL
+        <![CDATA[	AND a.realname_time >= #{startDate} AND a.realname_time <= #{endDate} ]]>
+    </select>
+    <select id="findBankCount" resultType="Integer"
+            parameterType="HashMap">
+
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        LEFT JOIN user_card_info e ON a.id = e.user_id
+        where d.id=#{channelid} and e.status =1
+        <![CDATA[	AND e.create_time >= #{startDate} AND e.create_time <= #{endDate} ]]>
+    </select>
+    <select id="findAlipayCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.my_hb_time IS NOT NULL
+        <![CDATA[	AND a.my_hb_time >= #{startDate} AND a.my_hb_time <= #{endDate} ]]>
+    </select>
+    <select id="findApproveErrorCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        where d.id=#{channelid} and a.my_hb_time IS NOT NULL
+        <![CDATA[	AND a.my_hb_time >= #{startDate} AND a.my_hb_time <= #{endDate} ]]>
+    </select>
+    <select id="findBorrowApplyCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        INNER JOIN asset_borrow_order e ON e.user_id = a.id
+        where d.id=#{channelid}
+        <![CDATA[	AND e.created_at >= #{startDate} AND e.created_at <= #{endDate} ]]>
+    </select>
+    <select id="findBorrowSucCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        <include refid="findSql"/>
+        INNER JOIN asset_borrow_order e ON e.user_id = a.id
+        where d.id=#{channelid}
+        <![CDATA[	AND e.created_at >= #{startDate} AND e.created_at <= #{endDate} ]]>
+        and e.status in
+        <foreach item="item" index="index" collection="inStatus"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="findIntoMoney" resultType="Integer"
+            parameterType="HashMap">
+        SELECT IFNULL(SUM(e.money_amount),0)
+        <include refid="findSql"/>
+        INNER JOIN asset_borrow_order e ON e.user_id = a.id
+        where d.id=#{channelid}
+        <![CDATA[	AND e.created_at >= #{startDate} AND e.created_at <= #{endDate} ]]>
+
+    </select>
+
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.ChannelReport">
+        INSERT INTO `qbm`.`channel_report`
+        (report_date,
+        register_count,
+        attestation_realname_count,
+        attestation_bank_count,
+        contact_count,
+        jxl_count,
+        alipay_count,
+        zhima_count,
+        company_count,
+        borrow_apply_count,
+        borrow_suc_count,
+        pass_rate,
+        into_money,
+        approve_error_count,
+        channelid)
+        VALUES (
+        #{reportDate},
+        #{registerCount},
+        #{attestationRealnameCount},
+        #{attestationBankCount},
+        #{contactCount},
+        #{jxlCount},
+        #{alipayCount},
+        #{zhimaCount},
+        #{companyCount},
+        #{borrowApplyCount},
+        #{borrowSucCount},
+        #{passRate},
+        #{intoMoney},
+        #{approveErrorCount},
+        #{channelid});
+    </insert>
+
+</mapper>

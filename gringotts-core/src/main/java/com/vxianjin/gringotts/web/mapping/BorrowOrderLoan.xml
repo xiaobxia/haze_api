@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IBorrowOrderLoanDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.BorrowOrderLoan">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="asset_order_id" property="assetOrderId"
+                jdbcType="INTEGER"/>
+        <result column="yurref" property="yurref" jdbcType="VARCHAR"/>
+        <result column="loan_interests" property="loanInterests"
+                jdbcType="INTEGER"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="loan_time" property="loanTime" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="pay_remark" property="payRemark" jdbcType="VARCHAR"/>
+        <result column="pay_status" property="payStatus" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, asset_order_id, yurref, loan_interests, created_at,
+        updated_at, loan_time,
+        status, pay_remark, pay_status
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+            parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from borrow_loaninterests_company
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <sql id="selectSql">
+        from borrow_loaninterests_company abo
+        left join user_info ui on
+        abo.user_id=ui.id
+        <where>
+            <if test="assetOrderId!=null and assetOrderId!=''">
+                and abo.asset_order_id=#{assetOrderId}
+            </if>
+            <if test="notPayStatus!=null and notPayStatus!=''">
+                and abo.pay_status!=#{notPayStatus}
+            </if>
+            <if test="payStatus!=null and payStatus!=''">
+                and abo.pay_status=#{payStatus}
+            </if>
+
+            <if test="status!=null and status!=''">
+                and abo.status=#{status}
+            </if>
+        </where>
+        order by abo.updated_at desc
+    </sql>
+    <select id="findParams" resultMap="BaseResultMap" parameterType="Map">
+        select
+        abo.*
+        <!-- <include refid="Base_Column_List" /> -->
+        <include refid="selectSql"/>
+
+    </select>
+
+
+    <select id="selectByParam" resultMap="BaseResultMap"
+            parameterType="Map">
+        select
+        abo.*
+        <!-- <include refid="Base_Column_List" /> -->
+        <include refid="selectSql"/>
+
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from borrow_loaninterests_company
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.BorrowOrderLoan">
+        insert into borrow_loaninterests_company (id, user_id, asset_order_id,
+        yurref, loan_interests, created_at,
+        loan_time, status,
+        pay_remark, pay_status)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+        #{assetOrderId,jdbcType=INTEGER},
+        #{yurref,jdbcType=VARCHAR}, #{loanInterests,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP},
+        #{loanTime,jdbcType=TIMESTAMP},
+        #{status,jdbcType=INTEGER},
+        #{payRemark,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.BorrowOrderLoan">
+        insert into borrow_loaninterests_company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="assetOrderId != null">
+                asset_order_id,
+            </if>
+            <if test="yurref != null">
+                yurref,
+            </if>
+            <if test="loanInterests != null">
+                loan_interests,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="loanTime != null">
+                loan_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="payRemark != null">
+                pay_remark,
+            </if>
+            <if test="payStatus != null">
+                pay_status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="assetOrderId != null">
+                #{assetOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="yurref != null">
+                #{yurref,jdbcType=VARCHAR},
+            </if>
+            <if test="loanInterests != null">
+                #{loanInterests,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loanTime != null">
+                #{loanTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="payRemark != null">
+                #{payRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="payStatus != null">
+                #{payStatus,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByParams" parameterType="Map">
+        update borrow_loaninterests_company
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="assetOrderId != null">
+                asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="yurref != null">
+                yurref = #{yurref,jdbcType=VARCHAR},
+            </if>
+            <if test="loanInterests != null">
+                loan_interests = #{loanInterests,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loanTime != null">
+                loan_time = #{loanTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="payRemark != null">
+                pay_remark = #{payRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=VARCHAR},
+            </if>
+        </set>
+
+        <if test="ids!=null">
+            where id in
+            <foreach collection="ids" item="item" open="(" separator=","
+                     close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.BorrowOrderLoan">
+        update borrow_loaninterests_company
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="assetOrderId != null">
+                asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="yurref != null">
+                yurref = #{yurref,jdbcType=VARCHAR},
+            </if>
+            <if test="loanInterests != null">
+                loan_interests = #{loanInterests,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loanTime != null">
+                loan_time = #{loanTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="payRemark != null">
+                pay_remark = #{payRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByYurref" parameterType="com.vxianjin.gringotts.web.pojo.BorrowOrderLoan">
+        update borrow_loaninterests_company
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="assetOrderId != null">
+                asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+            </if>
+
+            <if test="loanInterests != null">
+                loan_interests = #{loanInterests,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loanTime != null">
+                loan_time = #{loanTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="payRemark != null">
+                pay_remark = #{payRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where yurref = #{yurref,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.BorrowOrderLoan">
+        update borrow_loaninterests_company
+        set user_id = #{userId,jdbcType=INTEGER},
+        asset_order_id = #{assetOrderId,jdbcType=INTEGER},
+        yurref = #{yurref,jdbcType=VARCHAR},
+        loan_interests = #{loanInterests,jdbcType=INTEGER},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        loan_time = #{loanTime,jdbcType=TIMESTAMP},
+        status = #{status,jdbcType=INTEGER},
+        pay_remark = #{payRemark,jdbcType=VARCHAR},
+        pay_status = #{payStatus,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

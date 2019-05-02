@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IOutOrdersDao">
+    <resultMap id="BaseResultMap" type="OutOrders">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="asset_order_id" property="assetOrderId"/>
+
+        <result column="order_type" property="orderType"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="act" property="act"/>
+        <result column="req_params" property="reqParams"/>
+        <result column="return_params" property="returnParams"/>
+        <result column="notify_time" property="notifyTime"/>
+        <result column="notify_params" property="notifyParams"/>
+        <result column="add_time" property="addTime"/>
+        <result column="add_ip" property="addIp"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <insert id="insert" parameterType="OutOrders" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into out_orders
+        (user_id,asset_order_id,order_type,order_no,act,req_params,add_ip,return_params,notify_params
+        <if test="status != null">
+            ,status
+        </if>
+        )
+        values
+        (#{userId},#{assetOrderId},#{orderType},#{orderNo},#{act},#{reqParams},#{addIp},#{returnParams},#{notifyParams}
+        <if test="status != null">
+            ,#{status}
+        </if>
+        )
+
+    </insert>
+    <update id="update" parameterType="OutOrders">
+        update out_orders
+        <set>
+            <if test="returnParams != null">
+                return_params = #{returnParams},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="notifyParams != null">
+                notify_params = #{notifyParams},
+            </if>
+            <if test="notifyTime != null">
+                notify_time = #{notifyTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <update id="updateByOrderNo" parameterType="OutOrders">
+        update out_orders
+        <set>
+            <if test="reqParams != null">
+                req_params = #{reqParams},
+            </if>
+            <if test="returnParams != null">
+                return_params = #{returnParams},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="notifyParams != null">
+                notify_params = #{notifyParams},
+            </if>
+            <if test="notifyTime != null">
+                notify_time = #{notifyTime},
+            </if>
+        </set>
+        where order_no=#{orderNo}
+    </update>
+    <select id="findById" parameterType="OutOrders" resultMap="BaseResultMap">
+        select * from out_orders where id =#{id}
+    </select>
+    <select id="findByOrderNo" parameterType="OutOrders" resultMap="BaseResultMap">
+        select * from out_orders where order_no =#{orderNo}
+    </select>
+
+
+    <insert id="insertByTablelastName" parameterType="OutOrders"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into out_orders${tablelastName}
+        (user_id,asset_order_id,order_type,order_no,act,req_params,add_ip,return_params,notify_params
+        <if test="status != null">
+            ,status
+        </if>
+        )
+        values
+        (#{userId},#{assetOrderId},#{orderType},#{orderNo},#{act},#{reqParams},#{addIp},#{returnParams},#{notifyParams}
+        <if test="status != null">
+            ,#{status}
+        </if>
+        )
+    </insert>
+    <update id="updateByTablelastName" parameterType="OutOrders">
+        update out_orders${tablelastName}
+        <set>
+            <if test="returnParams != null">
+                return_params = #{returnParams},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="notifyParams != null">
+                notify_params = #{notifyParams},
+            </if>
+            <if test="notifyTime != null">
+                notify_time = #{notifyTime},
+            </if>
+        </set>
+        where id=#{id}
+        <if test="orderNo != null">
+            and order_no = #{orderNo}
+        </if>
+    </update>
+    <update id="updateByOrderNoByTablelastName" parameterType="OutOrders">
+        update out_orders${tablelastName}
+        <set>
+            <if test="returnParams != null">
+                return_params = #{returnParams},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="notifyParams != null">
+                notify_params = #{notifyParams},
+            </if>
+            <if test="notifyTime != null">
+                notify_time = #{notifyTime},
+            </if>
+        </set>
+        where order_no=#{orderNo}
+    </update>
+    <select id="findByIdByTablelastName" resultMap="BaseResultMap">
+        select * from
+        out_orders${tablelastName} where id =#{id}
+    </select>
+    <select id="findByOrderNoByTablelastName" resultMap="BaseResultMap">
+        select *
+        from out_orders${tablelastName} where order_no =#{orderNo}
+    </select>
+
+</mapper>

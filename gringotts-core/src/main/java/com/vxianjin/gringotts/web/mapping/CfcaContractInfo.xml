@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.ICfcaContractInfoDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.CfcaContractInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="cfca_contract_id" jdbcType="VARCHAR" property="cfcaContractId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="cfca_user_id" jdbcType="VARCHAR" property="cfcaUserId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="template_id" jdbcType="VARCHAR" property="templateId"/>
+        <result column="contract_price" jdbcType="DECIMAL" property="contractPrice"/>
+        <result column="sgin_region_name" jdbcType="VARCHAR" property="sginRegionName"/>
+        <result column="court_region_name" jdbcType="VARCHAR" property="courtRegionName"/>
+        <result column="type_name" jdbcType="VARCHAR" property="typeName"/>
+        <result column="contract_no" jdbcType="VARCHAR" property="contractNo"/>
+        <result column="sign_status" jdbcType="INTEGER" property="signStatus"/>
+        <result column="sign_json" jdbcType="VARCHAR" property="signJson"/>
+        <result column="contract_json" jdbcType="VARCHAR" property="contractJson"/>
+        <result column="sign_url" jdbcType="VARCHAR" property="url"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, cfca_contract_id, user_id, cfca_user_id, title, template_id, contract_price,
+        sgin_region_name, court_region_name, type_name, contract_no, sign_status, sign_json,
+        contract_json,sign_url
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cfca_contract_info
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from cfca_contract_info
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.CfcaContractInfo">
+        insert into cfca_contract_info (id, cfca_contract_id, user_id,
+        cfca_user_id, title, template_id,
+        contract_price, sgin_region_name, court_region_name,
+        type_name, contract_no, sign_status,
+        sign_json, contract_json, sign_url)
+        values (#{id,jdbcType=BIGINT}, #{cfcaContractId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+        #{cfcaUserId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR},
+        #{contractPrice,jdbcType=DECIMAL}, #{sginRegionName,jdbcType=VARCHAR}, #{courtRegionName,jdbcType=VARCHAR},
+        #{typeName,jdbcType=VARCHAR}, #{contractNo,jdbcType=VARCHAR}, #{signStatus,jdbcType=INTEGER},
+        #{signJson,jdbcType=VARCHAR}, #{contractJson,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.CfcaContractInfo">
+        insert into cfca_contract_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="cfcaContractId != null">
+                cfca_contract_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="cfcaUserId != null">
+                cfca_user_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="templateId != null">
+                template_id,
+            </if>
+            <if test="contractPrice != null">
+                contract_price,
+            </if>
+            <if test="sginRegionName != null">
+                sgin_region_name,
+            </if>
+            <if test="courtRegionName != null">
+                court_region_name,
+            </if>
+            <if test="typeName != null">
+                type_name,
+            </if>
+            <if test="contractNo != null">
+                contract_no,
+            </if>
+            <if test="signStatus != null">
+                sign_status,
+            </if>
+            <if test="signJson != null">
+                sign_json,
+            </if>
+            <if test="contractJson != null">
+                contract_json,
+            </if>
+            <if test="url != null">
+                sign_url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="cfcaContractId != null">
+                #{cfcaContractId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="cfcaUserId != null">
+                #{cfcaUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null">
+                #{templateId,jdbcType=VARCHAR},
+            </if>
+            <if test="contractPrice != null">
+                #{contractPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="sginRegionName != null">
+                #{sginRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="courtRegionName != null">
+                #{courtRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="typeName != null">
+                #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="contractNo != null">
+                #{contractNo,jdbcType=VARCHAR},
+            </if>
+            <if test="signStatus != null">
+                #{signStatus,jdbcType=INTEGER},
+            </if>
+            <if test="signJson != null">
+                #{signJson,jdbcType=VARCHAR},
+            </if>
+            <if test="contractJson != null">
+                #{contractJson,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.CfcaContractInfo">
+        update cfca_contract_info
+        <set>
+            <if test="cfcaContractId != null">
+                cfca_contract_id = #{cfcaContractId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="cfcaUserId != null">
+                cfca_user_id = #{cfcaUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null">
+                template_id = #{templateId,jdbcType=VARCHAR},
+            </if>
+            <if test="contractPrice != null">
+                contract_price = #{contractPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="sginRegionName != null">
+                sgin_region_name = #{sginRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="courtRegionName != null">
+                court_region_name = #{courtRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="typeName != null">
+                type_name = #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="contractNo != null">
+                contract_no = #{contractNo,jdbcType=VARCHAR},
+            </if>
+            <if test="signStatus != null">
+                sign_status = #{signStatus,jdbcType=INTEGER},
+            </if>
+            <if test="signJson != null">
+                sign_json = #{signJson,jdbcType=VARCHAR},
+            </if>
+            <if test="contractJson != null">
+                contract_json = #{contractJson,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                sign_url = #{url,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.CfcaContractInfo">
+        update cfca_contract_info
+        set cfca_contract_id = #{cfcaContractId,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=VARCHAR},
+        cfca_user_id = #{cfcaUserId,jdbcType=VARCHAR},
+        title = #{title,jdbcType=VARCHAR},
+        template_id = #{templateId,jdbcType=VARCHAR},
+        contract_price = #{contractPrice,jdbcType=DECIMAL},
+        sgin_region_name = #{sginRegionName,jdbcType=VARCHAR},
+        court_region_name = #{courtRegionName,jdbcType=VARCHAR},
+        type_name = #{typeName,jdbcType=VARCHAR},
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+        sign_status = #{signStatus,jdbcType=INTEGER},
+        sign_json = #{signJson,jdbcType=VARCHAR},
+        contract_json = #{contractJson,jdbcType=VARCHAR},
+        sign_url = #{url,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByContractId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cfca_contract_info
+        where cfca_contract_id = #{cfcaContractId,jdbcType=VARCHAR}
+    </select>
+</mapper>

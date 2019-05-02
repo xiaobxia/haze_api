@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IRiskCreditUsrDao">
+
+    <resultMap id="BaseResultMap" type="RiskCreditUser">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="asset_id" property="assetId"/>
+        <result column="user_name" property="userName"/>
+        <result column="card_num" property="cardNum"/>
+        <result column="user_phone" property="userPhone"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="amount_addsum" property="amountAddsum"/>
+        <result column="amount_max" property="amountMax"/>
+        <result column="js_amount_time" property="jsAmountTime"/>
+        <result column="zm_score" property="zmScore"/>
+        <result column="zm_score_time" property="zmScoreTime"/>
+        <result column="zm_industy_black" property="zmIndustyBlack"/>
+        <result column="zm_over" property="zmOver"/>
+        <result column="zm_no_pay_over" property="zmNoPayOver"/>
+        <result column="zm_industy_time" property="zmIndustyTime"/>
+        <result column="zm_status" property="zmStatus"/>
+        <result column="my_hb" property="myHb"/>
+        <result column="my_hb_time" property="myHbTime"/>
+        <result column="td_report_id" property="tdReportId"/>
+        <result column="td_report_time" property="tdReportTime"/>
+        <result column="td_score" property="tdScore"/>
+        <result column="td_phone_black" property="tdPhoneBlack"/>
+        <result column="td_card_num_black" property="tdCardNumBlack"/>
+        <result column="td_month1_borrow" property="tdMonth1Borrow"/>
+        <result column="td_day7_borrow" property="tdDay7Borrow"/>
+        <result column="td_month1_card_num_device_borrow" property="tdMonth1CardNumDeviceBorrow"/>
+        <result column="td_day7_device_card_or_phone_borrow" property="tdDay7DeviceCardOrPhoneBorrow"/>
+        <result column="td_day7_card_device" property="tdDay7CardDevice"/>
+        <result column="td_month3_apply_card" property="tdMonth3ApplyCard"/>
+        <result column="td_month3_card_apply" property="tdMonth3CardApply"/>
+        <result column="td_detail_time" property="tdDetailTime"/>
+        <result column="td_status" property="tdStatus"/>
+        <result column="bqs_black" property="bqsBlack"/>
+        <result column="bqs_black_time" property="bqsBlackTime"/>
+        <result column="bqs_status" property="bqsStatus"/>
+        <result column="jy_loan_num" property="jyLoanNum"/>
+        <result column="jy_jd_num" property="jyJdNum"/>
+        <result column="jy_jd_bl" property="jyJdBl"/>
+        <result column="jy_over_num" property="jyOverNum"/>
+        <result column="jy_over_bl" property="jyOverBl"/>
+        <result column="jy_fk_num" property="jyFkNum"/>
+        <result column="jy_hk_num" property="jyHkNum"/>
+        <result column="jy_hk_bl" property="jyHkBl"/>
+        <result column="jy_time" property="jyTime"/>
+        <result column="jy_status" property="jyStatus"/>
+        <result column="mg_black_score" property="mgBlackScore"/>
+        <result column="mg_day7_num" property="mgDay7Num"/>
+        <result column="mg_month1_num" property="mgMonth1Num"/>
+        <result column="mg_black" property="mgBlack"/>
+        <result column="mg_time" property="mgTime"/>
+        <result column="mg_status" property="mgStatus"/>
+        <result column="jxl_token" property="jxlToken"/>
+        <result column="jxl_token_time" property="jxlTokenTime"/>
+        <result column="jxl_detail" property="jxlDetail"/>
+        <result column="jxl_detail_time" property="jxlDetailTime"/>
+        <result column="jxl_zj_dk_num" property="jxlZjDkNum"/>
+        <result column="jxl_bj_dk_num" property="jxlBjDkNum"/>
+        <result column="jxl_yj_hf" property="jxlYjHf"/>
+        <result column="jxl_link2_days" property="jxlLink2Days"/>
+        <result column="jxl_link1_days" property="jxlLink1Days"/>
+        <result column="jxl_link2_num" property="jxlLink2Num"/>
+        <result column="jxl_link1_num" property="jxlLink1Num"/>
+        <result column="jxl_link2_order" property="jxlLink2Order"/>
+        <result column="jxl_link1_order" property="jxlLink1Order"/>
+        <result column="jxl_gj_ts" property="jxlGjTs"/>
+        <result column="jxl_ht_phone_num" property="jxlHtPhoneNum"/>
+        <result column="jxl_amth_num" property="jxlAmthNum"/>
+        <result column="jxl_phone_reg_days" property="jxlPhoneRegDays"/>
+        <result column="jxl_time" property="jxlTime"/>
+        <result column="yx_fx_num" property="yxFxNum"/>
+        <result column="yx_month3_over" property="yxMonth3Over"/>
+        <result column="yx_status" property="yxStatus"/>
+        <result column="yx_time" property="yxTime"/>
+        <result column="yx_less_month3_over" property="yxLessMonth3Over"/>
+        <result column="risk_status" property="riskStatus"/>
+        <result column="risk_remark" property="riskRemark"/>
+        <result column="history_over_num" property="historyOverNum"/>
+        <result column="last_over_days" property="lastOverDays"/>
+        <result column="csjy" property="csjy"/>
+        <result column="customer_type" property="customerType"/>
+        <result column="user_contact_size" property="userContactSize"/>
+        <result column="last_days" property="lastDays"/>
+        <result column="present_add_num" property="presentAddNum"/>
+        <result column="company_add_num" property="companyAddNum"/>
+        <result column="many_device_login_num" property="manyDeviceLoginNum"/>
+        <result column="one_device_reg_many_phone_num" property="oneDeviceRegManyPhoneNum"/>
+        <result column="company_name_num" property="companyNameNum"/>
+        <result column="company_phone_diff_name_or_add" property="companyPhoneDiffNameOrAdd"/>
+        <result column="company_add_diff_name_or_phone" property="companyAddDiffNameOrPhone"/>
+        <result column="company_name_diff_add_or_phone" property="companyNameDiffAddOrPhone"/>
+        <result column="concat_apply_num" property="concatApplyNum"/>
+        <result column="money_amount" property="moneyAmount"/>
+    </resultMap>
+
+    <resultMap id="riskRuleCalBaseResultMap" type="RiskRuleCal">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="rule_id" property="ruleId"/>
+        <result column="credit_id" property="creditId"/>
+        <result column="asset_id" property="assetId"/>
+        <result column="attention_type" property="attentionType"/>
+        <result column="rule_name" property="ruleName"/>
+        <result column="rule_value" property="ruleValue"/>
+        <result column="formula_show" property="formulaShow"/>
+        <result column="add_time" property="addTime"/>
+    </resultMap>
+
+    <select id="findByAssetsId" parameterType="string" resultMap="BaseResultMap">
+        select * from risk_credit_user
+        where asset_id = #{assetsId}
+    </select>
+
+    <select id="findRiskRuleCalByAssetsId" parameterType="string" resultMap="riskRuleCalBaseResultMap">
+        select * from risk_rule_cal
+        where asset_id = #{assetsId} and attention_type='2' group by rule_id
+    </select>
+
+</mapper>

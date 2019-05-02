@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="8000" debug="false">
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <property name="LOG_HOME" value="${catalina.home}/logs/"/>
+
+    <!--项目名称-->
+    <property name="PROJECT_NAME" value="gringotts" />
+    <!--分层日志打印级别-->
+    <property name="LOG_LEVEL" value="INFO" />
+    <!--controller 日志-->
+    <property name="CONTROLLER_LOG" value="controller"/>
+    <!--service 日志-->
+    <property name="SERVICE_LOG" value="service"/>
+    <!--dal 日志-->
+    <property name="DAL_LOG" value="dal"/>
+    <!--task日志-->
+    <property name="TASK_LOG" value="task"/>
+
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %msg %X{timeKey}%n"/>
+
+    <appender name="DEBUG_LEVEL_REMAPPER" class="org.springframework.boot.logging.logback.LevelRemappingAppender">
+        <destinationLogger>org.springframework.boot</destinationLogger>
+    </appender>
+    <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
+    <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
+    <logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
+    <logger name="org.apache.sshd.common.util.SecurityUtils" level="WARN"/>
+    <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+    <logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
+    <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+    <logger name="org.springframework.boot.actuate.endpoint.jmx" additivity="false">
+        <appender-ref ref="DEBUG_LEVEL_REMAPPER"/>
+    </logger>
+
+
+    <!--控制台输出-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!--controller log-->
+    <appender name="CONTROLLER_ROLLING_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <file>${LOG_HOME}/${PROJECT_NAME}-${CONTROLLER_LOG}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${CONTROLLER_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--设置文件最长保留时间为1个月-->
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+    <!--service log-->
+    <appender name="SERVICE_ROLLING_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <file>${LOG_HOME}/${PROJECT_NAME}-${SERVICE_LOG}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${SERVICE_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--设置文件最长保留时间为1个月-->
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!--DAL log-->
+    <appender name="DAL_ROLLING_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <file>${LOG_HOME}/${PROJECT_NAME}-${DAL_LOG}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${DAL_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--设置文件最长保留时间为1个月-->
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <!--TASK log-->
+    <appender name="TASK_ROLLING_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <file>${LOG_HOME}/${PROJECT_NAME}-${TASK_LOG}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${TASK_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--设置文件最长保留时间为1个月-->
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <appender name="TIME_ROLLING_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <File>${LOG_HOME}/${PROJECT_NAME}-error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-error.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--设置文件最长保留时间为1个月-->
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!--controller-->
+    <logger name="com.vxianjin.gringotts.web.controller" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
+    </logger>
+
+    <!-- DataSourceTransactionManager -->
+    <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="DEBUG" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
+    </logger>
+
+    <logger name="com.vxianjin.gringotts.pay.controller" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.attach.controller" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
+    </logger>
+
+    <!--service-->
+    <logger name="com.vxianjin.gringotts.web.service" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="SERVICE_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.pay.service" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="SERVICE_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.pay.component" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="SERVICE_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.attach.service" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="SERVICE_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.risk.service" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="SERVICE_ROLLING_INFO"/>
+    </logger>
+
+    <!--dao-->
+    <logger name="com.vxianjin.gringotts.web.dao" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="DAL_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.attach.dao" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="DAL_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.pay.dao" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="DAL_ROLLING_INFO"/>
+    </logger>
+    <logger name="com.vxianjin.gringotts.risk.dao" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}" />
+        <appender-ref ref="DAL_ROLLING_INFO"/>
+    </logger>
+
+    <!--task 日志-->
+    <logger name="com.vxianjin.gringotts.pay.task" level="INFO" additivity="true">
+        <level value="${LOG_LEVEL}"/>
+        <appender-ref ref="TASK_ROLLING_INFO"/>
+    </logger>
+
+    <!--error 日志-->
+    <logger name="com.vxianjin.gringotts" level="ERROR" additivity="true">
+        <appender-ref ref="TIME_ROLLING_ERROR"/>
+    </logger>
+
+    <!-- common 日志 -->
+    <logger name="com.vxianjin.gringotts.web.common" level="INFO" additivity="true">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

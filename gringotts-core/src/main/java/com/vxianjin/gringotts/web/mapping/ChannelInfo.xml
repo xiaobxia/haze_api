@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IChannelInfoDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.ChannelInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="channel_name" property="channelName" jdbcType="INTEGER"/>
+        <result column="channel_code" property="channelCode" jdbcType="INTEGER"/>
+        <result column="operator_name" property="operatorName"
+                jdbcType="INTEGER"/>
+        <result column="channel_tel" property="channelTel" jdbcType="INTEGER"/>
+        <result column="channel_province" property="channelProvince"/>
+        <result column="channel_city" property="channelCity"/>
+        <result column="channel_area" property="channelArea" jdbcType="INTEGER"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="apr" property="apr" jdbcType="REAL"/>
+        <result column="remark" property="remark" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <association property="user" column="user_id"
+                     javaType="com.vxianjin.gringotts.web.pojo.User"
+                     select="com.vxianjin.gringotts.web.dao.IUserDao.selectByPrimaryKey"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id,channel_name,channel_code,operator_name,channel_tel,channel_province,channel_city,channel_area,
+        created_at,updated_at,apr,remark,status
+    </sql>
+    <sql id="sql">
+        FROM channel_info
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        <include refid="sql"/>
+    </select>
+    <sql id="findUserAllSql">
+        <where>
+            <if test="realname != null and realname != ''">
+                and c.realname like CONCAT('%', #{realname}, '%')
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and c.user_phone like CONCAT('%', #{userPhone}, '%')
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                and b.channel_code= #{channelCode}
+            </if>
+            <if test="beginTime !=null and beginTime !=''">
+                <![CDATA[	and DATE_FORMAT(create_time,'%Y-%m-%d') >=  #{beginTime}  ]]>
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                <![CDATA[	and DATE_FORMAT(create_time,'%Y-%m-%d') <=  #{endTime}  ]]>
+            </if>
+        </where>
+    </sql>
+    <select id="findChannelIdByCode" resultType="Integer" parameterType="String">
+        select id from channel_info where channel_code = #{channelCode}
+    </select>
+    <select id="findUserIdByChannelId" resultType="Integer" parameterType="Integer">
+        select user_id from channel_user_info where channel_id = #{channelId}
+    </select>
+    <select id="findUserAllCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        FROM
+        channel_user_info a
+        LEFT JOIN
+        channel_info b ON
+        a.channel_id = b.id
+        LEFT
+        JOIN user_info c ON a.user_id
+        = c.id
+        <include refid="findUserAllSql"/>
+    </select>
+    <select id="findUserAll" resultMap="BaseResultMap"
+            parameterType="HashMap">
+        SELECT b.channel_code,b.channel_name,b.operator_name,
+        b.channel_tel,b.created_at,b.updated_at,b.apr,
+        c.realname AS realname,c.user_phone AS userPhone,a.rel_path
+        as relPath,a.remark as remark,c.create_time AS createTime
+        FROM
+        channel_user_info a
+        LEFT JOIN
+        channel_info b ON a.channel_id = b.id
+        LEFT
+        JOIN user_info c ON a.user_id
+        = c.id
+        <include refid="findUserAllSql"/>
+        order by created_at
+    </select>
+
+
+    <select id="findAllChUser" resultType="String" parameterType="Map">
+        <![CDATA[
+			SELECT 
+			 CONVERT(  
+			   CONCAT(
+			    CONCAT(
+			      CONCAT(
+			        CONCAT(
+			          '<li><a  tname="userId" tvalue="',
+			          a.user_id
+			        ),
+			        '">'
+			      ),
+			      b.user_phone
+			    ),
+			    '</a><ul></ul></li>'
+			) USING utf8) AS html 
+				  ]]>
+        FROM
+        channel_user_info a
+        LEFT JOIN user_info b ON a.user_id = b.id
+        WHERE a.channel_id IS NULL
+
+        <if test="userPhone!=null and userPhone!=null !=''">
+            and b.user_phone like CONCAT('%', #{userPhone}, '%')
+        </if>
+
+        ORDER BY a.user_id DESC
+
+    </select>
+
+    <sql id="findRecordAllSql">
+        <where>
+            <if test="userName != null and userName != ''">
+                and a.realname like CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userTel != null and userTel != ''">
+                and a.user_phone like CONCAT('%', #{userTel}, '%')
+            </if>
+            <if test="realname != null and realname != ''">
+                and b.realname like CONCAT('%', #{realname}, '%')
+            </if>
+
+            <if test="channelTel != null and channelTel != ''">
+                and channel_tel like CONCAT('%', #{channelTel}, '%')
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                and d.channel_code= #{channelCode}
+            </if>
+            <if test="beginTime !=null and beginTime !=''">
+                <![CDATA[	and DATE_FORMAT(a.create_time,'%Y-%m-%d') >=  #{beginTime}  ]]>
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                <![CDATA[	and DATE_FORMAT(a.create_time,'%Y-%m-%d') <=  #{endTime}  ]]>
+            </if>
+        </where>
+    </sql>
+
+    <select id="findRecordAllCount" resultType="Integer"
+            parameterType="HashMap">
+        SELECT COUNT(1)
+        FROM user_info a
+        INNER JOIN (
+        SELECT * FROM user_info WHERE id IN(SELECT user_id FROM channel_user_info)
+        )
+        b ON a.invite_userid=b.id
+        LEFT JOIN channel_info d ON d.id =
+        a.user_from
+        <include refid="findRecordAllSql"/>
+    </select>
+    <select id="findRecordAll" resultMap="BaseResultMap"
+            parameterType="HashMap">
+        SELECT b.realname as realname,b.user_phone AS userPhone,a.create_time
+        AS createTime, a.realname AS userName,a.user_phone AS userTel,d.*
+        FROM
+        user_info a
+        INNER JOIN (
+        SELECT * FROM user_info WHERE id IN(SELECT user_id FROM channel_user_info)
+        )
+        b ON a.invite_userid=b.id
+        LEFT JOIN channel_info d ON d.id =
+        a.user_from
+        <include refid="findRecordAllSql"/>
+        order by created_at
+    </select>
+    <sql id="findAllSql">
+        <include refid="sql"/>
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+            <if test="channelName != null and channelName != ''">
+                and channel_name like CONCAT('%', #{channelName}, '%')
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                and channel_code like CONCAT('%', #{channelCode}, '%')
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                and operator_name = #{operatorName}
+            </if>
+
+            <if test="channelTel != null and channelTel != ''">
+                and channel_tel like CONCAT('%', #{channelTel}, '%')
+            </if>
+            <if test="beginTime !=null and beginTime !=''">
+                <![CDATA[	and DATE_FORMAT(created_at,'%Y-%m-%d') >=  #{beginTime}  ]]>
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                <![CDATA[	and DATE_FORMAT(created_at,'%Y-%m-%d') <=  #{endTime}  ]]>
+            </if>
+        </where>
+    </sql>
+    <select id="findAllCount" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="findAllSql"/>
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap" parameterType="HashMap">
+        select
+        <include refid="Base_Column_List"/>
+        <include refid="findAllSql"/>
+
+        order by created_at
+    </select>
+    <select id="findById" parameterType="Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+
+        <include refid="sql"/>
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.ChannelInfo">
+        INSERT INTO channel_info
+        (channel_name,
+        channel_code,
+        operator_name,
+        channel_tel,
+        channel_province,
+        channel_city,
+        channel_area,
+        created_at,
+        apr,
+        remark,
+        status)
+        VALUES (
+        #{channelName},
+        #{channelCode},
+        #{operatorName},
+        #{channelTel,jdbcType=VARCHAR},
+        #{channelProvince},
+        #{channelCity},
+        #{channelArea},
+        NOW(),
+        #{apr},
+        #{remark},
+        #{status});
+    </insert>
+    <insert id="insertChannelUserInfo" parameterType="map">
+        INSERT INTO
+        channel_user_info(channel_id,user_id,created_at,rel_path,remark)
+        VALUES
+        (#{channelId}, #{userId}, NOW(),#{relPath},#{remark});
+    </insert>
+
+    <update id="updateById" parameterType="com.vxianjin.gringotts.web.pojo.ChannelInfo">
+
+
+        UPDATE channel_info
+        SET
+        channel_name = #{channelName},
+        channel_code = #{channelCode},
+        operator_name = #{operatorName},
+        channel_tel = #{channelTel},
+        channel_province = #{channelProvince},
+        channel_city = #{channelCity},
+        channel_area = #{channelArea},
+        created_at = #{createdAt},
+        apr = #{apr},
+        remark =
+        #{remark},
+        status = #{status}
+        WHERE id = #{id};
+
+    </update>
+</mapper>

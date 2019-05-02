@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IObtainUserShortMessageDao">
+
+    <!-- 查询用户手机里的短信多少 -->
+    <select id="selectObtainUserShortMessage" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*) from obtain_user_short_message where userId=#{userId}
+    </select>
+
+    <!-- 添加用户手机里的短信入库 -->
+    <insert id="saveObtainUserShortMessage" parameterType="com.vxianjin.gringotts.web.pojo.ObtainUserShortMessage"
+            useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+		insert into obtain_user_short_message(
+				id,
+				messageContent,
+				messageDate,
+				phone,
+				userId
+			)
+			values(
+				#{id},
+				#{messageContent},
+				#{messageDate},
+				#{phone},
+				#{userId}
+			)
+		]]>
+    </insert>
+
+    <!-- 查询用户手机里的短信列表 -->
+    <select id="selectUserShortMsgCount" resultType="Integer" parameterType="HashMap">
+        select
+        count(1)
+        from obtain_user_short_message
+        <where>
+            <if test="userId !=null and userId !=''">
+                userId=#{userId}
+            </if>
+            <if test="phone !=null and phone !=''">
+                AND phone like CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="messageContent !=null and messageContent !=''">
+                AND messageContent like CONCAT('%', #{messageContent}, '%')
+            </if>
+        </where>
+        order by messageDate desc
+    </select>
+
+    <!-- 查询用户手机里的短信列表 分页 -->
+    <select id="selectUserShortMsgPage" parameterType="HashMap"
+            resultType="com.vxianjin.gringotts.web.pojo.ObtainUserShortMessage">
+        select
+        id,
+        messageContent,
+        messageDate,
+        phone,
+        userId
+        from obtain_user_short_message
+        <where>
+            <if test="userId !=null and userId !=''">
+                userId=#{userId}
+            </if>
+            <if test="phone !=null and phone !=''">
+                AND phone like CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="messageContent !=null and messageContent !=''">
+                AND messageContent like CONCAT('%', #{messageContent}, '%')
+            </if>
+        </where>
+        order by messageDate desc
+    </select>
+
+    <!-- 根据用户id删除此用户的所有短信-->
+    <delete id="delObtainUserShortMessage" parameterType="java.lang.Integer">
+        delete from obtain_user_short_message where userId=#{userId}
+    </delete>
+</mapper>

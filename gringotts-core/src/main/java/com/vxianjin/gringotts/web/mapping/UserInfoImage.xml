@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user_info_image">
+
+    <!--上传图片 -->
+    <insert id="saveUserImage" parameterType="com.vxianjin.gringotts.web.pojo.UserInfoImage" useGeneratedKeys="true"
+            keyProperty="id">
+        <![CDATA[
+			insert into user_info_image(
+				id,
+				user_id,
+				type,
+				status,
+				pic_name,
+				url,
+				created_date,
+				remark
+			)
+			values(
+				#{id},
+				#{userId},
+				#{type},
+				#{status},
+				#{picName},
+				#{url},
+				#{createdDate},
+				#{remark}
+			)
+		]]>
+    </insert>
+
+    <!-- 查询图片 -->
+    <select id="selectImageByUserId" parameterType="int" resultType="Map">
+        select
+        id as id,
+        user_id as userId,
+        type as type,
+        status as status,
+        pic_name as picName,
+        url as url,
+        created_date as createdDate,
+        updated_date as updatedDate,
+        remark as remark
+        from user_info_image
+        where user_id=#{userId}
+    </select>
+
+    <!-- 修改图片 -->
+    <update id="updateUserImageStatus" parameterType="int">
+        update user_info_image
+        <set>
+            <if test="id != null and id !=''">
+                <![CDATA[id = #{id},]]>
+            </if>
+            <if test="userId != null and userId !=''">
+                <![CDATA[user_id = #{userId},]]>
+            </if>
+            <if test="type != null and type !=''">
+                <![CDATA[type = #{type},]]>
+            </if>
+            <if test="status != null and status !=''">
+                <![CDATA[status = #{status},]]>
+            </if>
+            <if test="picName != null and picName !=''">
+                <![CDATA[pic_name = #{picName},]]>
+            </if>
+            <if test="url != null and url !=''">
+                <![CDATA[url = #{url},]]>
+            </if>
+            <if test="createdDate != null and createdDate !=''">
+                <![CDATA[created_date = #{createdDate},]]>
+            </if>
+            <if test="remark != null and remark !=''">
+                <![CDATA[remark = #{remark},]]>
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

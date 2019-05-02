@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.risk.dao.IRiskOrdersDao">
+    <resultMap id="BaseResultMap" type="RiskOrders">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_type" property="orderType"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="act" property="act"/>
+        <result column="req_params" property="reqParams"/>
+        <result column="return_params" property="returnParams"/>
+        <result column="notify_time" property="notifyTime"/>
+        <result column="notify_params" property="notifyParams"/>
+        <result column="add_time" property="addTime"/>
+        <result column="add_ip" property="addIp"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="asset_borrow_id" property="assetBorrowId"/>
+        <result column="auto_sjmh" property="autoSjmh"/>
+    </resultMap>
+    <insert id="insert" parameterType="RiskOrders" useGeneratedKeys="true" keyProperty="id">
+        insert into risk_orders (user_id,order_type,order_no,act,req_params,add_ip,return_params
+        )
+        values (#{userId},#{orderType},#{orderNo},#{act},#{reqParams},#{addIp},#{returnParams})
+    </insert>
+    <update id="update" parameterType="RiskOrders">
+        update risk_orders
+        <set>
+            <if test="returnParams != null">
+                return_params = #{returnParams},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="notifyParams != null">
+                notify_params = #{notifyParams},
+            </if>
+            <if test="notifyTime != null">
+                notify_time = #{notifyTime},
+            </if>
+            <if test="autoSjmh != null">
+                auto_sjmh = #{autoSjmh}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="findById" parameterType="RiskOrders" resultMap="BaseResultMap">
+        select * from risk_orders where id =#{id}
+    </select>
+
+
+    <insert id="insertCreditReport" parameterType="RiskOrders" useGeneratedKeys="true" keyProperty="id">
+        insert into risk_orders
+        (user_id,order_type,order_no,act,req_params,add_ip,return_params,asset_borrow_id,auto_sjmh)
+        values
+        (#{userId},#{orderType},#{orderNo},#{act},#{reqParams},#{addIp},#{returnParams},#{assetBorrowId},#{autoSjmh})
+    </insert>
+
+    <select id="selectCreditReportByBorrowId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT * from risk_orders where asset_borrow_id=#{assetBorrowId} limit 1
+    </select>
+</mapper>

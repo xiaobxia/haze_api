@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IBorrowContractInfoDao">
+    <resultMap id="BaseResultMap" type="BorrowContractInfo">
+        <id column="id" property="id"/>
+        <result column="asset_order_id" property="assetOrderId"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="realname" property="realName"/>
+        <result column="money_amount" property="moneyAmount"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="capital_type" property="capitalType"/>
+        <result column="status" property="status"/>
+        <result column="capital_name" property="capitalName"/>
+    </resultMap>
+
+    <sql id="sql">
+        from borrow_contract_info
+        <where>
+            <if test="assetOrderId != null and assetOrderId != ''">
+                and asset_order_id = #{assetOrderId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findBorrowContractInfo" parameterType="BorrowContractInfo" resultMap="BaseResultMap">
+        select id,
+        asset_order_id,
+        id_number,
+        realname,
+        money_amount,
+        created_at,
+        update_time,
+        capital_type,
+        status,
+        capital_name
+        <include refid="sql"></include>
+    </select>
+</mapper>

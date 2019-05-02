@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.ICfcaUserInfoDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.CfcaUserInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="cfca_user_id" jdbcType="VARCHAR" property="cfcaUserId"/>
+        <result column="debt_type" jdbcType="INTEGER" property="debtType"/>
+        <result column="customer_type" jdbcType="INTEGER" property="customerType"/>
+        <result column="cfca_idcard_images" jdbcType="VARCHAR" property="cfcaIdcardImages"/>
+        <result column="cfca_idcard_images2" jdbcType="VARCHAR" property="cfcaIdcardImages2"/>
+        <!--result column="sign_switch" jdbcType="INTEGER" property="signSwitch" /-->
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, cfca_user_id, debt_type, customer_type, cfca_idcard_images, cfca_idcard_images2
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cfca_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from cfca_user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.CfcaUserInfo">
+        insert into cfca_user (id, user_id, cfca_user_id,
+        debt_type, customer_type, cfca_idcard_images,
+        cfca_idcard_images2)
+        values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{cfcaUserId,jdbcType=VARCHAR},
+        #{debtType,jdbcType=INTEGER}, #{customerType,jdbcType=INTEGER}, #{cfcaIdcardImages,jdbcType=VARCHAR},
+        #{cfcaIdcardImages2,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.CfcaUserInfo">
+        insert into cfca_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="cfcaUserId != null">
+                cfca_user_id,
+            </if>
+            <if test="debtType != null">
+                debt_type,
+            </if>
+            <if test="customerType != null">
+                customer_type,
+            </if>
+            <if test="cfcaIdcardImages != null">
+                cfca_idcard_images,
+            </if>
+            <if test="cfcaIdcardImages2 != null">
+                cfca_idcard_images2,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="cfcaUserId != null">
+                #{cfcaUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="debtType != null">
+                #{debtType,jdbcType=INTEGER},
+            </if>
+            <if test="customerType != null">
+                #{customerType,jdbcType=INTEGER},
+            </if>
+            <if test="cfcaIdcardImages != null">
+                #{cfcaIdcardImages,jdbcType=VARCHAR},
+            </if>
+            <if test="cfcaIdcardImages2 != null">
+                #{cfcaIdcardImages2,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.CfcaUserInfo">
+        update cfca_user
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="cfcaUserId != null">
+                cfca_user_id = #{cfcaUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="debtType != null">
+                debt_type = #{debtType,jdbcType=INTEGER},
+            </if>
+            <if test="customerType != null">
+                customer_type = #{customerType,jdbcType=INTEGER},
+            </if>
+            <if test="cfcaIdcardImages != null">
+                cfca_idcard_images = #{cfcaIdcardImages,jdbcType=VARCHAR},
+            </if>
+            <if test="cfcaIdcardImages2 != null">
+                cfca_idcard_images2 = #{cfcaIdcardImages2,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.CfcaUserInfo">
+        update cfca_user
+        set user_id = #{userId,jdbcType=VARCHAR},
+        cfca_user_id = #{cfcaUserId,jdbcType=VARCHAR},
+        debt_type = #{debtType,jdbcType=INTEGER},
+        customer_type = #{customerType,jdbcType=INTEGER},
+        cfca_idcard_images = #{cfcaIdcardImages,jdbcType=VARCHAR},
+        cfca_idcard_images2 = #{cfcaIdcardImages2,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectCfcaByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cfca_user
+        where user_id = #{userId,jdbcType=VARCHAR}
+        limit 1
+    </select>
+</mapper>

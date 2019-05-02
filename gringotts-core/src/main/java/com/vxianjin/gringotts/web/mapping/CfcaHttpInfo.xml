@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.ICfcaHttpInfoDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.CfcaHttpInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="req_type" jdbcType="INTEGER" property="reqType"/>
+        <result column="http_request" jdbcType="VARCHAR" property="httpRequest"/>
+        <result column="http_response" jdbcType="VARCHAR" property="httpResponse"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, req_type, http_request, http_response
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cfca_http
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from cfca_http
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.vxianjin.gringotts.web.pojo.CfcaHttpInfo">
+        insert into cfca_http (id, user_id, req_type,
+        http_request, http_response)
+        values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{reqType,jdbcType=INTEGER},
+        #{httpRequest,jdbcType=VARCHAR}, #{httpResponse,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.vxianjin.gringotts.web.pojo.CfcaHttpInfo">
+        insert into cfca_http
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="reqType != null">
+                req_type,
+            </if>
+            <if test="httpRequest != null">
+                http_request,
+            </if>
+            <if test="httpResponse != null">
+                http_response,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="reqType != null">
+                #{reqType,jdbcType=INTEGER},
+            </if>
+            <if test="httpRequest != null">
+                #{httpRequest,jdbcType=VARCHAR},
+            </if>
+            <if test="httpResponse != null">
+                #{httpResponse,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.vxianjin.gringotts.web.pojo.CfcaHttpInfo">
+        update cfca_http
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="reqType != null">
+                req_type = #{reqType,jdbcType=INTEGER},
+            </if>
+            <if test="httpRequest != null">
+                http_request = #{httpRequest,jdbcType=VARCHAR},
+            </if>
+            <if test="httpResponse != null">
+                http_response = #{httpResponse,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.vxianjin.gringotts.web.pojo.CfcaHttpInfo">
+        update cfca_http
+        set user_id = #{userId,jdbcType=VARCHAR},
+        req_type = #{reqType,jdbcType=INTEGER},
+        http_request = #{httpRequest,jdbcType=VARCHAR},
+        http_response = #{httpResponse,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

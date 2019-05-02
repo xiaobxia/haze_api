@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IUserCardInfoDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.UserCardInfo">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="bank_id" property="bank_id"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="card_no" property="card_no"/>
+        <result column="credit_amount" property="creditAmount"/>
+        <result column="valid_period" property="validPeriod"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="main_card" property="mainCard"/>
+        <result column="open_name" property="openName"/>
+        <result column="bank_address" property="bankAddress"/>
+        <result column="type" property="type"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_band" property="isBand"/>
+        <result column="card_default" property="cardDefault"/>
+    </resultMap>
+    <select id="findUserBankList" parameterType="HashMap" resultType="HashMap">
+        select
+        bc.id bankId,
+        bc.bank_name bankNmae,
+        uc.user_id userId,
+        uc.open_name openName,
+        uc.phone phone,
+        uc.card_no cardNo,
+        uc.main_card mainCard,
+        uc.type type,
+        uc.status status,
+        uc.create_time createTime,
+        uc.is_band isBand,
+        uc.card_default cardDefault
+        from user_card_info uc left join bank_all_info bc on (uc.bank_id=bc.id) left join user_info u
+        on(uc.user_id=u.id)
+        <where>
+            <if test="userId !=null and userId !=''">
+                uc.user_id=#{userId}
+            </if>
+            <if test="userName !=null and userName !=''">
+                AND u.open_name=#{userName}
+            </if>
+            <if test="userPhone !=null and userPhone !=''">
+                AND uc.phone=#{userPhone}
+            </if>
+            <if test="cardNo !=null and cardNo !=''">
+                AND uc.card_no=#{cardNo}
+            </if>
+            <if test="status !=null and status !=''">
+                AND uc.status=#{status}
+            </if>
+            <if test="isBand !=null and isBand !=''">
+                AND uc.is_band=#{isBand}
+            </if>
+            <if test="addStartTime !=null and addStartTime !='' and addEndTiem!=null and addEndTiem!='' ">
+                <![CDATA[AND uc.create_time>=#{addStartTime} AND uc.create_time<=#{addEndTiem}]]>
+            </if>
+            <if test="addStartTime !=null and addStartTime !='' and (addEndTiem==null || addEndTiem=='') ">
+                <![CDATA[AND uc.create_time>=#{addStartTime}]]>
+            </if>
+            <if test="addEndTiem!=null and addEndTiem!='' and (addStartTime==null and addStartTime =='')  ">
+                <![CDATA[AND uc.create_time<=#{addEndTiem}]]>
+            </if>
+        </where>
+    </select>
+    <select id="findUserBankTotal" resultType="Integer" parameterType="HashMap">
+        select count(1) from user_card_info uc left join bank_all_info bc on (uc.bank_id=bc.id) left join user_info u
+        on(uc.user_id=u.id)
+        <where>
+            <if test="userId !=null and userId !=''">
+                uc.user_id=#{userId}
+            </if>
+            <if test="userName !=null and userName !=''">
+                AND u.user_name=#{userName}
+            </if>
+            <if test="userPhone !=null and userPhone !=''">
+                AND uc.phone=#{userPhone}
+            </if>
+            <if test="cardNo !=null and cardNo !=''">
+                AND uc.card_no=#{cardNo}
+            </if>
+            <if test="status !=null and status !=''">
+                AND uc.status=#{status}
+            </if>
+            <if test="isBand !=null and isBand !=''">
+                AND uc.is_band=#{isBand}
+            </if>
+            <if test="addStartTime !=null and addStartTime !='' and addEndTiem!=null and addEndTiem!='' ">
+                <![CDATA[AND uc.create_time>=#{addStartTime} AND uc.create_time<=#{addEndTiem}]]>
+            </if>
+            <if test="addStartTime !=null and addStartTime !='' and (addEndTiem==null || addEndTiem=='') ">
+                <![CDATA[AND uc.create_time>=#{addStartTime}]]>
+            </if>
+            <if test="addEndTiem!=null and addEndTiem!='' and (addStartTime==null and addStartTime =='')  ">
+                <![CDATA[AND uc.create_time<=#{addEndTiem}]]>
+            </if>
+
+        </where>
+    </select>
+    <select id="selectUserBankCard" parameterType="map" resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.card_no card_no,
+        b.phone phone,
+        b.bank_id bank_id,
+        b.type type,
+        b.create_time createTime,
+        b.open_name openName,
+        b.main_card mainCard,
+        b.agreeno,
+        b.is_band isBand,
+        b.card_default cardDefault,
+        b.user_id userId,
+		c.open_bank bankCode
+        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 1 limit 1
+    </select>
+    <select id="selectUserBankCardNotDefault" parameterType="map"
+            resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.card_no card_no,
+        b.phone phone,
+        b.bank_id bank_id,
+        b.type type,
+        b.create_time createTime,
+        b.open_name openName,
+        b.main_card mainCard,
+        b.agreeno,
+        b.is_band isBand,
+        b.card_default cardDefault,
+        b.user_id userId
+        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 0
+    </select>
+    <insert id="saveUserCardInfo" parameterType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
+        <![CDATA[
+			insert into user_card_info (
+				user_id,
+				bank_id,
+				bank_name,
+				card_no,
+				credit_amount,
+				valid_period,
+				phone,
+				status,
+				main_card,
+				open_name,
+				bank_address,
+				type,
+				create_time,
+				agreeno,
+				is_band
+			)values(
+			#{userId},
+			#{bank_id},
+			#{bankName},
+			#{card_no},
+			#{creditAmount},
+			#{validPeriod},
+			#{phone},
+			#{status},
+			#{mainCard},
+			#{openName},
+			#{bankAddress},
+			#{type},
+			#{createTime},
+			#{agreeno},
+			#{isBand}
+			)
+		]]>
+    </insert>
+    <select id="findUserCardByUserId" parameterType="map" resultMap="BaseResultMap">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.card_no card_no,
+        b.phone phone,
+        b.bank_id bank_id,
+        b.type type,
+        b.create_time createTime,
+        b.open_name openName,
+        b.main_card mainCard,
+        b.agreeno,
+        b.is_band isBand,
+        b.card_default cardDefault
+        from user_card_info b where user_id=#{userId}
+        <if test="type != null and type != ''">
+            and type = #{type}
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="limit != null and limit != ''">
+            limit #{limit}
+        </if>
+    </select>
+    <update id="updateUserCardInfo" parameterType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
+        update user_card_info
+        <set>
+            <if test="bank_id != null and bank_id !=''">
+                <![CDATA[bank_id = #{bank_id},]]>
+            </if>
+            <if test="bankName != null and bankName !=''">
+                <![CDATA[bank_name = #{bankName},]]>
+            </if>
+            <if test="card_no != null and card_no !=''">
+                <![CDATA[card_no = #{card_no},]]>
+            </if>
+            <if test="creditAmount != null and creditAmount !=''">
+                <![CDATA[credit_amount = #{creditAmount},]]>
+            </if>
+            <if test="validPeriod != null and validPeriod !=''">
+                <![CDATA[valid_period = #{validPeriod},]]>
+            </if>
+            <if test="phone != null and phone !=''">
+                <![CDATA[phone = #{phone},]]>
+            </if>
+            <if test="mainCard != null and mainCard !=''">
+                <![CDATA[main_card = #{mainCard},]]>
+            </if>
+            <if test="openName != null and openName !=''">
+                <![CDATA[open_name = #{openName},]]>
+            </if>
+            <if test="bankAddress != null and bankAddress !=''">
+                <![CDATA[bankAddress = #{bankAddress},]]>
+            </if>
+            <if test="type != null and type !=''">
+                <![CDATA[type = #{type},]]>
+            </if>
+            <if test="createTime != null and createTime !=''">
+                <![CDATA[create_time = #{createTime},]]>
+            </if>
+            <if test="status != null">
+                <![CDATA[status = #{status},]]>
+            </if>
+            <if test="agreeno != null and agreeno !=''">
+                <![CDATA[agreeno = #{agreeno},]]>
+            </if>
+            <if test="isBand != null and isBand !=''">
+                <![CDATA[is_band = #{isBand},]]>
+            </if>
+            <if test="cardDefault != null">
+                <![CDATA[card_default = #{cardDefault}]]>
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER} AND id = #{id,jdbcType=INTEGER}
+    </update>
+    <delete id="deleteUserCardInfo" parameterType="Integer">
+        delete from user_card_info where user_id = #{id}
+    </delete>
+    <select id="findUserBankListByIsBand" parameterType="HashMap" resultMap="BaseResultMap">
+        select
+        uc.id,
+        uc.user_id userId,
+        uc.open_name openName,
+        uc.phone phone,
+        uc.card_no card_no,
+        uc.main_card mainCard,
+        uc.type type,
+        uc.status status,
+        uc.create_time createTime,
+        uc.is_band isBand,
+        uc.card_default cardDefault
+        from user_card_info uc
+        WHERE uc.is_band=#{isBand}
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="userId != null and userId != ''">
+            and user_id = #{userId}
+        </if>
+        and card_default = 1
+        ORDER BY uc.`id` ASC LIMIT #{page},#{pageSize}
+    </select>
+
+    <select id="findUserBankCardList" parameterType="Integer" resultMap="BaseResultMap">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.card_no card_no,
+        b.phone phone,
+        b.bank_id bank_id,
+        b.type type,
+        b.create_time createTime,
+        b.open_name openName,
+        b.main_card mainCard,
+        b.agreeno,
+        b.is_band isBand,
+        b.card_default cardDefault,
+        b.user_id userId
+        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1
+    </select>
+
+    <select id="findBankCardByCardId" parameterType="Integer" resultMap="BaseResultMap">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.card_no card_no,
+        b.phone phone,
+        b.bank_id bank_id,
+        b.type type,
+        b.create_time createTime,
+        b.open_name openName,
+        b.main_card mainCard,
+        b.agreeno,
+        b.is_band isBand,
+        b.card_default cardDefault,
+        b.user_id userId
+        from user_card_info b where id = #{bankId,jdbcType=INTEGER} AND status=1
+    </select>
+
+    <select id="findBankCardByCardNo" parameterType="String" resultMap="BaseResultMap">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.card_no card_no,
+        b.phone phone,
+        b.bank_id bank_id,
+        b.type type,
+        b.create_time createTime,
+        b.open_name openName,
+        b.main_card mainCard,
+        b.agreeno,
+        b.is_band isBand,
+        b.card_default cardDefault,
+        b.user_id userId
+        from user_card_info b where card_no = #{cardNo,jdbcType=VARCHAR} AND status=1
+    </select>
+</mapper>

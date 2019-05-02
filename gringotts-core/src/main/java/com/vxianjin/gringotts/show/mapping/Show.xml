@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.show.dao.IShowDao">
+    <!--状态：0:待初审(待机审);-3:初审驳回;1:初审通过;-4:复审驳回;20:复审通过,待放款;-5:放款驳回;22:放款中;-10:放款失败;21已放款，还款中;23:部分还款;30:已还款;-11:已逾期;-20:已坏账，34逾期已还款；-->
+    <!--		6.当天续期笔数和金额
+            7.历史续期笔数和金额
+            -->
+    <select id="findXq" resultType="HashMap">
+        <![CDATA[
+		SELECT COUNT(1) as cnt, IFNULL(SUM(IFNULL(money_amount,0)),0) as sm FROM
+		asset_renewal_record a
+		WHERE STATUS = 1
+		AND DATE_FORMAT(a.old_repayment_time,'%Y-%m-%d')=DATE_FORMAT(now(),'%Y-%m-%d')
+		union all
+		SELECT COUNT(1) as cnt, IFNULL(SUM(IFNULL(money_amount,0)),0) as sm FROM
+		asset_renewal_record a
+		WHERE STATUS = 1
+		AND DATE_FORMAT(a.old_repayment_time,'%Y-%m-%d')<=DATE_FORMAT(now(),'%Y-%m-%d')
+		 ]]>
+    </select>
+    <!--
+        1.全国放贷人数和累计放款总金额
+        2.等待放贷(放款中和放款失败)人数和金额
+        3.放款时间是当天，状态时是已放款的的记录数和总金额
+        4.当天订单总数和金额
+        5.当天成功借款人数和金额
+    -->
+    <select id="findIndexNum" resultType="HashMap">
+        <![CDATA[
+		SELECT	COUNT(1) as cnt, SUM(IFNULL(money_amount,0)) AS sm
+		FROM asset_borrow_order WHERE STATUS IN (21,23,30,-11,-20,34)
+		UNION ALL
+		SELECT	COUNT(1)  as cnt,SUM(IFNULL(money_amount,0)) as sm
+		FROM asset_borrow_order WHERE STATUS in(22,-10)
+		UNION ALL
+		SELECT count(1) as cnt,SUM(IFNULL(money_amount,0)) as sm
+		FROM asset_borrow_order t
+		WHERE status=21 and loan_time >= DATE_FORMAT(NOW(), '%Y-%m-%d') AND loan_time < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 DAY), '%Y-%m-%d')
+		UNION ALL
+		SELECT	COUNT(1) as cnt,SUM(IFNULL(money_amount,0)) as sm
+		FROM asset_borrow_order WHERE  created_at >= DATE_FORMAT(NOW(), '%Y-%m-%d') and created_at < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 DAY), '%Y-%m-%d') 
+		union all
+		SELECT	COUNT(1) as cnt,SUM(IFNULL(money_amount,0)) as sm
+		FROM asset_borrow_order WHERE status in(22,-10,21,23,30,20) and  verify_loan_time >= DATE_FORMAT(NOW(), '%Y-%m-%d') and verify_loan_time < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 DAY), '%Y-%m-%d')
+		 ]]>
+    </select>
+    <select id="findSuf" parameterType="Integer" resultType="String">
+        select risk_cal_suf from risk_credit_user where asset_id=#{assetId} limit 1
+    </select>
+    <select id="findAssetIds" resultType="String">
+        SELECT a.id as Id FROM asset_borrow_order AS a
+        WHERE a.`status` IN (- 3, - 4, 20, - 5, 22, - 10, 21, 23, 30, - 11, - 20, 34)
+        GROUP BY a.`user_id`
+        ORDER BY a.id DESC
+        LIMIT 100
+    </select>
+    <select id="findRuleValue" parameterType="HashMap" resultType="String">
+        select rule_value from risk_rule_cal${riskCalSuf} where asset_id=#{assetId} and rule_id=#{ruleId} limit 1
+    </select>
+    <select id="findUserList" resultType="UserShow" parameterType="HashMap">
+        SELECT
+        b.id as userId ,
+        CONCAT(
+        'http://super.xianjinxia.com/',
+        b.head_portrait
+        ) AS imgUrl,
+        b.`realname` AS userName,
+        b.user_sex AS sex,
+        CAST(
+        a.`money_amount` / 100 AS DECIMAL (20, 2)
+        ) AS borrowMoney,
+        a.status as status,
+        CONCAT(b.user_age, '岁') AS age,
+        b.id_number AS cardNum,
+        b.province AS province,
+        SUBSTRING(b.id_number, 1, 2) AS provinceCode,
+        CONCAT(
+        b.present_address_distinct,
+        b.`present_address`
+        ) AS address,
+        b.user_phone AS userPhone,
+        CASE
+        WHEN b.company_phone IS NULL
+        AND b.my_hb_time IS NOT NULL
+        AND (
+        b.qq IS NOT NULL
+        OR b.taobao_account IS NOT NULL
+        OR b.email IS NOT NULL
+        OR b.wechat_account IS NOT NULL
+        )
+        THEN CAST(7 / 9.0 * 100 AS DECIMAL (20, 0))
+        WHEN b.company_phone IS NOT NULL
+        AND b.my_hb_time IS NULL
+        AND (
+        b.qq IS NOT NULL
+        OR b.taobao_account IS NOT NULL
+        OR b.email IS NOT NULL
+        OR b.wechat_account IS NOT NULL
+        )
+        THEN CAST(7 / 9.0 * 100 AS DECIMAL (20, 0))
+        WHEN b.company_phone IS NOT NULL
+        AND b.my_hb_time IS NOT NULL
+        AND (
+        b.qq IS NULL
+        AND b.taobao_account IS NULL
+        AND b.email IS NULL
+        AND b.wechat_account IS NULL
+        )
+        THEN CAST(7 / 9.0 * 100 AS DECIMAL (20, 0))
+        ELSE 100
+        END AS dataPercent
+        FROM
+        asset_borrow_order AS a
+        left join user_info as b on a.user_id=b.id
+        WHERE a.id=#{assetId}
+    </select>
+    <select id="findProvinceList" resultType="Province">
+        <![CDATA[
+		SELECT 
+		 IFNULL(a.personNum,0) AS personNum,
+		  a.province,
+		  a.provinceCode,
+		  IFNULL(a.borrowTotal,0) AS borrowTotal,
+		  IFNULL(b.borrowToday, 0) AS borrowToday 
+		FROM
+		  (SELECT 
+		    COUNT(1) AS personNum,
+		    MAX(b.`province`) AS province,
+		    SUBSTRING(b.`id_number`, 1, 2) AS provinceCode,
+		    IFNULL(SUM(a.money_amount), 0) AS borrowTotal 
+		  FROM
+		    asset_borrow_order AS a 
+		    LEFT JOIN user_info AS b 
+		      ON a.`user_id` = b.`id` 
+		  WHERE a.`status` IN (21,23,30,-11,-20,34) 
+		  GROUP BY b.`province`) a 
+		  LEFT JOIN 
+		    (SELECT 
+		      MAX(b.`province`) AS province,
+		      IFNULL(SUM(a.money_amount), 0) AS borrowToday 
+		    FROM
+		      asset_borrow_order AS a 
+		      LEFT JOIN user_info AS b 
+		        ON a.`user_id` = b.`id` 
+		    WHERE a.`status` IN (21,23,30,-11,-20,34) 
+		      AND a.loan_time >= DATE_FORMAT(NOW(), '%Y-%m-%d') AND a.loan_time < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 DAY), '%Y-%m-%d')
+		   
+		    GROUP BY b.`province`) b 
+		    ON a.province = b.province 
+		ORDER BY a.personNum DESC,
+		  a.borrowTotal DESC,
+		  b.borrowToday DESC 
+		   ]]>
+    </select>
+</mapper>

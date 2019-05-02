@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IUserOrderDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.UserOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
+        <result column="order_type" property="orderType" jdbcType="INTEGER"/>
+        <result column="money_amount" property="moneyAmount" jdbcType="INTEGER"/>
+        <result column="apr" property="apr" jdbcType="REAL"/>
+        <result column="loan_interests" property="loanInterests" jdbcType="INTEGER"/>
+        <result column="into_money" property="intoMoney" jdbcType="INTEGER"/>
+        <result column="loan_method" property="loanMethod" jdbcType="INTEGER"/>
+        <result column="loan_term" property="loanTerm" jdbcType="INTEGER"/>
+        <result column="operator_name" property="operatorName" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="order_time" property="orderTime" jdbcType="TIMESTAMP"/>
+        <result column="loan_time" property="loanTime" jdbcType="TIMESTAMP"/>
+        <result column="loan_end_time" property="loanEndTime" jdbcType="TIMESTAMP"/>
+        <result column="late_fee_apr" property="lateFeeApr" jdbcType="INTEGER"/>
+        <result column="receive_card_id" property="receiveCardId" jdbcType="INTEGER"/>
+        <result column="debit_card_id" property="debitCardId" jdbcType="INTEGER"/>
+        <result column="capital_type" property="capitalType" jdbcType="INTEGER"/>
+        <result column="reason_remark" property="reasonRemark" jdbcType="VARCHAR"/>
+        <result column="credit_lv" property="creditLv" jdbcType="INTEGER"/>
+        <result column="is_hit_risk_rule" property="isHitRiskRule" jdbcType="TINYINT"/>
+        <result column="auto_risk_check_status" property="autoRiskCheckStatus" jdbcType="TINYINT"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.vxianjin.gringotts.web.pojo.BorrowOrder" extends="BaseResultMap">
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, out_trade_no, order_type, money_amount, apr, loan_interests, into_money,
+        loan_method, loan_term, operator_name, created_at, updated_at, order_time, loan_time,
+        loan_end_time, late_fee_apr, receive_card_id, debit_card_id, capital_type, reason_remark,
+        credit_lv, is_hit_risk_rule, auto_risk_check_status, status
+    </sql>
+    <sql id="sql">
+        FROM asset_borrow_order
+        <if test="channelType != null and channelType != ''">
+            and channel_type=#{channelType}
+        </if>
+
+
+    </sql>
+    <select id="findTotal" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="sql"/>
+    </select>
+    <select id="findList" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        <include refid="sql"/>
+    </select>
+    <select id="findAllCount" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="sql"/>
+    </select>
+    <select id="findAll" resultMap="BaseResultMap" parameterType="HashMap">
+        select
+        <include refid="Base_Column_List"/>
+        <include refid="sql"/>
+    </select>
+    <select id="findById" parameterType="Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from asset_borrow_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="findBankById" parameterType="Integer" resultMap="BaseResultMap">
+        select * from user_card_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+</mapper>

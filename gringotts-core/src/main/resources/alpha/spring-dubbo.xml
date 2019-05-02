@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="haze_api"  />
+    <!--<dubbo:registry address="multicast://224.5.6.7:1234" />-->
+    <dubbo:registry protocol="zookeeper" address="47.97.97.48:2181" client="zkclient"/>
+    <!-- 用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol name="dubbo" port="20887" />
+
+    <!--<dubbo:annotation package="com.vxianjin.gringotts.web.service" />-->
+    <!--服务调用：风控模块-->
+    <!--<dubbo:reference  interface="com.vxianjin.gringotts.risk.service.IRiskService" version="0.0.1" id="riskService" check="false"/>-->
+    <!--<dubbo:reference  interface="com.vxianjin.gringotts.risk.service.ICreditLineService" version="0.0.1" id="creditLineService" check="false"/>-->
+
+    <!-- 线下还款续期服务 -->
+    <dubbo:service interface="com.vxianjin.gringotts.pay.service.OffLinePay" ref="offLinePay"
+                   timeout="600000" group="haze"/>
+
+    <!-- 订单状态变更日志记录服务 -->
+    <dubbo:service interface="com.vxianjin.gringotts.pay.service.OrderLogService" ref="orderLogService"
+                   timeout="600000" group="haze"/>
+</beans>

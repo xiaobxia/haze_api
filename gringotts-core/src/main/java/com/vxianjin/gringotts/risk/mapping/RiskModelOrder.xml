@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.risk.dao.IRiskModelOrderDao">
+    <insert id="insert" parameterType="com.vxianjin.gringotts.risk.pojo.RiskModelOrder" useGeneratedKeys="true" keyProperty="id">
+        INSERT
+        INTO risk_model_order
+        (id,
+        borrow_order_id,
+        user_id,
+        customer_type,
+        model_code,
+        variable_version,
+        binning_version,
+        cutoff_version,
+        can_ignore_version,
+        cutoff,
+        review_up,
+        review_down,
+        old_customer_advice,
+        inflexible_advice,
+        model_advice,
+        summary_advice,
+        execute_advice,
+        person_review_advice,
+        person_review_account,
+        person_review_remark,
+        person_review_time,
+        model_score,
+        loan_switch_status)
+        values
+        (#{id},
+        #{borrowOrderId},
+        #{userId},
+        #{customerType},
+        #{modelCode},
+        #{variableVersion},
+        #{binningVersion},
+        #{cutoffVersion},
+        #{canIgnoreVersion},
+        #{cutoff},
+        #{reviewUp},
+        #{reviewDown},
+        #{oldCustomerAdvice},
+        #{inflexibleAdvice},
+        #{modelAdvice},
+        #{summaryAdvice},
+        #{executeAdvice},
+        #{personReviewAdvice},
+        #{personReviewAccount},
+        #{personReviewRemark},
+        #{personReviewTime},
+        #{modelScore},
+        #{loanSwitchStatus})
+    </insert>
+
+    <delete id="deleteByBorrowOrderId" parameterType="java.lang.Long">
+        delete from risk_model_order
+        where borrow_order_id = #{borrowOrderId,jdbcType=INTEGER}
+    </delete>
+</mapper>

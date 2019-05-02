@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.risk.dao.IRiskCreditUserDao">
+    <resultMap id="BaseResultMap" type="RiskCreditUser">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="asset_id" property="assetId"/>
+        <result column="user_name" property="userName"/>
+        <result column="card_num" property="cardNum"/>
+        <result column="user_phone" property="userPhone"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="amount_addsum" property="amountAddsum"/>
+        <result column="amount_max" property="amountMax"/>
+        <result column="js_amount_time" property="jsAmountTime"/>
+        <result column="zm_score" property="zmScore"/>
+        <result column="zm_score_time" property="zmScoreTime"/>
+        <result column="zm_industy_black" property="zmIndustyBlack"/>
+        <result column="zm_over" property="zmOver"/>
+        <result column="zm_no_pay_over" property="zmNoPayOver"/>
+        <result column="zm_industy_time" property="zmIndustyTime"/>
+        <result column="zm_status" property="zmStatus"/>
+        <result column="my_hb" property="myHb"/>
+        <result column="my_hb_time" property="myHbTime"/>
+        <result column="td_report_id" property="tdReportId"/>
+        <result column="td_report_time" property="tdReportTime"/>
+        <result column="td_score" property="tdScore"/>
+        <result column="td_phone_black" property="tdPhoneBlack"/>
+        <result column="td_card_num_black" property="tdCardNumBlack"/>
+        <result column="td_month1_borrow" property="tdMonth1Borrow"/>
+        <result column="td_day7_borrow" property="tdDay7Borrow"/>
+        <result column="td_month1_card_num_device_borrow" property="tdMonth1CardNumDeviceBorrow"/>
+        <result column="td_day7_device_card_or_phone_borrow" property="tdDay7DeviceCardOrPhoneBorrow"/>
+        <result column="td_day7_card_device" property="tdDay7CardDevice"/>
+        <result column="td_month3_apply_card" property="tdMonth3ApplyCard"/>
+        <result column="td_month3_card_apply" property="tdMonth3CardApply"/>
+        <result column="td_detail_time" property="tdDetailTime"/>
+        <result column="td_status" property="tdStatus"/>
+        <result column="bqs_black" property="bqsBlack"/>
+        <result column="bqs_black_time" property="bqsBlackTime"/>
+        <result column="bqs_status" property="bqsStatus"/>
+        <result column="jy_loan_num" property="jyLoanNum"/>
+        <result column="jy_jd_num" property="jyJdNum"/>
+        <result column="jy_jd_bl" property="jyJdBl"/>
+        <result column="jy_over_num" property="jyOverNum"/>
+        <result column="jy_over_bl" property="jyOverBl"/>
+        <result column="jy_fk_num" property="jyFkNum"/>
+        <result column="jy_hk_num" property="jyHkNum"/>
+        <result column="jy_hk_bl" property="jyHkBl"/>
+        <result column="jy_time" property="jyTime"/>
+        <result column="jy_status" property="jyStatus"/>
+        <result column="mg_black_score" property="mgBlackScore"/>
+        <result column="mg_day7_num" property="mgDay7Num"/>
+        <result column="mg_month1_num" property="mgMonth1Num"/>
+        <result column="mg_black" property="mgBlack"/>
+        <result column="mg_time" property="mgTime"/>
+        <result column="mg_status" property="mgStatus"/>
+        <result column="jxl_token" property="jxlToken"/>
+        <result column="jxl_token_time" property="jxlTokenTime"/>
+        <result column="jxl_detail" property="jxlDetail"/>
+        <result column="jxl_detail_time" property="jxlDetailTime"/>
+        <result column="jxl_zj_dk_num" property="jxlZjDkNum"/>
+        <result column="jxl_bj_dk_num" property="jxlBjDkNum"/>
+        <result column="jxl_yj_hf" property="jxlYjHf"/>
+        <result column="jxl_link2_days" property="jxlLink2Days"/>
+        <result column="jxl_link1_days" property="jxlLink1Days"/>
+        <result column="jxl_link2_num" property="jxlLink2Num"/>
+        <result column="jxl_link1_num" property="jxlLink1Num"/>
+        <result column="jxl_link2_order" property="jxlLink2Order"/>
+        <result column="jxl_link1_order" property="jxlLink1Order"/>
+        <result column="jxl_gj_ts" property="jxlGjTs"/>
+        <result column="jxl_total" property="jxlTotal"/>
+        <result column="jxl_gj_bl" property="jxlGjBl"/>
+        <result column="jxl_lx_gj_ts" property="jxlLxGjTs"/>
+        <result column="jxl_ht_phone_num" property="jxlHtPhoneNum"/>
+        <result column="jxl_amth_num" property="jxlAmthNum"/>
+        <result column="jxl_phone_reg_days" property="jxlPhoneRegDays"/>
+        <result column="jxl_time" property="jxlTime"/>
+        <result column="yx_fx_num" property="yxFxNum"/>
+        <result column="yx_month3_over" property="yxMonth3Over"/>
+        <result column="yx_status" property="yxStatus"/>
+        <result column="yx_time" property="yxTime"/>
+        <result column="yx_less_month3_over" property="yxLessMonth3Over"/>
+        <result column="risk_status" property="riskStatus"/>
+        <result column="risk_remark" property="riskRemark"/>
+        <result column="history_over_num" property="historyOverNum"/>
+        <result column="last_over_days" property="lastOverDays"/>
+        <result column="csjy" property="csjy"/>
+        <result column="customer_type" property="customerType"/>
+        <result column="user_contact_size" property="userContactSize"/>
+        <result column="last_days" property="lastDays"/>
+        <result column="present_add_num" property="presentAddNum"/>
+        <result column="company_add_num" property="companyAddNum"/>
+        <result column="many_device_login_num" property="manyDeviceLoginNum"/>
+        <result column="one_device_reg_many_phone_num" property="oneDeviceRegManyPhoneNum"/>
+        <result column="company_name_num" property="companyNameNum"/>
+        <result column="company_phone_diff_name_or_add" property="companyPhoneDiffNameOrAdd"/>
+        <result column="company_add_diff_name_or_phone" property="companyAddDiffNameOrPhone"/>
+        <result column="company_name_diff_add_or_phone" property="companyNameDiffAddOrPhone"/>
+        <result column="concat_apply_num" property="concatApplyNum"/>
+        <result column="money_amount" property="moneyAmount"/>
+        <result column="add_time" property="addTime"/>
+    </resultMap>
+    <select id="findRuleProperty" parameterType="Map" resultType="RiskRuleProperty">
+        select * from risk_rule_property
+    </select>
+    <!--	用户认证时更新用户表的芝麻分-->
+    <update id="updateUserZmScore" parameterType="RiskCreditUser">
+        update user_info
+        set zm_score=#{zmScore},zm_score_time=now() where id=#{userId}
+    </update>
+    <!--	用户认证支付宝时更新蚂蚁花呗信息-->
+    <update id="updateUserMyHb" parameterType="RiskCreditUser">
+        update user_info
+        set my_hb=#{myHb},my_hb_time=now() where id=#{userId}
+    </update>
+    <!--	用户认证时更新用户表的芝麻行业关注度及更新时间-->
+    <update id="updateUserZmIndusty" parameterType="RiskCreditUser">
+        update user_info
+        set zm_industy_black=#{zmIndustyBlack},zm_over=#{zmOver}
+        ,zm_no_pay_over=#{zmNoPayOver},zm_industy_time=now(),zm_status=2 where
+        id=#{userId}
+    </update>
+    <!--	运行决策树时更新用户表芝麻所有信息-->
+    <update id="updateUserZm" parameterType="RiskCreditUser">
+        update user_info set
+        zm_industy_black=#{zmIndustyBlack},zm_over=#{zmOver}
+        ,zm_no_pay_over=#{zmNoPayOver},zm_industy_time=now(),zm_score_time=now(),zm_score=#{zmScore}
+        where id=#{userId}
+    </update>
+    <!--	更新征信表芝麻所有信息-->
+    <update id="updateZm" parameterType="RiskCreditUser">
+        update risk_credit_user set
+        zm_industy_black=#{zmIndustyBlack},zm_over=#{zmOver}
+        ,zm_no_pay_over=#{zmNoPayOver},zm_industy_time=now(),zm_score_time=now(),zm_score=#{zmScore}
+        ,my_hb=#{myHb},my_hb_time=now()
+        where id=#{id}
+    </update>
+    <update id="updateNewFlag" parameterType="Integer">
+        update user_info set new_flag=3
+        where id=#{userId} and realname_status=1 and new_flag=1 AND jxl_detail_status=2
+    </update>
+    <!--	更新用户表聚信立token值和更新时间-->
+    <update id="updateUserJxlToken" parameterType="RiskCreditUser">
+        update user_info
+        set jxl_token=#{jxlToken},jxl_token_time=now(),jxl_status=2 where
+        id=#{userId}
+    </update>
+    <!--	更新用户表同盾信息-->
+    <update id="updateUserTd" parameterType="RiskCreditUser">
+        update user_info
+        set
+        td_status=#{tdStatus},td_task_id=#{tdTaskId},td_verify_time=#{tdVerifyTime},td_verify_next_time=#{tdVerifyNextTime},td_raw_data=#{tdRawData}
+        where
+        id=#{userId}
+    </update>
+    <update id="updateTdNewFlag" parameterType="Integer">
+        update user_info set new_flag=2
+        where id=#{userId} and realname_status=1 and new_flag=1 AND zm_status=2
+    </update>
+    <!--	更新用户表的聚信立分析数据及更新时间-->
+    <update id="updateUserJxl" parameterType="RiskCreditUser">
+        update user_info set
+        jxl_detail=#{jxlDetail},jxl_detail_time=now(),
+        jxl_zj_dk_num=#{jxlZjDkNum},
+        jxl_bj_dk_num=#{jxlBjDkNum},jxl_yj_hf=#{jxlYjHf},
+        jxl_link2_days=#{jxlLink2Days},jxl_link1_days=#{jxlLink1Days},
+        jxl_link2_num=#{jxlLink2Num},jxl_link1_num=#{jxlLink1Num},
+        jxl_link2_order=#{jxlLink2Order},jxl_link1_order=#{jxlLink1Order},
+        jxl_gj_ts=#{jxlGjTs},jxl_total=#{jxlTotal},jxl_gj_bl=#{jxlGjBl},jxl_lx_gj_ts=#{jxlLxGjTs},
+        jxl_ht_phone_num=#{jxlHtPhoneNum},jxl_amth_num=#{jxlAmthNum},
+        jxl_phone_reg_days=#{jxlPhoneRegDays},
+        jxl_time=now() where id=#{userId}
+    </update>
+    <sql id="userDetailSql">
+        id as userId,
+        realname as userName,
+        case user_sex
+        when '男' then 1
+        else 2
+        end as sex,
+        user_age as age,
+        CAST(amount_addsum/100.0 AS DECIMAL(20, 2) ) as amountAddsum,
+        education as education,
+        amount_max as amountMax,
+        js_amount_time as jsAmountTime,
+        customer_type as customerType,
+        history_over_num as historyOverNum,
+        csjy as csjy,
+        last_over_days as lastOverDays,
+        user_contact_size as userContactSize,
+        user_phone as userPhone,
+        id_number as cardNum,
+        present_address as presentAddress,
+        company_address as companyAddress,
+        company_name as companyName,
+        company_phone as companyPhone,
+        equipment_number as equipmentNumber,
+        jxl_token as jxlToken,
+        jxl_detail as jxlDetail,
+        jxl_zj_dk_num as jxlZjDkNum,
+        jxl_bj_dk_num as jxlBjDkNum,
+        jxl_yj_hf as
+        jxlYjHf,
+        jxl_link2_days as jxlLink2Days,
+        jxl_link1_days as jxlLink1Days,
+        jxl_link2_num as jxlLink2Num,
+        jxl_link1_num as jxlLink1Num,
+        jxl_link2_order as jxlLink2Order,
+        jxl_link1_order as jxlLink1Order,
+        jxl_gj_ts as jxlGjTs,
+        jxl_total as jxlTotal,
+        jxl_gj_bl as jxlGjBl,
+        jxl_lx_gj_ts as jxlLxGjTs,
+        jxl_ht_phone_num as jxlHtPhoneNum,
+        jxl_amth_num as jxlAmthNum,
+        jxl_phone_reg_days as jxlPhoneRegDays,
+        zm_score as zmScore,
+        zm_industy_black as zmIndustyBlack,
+        zm_over as zmOver,
+        zm_status as zmStatus,
+        my_hb as myHb,
+        my_hb_time as myHbTime,
+        zm_no_pay_over as zmNoPayOver from user_info
+    </sql>
+    <!--	查询用户表相关信息供风控使用-->
+    <select id="findUserDetail" resultType="RiskCreditUser" parameterType="Integer">
+        select
+        <include refid="userDetailSql"/>
+        where id =#{id}
+    </select>
+    <!--	更新征信表聚信立分析数据及更新时间-->
+    <update id="updateJxlAndDays" parameterType="RiskCreditUser">
+        update risk_credit_user set
+        jxl_zj_dk_num=#{jxlZjDkNum},
+        jxl_bj_dk_num=#{jxlBjDkNum},jxl_yj_hf=#{jxlYjHf},
+        jxl_link2_days=#{jxlLink2Days},jxl_link1_days=#{jxlLink1Days},
+        jxl_link2_num=#{jxlLink2Num},jxl_link1_num=#{jxlLink1Num},
+        jxl_link2_order=#{jxlLink2Order},jxl_link1_order=#{jxlLink1Order},
+        jxl_gj_ts=#{jxlGjTs},jxl_total=#{jxlTotal},jxl_gj_bl=#{jxlGjBl},
+        jxl_lx_gj_ts=#{jxlLxGjTs},
+        jxl_ht_phone_num=#{jxlHtPhoneNum},jxl_amth_num=#{jxlAmthNum},
+        jxl_token=#{jxlToken},jxl_token_time=now(),
+        jxl_detail=#{jxlDetail},jxl_detail_time=now(),
+        jxl_time=now(),last_days=#{lastDays},last_over_days=#{lastOverDays}
+        ,jxl_phone_reg_days=#{jxlPhoneRegDays},user_contact_size=#{userContactSize}
+        ,history_over_num=#{historyOverNum} where
+        id=#{id}
+    </update>
+    <!--	更新同盾详情及更新时间-->
+    <update id="updateTdDetail" parameterType="RiskCreditUser">
+        update
+        risk_credit_user set
+        td_score=#{tdScore},td_phone_black=#{tdPhoneBlack},td_card_num_black=#{tdCardNumBlack}
+        ,td_month1_borrow=#{tdMonth1Borrow},td_day7_borrow=#{tdDay7Borrow}
+        ,td_month1_card_num_device_borrow=#{tdMonth1CardNumDeviceBorrow}
+        ,td_day7_device_card_or_phone_borrow=#{tdDay7DeviceCardOrPhoneBorrow}
+        ,td_day7_card_device=#{tdDay7CardDevice},td_month3_apply_card=#{tdMonth3ApplyCard}
+        ,td_month3_card_apply=#{tdMonth3CardApply},td_status=2,td_report_id=#{tdReportId},td_report_time=now()
+        ,td_detail_time=now() where
+        id=#{id}
+    </update>
+    <!--	更新白骑士及更新时间-->
+    <update id="updateBqs" parameterType="RiskCreditUser">
+        update risk_credit_user set
+        bqs_black=#{bqsBlack},bqs_status=2,bqs_black_time=now() where id=#{id}
+    </update>
+    <!--	更新91征信及更新时间-->
+    <update id="updateJy" parameterType="RiskCreditUser">
+        update risk_credit_user set
+        jy_loan_num=#{jyLoanNum},
+        jy_jd_num=#{jyJdNum},jy_jd_bl=#{jyJdBl},jy_over_num=#{jyOverNum},jy_over_bl=#{jyOverBl},
+        jy_fk_num=#{jyFkNum},jy_hk_num=#{jyHkNum},jy_hk_bl=#{jyHkBl},
+        jy_status=2,
+        jy_time=now() where id=#{id}
+    </update>
+    <!--	更新密罐及更新时间-->
+    <update id="updateMg" parameterType="RiskCreditUser">
+        update risk_credit_user set
+        mg_black_score=#{mgBlackScore},
+        mg_day7_num=#{mgDay7Num},mg_month1_num=#{mgMonth1Num},mg_black=#{mgBlack},
+        mg_status=2,
+        mg_time=now() where id=#{id}
+    </update>
+    <!--	更新宜信及更新时间-->
+    <update id="updateYx" parameterType="RiskCreditUser">
+        update risk_credit_user set
+        yx_month3_over=#{yxMonth3Over},
+        yx_less_month3_over=#{yxLessMonth3Over},
+        yx_status=2,
+        yx_time=now() where id=#{id}
+    </update>
+
+    <!--	获取聚信立等待查询报告的用户列表-->
+    <select id="findJxlWaitReport" resultType="HashMap">
+        select id as
+        userId,jxl_token as token,
+        first_contact_phone as firstContactPhone,
+        second_contact_phone as secondContactPhone
+        from user_info where
+        jxl_status=2 and jxl_detail is null
+    </select>
+    <!--	等待分析的列表-->
+    <select id="findWaitAnalysis" resultType="Map">
+        select
+        id as id,
+        user_id
+        as userId,
+        asset_id as assetId,
+        user_name as userName,
+        card_num as
+        cardNum,
+        user_phone as userPhone,
+        age as age,
+        sex as sex
+        from
+        risk_credit_user where risk_status=1
+    </select>
+    <!--	获得某个用户最近一次被拒绝的时间-->
+    <select id="findLastFail" resultType="Date" parameterType="Integer">
+        SELECT updated_at FROM asset_borrow_order WHERE user_id=#{userId}
+        AND STATUS IN (-3,-4,-5) ORDER BY id DESC LIMIT 0,1;
+    </select>
+    <select id="findInterfaceStatus" resultType="RiskCreditUser" parameterType="Integer">
+        select
+        zm_status as zmStatus,
+        td_report_id as tdReportId,
+        td_status as tdStatus,
+        bqs_status as bqsStatus,
+        jy_status as jyStatus,
+        mg_status as mgStatus,
+        yx_status as yxStatus,
+        risk_status as riskStatus
+        from risk_credit_user where id=#{id}
+    </select>
+    <update id="updateStatus" parameterType="RiskCreditUser">
+        update risk_credit_user set zm_status=#{zmStatus},
+        td_status=#{tdStatus},td_report_id=#{tdReportId},td_report_time=now(),bqs_status=#{bqsStatus},jy_status=#{jyStatus},mg_status=#{mgStatus}
+        where id=#{id}
+    </update>
+    <!--	更新借款申请为机审通过-->
+    <update id="updateAssetsSuc" parameterType="HashMap">
+        update asset_borrow_order set
+        verify_trial_time = now(),verify_trial_remark=#{remark},verify_trial_user='机审',
+        verify_review_time = now(),verify_review_remark=#{remark},verify_review_user='机审',
+        verify_loan_time = now(),verify_loan_remark=#{remark},verify_loan_user='机审'
+        ,status='22'
+        where id =#{id}
+    </update>
+    <!--	更新借款申请为机审拒绝-->
+    <update id="updateAssetsFail" parameterType="HashMap">
+        update asset_borrow_order set verify_trial_time = now(),verify_trial_remark=#{remark}
+        ,verify_trial_user='机审'
+        ,status=#{st}
+        where id =#{id}
+    </update>
+    <!--	更新待审核列表状态-->
+    <update id="updateRiskStatus" parameterType="RiskCreditUser">
+        update risk_credit_user set risk_status=#{riskStatus},risk_remark=#{riskRemark} where id=#{id}
+    </update>
+    <!--	查询主键ID-->
+    <select id="findById" resultMap="BaseResultMap" parameterType="Integer">
+        select * from risk_credit_user where id=#{id}
+    </select>
+    <!--	查询某个住址重复的个数，包括当前用户-->
+    <select id="findRepeatZz" resultType="Integer" parameterType="String">
+        SELECT COUNT(1) FROM user_info WHERE present_address=#{presentAddress} GROUP BY present_address
+    </select>
+    <!--	查询某个公司地址重复的个数，包括当前用户-->
+    <select id="findRepeatGsdz" resultType="Integer" parameterType="String">
+        SELECT COUNT(1) FROM user_info WHERE company_address=#{companyAddress} GROUP BY company_address
+    </select>
+    <!--	查询某个用户公司名称重复的个数，包括当前用户-->
+    <select id="findRepeatGsmc" resultType="Integer" parameterType="String">
+        SELECT COUNT(1) FROM user_info WHERE company_name=#{companyName} GROUP BY company_name
+    </select>
+    <!--	1.查询公司电话相同但公司名称或者公司地址不同的记录数，减1是排除当前用户
+    2.查询公司地址相同但公司名称或者公司电话不同的记录数，减1是排除当前用户
+    3.查询公司名称相同但公司号码或者公司地址不同的记录数，减1是排除当前用户
+    4.查询使用同一个用户使用不同设备登录的用户数量，不能排除当前用户
+    5.查询某个用户的第一二联系人在平台的申请记录
+     -->
+    <select id="findAllCount" resultType="Integer" parameterType="RiskCreditUser">
+        SELECT COUNT(1)-1 as num
+        FROM (SELECT
+        company_name
+        FROM
+        user_info
+        WHERE company_phone=#{companyPhone} AND
+        company_address IS NOT NULL AND company_name IS NOT NULL
+        GROUP BY
+        company_name,company_address )a
+        union all
+        SELECT
+        COUNT(1) - 1 as num
+        FROM
+        (SELECT
+        company_name
+        FROM
+        user_info
+        WHERE company_address = #{companyAddress}
+        AND company_phone IS NOT NULL
+        AND company_name IS NOT NULL
+        GROUP BY company_name,
+        company_phone) a
+        union all
+        SELECT
+        COUNT(1) - 1 as num
+        FROM
+        (SELECT
+        company_address
+        FROM
+        user_info
+        WHERE company_name = #{companyName}
+        AND company_phone IS NOT NULL
+        AND company_address IS NOT NULL
+        GROUP BY company_phone,
+        company_address) a
+        union all
+        SELECT COUNT(1) as num
+        FROM(SELECT MAX(user_id) FROM user_login_log WHERE user_id=#{userId}
+        GROUP BY equipment_number)a
+        union all
+        SELECT
+        COUNT(1) AS num
+        FROM
+        asset_borrow_order
+        WHERE user_id IN
+        (SELECT
+        a.id
+        FROM
+        user_info AS a,
+        (SELECT
+        first_contact_phone AS name1,
+        second_contact_phone AS name2
+        FROM
+        user_info
+        WHERE id =#{userId}) AS b
+        WHERE a.user_name = b.name1
+        OR a.user_name = b.name2)
+    </select>
+    <!--	查询使用同一个设备注册的用户数量，不能排除当前用户-->
+    <select id="findDifPhoneByEqNum" resultType="Integer" parameterType="String">
+        SELECT
+        count(1)
+        FROM
+        user_info
+        WHERE equipment_number = #{equipmentNumber}
+        GROUP BY equipment_number
+    </select>
+    <!--	查找需要计算用户额度的用户-->
+    <select id="findCalMoney" resultType="RiskCreditUser">
+        select
+        <include refid="userDetailSql"/>
+        where zm_status=2 and td_status=2 and realname_status=1 and new_flag=1
+    </select>
+    <!--	插入征信数据，辅助计算用户额度-->
+    <insert id="insertCalMoney" parameterType="RiskCreditUser" useGeneratedKeys="true" keyProperty="id">
+        insert risk_credit_user(user_id,asset_id,user_name,card_num,user_phone,age,sex,education,zm_score,zm_score_time
+        ,zm_industy_black,zm_over,zm_no_pay_over,zm_industy_time,zm_status,my_hb,my_hb_time,jxl_token,jxl_token_time,jxl_detail
+        ,jxl_detail_time,jxl_zj_dk_num,jxl_bj_dk_num,jxl_yj_hf,jxl_link2_days,jxl_link1_days
+        ,jxl_link2_num,jxl_link1_num,jxl_link2_order,jxl_link1_order,jxl_gj_ts,jxl_total,jxl_gj_bl
+        ,jxl_ht_phone_num,jxl_amth_num,jxl_phone_reg_days,jxl_time,history_over_num,last_over_days,
+        last_days,user_contact_size,risk_status,amount_addsum,jxl_lx_gj_ts)
+        values(#{userId},#{assetId},#{userName},#{cardNum},#{userPhone},#{age},#{sex},#{education},#{zmScore},now(),
+        #{zmIndustyBlack},#{zmOver},#{zmNoPayOver},now(),#{zmStatus},#{myHb},now(),#{jxlToken},now(),#{jxlDetail},
+        now(),#{jxlZjDkNum},#{jxlBjDkNum},#{jxlYjHf},#{jxlLink2Days},#{jxlLink1Days},
+        #{jxlLink2Num},#{jxlLink1Num},#{jxlLink2Order},#{jxlLink1Order},#{jxlGjTs},#{jxlTotal},#{jxlGjBl},
+        #{jxlHtPhoneNum},#{jxlAmthNum},#{jxlPhoneRegDays},now(),#{historyOverNum},#{lastOverDays},#{lastDays},#{userContactSize}
+        ,#{riskStatus},#{amountAddsum},#{jxlLxGjTs})
+    </insert>
+    <!--	更新用户的机审额度及状态-->
+    <update id="updateUserMoney" parameterType="RiskCreditUser">
+        update user_info set js_amount_time=now(),new_flag=2 where id=#{userId}
+    </update>
+    <!--	更新征信的机审额度及状态-->
+    <update id="updateMoney" parameterType="RiskCreditUser">
+        update risk_credit_user set js_amount_time=now(),amount_max=#{amountMax} where id=#{id}
+    </update>
+    <!--	更新征信的聚类信息-->
+    <update id="updateJl" parameterType="RiskCreditUser">
+        update risk_credit_user set present_add_num=#{presentAddNum},company_add_num=#{companyAddNum},
+        many_device_login_num=#{manyDeviceLoginNum},one_device_reg_many_phone_num=#{oneDeviceRegManyPhoneNum},
+        company_name_num=#{companyNameNum},company_phone_diff_name_or_add=#{companyPhoneDiffNameOrAdd},
+        company_add_diff_name_or_phone=#{companyAddDiffNameOrPhone},company_name_diff_add_or_phone=#{companyNameDiffAddOrPhone},
+        concat_apply_num=#{concatApplyNum}
+        where id=#{id}
+    </update>
+    <!--	根据征信主键查询借款金额-->
+    <select id="findBorrowMoney" parameterType="Integer" resultType="RiskCreditUser">
+        SELECT money_amount as moneyAmount,user_id as userId FROM risk_credit_user WHERE id=#{id}
+    </select>
+    <!--	根据用户主键更新用户表的可用金额为原可用金额加上档次被拒金额-->
+    <update id="updateUserAvailable" parameterType="RiskCreditUser">
+        update user_info set amount_available=amount_available+#{moneyAmount}*100 where id=#{userId}
+    </update>
+    <select id="findByUserId" parameterType="Integer" resultType="RiskCreditUser">
+        SELECT add_time as addTime FROM risk_credit_user WHERE user_id=#{userId}
+        AND (zm_industy_black=1 OR zm_over>0 OR zm_no_pay_over>0 OR td_card_num_black>0 OR bqs_black=2 OR jy_over_num>0
+        )
+    </select>
+    <!--     查询某个用户有没有辅助计算额度的记录-->
+    <select id="findOneCal" resultType="Integer" parameterType="RiskCreditUser">
+        select id from risk_credit_user where user_id=#{userId} and asset_id=#{assetId} order by id limit 1
+    </select>
+</mapper>

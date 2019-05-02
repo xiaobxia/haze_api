@@ -1,0 +1,122 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IAdvertisementDao">
+    <resultMap type="Advertisement" id="advertisementList">
+        <id column="id" property="id"/>
+        <result column="showType" property="showType" javaType="String"/>
+        <result column="channelType" property="channelType" javaType="String"/>
+        <result column="columnType" property="columnType" javaType="String"/>
+        <result column="url" property="url" javaType="String"/>
+        <result column="title" property="title" javaType="String"/>
+        <result column="reurl" property="reurl" javaType="String"/>
+        <result column="userLevel" property="userLevel" javaType="String"/>
+        <result column="startTime" property="startTime" javaType="String"/>
+        <result column="endTime" property="endTime" javaType="String"/>
+        <result column="presentWay" property="presentWay" javaType="String"/>
+        <result column="status" property="status" javaType="String"/>
+    </resultMap>
+    <sql id="basicSql">
+        id,show_type showType,channel_type channelType,column_type columnType,url url,reurl reurl,title title,start_time
+        startTime,user_level userLevel,
+        end_time endTime,present_way presentWay,status status,sort sort
+    </sql>
+    <sql id="partSql">
+        id,url,reurl,status
+    </sql>
+    <!--保存-->
+    <insert id="save" parameterType="Advertisement">
+        insert into
+        info_ad (title,url,reurl,user_level,show_type,channel_type,column_type,present_way,start_time,end_time,status)
+        values
+        (#{title},#{url},#{reurl},#{userLevel},#{showType},#{channelType},#{columnType},#{presentWay},#{startTime},#{endTime},#{status})
+    </insert>
+    <!--删除-->
+    <delete id="delete" parameterType="int">
+        delete from info_ad where
+        id = #{id}
+    </delete>
+    <!--更新-->
+    <update id="update" parameterType="Advertisement">
+        update info_ad set
+        show_type=#{showType},channel_type=#{channelType},column_type=#{columnType},title=#{title},url=#{url},reurl=#{reurl},user_level=#{userLevel}
+        ,start_time=#{startTime},end_time=#{endTime},present_way=#{presentWay},status=#{status}
+        where id=#{id}
+    </update>
+    <!--查询一条数据-->
+    <select id="findById" parameterType="int" resultType="Advertisement">
+        select
+        <include refid="basicSql"/>
+        from info_ad where id = #{id}
+    </select>
+    <!--查询所有数据-->
+    <select id="findOne" resultMap="advertisementList" parameterType="Map">
+        select
+        <include refid="basicSql"/>
+        from info_ad
+        WHERE 1=1
+        <if test="status != null and '' != status">
+            and status=#{status}
+        </if>
+
+        <if test="showType != null and '' != showType">
+            and show_type=#{showType}
+        </if>
+    </select>
+    <!--查询所有数据-->
+    <select id="findAll" resultMap="advertisementList">
+        select
+        <include refid="basicSql"/>
+        from info_ad
+        WHERE 1=1
+        <if test="status != null and '' != status">
+            and status=#{status}
+        </if>
+
+        <if test="showType != null and '' != showType">
+            and show_type=#{showType}
+        </if>
+    </select>
+    <select id="countByCondition" resultType="Integer" parameterType="Map">
+        select count(1) from info_ad where 1=1
+        <if test="channelType != null and '' != channelType">
+            and channel_type=#{channelType}
+        </if>
+        <if test="showType != null and '' != showType">
+            and show_type=#{showType}
+        </if>
+        <if test="columnType != null and '' != columnType">
+            and column_type=#{columnType}
+        </if>
+        <if test="userLevel != null and '' != userLevel">
+            and user_level=#{userLevel}
+        </if>
+    </select>
+    <select id="findByCondition" resultType="Advertisement" parameterType="Map">
+        select
+        <include refid="basicSql"/>
+        from info_ad where 1=1
+        <if test="channelType != null and '' != channelType">
+            and channel_type=#{channelType}
+        </if>
+        <if test="showType != null and '' != showType">
+            and show_type=#{showType}
+        </if>
+        <if test="columnType != null and '' != columnType">
+            and column_type=#{columnType}
+        </if>
+        <if test="userLevel != null and '' != userLevel">
+            and user_level=#{userLevel}
+        </if>
+        <if test="status != null and '' != status">
+            and status=#{status}
+        </if>
+        <if test="sortType != null and '' != sortType and sortType == 0">
+            order by sort*1 asc
+        </if>
+        <if test="sortType != null and '' != sortType and sortType == 1">
+            order by sort*1 desc
+        </if>
+        limit #{beginIndex}, #{pagesize}
+    </select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IMessageCenterDao">
+    <resultMap id="BaseResultMap" type="BackMessageCenter">
+        <id column="id" property="id"/>
+        <result column="send_user_id" property="sendUserId"/>
+        <result column="receive_user_id" property="receiveUserId"/>
+        <result column="message_title" property="messageTitle"/>
+        <result column="message_status" property="messageStatus"/>
+        <result column="message_content" property="messageContent"/>
+        <result column="message_send_datetime" property="messageSendDatetime"/>
+        <result column="message_send_ip" property="messageSendIp"/>
+        <result column="notice_type_id" property="noticeTypeId"/>
+        <result column="message_address" property="messageAddress"/>
+
+
+    </resultMap>
+    <sql id="selectMsgCenterSql">
+        from info_message_center a
+        inner join back_user as b on a.send_user_id=b.id
+        inner join info_user as c on a.receive_user_id=c.id
+        where 1=1
+        <if test="id != null and id !=''">
+            and a.id = #{id}
+        </if>
+        <if test="receiveUserId != null and receiveUserId !=''">
+            and a.receive_user_id = #{receiveUserId}
+        </if>
+        <if test="noticeTypeId!=null and noticeTypeId!=''">
+            and a.notice_type_id = #{noticeTypeId}
+        </if>
+        <if test="noticeTypeAll != null and noticeTypeAll != ''">
+            and a.notice_type_id between 1 and 3
+        </if>
+        <if test="messageStatus != null and messageStatus != ''">
+            AND a.message_status = #{messageStatus}
+        </if>
+        <if test="messageAddress!=null and messageAddress!=''">
+            and a.message_address like CONCAT('', #{messageAddress}, '%')
+        </if>
+        <if test="receiveAccount != null and receiveAccount != ''">
+            and c.user_account like CONCAT('', #{receiveAccount}, '%')
+        </if>
+        <if test="messageTitle != null and messageTitle != ''">
+            and a.message_title like CONCAT('', #{messageTitle}, '%')
+        </if>
+    </sql>
+    <select id="findParamsCount" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="selectMsgCenterSql"/>
+    </select>
+    <select id="findParams" resultMap="BaseResultMap" parameterType="HashMap" fetchSize="200">
+        select
+        a.*,
+        b.user_account bUserAccount,
+        c.user_account cUserAccount
+        <include refid="selectMsgCenterSql"/>
+        order by a.id desc
+    </select>
+    <delete id="delete" parameterType="HashMap">
+        update info_message_center set message_status=1
+        where id in (${ids})
+        <where>
+            <if test="receiveUserId != null and receiveUserId != ''">
+                and receive_user_id = #{receiveUserId}
+            </if>
+        </where>
+    </delete>
+    <insert id="insert" parameterType="BackMessageCenter">
+        insert into info_message_center (id, send_user_id, receive_user_id,
+        message_title, message_status, message_content,
+        message_send_ip, notice_type_id,message_address
+        )
+        values (#{id}, #{sendUserId},
+        #{receiveUserId},
+        #{messageTitle}, #{messageStatus},
+        #{messageContent},
+        #{messageSendIp}, #{noticeTypeId},
+        #{messageAddress}
+        )
+    </insert>
+    <update id="update" parameterType="BackMessageCenter">
+        update info_message_center
+        set
+        message_status = #{messageStatus}
+        where id = #{id}
+    </update>
+</mapper>

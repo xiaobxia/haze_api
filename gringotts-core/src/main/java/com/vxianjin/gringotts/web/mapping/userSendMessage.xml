@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user_send_message">
+    <!-- 添加用户短信 -->
+    <insert id="saveUserSendMsg" parameterType="com.vxianjin.gringotts.web.pojo.UserSendMessage">
+        insert into user_send_message
+        (
+        id,
+        phone,
+        message_content,
+        message_create_time,
+        message_status,
+        send_ip
+        )
+        values
+        (
+        #{id},
+        #{phone},
+        #{messageContent},
+        #{messageCreateTime},
+        #{messageStatus},
+        #{sendIp}
+        )
+    </insert>
+
+    <!-- 根据短信ID查询短信详情  -->
+    <select id="selectSendMsgDetail" parameterType="HashMap"
+            resultType="com.vxianjin.gringotts.web.pojo.UserSendMessage">
+        <![CDATA[
+			select 
+				id as id,
+				phone as phone,
+				message_content as messageContent,
+				message_create_time as messageCreateTime,
+				message_status as messageStatus,
+				send_ip as sendIp
+			from user_send_message
+			where id=#{id}
+		]]>
+    </select>
+
+    <!-- 修改用户短信状态 -->
+    <update id="updateSendMsgStatus" parameterType="com.vxianjin.gringotts.web.pojo.UserSendMessage">
+        update user_send_message
+        <set>
+            <if test="messageStatus != null and messageStatus !=''">
+                <![CDATA[message_status = #{messageStatus},]]>
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!-- 用于查询是否发送短信 -->
+    <select id="lastMsg" resultType="com.vxianjin.gringotts.web.pojo.UserSendMessage" parameterType="Map">
+        select
+        id as id,
+        phone as phone,
+        message_content as messageContent,
+        message_create_time as messageCreateTime,
+        message_status as messageStatus,
+        send_ip as sendIp
+        from user_send_message
+        where 1=1 and phone=#{messageAddress}
+        order by message_create_time desc
+        limit 1
+    </select>
+</mapper>

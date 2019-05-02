@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IBankAllInfoDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.BankAllInfo">
+        <id column="id" property="bankId"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_sequence" property="bankSequence"/>
+        <result column="bank_status" property="bankStatus"/>
+        <result column="bank_updatetime" property="bankUpdatetime"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="open_bank" property="openBank"/>
+        <result column="bank_logo_img1" property="bankLogoImg1"/>
+        <result column="bank_logo_img2" property="bankLogoImg2"/>
+    </resultMap>
+    <select id="selectBankAll" parameterType="map" resultType="map">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.bank_code bankCode,
+        b.bank_logo_img1 bankLogoImg1,
+        b.bank_logo_img2 bankLogoImg2
+        from bank_all_info b where bank_status = '1' order by b.bank_sequence asc
+    </select>
+    <select id="selectBankAlls" parameterType="map" resultMap="BaseResultMap">
+        select
+        b.id bankId,
+        b.bank_name bankName,
+        b.bank_code bankCode,
+        b.bank_logo_img1 bankLogoImg1,
+        b.bank_logo_img2 bankLogoImg2,
+        b.open_bank openBank
+        from bank_all_info b where bank_status = '1' order by b.bank_sequence asc
+    </select>
+    <select id="selectBankInfo" parameterType="map" resultType="map">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.bank_status bankStatus,
+        b.bank_code bankCode ,
+        b.bank_number bankNumber,
+        b.bank_logo_img1 bankLogoImg1,
+        b.bank_logo_img2 bankLogoImg2
+        from bank_all_info b where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectBankInfoByOpenBank" parameterType="map" resultType="map">
+        select
+        b.id,
+        b.bank_name bankName,
+        b.bank_status bankStatus,
+        b.bank_code bankCode ,
+        b.bank_number bankNumber,
+        b.open_bank openBank,
+        b.bank_logo_img1 bankLogoImg1,
+        b.bank_logo_img2 bankLogoImg2
+        from bank_all_info b where open_bank = #{openBank,jdbcType=VARCHAR}
+    </select>
+</mapper>

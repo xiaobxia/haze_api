@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IJsLoanPersonDao">
+    <sql id="Base_Column_List">
+        id, uid, open_id, id_number, type, name, phone, birthday, property, contact_username,
+        credit_limit, created_at, updated_at, source_id, contact_phone, is_verify, created_ip,
+        auth_key, invite_code, status, username, card_bind_status, customer_type, can_loan_time
+    </sql>
+    <sql id="Blob_Column_List">
+        attachment
+    </sql>
+    <sql id="Base_Column_UserList">
+        a.id, a.uid, a.open_id, a.id_number, a.type, a.name, a.phone, a.birthday, a.property, a.contact_username,
+        a.credit_limit, a.created_at, a.updated_at, a.source_id, a.contact_phone, a.is_verify, a.created_ip,
+        a.auth_key, a.invite_code, a.status, a.username, a.card_bind_status, a.customer_type, a.can_loan_time,
+        c.name as inviteName
+    </sql>
+
+    <sql id="Example_Where_Clause">
+
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+
+    </sql>
+
+
+    <select id="getOne" resultType="JsLoanPerson">
+        select
+        <include refid="Base_Column_List"/>
+
+        from js_loan_person
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="get" resultType="JsLoanPerson">
+        select
+        <include refid="Base_Column_List"/>
+
+        from js_loan_person
+
+        <where>
+            <if test="phone != null and phone != ''">
+                and phone=#{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="idNumber != null and idNumber != ''">
+                and id_number=#{idNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name != ''">
+                and name=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test="id != null and id != ''">
+                and id=#{id,jdbcType=VARCHAR}
+            </if>
+        </where>
+        <!--     where id = #{id,jdbcType=INTEGER} -->
+    </select>
+    <select id="findList" resultType="JsLoanPerson">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_loan_person a
+
+        <where>
+            <if test="id != null and id != ''">
+                and id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone=#{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="idNumber != null and idNumber != ''">
+                and id_number=#{idNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name != ''">
+                and name=#{name,jdbcType=VARCHAR}
+            </if>
+
+
+        </where>
+        order by a.id desc
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findUserList" resultType="JsLoanPerson">
+        SELECT
+
+        <include refid="Base_Column_UserList"/>
+        FROM js_loan_person a
+        LEFT JOIN js_loan_person c ON a.invite_code = c.phone
+
+        <where>
+            <if test="id != null and id != ''">
+                and id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="phone != null and phone != ''">
+                and
+                a.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="idNumber != null and idNumber != ''">
+                and
+                a.id_number like concat('%',#{idNumber},'%')
+            </if>
+            <if test="name != null and name != ''">
+                AND a.name like concat('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="inviteCode != null and inviteCode != ''">
+                and
+                a.invite_code like concat('%',#{inviteCode},'%')
+            </if>
+
+
+        </where>
+        GROUP BY a.id
+        ORDER BY a.created_at DESC
+        <choose>
+
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findAllList" resultType="JsLoanPerson">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM js_loan_person a
+
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <delete id="delete">
+        delete from js_loan_person
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertP" parameterType="JsLoanPerson">
+        insert into js_loan_person (id, uid, open_id,
+        id_number, type, name,
+        phone, birthday, property,
+        contact_username, credit_limit, created_at,
+        source_id, contact_phone,
+        is_verify, created_ip, auth_key,
+        invite_code, status, username,
+        card_bind_status, customer_type, can_loan_time,
+        attachment)
+        values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR},
+        #{idNumber,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, #{name,jdbcType=VARCHAR},
+        #{phone,jdbcType=BIGINT}, #{birthday,jdbcType=INTEGER}, #{property,jdbcType=VARCHAR},
+        #{contactUsername,jdbcType=VARCHAR}, #{creditLimit,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP},
+        #{sourceId,jdbcType=INTEGER}, #{contactPhone,jdbcType=BIGINT},
+        #{isVerify,jdbcType=TINYINT}, #{createdIp,jdbcType=VARCHAR}, #{authKey,jdbcType=VARCHAR},
+        #{inviteCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR},
+        #{cardBindStatus,jdbcType=INTEGER}, #{customerType,jdbcType=INTEGER}, #{canLoanTime,jdbcType=INTEGER},
+        #{attachment,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insert" parameterType="JsLoanPerson" useGeneratedKeys="true" keyProperty="id">
+        insert into js_loan_person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="openId != null">
+                open_id,
+            </if>
+            <if test="idNumber != null">
+                id_number,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="property != null">
+                property,
+            </if>
+            <if test="contactUsername != null">
+                contact_username,
+            </if>
+            <if test="creditLimit != null">
+                credit_limit,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="sourceId != null">
+                source_id,
+            </if>
+            <if test="contactPhone != null">
+                contact_phone,
+            </if>
+            <if test="isVerify != null">
+                is_verify,
+            </if>
+            <if test="createdIp != null">
+                created_ip,
+            </if>
+            <if test="authKey != null">
+                auth_key,
+            </if>
+            <if test="inviteCode != null">
+                invite_code,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="cardBindStatus != null">
+                card_bind_status,
+            </if>
+            <if test="customerType != null">
+                customer_type,
+            </if>
+            <if test="canLoanTime != null">
+                can_loan_time,
+            </if>
+            <if test="attachment != null">
+                attachment,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="uid != null">
+                #{uid,jdbcType=INTEGER},
+            </if>
+            <if test="openId != null">
+                #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="idNumber != null">
+                #{idNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=BIGINT},
+            </if>
+            <if test="birthday != null">
+                #{birthday,jdbcType=INTEGER},
+            </if>
+            <if test="property != null">
+                #{property,jdbcType=VARCHAR},
+            </if>
+            <if test="contactUsername != null">
+                #{contactUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLimit != null">
+                #{creditLimit,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sourceId != null">
+                #{sourceId,jdbcType=INTEGER},
+            </if>
+            <if test="contactPhone != null">
+                #{contactPhone,jdbcType=BIGINT},
+            </if>
+            <if test="isVerify != null">
+                #{isVerify,jdbcType=TINYINT},
+            </if>
+            <if test="createdIp != null">
+                #{createdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="authKey != null">
+                #{authKey,jdbcType=VARCHAR},
+            </if>
+            <if test="inviteCode != null">
+                #{inviteCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="cardBindStatus != null">
+                #{cardBindStatus,jdbcType=INTEGER},
+            </if>
+            <if test="customerType != null">
+                #{customerType,jdbcType=INTEGER},
+            </if>
+            <if test="canLoanTime != null">
+                #{canLoanTime,jdbcType=INTEGER},
+            </if>
+            <if test="attachment != null">
+                #{attachment,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="JsLoanPerson" resultType="java.lang.Integer">
+        select count(*) from js_loan_person
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update js_loan_person
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.uid != null">
+                uid = #{record.uid,jdbcType=INTEGER},
+            </if>
+            <if test="record.openId != null">
+                open_id = #{record.openId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.idNumber != null">
+                id_number = #{record.idNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="record.type != null">
+                type = #{record.type,jdbcType=TINYINT},
+            </if>
+            <if test="record.name != null">
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.phone != null">
+                phone = #{record.phone,jdbcType=BIGINT},
+            </if>
+            <if test="record.birthday != null">
+                birthday = #{record.birthday,jdbcType=INTEGER},
+            </if>
+            <if test="record.property != null">
+                property = #{record.property,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contactUsername != null">
+                contact_username = #{record.contactUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="record.creditLimit != null">
+                credit_limit = #{record.creditLimit,jdbcType=INTEGER},
+            </if>
+            <if test="record.createdAt != null">
+                created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.sourceId != null">
+                source_id = #{record.sourceId,jdbcType=INTEGER},
+            </if>
+            <if test="record.contactPhone != null">
+                contact_phone = #{record.contactPhone,jdbcType=BIGINT},
+            </if>
+            <if test="record.isVerify != null">
+                is_verify = #{record.isVerify,jdbcType=TINYINT},
+            </if>
+            <if test="record.createdIp != null">
+                created_ip = #{record.createdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="record.authKey != null">
+                auth_key = #{record.authKey,jdbcType=VARCHAR},
+            </if>
+            <if test="record.inviteCode != null">
+                invite_code = #{record.inviteCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record.username != null">
+                username = #{record.username,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cardBindStatus != null">
+                card_bind_status = #{record.cardBindStatus,jdbcType=INTEGER},
+            </if>
+            <if test="record.customerType != null">
+                customer_type = #{record.customerType,jdbcType=INTEGER},
+            </if>
+            <if test="record.canLoanTime != null">
+                can_loan_time = #{record.canLoanTime,jdbcType=INTEGER},
+            </if>
+            <if test="record.attachment != null">
+                attachment = #{record.attachment,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update js_loan_person
+        set id = #{record.id,jdbcType=INTEGER},
+        uid = #{record.uid,jdbcType=INTEGER},
+        open_id = #{record.openId,jdbcType=VARCHAR},
+        id_number = #{record.idNumber,jdbcType=VARCHAR},
+        type = #{record.type,jdbcType=TINYINT},
+        name = #{record.name,jdbcType=VARCHAR},
+        phone = #{record.phone,jdbcType=BIGINT},
+        birthday = #{record.birthday,jdbcType=INTEGER},
+        property = #{record.property,jdbcType=VARCHAR},
+        contact_username = #{record.contactUsername,jdbcType=VARCHAR},
+        credit_limit = #{record.creditLimit,jdbcType=INTEGER},
+        created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+        source_id = #{record.sourceId,jdbcType=INTEGER},
+        contact_phone = #{record.contactPhone,jdbcType=BIGINT},
+        is_verify = #{record.isVerify,jdbcType=TINYINT},
+        created_ip = #{record.createdIp,jdbcType=VARCHAR},
+        auth_key = #{record.authKey,jdbcType=VARCHAR},
+        invite_code = #{record.inviteCode,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=INTEGER},
+        username = #{record.username,jdbcType=VARCHAR},
+        card_bind_status = #{record.cardBindStatus,jdbcType=INTEGER},
+        customer_type = #{record.customerType,jdbcType=INTEGER},
+        can_loan_time = #{record.canLoanTime,jdbcType=INTEGER},
+        attachment = #{record.attachment,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update js_loan_person
+        set id = #{record.id,jdbcType=INTEGER},
+        uid = #{record.uid,jdbcType=INTEGER},
+        open_id = #{record.openId,jdbcType=VARCHAR},
+        id_number = #{record.idNumber,jdbcType=VARCHAR},
+        type = #{record.type,jdbcType=TINYINT},
+        name = #{record.name,jdbcType=VARCHAR},
+        phone = #{record.phone,jdbcType=BIGINT},
+        birthday = #{record.birthday,jdbcType=INTEGER},
+        property = #{record.property,jdbcType=VARCHAR},
+        contact_username = #{record.contactUsername,jdbcType=VARCHAR},
+        credit_limit = #{record.creditLimit,jdbcType=INTEGER},
+        created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+        source_id = #{record.sourceId,jdbcType=INTEGER},
+        contact_phone = #{record.contactPhone,jdbcType=BIGINT},
+        is_verify = #{record.isVerify,jdbcType=TINYINT},
+        created_ip = #{record.createdIp,jdbcType=VARCHAR},
+        auth_key = #{record.authKey,jdbcType=VARCHAR},
+        invite_code = #{record.inviteCode,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=INTEGER},
+        username = #{record.username,jdbcType=VARCHAR},
+        card_bind_status = #{record.cardBindStatus,jdbcType=INTEGER},
+        customer_type = #{record.customerType,jdbcType=INTEGER},
+        can_loan_time = #{record.canLoanTime,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="update" parameterType="JsLoanPerson">
+        update js_loan_person
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=INTEGER},
+            </if>
+            <if test="openId != null">
+                open_id = #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="idNumber != null">
+                id_number = #{idNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=BIGINT},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=INTEGER},
+            </if>
+            <if test="property != null">
+                property = #{property,jdbcType=VARCHAR},
+            </if>
+            <if test="contactUsername != null">
+                contact_username = #{contactUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLimit != null">
+                credit_limit = #{creditLimit,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sourceId != null">
+                source_id = #{sourceId,jdbcType=INTEGER},
+            </if>
+            <if test="contactPhone != null">
+                contact_phone = #{contactPhone,jdbcType=BIGINT},
+            </if>
+            <if test="isVerify != null">
+                is_verify = #{isVerify,jdbcType=TINYINT},
+            </if>
+            <if test="createdIp != null">
+                created_ip = #{createdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="authKey != null">
+                auth_key = #{authKey,jdbcType=VARCHAR},
+            </if>
+            <if test="inviteCode != null">
+                invite_code = #{inviteCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="cardBindStatus != null">
+                card_bind_status = #{cardBindStatus,jdbcType=INTEGER},
+            </if>
+            <if test="customerType != null">
+                customer_type = #{customerType,jdbcType=INTEGER},
+            </if>
+            <if test="canLoanTime != null">
+                can_loan_time = #{canLoanTime,jdbcType=INTEGER},
+            </if>
+            <if test="attachment != null">
+                attachment = #{attachment,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="JsLoanPerson">
+        update js_loan_person
+        set uid = #{uid,jdbcType=INTEGER},
+        open_id = #{openId,jdbcType=VARCHAR},
+        id_number = #{idNumber,jdbcType=VARCHAR},
+        type = #{type,jdbcType=TINYINT},
+        name = #{name,jdbcType=VARCHAR},
+        phone = #{phone,jdbcType=BIGINT},
+        birthday = #{birthday,jdbcType=INTEGER},
+        property = #{property,jdbcType=VARCHAR},
+        contact_username = #{contactUsername,jdbcType=VARCHAR},
+        credit_limit = #{creditLimit,jdbcType=INTEGER},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        source_id = #{sourceId,jdbcType=INTEGER},
+        contact_phone = #{contactPhone,jdbcType=BIGINT},
+        is_verify = #{isVerify,jdbcType=TINYINT},
+        created_ip = #{createdIp,jdbcType=VARCHAR},
+        auth_key = #{authKey,jdbcType=VARCHAR},
+        invite_code = #{inviteCode,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        username = #{username,jdbcType=VARCHAR},
+        card_bind_status = #{cardBindStatus,jdbcType=INTEGER},
+        customer_type = #{customerType,jdbcType=INTEGER},
+        can_loan_time = #{canLoanTime,jdbcType=INTEGER},
+        attachment = #{attachment,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="JsLoanPerson">
+        update js_loan_person
+        set uid = #{uid,jdbcType=INTEGER},
+        open_id = #{openId,jdbcType=VARCHAR},
+        id_number = #{idNumber,jdbcType=VARCHAR},
+        type = #{type,jdbcType=TINYINT},
+        name = #{name,jdbcType=VARCHAR},
+        phone = #{phone,jdbcType=BIGINT},
+        birthday = #{birthday,jdbcType=INTEGER},
+        property = #{property,jdbcType=VARCHAR},
+        contact_username = #{contactUsername,jdbcType=VARCHAR},
+        credit_limit = #{creditLimit,jdbcType=INTEGER},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        source_id = #{sourceId,jdbcType=INTEGER},
+        contact_phone = #{contactPhone,jdbcType=BIGINT},
+        is_verify = #{isVerify,jdbcType=TINYINT},
+        created_ip = #{createdIp,jdbcType=VARCHAR},
+        auth_key = #{authKey,jdbcType=VARCHAR},
+        invite_code = #{inviteCode,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        username = #{username,jdbcType=VARCHAR},
+        card_bind_status = #{cardBindStatus,jdbcType=INTEGER},
+        customer_type = #{customerType,jdbcType=INTEGER},
+        can_loan_time = #{canLoanTime,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

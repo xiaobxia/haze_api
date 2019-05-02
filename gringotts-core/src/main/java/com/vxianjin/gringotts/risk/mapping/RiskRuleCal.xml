@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.risk.dao.IRiskRuleCalDao">
+    <insert id="insert" parameterType="RiskRuleCal" useGeneratedKeys="true" keyProperty="id">
+        insert into risk_rule_cal
+        (user_id,rule_id,credit_id,asset_id,attention_type,rule_name,formula_show,rule_value,rule_detail)
+        values
+        (#{userId},#{ruleId},#{creditId},#{assetId},#{attentionType},#{ruleName},#{formulaShow},#{ruleValue},#{ruleDetail})
+    </insert>
+</mapper>

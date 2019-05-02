@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user_login_log">
+    <!-- 查询用户是否是第一次登录 -->
+    <select id="selectByParams" resultType="com.vxianjin.gringotts.web.pojo.UserLoginLog" parameterType="Map">
+        select
+        id as id,
+        user_id as userId,
+        user_name as userName,
+        password as password,
+        login_time as loginTime,
+        login_ip as loginIp,
+        eff_time as effTime,
+        token as token,
+        equipment_number as equipmentNumber
+        from user_login_log
+        where 1=1
+        <if test="userId != null and userId != ''">
+            AND user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND user_name = #{userName}
+        </if>
+        <if test="token != null and token != ''">
+            AND token = #{token}
+        </if>
+        <if test="deviceId != null and deviceId != ''">
+            AND equipment_number = #{deviceId}
+        </if>
+        <if test="isLast != null and isLast != ''">
+            ORDER by login_time DESC
+        </if>
+
+        limit 1
+    </select>
+
+    <!-- 新增用户登录记录 -->
+    <insert id="saveUserLoginLog" parameterType="com.vxianjin.gringotts.web.pojo.UserLoginLog">
+        insert into user_login_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="loginTime != null">
+                login_time,
+            </if>
+            <if test="loginIp != null">
+                login_ip,
+            </if>
+            <if test="effTime != null">
+                eff_time,
+            </if>
+            <if test="token != null">
+                token,
+            </if>
+            <if test="equipmentNumber != null">
+                equipment_number,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="loginTime != null">
+                #{loginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loginIp != null">
+                #{loginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="effTime != null">
+                #{effTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="token != null">
+                #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentNumber != null">
+                #{equipmentNumber,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 修改用户登录记录 -->
+    <update id="updateUserLoginLog" parameterType="com.vxianjin.gringotts.web.pojo.UserLoginLog">
+        update
+        user_login_log
+        set
+        user_name = #{userName,jdbcType=VARCHAR},
+        password =
+        #{password,jdbcType=VARCHAR},
+        login_time =
+        #{loginTime,jdbcType=TIMESTAMP},
+        login_ip=
+        #{loginIp,jdbcType=VARCHAR},
+        eff_time =
+        #{effTime,jdbcType=TIMESTAMP},
+        token = #{token,jdbcType=VARCHAR},
+        equipment_number=#{equipmentNumber,jdbcType=VARCHAR}
+        where
+        id= #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IUserAppSoftwareDao">
+
+    <!-- 查询用户手机里的应用软件 -->
+    <select id="selectUserAppSoftwareCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*) from user_app_software where userId=#{userId}
+    </select>
+
+    <!-- 添加用户手机里的应用软件入库 -->
+    <insert id="saveUserAppSoftware" parameterType="com.vxianjin.gringotts.web.pojo.UserAppSoftware"
+            useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+			insert into user_app_software(
+				id,
+				appName,
+				packageName,
+				versionName,
+				versionCode,
+				userId
+			)
+			values(
+				#{id},
+				#{appName},
+				#{packageName},
+				#{versionName},
+				#{versionCode},
+				#{userId}
+			)
+		]]>
+    </insert>
+
+    <!-- 根据用户id删除此用户的所有应用软件 -->
+    <delete id="delUserAppSoftware" parameterType="java.lang.Integer">
+        delete from user_app_software where userId=#{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IBackNoticeDao">
+
+    <resultMap id="BaseResultMap" type="BackNotice">
+        <id column="id" property="id"/>
+        <result column="notice_title" property="noticeTitle"/>
+        <result column="notice_code" property="noticeCode"/>
+        <result column="notice_status" property="noticeStatus"/>
+        <result column="notice_sequence" property="noticeSequence"/>
+        <result column="message" property="message"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="notice_addtime" property="noticeAddtime"/>
+        <result column="notice_updatetime" property="noticeUpdatetime"/>
+    </resultMap>
+
+    <select id="selectNotices" resultMap="BaseResultMap">
+        SELECT
+        a.id,
+        a.notice_title as noticeTitle,
+        CASE
+        WHEN (a.message=3 and b.message=1) then 3
+        WHEN (a.message=3 and b.message=2) then 4
+        WHEN (a.message=4 and b.message=1) then 3
+        WHEN (a.message=4 and b.message=2) then 4
+        ELSE
+        a.message
+        END
+        AS message,
+        CASE
+        WHEN (a.phone=3 and b.phone=1) then 3
+        WHEN (a.phone=3 and b.phone=2) then 4
+        WHEN (a.phone=4 and b.phone=1) then 3
+        WHEN (a.phone=4 and b.phone=2) then 4
+        ELSE
+        a.phone
+        END
+        AS phone,
+        CASE
+        WHEN (a.email=3 and b.email=1) then 3
+        WHEN (a.email=3 and b.email=2) then 4
+        WHEN (a.email=4 and b.email=1) then 3
+        WHEN (a.email=4 and b.email=2) then 4
+        ELSE
+        a.email
+        END
+        AS email
+        FROM back_notice as a
+        left join back_notice_user as b on a.id=b.notice_id
+        where notice_status = 1
+        ORDER BY notice_sequence asc
+    </select>
+    <sql id="selectSql">
+        from back_notice where 1=1
+        <if test="noticeTitle != null and noticeTitle != ''">
+            and notice_title like CONCAT('%', #{noticeTitle}, '%')
+        </if>
+        <if test="noticeCode != null and noticeCode != ''">
+            and notice_code=#{noticeCode}
+        </if>
+        <if test="id != null and id != ''">
+            and id=#{id}
+        </if>
+        <if test="noticeStatus != null">
+            and notice_status=#{noticeStatus}
+        </if>
+        <if test="message != null">
+            and message=#{message}
+        </if>
+        <if test="email != null">
+            and email=#{email}
+        </if>
+        <if test="phone != null">
+            and phone=#{phone}
+        </if>
+    </sql>
+    <select id="findParamsCount" resultType="int" parameterType="BackNotice">
+        select
+        count(1)
+        <include refid="selectSql"/>
+    </select>
+
+    <select id="findParams" resultMap="BaseResultMap"
+            parameterType="BackNotice">
+        select
+        *
+        <include refid="selectSql"/>
+        order by notice_sequence asc,notice_updatetime desc
+    </select>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from back_notice
+        where id = #{id}
+    </delete>
+    <insert id="insert" parameterType="BackNotice">
+        insert into back_notice (notice_title, notice_code,
+        notice_status, notice_sequence,
+        message, email, phone)
+        values (#{noticeTitle},
+        #{noticeCode},
+        #{noticeStatus}, #{noticeSequence},
+        #{message}, #{email}, #{phone})
+    </insert>
+    <update id="update" parameterType="BackNotice">
+        update back_notice
+        <set>
+            <if test="noticeTitle != null">
+                notice_title = #{noticeTitle},
+            </if>
+            <if test="noticeCode != null">
+                notice_code = #{noticeCode},
+            </if>
+            <if test="noticeStatus != null">
+                notice_status = #{noticeStatus},
+            </if>
+            <if test="noticeSequence != null">
+                notice_sequence = #{noticeSequence},
+            </if>
+            <if test="message != null">
+                message = #{message},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

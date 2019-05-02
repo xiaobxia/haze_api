@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IContentDao">
+    <resultMap id="BaseResultMap" type="Content">
+        <id column="id" property="id"/>
+        <result column="channel_type" property="channelType"/>
+        <result column="content_title" property="contentTitle"/>
+        <result column="content_summary" property="contentSummary"/>
+        <result column="add_time" property="addTime"/>
+        <result column="add_user_id" property="addUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="add_ip" property="addIp"/>
+        <result column="content_txt" property="contentTxt"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="remark" property="remark"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="from_url" property="fromUrl"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="external_url" property="externalUrl"/>
+    </resultMap>
+    <resultMap id="ResultMapAll" type="Content" extends="BaseResultMap">
+        <association property="addUser" column="add_user_id" javaType="BackUser">
+            <id property="id" column="bId"/>
+            <result property="userAccount" column="bUserAccount"/>
+        </association>
+        <association property="updateUser" column="update_user_id" javaType="BackUser">
+            <id property="id" column="cId"/>
+            <result property="userAccount" column="cUserAccount"/>
+        </association>
+    </resultMap>
+    <sql id="sql">
+        from info_content as a
+        left join back_user as b on a.add_user_id=b.id
+        left join back_user as c on a.update_user_id=c.id
+        where is_deleted = 1
+        <if test="channelType != null and channelType != ''">
+            and channel_type=#{channelType}
+        </if>
+        <if test="channelType != null and channelType != ''">
+            and channel_type =#{channelType}
+        </if>
+        <if test="contentTitle != null and contentTitle != ''">
+            and content_title like CONCAT('%', #{contentTitle}, '%')
+        </if>
+        <if test="contentTxt != null and contentTxt != ''">
+            and content_txt like CONCAT('%', #{contentTxt}, '%')
+        </if>
+        order by order_num asc,add_time desc
+    </sql>
+    <select id="findTotal" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="sql"/>
+    </select>
+    <select id="findList" resultMap="ResultMapAll" parameterType="HashMap">
+        select a.*,
+        b.id as bId,
+        b.user_account as bUserAccount,
+        c.id as cId,
+        c.user_account as cUserAccount
+        <include refid="sql"/>
+    </select>
+    <sql id="sqlFront">
+        from info_content
+        where is_deleted = 1
+        and channel_type=#{channelType}
+        order by order_num asc,add_time desc
+    </sql>
+    <select id="findAllCount" resultType="Integer" parameterType="HashMap">
+        select count(1)
+        <include refid="sqlFront"/>
+    </select>
+    <select id="findAll" resultMap="BaseResultMap" parameterType="HashMap">
+        select id,content_title,content_summary,add_time
+        <include refid="sqlFront"/>
+    </select>
+    <select id="findById" parameterType="Integer" resultMap="BaseResultMap">
+        select * from info_content where id=#{id} and is_deleted = 1
+    </select>
+    <update id="delete" parameterType="Content">
+        update info_content set is_deleted=2 , remark=#{remark} where id = #{id}
+    </update>
+    <delete id="deleteDrop" parameterType="Integer">
+        delete from info_content where id = #{id}
+    </delete>
+    <insert id="insert" parameterType="Content">
+        insert into info_content (channel_type, content_title, content_summary,add_user_id,
+        add_ip,content_txt,order_num,img_url,external_url)
+        values (#{channelType},
+        #{contentTitle},#{contentSummary},#{addUserId},#{addIp},#{contentTxt},#{orderNum},#{imgUrl},#{externalUrl})
+    </insert>
+    <update id="update" parameterType="Content">
+        update info_content
+        set channel_type = #{channelType},
+        content_title = #{contentTitle},
+        content_summary =#{contentSummary},
+        update_user_id=#{updateUserId},
+        content_txt =#{contentTxt},
+        order_num =#{orderNum},
+        img_url=#{imgUrl},
+        external_url=#{externalUrl}
+        where id =#{id}
+    </update>
+    <update id="updateViewCount" parameterType="Integer">
+        update info_content set view_count = view_count +1 where id =#{id}
+    </update>
+    <delete id="deleteByFromUrl" parameterType="ArrayList">
+        delete from info_content where from_url in
+        <foreach collection="list" item="url" open="(" close=")" separator=",">
+            #{url}
+        </foreach>
+    </delete>
+    <insert id="batchInsert" parameterType="ArrayList">
+        insert into info_content (channel_type, content_title, content_summary,add_user_id,
+        add_ip,content_txt,order_num,from_url)
+        VALUES
+        <foreach collection="list" item="content" open="" close="" separator=",">
+            (#{content.channelType},#{content.contentTitle},#{content.contentSummary},
+            #{content.addUserId},#{content.addIp},#{content.contentTxt},1,#{content.fromUrl})
+        </foreach>
+    </insert>
+</mapper>

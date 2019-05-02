@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IFaceRecognitionDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.FaceRecognition">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="le3" property="le3"/>
+        <result column="le4" property="le4"/>
+        <result column="le5" property="le5"/>
+        <result column="le6" property="le6"/>
+        <result column="confidence" property="confidence"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updatetime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <!-- 根据用户编号查询是否存在 -->
+    <select id="selectByFaceRecognitionUserId" resultType="com.vxianjin.gringotts.web.pojo.FaceRecognition"
+            parameterType="HashMap">
+        select
+        f.id id,
+        f.user_id userId,
+        f.le5 le5,
+        f.le6 le6,
+        f.confidence confidence,
+        f.create_time createTime,
+        f.update_time updatetime,
+        f.status status
+        from face_recognition f
+        where
+        f.user_id =#{userId,jdbcType=INTEGER}
+    </select>
+    <!--保存人脸识别状态-->
+    <insert id="saveFaceRecognition" parameterType="com.vxianjin.gringotts.web.pojo.FaceRecognition"
+            useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+			insert into face_recognition(
+				user_id,
+				le3,
+				le4,
+				le5,
+				le6,
+				confidence,
+				create_time,
+				status
+			)
+			values(
+				#{userId},
+				#{le3},
+				#{le4},
+				#{le5},
+				#{le6},
+				#{confidence},
+				NOW(),
+				#{status}
+				
+			)
+		]]>
+    </insert>
+
+    <!--更新人脸对象-->
+    <update id="updateByUserId" parameterType="com.vxianjin.gringotts.web.pojo.FaceRecognition">
+        update face_recognition
+        <set>
+            <if test="le3 != null and le3 != ''">
+                le3 =#{le3},
+            </if>
+            <if test="le4 != null and le4 !=''">
+                le4 =#{le4},
+            </if>
+            <if test="le5 != null and le5 != ''">
+                le5 =#{le5},
+            </if>
+            <if test="le6 != null and le6 != ''">
+                le6 =#{le6},
+            </if>
+            <if test="confidence != null and confidence != ''">
+                confidence =#{confidence},
+            </if>
+            <if test="status != null and status != ''">
+                status =#{status},
+            </if>
+            total_num=total_num+1
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

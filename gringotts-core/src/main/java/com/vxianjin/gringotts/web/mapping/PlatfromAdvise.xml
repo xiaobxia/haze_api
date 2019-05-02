@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vxianjin.gringotts.web.dao.IPlatfromAdviseDao">
+
+    <!-- 新增用户反馈内容 -->
+    <insert id="searchPlatfromAdvise" parameterType="com.vxianjin.gringotts.web.pojo.PlatfromAdvise"
+            useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+			insert into platfrom_advise 
+			(
+				id,
+				user_phone,
+				advise_content,
+				advise_addtime,
+				advise_addip
+			)
+			values
+			(
+				#{id},
+				#{userPhone},
+				#{adviseContent},
+				#{adviseAddtime},
+				#{adviseAddip}
+			)
+		]]>
+    </insert>
+
+    <!-- 反馈列表 -->
+    <select id="selectPlatfromAdviseCount" resultType="Integer" parameterType="HashMap">
+        select count(1) from platfrom_advise where 1=1
+        <if test="id != null and id !=''">
+            <![CDATA[ and id like CONCAT('%', #{id}, '%')]]>
+        </if>
+        <if test="userPhone != null and userPhone !=''">
+            <![CDATA[ and user_phone like CONCAT('%', #{userPhone}, '%')]]>
+        </if>
+        <if test="adviseStatus != null and adviseStatus !=''">
+            <![CDATA[ and advise_status like CONCAT('%', #{adviseStatus}, '%')]]>
+        </if>
+        <if test="adviseAddtime !=null and adviseAddtime !=''">
+            <![CDATA[ and advise_addtime>=#{adviseAddtime}]]>
+        </if>
+        and hidden=0
+        order by advise_addtime desc
+    </select>
+
+    <!-- 查询反馈内容 多条件查询 -->
+    <select id="selectPlatfromAdvise" resultType="map" parameterType="HashMap">
+        select
+        *
+        from platfrom_advise
+        where 1=1
+        <if test="id != null and id !=''">
+            <![CDATA[ and id like CONCAT('%', #{id}, '%')]]>
+        </if>
+        <if test="userPhone != null and userPhone !=''">
+            <![CDATA[ and user_phone like CONCAT('%', #{userPhone}, '%')]]>
+        </if>
+        <if test="adviseStatus != null and adviseStatus !=''">
+            <![CDATA[ and advise_status like CONCAT('%', #{adviseStatus}, '%')]]>
+        </if>
+        <if test="adviseAddtime !=null and adviseAddtime !=''">
+            <![CDATA[ and advise_addtime>=#{adviseAddtime}]]>
+        </if>
+        and hidden=0
+        order by advise_addtime desc
+    </select>
+
+    <!-- 根据id查询单个 -->
+    <select id="selectPlatfromAdviseById" resultType="PlatfromAdvise" parameterType="Map">
+        select
+        id as id,
+        user_phone as userPhone,
+        advise_content as adviseContent,
+        advise_addtime as adviseAddtime,
+        advise_addip as adviseAddip,
+        advise_connect_info as adviseConnectInfo,
+        advise_status as adviseStatus,
+        feedback_way as feedbackWay,
+        advise_feedback as adviseFeedback,
+        feed_date as feedDate,
+        feed_ip as feedIp,
+        hidden as hidden
+        from platfrom_advise
+        where
+        id=#{id}
+    </select>
+
+    <!-- 修改反馈内容 -->
+    <update id="updatePlatfromAdvise" parameterType="com.vxianjin.gringotts.web.pojo.PlatfromAdvise">
+        update platfrom_advise
+        <set>
+            <if test="adviseConnectInfo != null and adviseConnectInfo !=''">
+                <![CDATA[advise_connect_info = #{adviseConnectInfo},]]>
+            </if>
+            <if test="adviseStatus != null and adviseStatus !=''">
+                <![CDATA[advise_status = #{adviseStatus},]]>
+            </if>
+            <if test="feedbackWay != null and feedbackWay !=''">
+                <![CDATA[feedback_way = #{feedbackWay},]]>
+            </if>
+            <if test="adviseFeedback != null and adviseFeedback !=''">
+                <![CDATA[advise_feedback = #{adviseFeedback},]]>
+            </if>
+            <if test="feedIp != null and feedIp !=''">
+                <![CDATA[feed_ip = #{feedIp},]]>
+            </if>
+            <if test="hidden != null and hidden !=''">
+                <![CDATA[hidden = #{hidden},]]>
+            </if>
+            feed_date = NOW()
+        </set>
+        where id = #{id}
+    </update>
+
+
+</mapper>
