@@ -8,6 +8,7 @@ import com.vxianjin.gringotts.util.HttpUtil;
 import com.vxianjin.gringotts.web.pojo.risk.ZhimiContact;
 import com.vxianjin.gringotts.web.pojo.risk.ZhimiEmergencyContact;
 import com.vxianjin.gringotts.web.pojo.risk.ZhimiRiskRequest;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -20,10 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 public class ZhimiUtils  {
@@ -57,7 +55,20 @@ public class ZhimiUtils  {
 
     public static void main(String[] args) throws IOException {
 
-        for (int i = 0; i < 1; i++) {
+        String appId = "gxb79554ed8a02eeb28";
+        String appSecret = "da1855416a844cdba918800b9b0f1dc3";
+
+
+        String GXBREPORT = "https://prod.gxb.io/crawler/data/report/%s?appId=%s&timestamp=%s&sign=%s";
+        String GXBRAWDATA = "https://prod.gxb.io/crawler/data/rawdata/%s?appId=%s&timestamp=%s&sign=%s";
+        String timestamp = new Date().getTime()+"";
+        String md5Hex = DigestUtils.md5Hex(String.format("%s%s%s", appId, appSecret, timestamp));
+        String reportUrl = String.format(GXBREPORT, "", appId, timestamp, md5Hex);
+        String rawDataUrl = String.format(GXBRAWDATA, "", appId, timestamp, md5Hex);
+        String gxb_report = HttpUtil.post(reportUrl, null);
+        String gxb_raw = HttpUtil.post(rawDataUrl, null);
+
+        /*for (int i = 0; i < 1; i++) {
             String fileContent = null;
             try {
                 fileContent = IOUtils.toString(new FileInputStream("sample_data"), StandardCharsets.UTF_8);
@@ -119,6 +130,6 @@ public class ZhimiUtils  {
             } catch(IOException e){
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }
