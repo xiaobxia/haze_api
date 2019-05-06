@@ -342,6 +342,7 @@ public class FuiouServiceImpl implements FuiouService {
         String cardNo = paramMap.get("card_no");
         String phone = paramMap.get("phone");
         String realName = paramMap.get("real_name");
+        String agreeno = paramMap.get("agreeno");
 
         UserCardInfo bankCardByCardNo = userService.findBankCardByCardNo(cardNo);
 
@@ -359,6 +360,7 @@ public class FuiouServiceImpl implements FuiouService {
             cardInfo.setType(UserCardInfo.TYPE_DEBIT);
             cardInfo.setCreateTime(new Date());
             cardInfo.setIsBand(1);
+            cardInfo.setAgreeno(agreeno);
             boolean flag = userBankDao.saveUserbankCard(cardInfo);
             log.info("YeepayService updateUserBankInfo userId=" + userId + " new flag=" + flag);
 

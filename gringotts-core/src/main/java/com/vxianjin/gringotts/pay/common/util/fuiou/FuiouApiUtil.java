@@ -78,6 +78,7 @@ public class FuiouApiUtil {
         // 成功则进行相关处理
         if ("0000".equals(response.getResponseCode())) {
             result.put("status", "0000");
+            result.put("agreeno", response.getProtocolNo());
             logger.info("response.getResult:{}",result);
         }
         return result;

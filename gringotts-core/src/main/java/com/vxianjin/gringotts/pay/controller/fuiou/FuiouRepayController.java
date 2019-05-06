@@ -6,7 +6,7 @@ import com.vxianjin.gringotts.pay.common.exception.BizException;
 import com.vxianjin.gringotts.pay.model.YeepayRepayReq;
 import com.vxianjin.gringotts.pay.model.YeepayRepaySmsReq;
 import com.vxianjin.gringotts.pay.model.YeepaySmsReSendResp;
-import com.vxianjin.gringotts.pay.service.YeepayRepayService;
+import com.vxianjin.gringotts.pay.service.FuiouRepayService;
 import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.web.controller.BaseController;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class FuiouRepayController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(FuiouRepayController.class);
 
     @Resource
-    private YeepayRepayService yeepayRepayService;
+    private FuiouRepayService fuiouRepayService;
 
     /**
      * 代扣回调（还款）
@@ -41,7 +41,7 @@ public class FuiouRepayController extends BaseController {
         logger.debug("YeepayRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(request.getParameter("response")) + "  userId:" + userId + "】");
         try {
             String req = request.getParameter("response");
-            return yeepayRepayService.payWithholdCallback(req).getCode();
+            return fuiouRepayService.payWithholdCallback(req).getCode();
         } catch (Exception e) {
             logger.error("YeepayRepayController.payWithholdCallback(代扣回调) has error,params : 【req:" + JSON.toJSONString(request.getParameter("response")) + "  userId:" + userId + "】 ,error: ", e);
             return "FAIL";
@@ -57,7 +57,7 @@ public class FuiouRepayController extends BaseController {
         logger.debug("YeepayRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
         try {
             String req = request.getParameter("response");
-            return yeepayRepayService.payRenewalWithholdCallback(req).getCode();
+            return fuiouRepayService.payRenewalWithholdCallback(req).getCode();
         } catch (Exception e) {
             logger.error("YeepayRepayController.payRenewalWithholdCallback(续期回调) has error ,params : 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】,error: ", e);
             return "FAIL";
@@ -73,7 +73,7 @@ public class FuiouRepayController extends BaseController {
     public ResponseContent repaymentWithholdRequest(YeepayRepayReq req) {
         logger.debug("YeepayRepayController.repaymentWithholdRequest params: 【req:" + JSON.toJSONString(req) + "】");
         try {
-            return yeepayRepayService.repaymentWithholdRequest(req);
+            return fuiouRepayService.repaymentWithholdRequest(req);
         } catch (BizException e) {
             logger.error("YeepayRepayController.payRenewalWithholdCallback(主动支付请求) has BizException,params: 【req:" + JSON.toJSONString(req) + "】" + " errorCode" + e.getErrorCode() + " errorMsg:" + e.getErrorMsg());
             return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
@@ -104,7 +104,7 @@ public class FuiouRepayController extends BaseController {
             return new ResponseContent("-101", "请输入交易密码");
         }
         try {
-            result = yeepayRepayService.repaymentWithholdConfirm(id, smsCode, requestNo, payPwd);
+            result = fuiouRepayService.repaymentWithholdConfirm(id, smsCode, requestNo, payPwd);
         } catch (BizException e) {
             logger.error("YeepayRepayController.repaymentWithholdConfirm(主动支付确认) has BizException, params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + " payPwd:" + payPwd + "】,errorCode:" + e.getErrorCode() + " eroroMsg:" + e.getErrorMsg());
             result = new ResponseContent(e.getErrorCode(), e.getErrorMsg());
@@ -122,7 +122,7 @@ public class FuiouRepayController extends BaseController {
     @RequestMapping(value = "repayWithholdSmscode")
     public YeepaySmsReSendResp repaymentWithholdResendSmscode(YeepayRepaySmsReq req) {
         logger.debug("YeepayRepayController.repaymentWithholdResendSmscode params: 【req:" + JSON.toJSONString(req) + "】");
-        return yeepayRepayService.repaymentWithholdResendSmscode(req);
+        return fuiouRepayService.repaymentWithholdResendSmscode(req);
     }
 
 
@@ -144,7 +144,7 @@ public class FuiouRepayController extends BaseController {
             return new ResponseContent("-101", "请输入交易密码");
         }
         try {
-            return yeepayRepayService.repaymentWithhold(id, payPwd);
+            return fuiouRepayService.repaymentWithhold(id, payPwd);
         } catch (BizException e) {
             logger.error("YeepayRepayController.repaymentWithhold has BizException ,params: 【borrowId：" + id + " payPwd：" + payPwd + "】,errorCode:" + e.getErrorCode() + " errorMsg:" + e.getErrorMsg());
             return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
@@ -168,7 +168,7 @@ public class FuiouRepayController extends BaseController {
             return new ResponseContent("-101", "请输入交易密码");
         }
         try {
-            return yeepayRepayService.renewalWithhold(id, payPwd, money, bankId, sgd);
+            return fuiouRepayService.renewalWithhold(id, payPwd, money, bankId, sgd);
         } catch (BizException e) {
             logger.error("YeepayRepayController.renewalWithhold(续期代扣) has BizException, params：【id:" + id + " payPwd：" + payPwd + " money:" + money + " bankId:" + bankId + " sgd:" + sgd + "】,errorCode:" + e.getErrorCode() + " errorMsg:" + e.getErrorMsg());
             return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
@@ -190,7 +190,7 @@ public class FuiouRepayController extends BaseController {
             return new ResponseContent("-101", "请求参数非法");
         }
         try {
-            return yeepayRepayService.autoWithhold(id);
+            return fuiouRepayService.autoWithhold(id);
         } catch (BizException e) {
             logger.error("YeepayRepayController.autoWithhold(定时代扣) has BizException, params:【id:" + id + "】,errorCode:" + e.getErrorCode() + " errorMsg:" + e.getErrorMsg());
             return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
@@ -207,7 +207,7 @@ public class FuiouRepayController extends BaseController {
     @RequestMapping(value = "query-withhold")
     public ResponseContent queryWithhold(Integer id, String orderNo) {
         logger.debug("YeepayRepayController.queryWithhold params: 【id:" + id + " orderNo:" + orderNo + "】");
-        return yeepayRepayService.queryWithhold(id, orderNo);
+        return fuiouRepayService.queryWithhold(id, orderNo);
     }
 
     /**
@@ -217,7 +217,7 @@ public class FuiouRepayController extends BaseController {
     @RequestMapping(value = "query-renewalWithhold")
     public ResponseContent queryRenewalWithhold(Integer id, String orderNo) {
         logger.debug("YeepayRepayController.queryRenewalWithhold params:【id:" + id + " orderNo:" + orderNo + "】");
-        return yeepayRepayService.queryRenewalWithhold(id, orderNo);
+        return fuiouRepayService.queryRenewalWithhold(id, orderNo);
     }
 
     /**
@@ -233,7 +233,7 @@ public class FuiouRepayController extends BaseController {
             return new ResponseContent("-101", "代付失败,请求参数不符合要求");
         }
         try {
-            return yeepayRepayService.collectionWithhold(userId, repaymentId, money, withholdId, sign);
+            return fuiouRepayService.collectionWithhold(userId, repaymentId, money, withholdId, sign);
         } catch (Exception e) {
             logger.error("YeepayRepayController.collectionWithhold params:【userId:" + userId + " repaymentId:" + repaymentId + " money:" + money + " withholdId:" + withholdId + " sign:" + sign + "】,error:", e);
             return new ResponseContent("-101", "系统异常，请稍后重试");

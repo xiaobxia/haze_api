@@ -89,11 +89,14 @@ public class FuiouCardServiceImpl implements FuiouCardService {
                 outOrdersService.updateByOrderNo(newOutOrder);
 
                 Map<String, String> infoMap = new HashMap<>();
+                if (result.getData().get("agreeno") != null)
+                    infoMap.put("agreeno", result.getData().get("agreeno").toString());
                 infoMap.put("user_id", bindCardConfirmReq.getUserId());
                 infoMap.put("card_no", bindCardConfirmReq.getCardNo());
                 infoMap.put("phone", bindCardConfirmReq.getPhone());
                 infoMap.put("real_name", bindCardConfirmReq.getUserName());
                 infoMap.put("request_no", bindCardConfirmReq.getRequestNo());
+
                 if (resultMap.get("bankcode") != null) {
                     //bankId.trim()
                     infoMap.put("bank_id", QbmBankEnums.getEnumFromValue(resultMap.get("bankcode").toString()).getCode());

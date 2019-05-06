@@ -550,7 +550,6 @@ public class FuiouBindCardController extends BaseController {
     /**
      * 绑卡确认
      */
-    @SuppressWarnings("unchecked")
     @PostMapping(value = "credit-card/userBankConfirm")
     public void userBankConfirm(HttpServletRequest request, HttpServletResponse response) {
         ResultModel<User> userInfoCheckResult = new ResultModel(false,
@@ -612,9 +611,6 @@ public class FuiouBindCardController extends BaseController {
             bindCardConfirmReq.setPhone(phone);
             bindCardConfirmReq.setCardNo(cardNo);
             bindCardConfirmReq.setUserName(user.getRealname());
-
-            //String merchantNo = FuiouConstants.API_MCHNT_CD;
-            //String requestUrl = FuiouConstants.NEW_PROTOCOL_BINDMSG_URL;
 
             //【3】用户绑卡
             ResultModel<String> result = fuiouCardService.userBankConfirm(bindCardConfirmReq);
@@ -689,7 +685,7 @@ public class FuiouBindCardController extends BaseController {
 
     private void getBindCardConfirmDataMap(YPBindCardConfirmReq bindCardConfirmReq) {
         //商户编号
-        String merchantNo = PayConstants.MERCHANT_NO;
+        String merchantNo = FuiouConstants.API_MCHNT_CD;
         String requestNo = bindCardConfirmReq.getRequestNo();
         String smsCode = bindCardConfirmReq.getSmsCode();
         Map<String, String> dataMap = new HashMap<>();
@@ -699,182 +695,4 @@ public class FuiouBindCardController extends BaseController {
         bindCardConfirmReq.setDataMap(dataMap);
     }
 
-    /**
-     * 获取绑卡短信验证码
-     */
-    @RequestMapping(value = "credit-card/userBankSmsCode")
-    public void userBankSmsCode(HttpServletRequest request, HttpServletResponse response) {
-        //用户手机号
-        String telephone = request.getParameter("mobilePhone");
-        Map<String, Object> retMap = new HashMap<>();
-        String code = ResponseStatus.FAILD.getName();
-        String msg = "绑定失败";
-        User logUser = null;
-        try {
-            logUser = this.loginFrontUserByDeiceId(request);
-
-            if (null == logUser) {
-                code = ResponseStatus.LOGIN.getName();
-                msg = ResponseStatus.LOGIN.getValue();
-                return;
-            }
-
-            logger.info("YeepayBindCardController userBankSmsCode userId=" + logUser.getId()
-                        + " user is not null");
-
-            User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
-            if (null == user) {
-                code = ResponseStatus.LOGIN.getName();
-                msg = ResponseStatus.LOGIN.getValue();
-                return;
-            }
-            logger.info("YeepayBindCardController userBankSmsCode userId=" + logUser.getId()
-                        + " user is not null userPhone=" + user.getUserPhone());
-//            Integer checkResult = borrowOrderService.checkBorrow(Integer.parseInt(logUser.getId()));
-            /* if (1 == checkResult) {
-                code = ResponseStatus.FAILD.getName();
-                msg = "您有借款申请正在审核或未还款完成，暂不能修改银行卡。";
-                return;
-            }*/
-//            logger.info("YeepayBindCardController userBankSmsCode userId=" + logUser.getId()
-//                        + " checkResult=" + checkResult);
-            if ((StringUtils.isBlank(user.getRealname()))
-                || (!"1".equals(user.getRealnameStatus()))) {
-                code = ResponseStatus.FAILD.getName();
-                msg = "请填写个人信息";
-                return;
-            }
-            logger.info(
-                "YeepayBindCardController userBankSmsCode userId=" + logUser.getId() + " 个人信息验证通过");
-
-            Map<String, String> pams = this.getParameters(request);
-            //绑卡请求编号
-            String requestNo = pams.get("request_no") == null ? "" : pams.get("request_no");
-            logger.info("YeepayBindCardController userBankSmsCode userId=" + logUser.getId()
-                        + " requestNo:" + requestNo);
-
-            if (StringUtils.isBlank(requestNo)) {
-                code = ResponseStatus.FAILD.getName();
-                msg = "请求参数异常，请确认后重试";
-                return;
-            }
-
-            //短信冷却剩余时间（单位：s）
-            Long remainTime = checkForFront(YEEPAY_SMS_CODE, requestNo + telephone, 60);
-            if (remainTime > 0) {
-                code = ResponseStatus.FREQUENT.getName();
-                retMap.put("time", remainTime);
-                return;
-            }
-            logger.info("YeepayBindCardController userBankSmsCode userId=" + logUser.getId()
-                        + " remainTime success " + remainTime);
-
-            Map<String, String> paramMap = new HashMap<>();
-            //绑卡请求编号
-            paramMap.put("requestNo", requestNo.trim());
-            //用户id
-            paramMap.put("userId", logUser.getId());
-            //发送银行卡绑定验证码
-            Map<String, Object> resultMap = fuiouService.getBindCardSmsCode(paramMap);
-            logger.info("YeepayBindCardController userBankSmsCode userId=" + logUser.getId()
-                        + " resultMap=" + JSON.toJSONString(resultMap));
-            if ("0000".equals(String.valueOf(resultMap.get("code")))) {
-                code = ResponseStatus.SUCCESS.getName();
-                msg = ResponseStatus.SUCCESS.getValue();
-                //短信冷却时间
-                retMap.put("time", 60);
-                retMap.put("requestNo", requestNo);
-                //存入redis里，避免发送过于频繁
-                checkForFront(YEEPAY_SMS_CODE, requestNo + telephone, 60);
-            } else {
-                code = ResponseStatus.FAILD.getName();
-                msg = resultMap.get("msg") + "";
-            }
-
-        } catch (Exception e) {
-            logger.error("YeepayBindCardController userBankSmsCode userId="
-                         + (null != logUser ? logUser.getId() : "") + " error",
-                e);
-        } finally {
-            retMap.put("code", code);
-            retMap.put("message", msg);
-            logger.info("YeepayBindCardController userBankSmsCode userId="
-                        + (null != logUser ? logUser.getId() : "") + " message=" + msg);
-            JSONUtil.toObjectJson(response, JSONUtil.beanToJson(retMap));
-        }
-    }
-
-    /**
-     * 无短验的绑卡请求（针对老用户）
-     */
-    @RequestMapping(value = "credit-card/userUnSendBindBankRequest")
-    public void userUnSendBindBankRequest(HttpServletResponse response, Integer isBand,
-                                          Integer userId, Integer status, Integer page,
-                                          Integer pageSize) {
-        logger.info("userUnSendBindBankRequest start");
-
-        ResponseContent result = new ResponseContent("400", "绑定失败");
-
-        HashMap<String, Object> param = new HashMap<>();
-        param.put("isBand", isBand);
-        param.put("status", status);
-        param.put("userId", userId);
-        param.put("page", page);
-        param.put("pageSize", pageSize);
-
-        List<UserCardInfo> list = null;
-
-        Map<String, String> paramMap;
-        //生成绑卡请求号（唯一，且整个绑卡过程中保持不变）
-        String requestNo;
-        User user;
-        UserCardInfo newCardInfo;
-        int count = 0;
-        try {
-            list = userBankService.findUserBankListByIsBand(param);
-            logger.info(
-                "userUnSendBindBankRequest listSize=" + (list != null ? list.size() : "null"));
-            if (list != null && list.size() > 0) {
-                for (UserCardInfo cardInfo : list) {
-                    requestNo = GenerateNo.nextOrdId();
-                    user = userService.searchByUserid(cardInfo.getUserId());
-
-                    paramMap = new HashMap<>();
-                    paramMap.put("requestNo", requestNo);
-                    paramMap.put("userId", user.getId());
-                    paramMap.put("cardNo", cardInfo.getCard_no());
-                    paramMap.put("idCardNo", user.getIdNumber());
-                    paramMap.put("realName", cardInfo.getOpenName());
-                    paramMap.put("phone", cardInfo.getPhone());
-
-                    //发送银行卡绑定请求
-                    Map<String, Object> resultMap = fuiouService
-                        .getUnSendBindCardRequest(paramMap);
-
-                    logger.info("YeepayBindCardController userUnSendBindBankRequest userId="
-                                + user.getId() + " resultMap=" + JSON.toJSONString(resultMap));
-                    if ("0000".equals(String.valueOf(resultMap.get("code")))) {
-                        count++;
-                        newCardInfo = new UserCardInfo();
-                        newCardInfo.setUserId(Integer.parseInt(user.getId()));
-                        newCardInfo.setIsBand(1);
-                        newCardInfo.setStatus(1);
-                        userBankService.updateUserBankCard(newCardInfo);
-                        result = new ResponseContent("0", "自动绑卡成功userId=" + user.getId());
-                    } else {
-                        logger.info("YeepayBindCardController 自动绑卡失败userId=" + user.getId()
-                                    + " msg=" + resultMap.get("msg").toString());
-                        result = new ResponseContent("400", resultMap.get("msg").toString());
-                    }
-
-                }
-            }
-
-        } catch (Exception e) {
-            logger.error("userUnSendBindBankRequest error:{}",e);
-        }
-        logger.info("YeepayBindCardController listSize=" + (list != null ? list.size() : "null"));
-        logger.info("YeepayBindCardController count=" + count);
-        JSONUtil.toObjectJson(response, JSON.toJSONString(result));
-    }
 }

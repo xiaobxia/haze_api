@@ -2,7 +2,7 @@ package com.vxianjin.gringotts.pay.controller.fuiou;
 
 import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.pay.common.exception.BizException;
-import com.vxianjin.gringotts.pay.service.YeepayWithdrawService;
+import com.vxianjin.gringotts.pay.service.FuiouWithdrawService;
 import com.vxianjin.gringotts.web.controller.BaseController;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class FuiouWithdrawController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(FuiouWithdrawController.class);
 
     @Resource
-    private YeepayWithdrawService yeepayWithdrawService;
+    private FuiouWithdrawService fuiouWithdrawService;
 
     /**
      * 用户提现（代付）回调接口
@@ -41,7 +41,7 @@ public class FuiouWithdrawController extends BaseController {
         if (StringUtils.isBlank(reqString)) {
             return "数据解析失败";
         }
-        return yeepayWithdrawService.payWithdrawCallback(reqString);
+        return fuiouWithdrawService.payWithdrawCallback(reqString);
     }
 
 
@@ -55,7 +55,7 @@ public class FuiouWithdrawController extends BaseController {
         if (StringUtils.isBlank(reqString)) {
             return "数据解析失败";
         }
-        return yeepayWithdrawService.payWithdrawCallbackForOnline(reqString);
+        return fuiouWithdrawService.payWithdrawCallbackForOnline(reqString);
     }
 
 
@@ -76,7 +76,7 @@ public class FuiouWithdrawController extends BaseController {
             return new ResponseContent("-101", "代付失败,请求参数不符合要求");
         }
         try {
-            return yeepayWithdrawService.payWithdraw(userId, borrowId, uuid, sign);
+            return fuiouWithdrawService.payWithdraw(userId, borrowId, uuid, sign);
         } catch (BizException e) {
             return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
         }

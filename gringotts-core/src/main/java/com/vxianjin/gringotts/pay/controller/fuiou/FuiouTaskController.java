@@ -2,7 +2,7 @@ package com.vxianjin.gringotts.pay.controller.fuiou;
 
 import com.alibaba.fastjson.JSON;
 import com.vxianjin.gringotts.pay.common.constants.PayConstants;
-import com.vxianjin.gringotts.pay.component.YeepayService;
+import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.model.ResultModel;
 import com.vxianjin.gringotts.pay.model.YPRepayRecordReq;
 import com.vxianjin.gringotts.pay.model.YPRepayResultModel;
@@ -38,7 +38,7 @@ public class FuiouTaskController {
 
 
     @Resource
-    private YeepayService yeepayService;
+    private FuiouService fuiouService;
 
     @Resource
     private UserQuotaSynTask userQuotaSynTask;
@@ -61,7 +61,7 @@ public class FuiouTaskController {
         YPRepayRecordReq repayRecordReq = new YPRepayRecordReq();
         repayRecordReq.setMerchantNo(PayConstants.MERCHANT_NO);
         repayRecordReq.setRequestNo(orderNo);
-        ResultModel<YPRepayResultModel> resultModel =  yeepayService.getYBRepayResult(repayRecordReq,userId);
+        ResultModel<YPRepayResultModel> resultModel =  fuiouService.getYBRepayResult(repayRecordReq,userId);
         logger.info(MessageFormat.format("用户支付状态,主动查询,查询结果: {0}", JSON.toJSONString(resultModel)));
         return resultModel;
     }
