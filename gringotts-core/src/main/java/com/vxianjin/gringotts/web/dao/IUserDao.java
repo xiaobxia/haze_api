@@ -1,6 +1,7 @@
 package com.vxianjin.gringotts.web.dao;
 
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.risk.RiskRecord;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
 
 import java.math.BigDecimal;
@@ -151,4 +152,6 @@ public interface IUserDao {
      * @return result
      */
     StrongRiskResult getStrongRiskResultByUserId(String userId);
+
+    void saveRiskRecord(RiskRecord riskRecord);
 }

@@ -152,6 +152,15 @@ public class MoneyLimitService implements IMoneyLimitService {
         try {
             HttpResponse response = client.execute(post);
             String responseStr = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            JSONObject jsonObject = JSONObject.parseObject(requestStr);
+            RiskRecord riskRecord = new RiskRecord();
+            riskRecord.setRequestId(jsonObject.getString("request_id"));
+            riskRecord.setUserId( Integer.parseInt(userId));
+            riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
+            riskRecord.setReturnInfo(jsonObject.getString("return_info"));
+            riskRecord.setScore(jsonObject.getInteger("score"));
+            riskRecord.setCreateTime(new Date());
+            userDao.saveRiskRecord(riskRecord);
             //System.out.println(responseStr);
         } catch(IOException e){
             e.printStackTrace();
@@ -159,6 +168,20 @@ public class MoneyLimitService implements IMoneyLimitService {
         logger.info(" MoneyLimitService dealEd end");
     }
 
+    @Override
+    public void testRiskRecord(){
+        String userId="1";
+        String responseStr="{\"return_code\":0,\"return_info\": 'success',\"request_id\": '20181218191308-e6566a56-02b5-11e9-80e2-00163e06bcb2', \"score\":541}";
+        JSONObject jsonObject = JSONObject.parseObject(responseStr);
+        RiskRecord riskRecord = new RiskRecord();
+        riskRecord.setRequestId(jsonObject.getString("request_id"));
+        riskRecord.setUserId( Integer.parseInt(userId));
+        riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
+        riskRecord.setReturnInfo(jsonObject.getString("return_info"));
+        riskRecord.setScore(jsonObject.getInteger("score"));
+        riskRecord.setCreateTime(new Date());
+        userDao.saveRiskRecord(riskRecord);
+    }
     private void updateBorrowMoney(RiskCreditUser riskCreditUser2) {
         try {
             RiskCreditUser tmp = new RiskCreditUser();
@@ -179,7 +202,6 @@ public class MoneyLimitService implements IMoneyLimitService {
             logger.error("updateBorrowMoney error riskCreditUser2=" + riskCreditUser2.toString(), e);
         }
     }
-
 
 }
 

@@ -855,4 +855,24 @@
 		select user_id userId,strong_result result,amount amount,consumer_no consumerNo,risk_status_type riskStatusType,type type,order_no orderNo
 		 from  user_strong_risk_result where user_id =#{userId} order by create_time desc limit 1
 	</select>
+	<insert id="saveRiskRecord">
+		insert into risk_record
+		(
+		id,
+		user_id,
+		request_id,
+		return_code,
+		return_info,
+		score,
+		create_time
+		)VALUES (
+		#{id},
+		#{userId},
+		#{requestId},
+		#{returnCode},
+		#{returnInfo},
+		#{score},
+		#{createTime}
+		)
+	</insert>
 </mapper>

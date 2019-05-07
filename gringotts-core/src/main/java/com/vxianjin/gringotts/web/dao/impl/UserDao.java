@@ -2,6 +2,7 @@ package com.vxianjin.gringotts.web.dao.impl;
 
 import com.vxianjin.gringotts.web.dao.IUserDao;
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.risk.RiskRecord;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
 import org.springframework.stereotype.Repository;
 
@@ -123,6 +124,11 @@ public class UserDao extends BaseDao implements IUserDao {
     @Override
     public HashMap<String, Object> selectPushId(HashMap<String, Object> map) {
         return this.getSqlSessionTemplate().selectOne("selectPushIdByInviteUserid", map);
+    }
+
+    @Override
+    public void saveRiskRecord(RiskRecord riskRecord) {
+        this.getSqlSessionTemplate().insert("saveRiskRecord",riskRecord);
     }
 
     @Override
