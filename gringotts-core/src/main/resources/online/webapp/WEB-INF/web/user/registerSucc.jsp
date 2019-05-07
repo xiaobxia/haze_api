@@ -66,13 +66,13 @@
             var browers = brower_info();
             // 安卓用户微信打开提示到浏览器下载
             if (browers.is_android()) {
-                location="https://fir.im/8t6k";
+                location="https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
 
             } else if (browers.is_iPhone()) {
-                location="https://fir.im/6gr1";
+                location="https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
 
             } else {
-                location="https://fir.im/8t6k";
+                location="https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
             }
         }
     </script>
@@ -156,7 +156,7 @@
             </div>
             <h3>简单的借款流程</h3>
             <img src="${basePath }/images/c_01.png" alt="">
-            <h3>小鱼儿优势</h3>
+            <h3>多米优优势</h3>
             <p>1、无需抵押，无需担保，纯信用线上借贷。</p>
             <p>2、五分钟资料填写，最快三分钟到账。</p>
             <p>3、银行级数据保护，为您保驾护航。</p>

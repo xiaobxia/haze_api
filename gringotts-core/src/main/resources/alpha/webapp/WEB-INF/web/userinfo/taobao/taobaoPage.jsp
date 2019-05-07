@@ -135,7 +135,7 @@
                       <div class="icon-box"><img src="${basePath }/images/ic_taobao_conduct.png" alt=""></div>
                       <h5>淘宝授信中……</h5>
                       <div class="warm-tips">
-                          <p>温馨小提示：<br/>感谢您对小鱼儿的信任，授信操作可能需要一些时间，请您耐心等候……<br/>等候期间您可以先进行下一步认证!</p>
+                          <p>温馨小提示：<br/>感谢您对多米优的信任，授信操作可能需要一些时间，请您耐心等候……<br/>等候期间您可以先进行下一步认证!</p>
                       </div>
                   </div>
               </c:if>

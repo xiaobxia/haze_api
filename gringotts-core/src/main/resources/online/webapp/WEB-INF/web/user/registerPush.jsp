@@ -10,7 +10,7 @@
 <head>
     <c:set var="basePath" value="<%=basePath%>"></c:set>
     <c:set var="path" value="<%=path%>"></c:set>
-    <title>注册-小鱼儿</title>
+    <title>注册-多米优</title>
     <meta http-equiv="Expires" content="-1">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Cache-Control" content="no-cache">
@@ -61,7 +61,7 @@
                 <input type="hidden" placeholder="来源" data-role="none" name="user_from"  id="user_from" value="${user_from}">
                 <input type="hidden" placeholder="pushId" data-role="none" name="pushId"  id="pushId" value="${pushId}">
                 <a rel="external" href="#" onclick="nextStep();"  class="com-btn">立即注册 极速借款</a>
-                <p>注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do" >《小鱼儿注册协议》</a></p>
+                <p>注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do" >《多米优注册协议》</a></p>
             </div>
             <!-- <a onclick="downxjxApp();" class="download-app"><u>已有帐号 去下载APP</u></a> -->
             <div class="more-info1">
@@ -71,7 +71,7 @@
                 <!-- 2016-12-22添加 -->
                 <h3>简单的借款流程</h3>
                 <img src="${basePath}/images/c_01.png" alt="">
-                <h3>小鱼儿优势</h3>
+                <h3>多米优优势</h3>
                 <p>1、无需抵押，无需担保，纯信用线上借贷。</p>
                 <p>2、五分钟资料填写，最快三分钟到账。</p>
                 <p>3、银行级数据保护，为您保驾护航。</p>

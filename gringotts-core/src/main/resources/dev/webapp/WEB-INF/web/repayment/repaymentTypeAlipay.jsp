@@ -188,7 +188,7 @@
 
 <div data-role="page">
     <section class="g-repayment">
-        <h5 style="display: none;">更多优惠活动、还款方式请关注“小鱼儿”微信公众号</h5>
+        <h5 style="display: none;">更多优惠活动、还款方式请关注“多米优”微信公众号</h5>
         <ul>
             <!--<li>
                 <a class="f-cb nav" href="javascript:;">

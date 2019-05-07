@@ -1,10 +1,8 @@
 package com.vxianjin.gringotts.web.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.sun.deploy.net.HttpUtils;
 import com.vxianjin.gringotts.risk.dao.IRiskCreditUserDao;
 import com.vxianjin.gringotts.risk.pojo.RiskCreditUser;
 import com.vxianjin.gringotts.risk.utils.ConstantRisk;
@@ -14,7 +12,6 @@ import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.util.security.RsaUtil;
 import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
-import com.vxianjin.gringotts.web.dao.IUserClientInfoDao;
 import com.vxianjin.gringotts.web.dao.IUserContactsDao;
 import com.vxianjin.gringotts.web.dao.IUserDao;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
@@ -152,16 +149,30 @@ public class MoneyLimitService implements IMoneyLimitService {
         try {
             HttpResponse response = client.execute(post);
             String responseStr = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-            JSONObject jsonObject = JSONObject.parseObject(requestStr);
-            RiskRecord riskRecord = new RiskRecord();
-            riskRecord.setRequestId(jsonObject.getString("request_id"));
-            riskRecord.setUserId( Integer.parseInt(userId));
-            riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
-            riskRecord.setReturnInfo(jsonObject.getString("return_info"));
-            riskRecord.setScore(jsonObject.getInteger("score"));
-            riskRecord.setCreateTime(new Date());
-            userDao.saveRiskRecord(riskRecord);
-            //System.out.println(responseStr);
+
+            if (responseStr != null) {
+                JSONObject jsonObject = JSONObject.parseObject(responseStr);
+                RiskRecord riskRecord = new RiskRecord();
+                riskRecord.setRequestId(jsonObject.getString("request_id"));
+                riskRecord.setUserId(Integer.parseInt(userId));
+                riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
+                riskRecord.setReturnInfo(jsonObject.getString("return_info"));
+                riskRecord.setScore(jsonObject.getInteger("score"));
+                riskRecord.setCreateTime(new Date());
+                userDao.saveRiskRecord(riskRecord);
+
+
+                StrongRiskResult riskResult = new StrongRiskResult();
+                riskResult.setUserId(userId);
+                riskResult.setAmount("1000");
+                riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
+                riskResult.setResult(jsonObject.getInteger("score") > 560 ? "10" : "30");
+                riskResult.setRiskStatusType("px");
+                riskResult.setType("0");
+                riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
+                userDao.insertUserStrongRiskResult(riskResult);
+
+            }
         } catch(IOException e){
             e.printStackTrace();
         }
@@ -182,6 +193,7 @@ public class MoneyLimitService implements IMoneyLimitService {
         riskRecord.setCreateTime(new Date());
         userDao.saveRiskRecord(riskRecord);
     }
+
     private void updateBorrowMoney(RiskCreditUser riskCreditUser2) {
         try {
             RiskCreditUser tmp = new RiskCreditUser();

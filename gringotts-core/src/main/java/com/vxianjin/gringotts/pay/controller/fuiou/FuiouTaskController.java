@@ -25,7 +25,7 @@ import java.text.MessageFormat;
  */
 @Controller
 @ResponseBody
-@RequestMapping(value = "/gringotts/task/")
+@RequestMapping(value = "/fuiou/gringotts/task/")
 public class FuiouTaskController {
 
     private final static Logger logger = LoggerFactory.getLogger(FuiouTaskController.class);

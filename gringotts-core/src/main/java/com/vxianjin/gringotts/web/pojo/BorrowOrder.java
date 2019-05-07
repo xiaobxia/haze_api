@@ -194,7 +194,7 @@ public class BorrowOrder implements Serializable {
 //	public static final String PAY_RETURN_FAIL ="504";
 
     static {
-        orderTypes.put(1, "小鱼儿");
+        orderTypes.put(1, "多米优");
         orderTypes.put(0, "其它平台");
 
         loanMethed.put(0, "天");

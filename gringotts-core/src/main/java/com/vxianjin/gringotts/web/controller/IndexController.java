@@ -532,7 +532,7 @@ public class IndexController extends BaseController {
             //代收通道费
             amountDaysListMap.put("collectionChannel", IndexUtil.getCollectionChannel(index));
 
-            //小鱼儿 可能会用到
+            //多米优 可能会用到
             //			amountDaysListMap.put("creditVet", IndexUtil.getAmounts(index));//金额列表
             //			amountDaysListMap.put("accountManage", IndexUtil.getAccountManageDays(index));//金额列表
             //			amountDaysListMap.put("accrual", IndexUtil.getAccrualDays(index));//利息

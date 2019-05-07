@@ -12,7 +12,7 @@
     <c:set var="staticBasePath" value="<%=staticBasePath%>"></c:set>
     <c:set var="basePath" value="<%=basePath%>"></c:set>
     <c:set var="path" value="<%=path%>"></c:set>
-    <title>注册-小鱼儿</title>
+    <title>注册-多米优</title>
     <meta http-equiv="Expires" content="-1">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Cache-Control" content="no-cache">
@@ -150,10 +150,10 @@
                     <input type="hidden" placeholder="来源" data-role="none" name="user_from" id="user_from" value="${user_from}">
                     <input type="hidden" data-role="none" name="token" id="token" value="${token}">
                     <p id="voice-code" class="none_code">获取不到验证码？</p>
-                    <p style="display:none;" >注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《小鱼儿注册协议》</a>
+                    <p style="display:none;" >注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《多米优注册协议》</a>
                         <a rel="external" href="${path}/agreement/creditExtension.do?appName=${appKey}" class="ui-link">《信用授权协议》</a></p>
                     <a rel="external" id="registerClick" onclick="nextStep()" href="javascript:;" class="com-btn ui-link">注册即可领取</a>
-                    <p class="beizhu">*注：注册下载小鱼儿app后即可申请领取</p>
+                    <p class="beizhu">*注：注册下载多米优app后即可申请领取</p>
                     <!-- <ul class="odds">
                         <li><img src="${basePath}/images/pic_01.png" alt=""></li>
                         <li><img src="${basePath}/images/pic_02.png" alt=""></li>
@@ -172,7 +172,7 @@
             <!-- <div class="more-info1" style="display:none;" >
                 <h3>简单的借款流程</h3>
                 <img src="${basePath}/images/c_01.png" alt="">
-                <h3>小鱼儿优势</h3>
+                <h3>多米优优势</h3>
                 <p>1、无需抵押，无需担保，纯信用线上借贷。</p>
                 <p>2、五分钟资料填写，最快三分钟到账。</p>
                 <p>3、银行级数据保护，为您保驾护航。</p>
@@ -222,7 +222,7 @@
     var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
     document.write(unescape("%3Cspan id='cnzz_stat_icon_1271438488'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s13.cnzz.com/z_stat.php%3Fid%3D1271438488' type='text/javascript'%3E%3C/script%3E"));
 </script>-->
-<!--小鱼儿新域名对应cnzz-->
+<!--多米优新域名对应cnzz-->
 <script type="text/javascript">
     var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
     document.write(unescape("%3Cspan id='cnzz_stat_icon_1271438590'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1271438590' type='text/javascript'%3E%3C/script%3E"));

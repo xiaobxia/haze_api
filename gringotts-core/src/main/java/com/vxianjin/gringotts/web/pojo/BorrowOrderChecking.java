@@ -63,9 +63,9 @@ public class BorrowOrderChecking implements Serializable {
     }
 
     static {
-        capitalTypeMap.put(ASSEST_LQ, "小鱼儿");
-        capitalTypeMap.put(ASSEST_KD, "小鱼儿");
-        capitalTypeMap.put(ASSEST_WZD, "小鱼儿");
+        capitalTypeMap.put(ASSEST_LQ, "多米优");
+        capitalTypeMap.put(ASSEST_KD, "多米优");
+        capitalTypeMap.put(ASSEST_WZD, "多米优");
     }
 
     private Integer id;

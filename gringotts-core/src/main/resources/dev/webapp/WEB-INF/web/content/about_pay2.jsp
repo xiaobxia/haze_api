@@ -101,9 +101,9 @@
         <div class="pannel">
             <img class="method-bg" src="${basePath}/images/content/repay2/method1-bg.png" alt="">
             <ul>
-                <li>关注小鱼儿官方微信公众号即可在线还款</li>
+                <li>关注多米优官方微信公众号即可在线还款</li>
                 <li><img style="margin: 0.2rem auto;width: 4rem;" src="${basePath}/images/content/repay2/wx-pay-1.png" alt=""></li>
-                <li style="font-weight: bold;color: #E8403E;">*注：请认准官方唯一微信公众号“小鱼儿”</li>
+                <li style="font-weight: bold;color: #E8403E;">*注：请认准官方唯一微信公众号“多米优”</li>
             </ul>
         </div>
         <div class="pannel">

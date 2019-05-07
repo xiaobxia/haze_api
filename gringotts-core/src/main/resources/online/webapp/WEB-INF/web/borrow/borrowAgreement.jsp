@@ -11,7 +11,7 @@ String basePath = path + "/common/web";
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>小鱼儿用户借款协议</title>
+<title>多米优用户借款协议</title>
 <meta http-equiv="Expires" content="-1">               
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Cache-Control" content="no-cache"> 
@@ -31,7 +31,7 @@ String basePath = path + "/common/web";
     <div class="ui-page ui-page-theme-a ui-page-active" data-role="page"  style="background:#fff;">
         <div class="header">
             <a class="back_arr" href="javascript:void(0);"></a>
-            <h1>小鱼儿用户借款协议</h1>
+            <h1>多米优用户借款协议</h1>
         </div>
         <!-- main start -->
         <div class="wrapper">
@@ -45,8 +45,8 @@ String basePath = path + "/common/web";
             <br>
             <p>鉴于：</p>
             <div class="jy-txt">
-              <p>甲方为具备完全民事行为能力的中华人民共和国大陆地区居民，系“小鱼儿”注册用户，具有一定资金需求。</p>
-              <p>乙方系互联网金融信息服务平台“小鱼儿”运营方,能够通过其平台为甲方借款事项提供信息中介服务。</p>
+              <p>甲方为具备完全民事行为能力的中华人民共和国大陆地区居民，系“多米优”注册用户，具有一定资金需求。</p>
+              <p>乙方系互联网金融信息服务平台“多米优”运营方,能够通过其平台为甲方借款事项提供信息中介服务。</p>
               <p>甲方在申请使用本服务前应充分阅读、理解本协议的全部内容。甲方在本平台上的账户和密码是识别甲方身份及指令的唯一标志，所有使用甲方的账户和密码的操作即为甲方本人的操作行为，任何使用甲方的账户和密码在乙方平台上作出的指示均是不可撤销的，本平台对依照该指示进行的操作行为及其结果不承担任何责任。</p>
             </div>
             <h4>第一条：借款信息</h4>

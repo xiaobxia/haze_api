@@ -11,7 +11,7 @@ String basePath = path + "/common/web";
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>小鱼儿用户借款协议</title>
+<title>多米优用户借款协议</title>
 <meta http-equiv="Expires" content="-1">               
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Cache-Control" content="no-cache"> 
@@ -34,7 +34,7 @@ String basePath = path + "/common/web";
     <div class="agreement">
       <h2>用户注册协议</h2>
       <div class="jy-txt">
-        <p>鸾鸟网络科技（上海）有限公司在此郑重提示您，本文系您与“小鱼儿”（以下简称平台）之间的法律协议，请您认真阅读并理解本协议。您通过平台点击确认本协议的，即表示您同意遵循本协议的所有约定，本协议在您和平台之间具有法律约束力。如发生法律纠纷，您不得以未仔细阅读或理解本协议为由进行抗辩。</p>
+        <p>鸾鸟网络科技（上海）有限公司在此郑重提示您，本文系您与“多米优”（以下简称平台）之间的法律协议，请您认真阅读并理解本协议。您通过平台点击确认本协议的，即表示您同意遵循本协议的所有约定，本协议在您和平台之间具有法律约束力。如发生法律纠纷，您不得以未仔细阅读或理解本协议为由进行抗辩。</p>
       </div>
       <br>
       <%--<input type="button">--%>
