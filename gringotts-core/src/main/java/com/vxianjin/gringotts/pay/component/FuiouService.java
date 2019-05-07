@@ -45,7 +45,7 @@ public interface FuiouService {
      * @param paramMap map
      * @return map
      */
-    Map<String, Object> getWithdrawRequest(Map<String, String> paramMap);
+    Map<String, Object> getWithdrawRequest(Map<String, String> paramMap) throws Exception;
 
 
     /**

@@ -120,7 +120,7 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         NeedPayInfo needPayInfo = withdrawService.getNeedPayInfo(userId, borrowId);
 
         //请求代付参数
-        Map<String, String> paramMap = prepareParamsToYeepay(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
+        Map<String, String> paramMap = prepareParamsToFuiou(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
         Map<String, Object> resultMap = null;
         try {
             //发送提现请求
@@ -209,14 +209,14 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         }
     }
 
-    private Map<String, String> prepareParamsToYeepay(User user, BorrowOrder order, UserCardInfo info) {
+    private Map<String, String> prepareParamsToFuiou(User user, BorrowOrder order, UserCardInfo info) {
         Map<String, String> paramMap = new HashMap<>();
         //用户id
         paramMap.put("userId", user.getId());
         //借款订单编号
         paramMap.put("orderId", order.getSerialNo());
         //实际放款金额
-        paramMap.put("amount", new DecimalFormat("######0.00").format(order.getIntoMoney() / 100.00));
+        paramMap.put("amount", ""+order.getIntoMoney());
         //银行卡号
         paramMap.put("cardNo", order.getCardNo());
         //银行卡开户人姓名

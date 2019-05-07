@@ -16,10 +16,12 @@ import com.vxianjin.gringotts.pay.common.util.fuiou.XMapUtil;
 import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.model.*;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolBindXmlBeanReq;
+import com.vxianjin.gringotts.pay.model.fuiou.PayforreqXmlBeanReq;
 import com.vxianjin.gringotts.risk.service.IOutOrdersService;
 import com.vxianjin.gringotts.util.GenerateNo;
 import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
+import com.vxianjin.gringotts.util.fuiou.MD5Util;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.dao.IUserBankDao;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
@@ -27,6 +29,8 @@ import com.vxianjin.gringotts.web.pojo.OutOrders;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.*;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -40,9 +44,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zed 易宝支付服务类
@@ -420,7 +422,7 @@ public class FuiouServiceImpl implements FuiouService {
      * @return map
      */
     @Override
-    public Map<String, Object> getWithdrawRequest(Map<String, String> paramMap) {
+    public Map<String, Object> getWithdrawRequest(Map<String, String> paramMap) throws Exception {
         log.info("YeepayService getWithdrawRequest start");
         log.info("YeepayService getWithdrawRequest paramMap=" + JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = new HashMap<>();
@@ -428,7 +430,7 @@ public class FuiouServiceImpl implements FuiouService {
         resultMap.put("msg", "请求异常");
         Map<String, Object> params = new HashMap<>();
         //集团编号
-        params.put("customerNumber", PayConstants.MERCHANT_NO);
+        params.put("customerNumber", FuiouConstants.API_MCHNT_CD);
         //商户编号
         params.put("groupNumber", PayConstants.GROUP_ID);
         //批次号
@@ -446,11 +448,11 @@ public class FuiouServiceImpl implements FuiouService {
         //银行编号
         params.put("bankCode", paramMap.get("bankCode"));
         params.put("feeType", "SOURCE");
-//        params.put("desc", PropertiesConfigUtil.get("APP_NAME") + "放款");
+//        pairs.put("desc", PropertiesConfigUtil.get("APP_NAME") + "放款");
 
         OutOrders outOrders = new OutOrders();
         outOrders.setUserId(paramMap.get("userId"));
-        outOrders.setOrderType("YEEPAY");
+        outOrders.setOrderType("FUIOU");
         outOrders.setOrderNo(GenerateNo.nextOrdId());
         outOrders.setAct("WITHDRAW");
         outOrders.setReqParams(JSON.toJSONString(params));
@@ -460,10 +462,25 @@ public class FuiouServiceImpl implements FuiouService {
         log.info(" before insert into outOrder,outOrder no is:" + outOrders.getOrderNo());
         outOrdersService.insert(outOrders);
         log.info(" after insert into outOrder,outOrder no is:" + outOrders.getOrderNo());
+
+        PayforreqXmlBeanReq payforreqXmlBeanReq = new PayforreqXmlBeanReq();
+        //payforreqXmlBeanReq.setAccnTnm();
+
+        String xml = XMapUtil.toXML(payforreqXmlBeanReq, FuiouConstants.charset);
+
+        String macSource = FuiouConstants.API_MCHNT_CD + "|" + FuiouConstants.API_MCHNT_KEY + "|"+ FuiouConstants.PAYFORREQ + "|" + xml;
+        String mac = MD5Util.encode(macSource, "UTF-8").toUpperCase();
+        String url = FuiouConstants.PAYFORREQ_SINCOMEFORREQ_URL;
+        Map<String, String> map = new HashMap();
+        map.put("merid", FuiouConstants.API_MCHNT_CD);
+        map.put("reqtype", "payforreq");
+        map.put("xml", xml);
+        map.put("mac", mac);
+
         //发送https请求
         Map<String,Object> yopresponsemap = new HashMap<>();
         try{
-            yopresponsemap	=	YeepayUtil.yeepayYOP(params,PayConstants.REQUEST_URL);
+            yopresponsemap	=	FuiouApiUtil.FuiouPS(map, url);
             log.info("yopresponseMap :{}",JSON.toJSONString(yopresponsemap));
         }catch (Exception e){
             log.error("request yeepay error:{}",e);
