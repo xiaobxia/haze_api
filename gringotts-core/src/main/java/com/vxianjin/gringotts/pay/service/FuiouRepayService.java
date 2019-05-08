@@ -10,6 +10,8 @@ import com.vxianjin.gringotts.web.pojo.Repayment;
 import com.vxianjin.gringotts.web.pojo.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 /**
  * 易宝支付代扣相关处理
  * @author zed
@@ -20,10 +22,10 @@ public interface FuiouRepayService {
     /**
      * 代扣回调（还款）
      * @return res
-     * @param req req
+     * @param callbackResult
      */
 
-    ResultModel payWithholdCallback(String req);
+    ResultModel payWithholdCallback(Map<String, String> callbackResult);
 
     /**
      * 续期回调（续期）
@@ -35,24 +37,13 @@ public interface FuiouRepayService {
     ResultModel payRenewalWithholdCallback(String req);
 
     /**
-     * 主动支付请求（还款）
-     *
-     * @param pams 请求内容
-     */
-    @Transactional(rollbackFor = Exception.class)
-    ResponseContent repaymentWithholdRequest(YeepayRepayReq pams) throws Exception;
-
-
-    /**
-     * 主动支付确认（还款）
+     * 主动支付（还款）
      *
      * @param id id
-     * @param smsCode sms
-     * @param requestNo no
      * @param payPwd pwd
      */
     @Transactional(rollbackFor = Exception.class)
-    ResponseContent repaymentWithholdConfirm(Integer id, String smsCode, String requestNo, String payPwd) throws Exception;
+    ResponseContent repaymentWithholdConfirm(Integer id, String payPwd, String bankId) throws Exception;
 
     /**
      * 主动支付短信重发（还款）

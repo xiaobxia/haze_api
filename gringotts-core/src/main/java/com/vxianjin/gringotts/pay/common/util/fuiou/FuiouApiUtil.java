@@ -8,6 +8,7 @@ import com.vxianjin.gringotts.pay.common.constants.PayConstants;
 import com.vxianjin.gringotts.pay.common.util.EncryUtil;
 import com.vxianjin.gringotts.pay.common.util.RSA;
 import com.vxianjin.gringotts.pay.common.util.RandomUtil;
+import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolOrderResponse;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolResponse;
 import com.vxianjin.gringotts.pay.model.fuiou.PayforreqResponse;
 import com.vxianjin.gringotts.util.security.AESUtil;
@@ -78,6 +79,52 @@ public class FuiouApiUtil {
         if ("0000".equals(response.getResponseCode())) {
             result.put("status", "0000");
             result.put("agreeno", response.getProtocolNo());
+            logger.info("response.getResult:{}",result);
+        }
+        return result;
+    }
+
+    /**
+     * fuiou支付相关
+     * @param APIFMS 对象转换后的XML字符串
+     * @param uri uri
+     * @return map
+     * @throws IOException ex
+     */
+    public static Map<String, Object> FuiouOD(String APIFMS, String uri) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        Map<String,String> map = new HashMap<String, String>();
+        APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+        map.put("MCHNTCD",FuiouConstants.API_MCHNT_CD);
+        map.put("APIFMS", APIFMS);
+        String res = new HttpPoster(uri).postStr(map);
+        res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+
+        NewProtocolOrderResponse response = XMapUtil.parseStr2Obj(NewProtocolOrderResponse.class, res);
+
+        logger.info("请求YOP之后结果：{}",response.toString());
+        // 对结果进行处理
+        if (!"0000".equals(response.getResponseCode()) && !"P000".equals(response.getResponseCode())) {
+            if (response.getResponseMsg() != null){
+                result.put("errorcode", response.getResponseCode());
+                result.put("errormsg", response.getResponseMsg());
+                logger.info("错误明细:{}",response.getResponseMsg());
+                logger.info("系统处理异常结果:{}",result);
+                return result;
+            }
+        }
+        // 成功则进行相关处理
+        if ("P000".equals(response.getResponseCode())) {//支付处理中
+            result.put("status", "P000");
+            result.put("fuiouOrderId", response.getOrderId());
+            result.put("requestNo", response.getMchntOrderId());
+            logger.info("response.getResult:{}",result);
+        }
+
+        if ("0000".equals(response.getResponseCode())) {//直接成功，不用等待回调
+            result.put("status", "0000");
+            result.put("fuiouOrderId", response.getOrderId());
+            result.put("requestNo", response.getMchntOrderId());
             logger.info("response.getResult:{}",result);
         }
         return result;

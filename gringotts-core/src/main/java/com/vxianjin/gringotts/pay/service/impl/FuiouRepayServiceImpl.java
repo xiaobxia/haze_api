@@ -1,10 +1,12 @@
 package com.vxianjin.gringotts.pay.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fuiou.mpay.encrypt.DESCoderFUIOU;
 import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.common.ResponseStatus;
 import com.vxianjin.gringotts.common.ServiceResult;
 import com.vxianjin.gringotts.constant.CollectionConstant;
+import com.vxianjin.gringotts.pay.common.constants.FuiouConstants;
 import com.vxianjin.gringotts.pay.common.constants.PayConstants;
 import com.vxianjin.gringotts.pay.common.enums.ErrorBase;
 import com.vxianjin.gringotts.pay.common.enums.EventTypeEnum;
@@ -13,9 +15,13 @@ import com.vxianjin.gringotts.pay.common.exception.PayException;
 import com.vxianjin.gringotts.pay.common.publish.PublishAdapter;
 import com.vxianjin.gringotts.pay.common.publish.PublishFactory;
 import com.vxianjin.gringotts.pay.common.util.YeepayApiUtil;
+import com.vxianjin.gringotts.pay.common.util.fuiou.FuiouApiUtil;
+import com.vxianjin.gringotts.pay.common.util.fuiou.FuiouUtil;
+import com.vxianjin.gringotts.pay.common.util.fuiou.XMapUtil;
 import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.dao.IRenewalRecordDao;
 import com.vxianjin.gringotts.pay.model.*;
+import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolOrderXmlBeanReq;
 import com.vxianjin.gringotts.pay.service.*;
 import com.vxianjin.gringotts.pay.service.base.RepayService;
 import com.vxianjin.gringotts.risk.service.IOutOrdersService;
@@ -105,15 +111,15 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     /**
      * 代扣回调（还款）
      *
-     * @param req req
+     * @param callbackResult
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultModel payWithholdCallback(String req) {
+    public ResultModel payWithholdCallback(Map<String, String> callbackResult) {
         ResultModel resultModel = new ResultModel(false);
 
-        logger.info("YeepayRepayServiceImpl.payWithholdCallback params:【" + JSON.toJSONString(req) + "】");
-        Map<String, String> callbackResult = YeepayApiUtil.getCallBackParamMap(req);
+        /*logger.info("YeepayRepayServiceImpl.payWithholdCallback params:【" + JSON.toJSONString(req) + "】");
+        Map<String, String> callbackResult = YeepayApiUtil.getCallBackParamMap(req);*/
         logger.info("YeepayRepayServiceImpl.payWithholdCallback callbackResult=" + (callbackResult != null ? JSON.toJSONString(callbackResult) : "null"));
         if (callbackResult == null) {
             resultModel.setMessage("数据解析失败");
@@ -121,13 +127,14 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         }
         // 解析数据
         //支付编号
-        String orderNo = YeepayApiUtil.formatString(callbackResult.get("requestno"));
+        String orderNo = FuiouApiUtil.formatString(callbackResult.get("MCHNTORDERID"));
+        String fuiouOrderId = FuiouApiUtil.formatString(callbackResult.get("MCHNTORDERID"));
         //支付结果状态
-        String status = YeepayApiUtil.formatString(callbackResult.get("status"));
+        String status = FuiouApiUtil.formatString(callbackResult.get("RESPONSECODE"));
         //支付结果信息
-        String errorMsg = YeepayApiUtil.formatString(callbackResult.get("errormsg"));
+        String errorMsg = FuiouApiUtil.formatString(callbackResult.get("RESPONSEMSG"));
         //代扣金额
-        String orderMoney = YeepayApiUtil.formatString(callbackResult.get("amount"));
+        String orderMoney = FuiouApiUtil.formatString(callbackResult.get("AMT"));
         // 获取外部订单
         OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
         logger.info("YeepayRepayService.payWithholdCallback orderNo: " + orderNo + ",outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
@@ -148,7 +155,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                 final String realName = user.getRealname();
                 final long amount = re.getRepaymentAmount();
                 //支付成功
-                if ("PAY_SUCCESS".equals(status)) {
+                if ("0000".equals(status)) {
                     logger.info("YeepayRepayServiceImpl.payWithholdCallback orderNo:" + orderNo + " pay success");
                     // 还款回调处理
                     repayService.repayCallBackHandler(re, detail, outOrders, orderMoney, true, "", "易宝",user);
@@ -268,64 +275,14 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     }
 
     /**
-     * 主动支付请求（还款）
-     *
-     * @param pams 请求内容
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class, noRollbackFor = BizException.class)
-    public ResponseContent repaymentWithholdRequest(YeepayRepayReq pams) throws Exception {
-        logger.info("repaymentWithholdRequest params:【pams：" + JSON.toJSONString(pams) + "】");
-        ResponseContent result = null;
-        //绑卡请求编号
-        Integer id = pams.getBorrowId() == null ? null : Integer.parseInt(pams.getBorrowId());
-
-        if (id == null || StringUtils.isBlank(id.toString())) {
-            return new ResponseContent("-101", "请求参数非法");
-        }
-        // 获取还款相关信息
-        NeedRepayInfo needRepayInfo = repayService.getNeedRepayInfo(id);
-
-        String bankIdStr = pams.getBankId();
-        Integer bankId;
-        //如果没传则使用默认卡
-        if (StringUtils.isEmpty(bankIdStr)) {
-            UserCardInfo userBankCard = userService.findUserBankCard(needRepayInfo.getBorrowOrder().getUserId());
-            bankId = userBankCard.getId();
-            logger.info("params bankIdStr is null,BankId :" + bankId);
-        } else {
-            bankId = Integer.valueOf(bankIdStr);
-        }
-        logger.info("repaymentWithholdRequest bankCardId:" + bankId);
-        //生成还款编号请求号（唯一，且整个还款过程中保持不变）
-        String requestNo = GenerateNo.nextOrdId();
-        //发起主动代扣请求，并获取结果。（参数：还款编号、还款信息、还款用户信息、还款额度、还款操作）
-        ResponseContent serviceResult = newRecharge(requestNo, needRepayInfo.getRepayment(), needRepayInfo.getUser(), needRepayInfo.getMoney(), "主动支付", bankId);
-
-        logger.info("repaymentWithholdRequest userId=" + needRepayInfo.getUser().getId() + " serviceResult=" + JSON.toJSONString(serviceResult));
-        if ("0".equals(serviceResult.getCode())) {
-            result = new ResponseContent("0", requestNo);
-            //存入redis里，避免发送过于频繁
-            checkForFront(WITHHOLD_SMS_CODE, requestNo + needRepayInfo.getUser().getUserPhone(), 60);
-        } else {
-            logger.info("repaymentWithholdRequest borrowId:" + id + " fail to request");
-            result = new ResponseContent(serviceResult.getCode(), serviceResult.getMsg());
-        }
-        return result;
-    }
-
-
-    /**
      * 主动支付确认（还款）
      * @param id id
-     * @param smsCode code
-     * @param requestNo no
      * @param payPwd pwd
      */
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = BizException.class)
-    public ResponseContent repaymentWithholdConfirm(Integer id, String smsCode, String requestNo, String payPwd) throws Exception {
-        logger.info("repaymentWithholdConfirm params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + " payPwd:" + payPwd + "】");
+    public ResponseContent repaymentWithholdConfirm(Integer id, String payPwd, String bankIdStr) throws Exception {
+        logger.info("repaymentWithholdConfirm params:【id:" + id + " payPwd:" + payPwd + "】");
         ResponseContent result = null;
         // 获取还款相关信息
         NeedRepayInfo needRepayInfo = repayService.getNeedRepayInfo(id);
@@ -338,8 +295,20 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         if (!needRepayInfo.getUser().getPayPassword().equals(MD5Util.MD5(AESUtil.encrypt(payPwd, "")))) {
             return new ResponseContent("-103", "支付密码输入错误");
         }
-        OutOrders outOrders = new OutOrders();
-        outOrders.setOrderNo(requestNo);
+
+        Integer bankId;
+        //如果没传则使用默认卡
+        if (StringUtils.isEmpty(bankIdStr)) {
+            UserCardInfo userBankCard = userService.findUserBankCard(needRepayInfo.getBorrowOrder().getUserId());
+            bankId = userBankCard.getId();
+            logger.info("params bankIdStr is null,BankId :" + bankId);
+        } else {
+            bankId = Integer.valueOf(bankIdStr);
+        }
+        logger.info("repaymentWithholdRequest bankCardId:" + bankId);
+
+        //生成还款编号请求号（唯一，且整个还款过程中保持不变）
+        String requestNo = GenerateNo.nextOrdId();
         try {
             logger.info("prepare send to yeepay , repaymentId " + needRepayInfo.getRepayment().getId());
             // 占锁
@@ -349,19 +318,18 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
             paramMap.put("requestNo", requestNo.trim());
             //用户id
             paramMap.put("userId", needRepayInfo.getBorrowOrder().getUserId() + "");
-            //用户id
-            paramMap.put("smsCode", smsCode);
 
-            //发起主动支付确认，并获取结果
-            ResultModel<Map<String, Object>> resultModel = fuiouService.getRechargeConfirm(paramMap);
+            //发起主动代扣请求，并获取结果。（参数：还款编号、还款信息、还款用户信息、还款额度、还款操作）
+            ResponseContent serviceResult = newRecharge(requestNo, needRepayInfo.getRepayment(), needRepayInfo.getUser(), needRepayInfo.getMoney(), "主动支付", bankId);
 
-            logger.info("repaymentWithholdConfirm userId=" + needRepayInfo.getUser().getId() + " serviceResult=" + JSON.toJSONString(resultModel));
-            if (resultModel.isSucc()) {
+
+            logger.info("repaymentWithholdConfirm userId=" + needRepayInfo.getUser().getId() + " serviceResult=" + JSON.toJSONString(serviceResult));
+            if ("0000".equals(serviceResult.getCode()) || "P000".equals(serviceResult.getCode()) ) {
                 result = new ResponseContent("0", requestNo);
             } else {
                 //支付失败状态下，解除该笔订单锁定状态
                 repayService.removeRepaymentLock(needRepayInfo.getRepayment().getId() + "");
-                result = new ResponseContent(resultModel.getCode(), resultModel.getMessage());
+                result = new ResponseContent(serviceResult.getCode(), serviceResult.getMsg());
             }
         } catch (Exception e) {
             repayService.removeRepaymentLock(needRepayInfo.getRepayment().getId() + "");
@@ -914,22 +882,25 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
             throw new Exception("非本人银行卡");
         }
         // 生成外部订单
-        OutOrders outOrders = getRepayOutOrders(user, repayment.getId(), requestNo, OutOrders.ACT_REPAY_DEBIT);
+        OutOrders outOrders = getRepayOutOrders(user, repayment.getId(), requestNo, "WITHHOLD_CONFIRM");
         //生成待还信息记录
         RepaymentDetail detail = getRepaymentDetail(repayment, money, requestNo, Repayment.CARD_WITHHOLD, remark, new Date());
 
         // 组织发送第三方内容
-        Map<String, String> paramMap = prepareParams(requestNo, user, info, money, "/yeepay/withholdCallback/");
+        String paramMap = prepareParams(requestNo, user, info, money, "/fuiou/withholdCallback/");
         // 外部订单记录
-        outOrders.setReqParams(JSON.toJSONString(paramMap));
+        outOrders.setReqParams(paramMap);
         //发送支付请求
-        Map<String, Object> result = YeepayApiUtil.yeepayYOP(paramMap,PayConstants.AUTOPAY_REQUEST_URL);
+        Map<String, Object> result = FuiouApiUtil.FuiouOD(paramMap,FuiouConstants.NEW_PROTOCOL_ORDER_URL);
         outOrders.setReturnParams(JSON.toJSONString(result));
         // 发送还款请求到第三方后处理
         repayService.beforeRepayHandler(outOrders, detail);
 
-        if (result != null && "TO_VALIDATE".equals(result.get("status"))) {
-            serviceResult = new ResponseContent("0", "收到请求");
+        if (result != null && "P000".equals(result.get("status"))) {
+            serviceResult = new ResponseContent("P000", "收到请求");
+        } else if (result != null && "0000".equals(result.get("status"))) {
+            //支付成功，提前处理回调
+            serviceResult = new ResponseContent("0000", "收到请求");
         } else {
             logger.info("repaymentId " + repayment.getId() + "fail ");
             serviceResult.setCode("400");
@@ -1042,29 +1013,25 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
      * @param callBackUrl url
      * @return treeMap
      */
-    private Map<String, String> prepareParams(String orderNo, User user, UserCardInfo info,
-                                                  long money, String callBackUrl) {
-        Map<String, String> dataMap = new HashMap<>();
-        dataMap.put("merchantno", PayConstants.MERCHANT_NO);
-        dataMap.put("requestno", orderNo);
-        dataMap.put("issms", "true");
-        dataMap.put("identityid", PropertiesConfigUtil.get("RISK_BUSINESS")+user.getId());
-        dataMap.put("identitytype", "USER_ID");
-        dataMap.put("advicesmstype", "MESSAGE");
-        dataMap.put("cardtop", info.getCard_no().substring(0, 6));
-        dataMap.put("cardlast", info.getCard_no().substring(info.getCard_no().length() - 4));
-        dataMap.put("amount", new DecimalFormat("######0.00").format(money / 100.00) + "");
-        dataMap.put("productname", PropertiesConfigUtil.get("APP_NAME") + "还款");
-        dataMap.put("callbackurl", PropertiesConfigUtil.get("APP_HOST_API") + callBackUrl + user.getId());
-        dataMap.put("requesttime", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
-//        dataMap.put("terminalid", user.getUserPhone());
-        dataMap.put("terminalno", "SQKKSCENEKJ010");
-//        dataMap.put("registtime", DateUtil.getDateFormat(user.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-//        dataMap.put("lastloginterminalid", user.getUserPhone());
-//        dataMap.put("issetpaypwd", "0");
-//
-//        String sign = EncryUtil.handleRSA(dataMap, PayConstants.MERCHANT_PRIVATE_KEY);
-//        dataMap.put("sign", sign);
-        return dataMap;
+    private String prepareParams(String orderNo, User user, UserCardInfo info,
+                                                  long money, String callBackUrl) throws Exception {
+        NewProtocolOrderXmlBeanReq beanReq = new NewProtocolOrderXmlBeanReq();
+        beanReq.setVersion("1.0");
+        beanReq.setUserIp(user.getCreateIp());
+        beanReq.setMchntCd(FuiouConstants.API_MCHNT_CD);
+        beanReq.setType("03");
+        beanReq.setMchntOrderId(orderNo);
+        beanReq.setUserId(PropertiesConfigUtil.get("RISK_BUSINESS")+user.getId());
+        beanReq.setAmt(String.valueOf(money));
+        beanReq.setProtocolNo(info.getAgreeno());
+        beanReq.setNeedSendMsg("0");
+        beanReq.setBackUrl(PropertiesConfigUtil.get("APP_HOST_API") + callBackUrl + user.getId());
+        beanReq.setSignTp("MD5");
+        beanReq.setSign(FuiouUtil.getSign(beanReq.signStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
+
+        String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
+        APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+
+        return APIFMS;
     }
 }
