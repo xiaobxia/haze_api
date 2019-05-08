@@ -464,7 +464,12 @@ public class FuiouServiceImpl implements FuiouService {
         log.info(" after insert into outOrder,outOrder no is:" + outOrders.getOrderNo());
 
         PayforreqXmlBeanReq payforreqXmlBeanReq = new PayforreqXmlBeanReq();
-        //payforreqXmlBeanReq.setAccnTnm();
+        payforreqXmlBeanReq.setVer("1.0");
+        payforreqXmlBeanReq.setMerdt(DateUtil.formatDate(new Date(), "yyyyMMdd"));
+        payforreqXmlBeanReq.setOrderNo(outOrders.getOrderNo());
+        payforreqXmlBeanReq.setAccntNo(paramMap.get("cardNo"));
+        payforreqXmlBeanReq.setAccnTnm(paramMap.get("cardName"));
+        payforreqXmlBeanReq.setAmt(paramMap.get("amount"));
 
         String xml = XMapUtil.toXML(payforreqXmlBeanReq, FuiouConstants.charset);
 
@@ -490,7 +495,7 @@ public class FuiouServiceImpl implements FuiouService {
         ordersNew.setId(outOrders.getId());
         if(yopresponsemap!=null){
 
-            if(!"BAC001".equals(yopresponsemap.get("errorCode"))){
+            if(!"0000".equals(yopresponsemap.get("errorCode"))){
                 resultMap = new HashMap<>();
                 resultMap.put("code", "400");
                 resultMap.put("msg", "代付失败" + yopresponsemap.get("errorCode").toString() + ":【" + yopresponsemap.get("errorMsg").toString() + "】");
@@ -498,10 +503,7 @@ public class FuiouServiceImpl implements FuiouService {
                 outOrdersService.updateByOrderNo(ordersNew);
                 return resultMap;
             }
-            if ("0025".equals(yopresponsemap.get("transferStatusCode").toString())
-                    || "0029".equals(yopresponsemap.get("transferStatusCode").toString()) ||
-                    "0030".equals(yopresponsemap.get("transferStatusCode").toString()) ||
-                    "0026".equals(yopresponsemap.get("transferStatusCode").toString())) {
+            if ("0000".equals(yopresponsemap.get("status").toString())) {
                 resultMap = new HashMap<>();
                 resultMap.put("code", BorrowOrder.SUB_SUBMIT);
                 resultMap.put("msg", "支付正在处理中");

@@ -195,12 +195,12 @@ public class UserloanDetailController extends BaseController {
 //				mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/gotoRepaymentType?type=2");
 //				payList.add(mapPay);
 
-                mapPay = new HashMap<String, Object>();
+                /*mapPay = new HashMap<String, Object>();
                 mapPay.put("type", 2);
                 mapPay.put("title", "更多还款方式");
                 mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/more_pay.png");
                 mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/gotoAlipayPayType");
-                payList.add(mapPay);
+                payList.add(mapPay);*/
 
 				/*Map<String, Object> mapPay = new HashMap<String, Object>();
                 mapPay.put("type", 1);

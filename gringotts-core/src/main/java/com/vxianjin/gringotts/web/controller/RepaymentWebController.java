@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.vxianjin.gringotts.web.pojo.BorrowOrder.borrowStatusMap_shenheFail;
 import static com.vxianjin.gringotts.web.pojo.BorrowOrder.borrowStatusMap_shenhezhong;
@@ -238,6 +239,43 @@ public class RepaymentWebController extends BaseController {
     }
 
     /**
+     * 还款支付页面（富友支付）
+     */
+    @RequestMapping("repay-pay-fuiou")
+    public String repayFuiou(HttpServletRequest request, Model model, Integer id) {
+        BorrowOrder bo = borrowOrderService.findOneBorrow(id);
+        String msg = "";
+        if (bo != null) {
+            UserCardInfo info = userService.findUserBankCard(bo.getUserId());
+            info.setCard_no(info.getCard_no().substring(info.getCard_no().length() - 4));
+            model.addAttribute("info", info);
+            model.addAttribute("bo", bo);
+            Map<String, Object> map = new HashMap<>();
+            map.put("assetOrderId", bo.getId());
+            Repayment repayment = repaymentService.findOneRepayment(map);
+            Gson gson = new Gson();
+            //该用户银行卡列表
+            //List<UserCardInfo> userBankCardList = userService.findUserBankCardList(bo.getUserId());
+            List<UserCardInfo> userBankCardList = userService.findUserBankCardList(bo.getUserId()).stream().map(userCardInfo -> {
+                String cardNo = userCardInfo.getCard_no();
+                userCardInfo.setCard_no(cardNo.substring(cardNo.length() - 4, cardNo.length()));
+                return userCardInfo;
+            }).collect(Collectors.toList());
+
+            String json = "";
+            if (ArrayUtil.isNotEmpty(userBankCardList)) {
+                json = gson.toJson(userBankCardList);
+            }
+            model.addAttribute("repayment", repayment);
+            model.addAttribute("bankCardList", json);
+        } else {
+            msg = "不存在借款订单";
+            model.addAttribute("message", msg);
+        }
+        return "repayment/repaymentFuiou";
+    }
+
+    /**
      * 还款支付页面（易宝支付）
      */
     @RequestMapping("repay-pay-yeepay")
@@ -366,6 +404,74 @@ public class RepaymentWebController extends BaseController {
         Repayment repayment = repaymentService.findOneRepayment(map);
         model.addAttribute("repayment", repayment);
         return "repayment/renewalChoose";
+    }
+
+    /**
+     * 续期支付页面（富友支付）
+     */
+    @RequestMapping("renewal-pay-fuiou")
+    public String renewalFuiou(HttpServletRequest request, Model model, Integer id) {
+        String errorReturnUrl = request.getParameter("errorReturnUrl");
+        String successReturnUrl = request.getParameter("successReturnUrl");
+        String rtl = request.getParameter("rtl");
+        boolean isTg = false;
+        if (StringUtils.isNotBlank(errorReturnUrl)) {
+            model.addAttribute("errorReturnUrl", errorReturnUrl);
+            isTg = true;
+        }
+        if (StringUtils.isNotBlank(successReturnUrl)) {
+            model.addAttribute("successReturnUrl", successReturnUrl);
+            isTg = true;
+        }
+        if (StringUtils.isNotBlank(rtl)) {
+            model.addAttribute("rtl", rtl);
+            isTg = true;
+        }
+        BorrowOrder bo = borrowOrderService.findOneBorrow(id);
+        // 续期手续费
+        BigDecimal renewalFee = bo.getRenewalPoundage();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("assetOrderId", bo.getId());
+        Repayment re = repaymentService.findOneRepayment(map);
+        // 待还总金额
+        Long waitRepay = re.getRepaymentAmount() - re.getRepaymentedAmount();
+        // 待还滞纳金
+        Long waitLate = Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
+        // 待还本金
+        Long waitAmount = waitRepay - waitLate;
+        // 续期费
+        Integer loanApr = bo.getRenewalFee().intValue();
+
+        Long allCount = waitLate + loanApr + renewalFee.longValue();
+        //用户银行卡信息
+        UserCardInfo info = userService.findUserBankCard(bo.getUserId());
+        info.setCard_no(info.getCard_no().substring(info.getCard_no().length() - 4));
+        logger.info("usercardinfo :" + info.getCard_no());
+        Gson gson = new Gson();
+        //获取银行卡列表
+        List<UserCardInfo> userBankCardList = userService.findUserBankCardList(bo.getUserId()).stream().map(userCardInfo -> {
+            String cardNo = userCardInfo.getCard_no();
+            userCardInfo.setCard_no(cardNo.substring(cardNo.length() - 4, cardNo.length()));
+            return userCardInfo;
+        }).collect(Collectors.toList());
+        String json = "";
+        if (ArrayUtil.isNotEmpty(userBankCardList)) {
+            json = gson.toJson(userBankCardList);
+        }
+        model.addAttribute("bo", bo);
+        model.addAttribute("info", info);
+        model.addAttribute("waitAmount", waitAmount);
+        model.addAttribute("loanApr", loanApr);
+        model.addAttribute("renewalFee", renewalFee);
+        model.addAttribute("waitLate", waitLate);
+        model.addAttribute("allCount", allCount);
+        model.addAttribute("bankCardList", json);
+        if (isTg) {
+            model.addAttribute("sgd", request.getParameter("sgd"));
+            return "repayment/tg/renewalRenewal2";
+        }
+        return "repayment/renewalFuiou";
     }
 
     /**

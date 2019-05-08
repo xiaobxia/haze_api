@@ -111,6 +111,7 @@ public class FuiouApiUtil {
         // 成功则进行相关处理
         if ("0000".equals(response.getRet()) || "000000".equals(response.getRet())) {
             result.put("status", "0000");
+            result.put("transferStatusCode", response.getRet());
             result.put("agreeno", response.getMemo());
             logger.info("response.getResult:{}",result);
         }

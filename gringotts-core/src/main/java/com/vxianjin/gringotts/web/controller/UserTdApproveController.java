@@ -287,7 +287,7 @@ public class UserTdApproveController extends BaseController {
 
                 //判断芝麻认证和同盾运营商认证是否都认证完，如果都认证完，则给予默认额度
                 logger.info("mobileTdCallback userId=" + user.getId() + " zmStatus=" + user.getZmStatus() + " tdStatus=" + newUser.getTdStatus());
-                if ("2".equals(newUser.getTdStatus()) && "2".equals(user.getZmStatus())) {
+                if ("2".equals(newUser.getTdStatus())) {
                     //更新newFlag
                     userDao.updateUserNewFlagById(newUser);
                     //初始额度

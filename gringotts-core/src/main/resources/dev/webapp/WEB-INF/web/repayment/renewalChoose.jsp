@@ -51,7 +51,7 @@
             <h2>请选择支付方式</h2>
             <ul class="zl_info tk_new">
                 <li>
-                    <a rel="external" href="${path}/repayment/renewal-pay-yeepay?id=${bo.id}">
+                    <a rel="external" href="${path}/repayment/renewal-pay-fuiou?id=${bo.id}">
                         <span><img style="vertical-align: middle" src="${basePath}/images/b_01.png" alt="">一键支付</span>
                         <p><em>${info.bankName}（${info.card_no}）</em><img src="${basePath}/images/el_06.png" alt=""></p>
                     </a>

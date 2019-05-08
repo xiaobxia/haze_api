@@ -12,12 +12,6 @@ public class PayforreqXmlBeanReq {
 	private String merdt;
 	@XNode("orderno")
 	private String orderNo;
-	@XNode("bankno")
-	private String bankNo;
-	@XNode("cityno")
-	private String cityNo;
-	@XNode("branchnm")
-	private String branchNm;
 	@XNode("accntno")
 	private String accntNo;
 	@XNode("accntnm")
@@ -49,30 +43,6 @@ public class PayforreqXmlBeanReq {
 
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
-	}
-
-	public String getBankNo() {
-		return bankNo;
-	}
-
-	public void setBankNo(String bankNo) {
-		this.bankNo = bankNo;
-	}
-
-	public String getCityNo() {
-		return cityNo;
-	}
-
-	public void setCityNo(String cityNo) {
-		this.cityNo = cityNo;
-	}
-
-	public String getBranchNm() {
-		return branchNm;
-	}
-
-	public void setBranchNm(String branchNm) {
-		this.branchNm = branchNm;
 	}
 
 	public String getAccntNo() {

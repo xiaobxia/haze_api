@@ -216,7 +216,7 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         //借款订单编号
         paramMap.put("orderId", order.getSerialNo());
         //实际放款金额
-        paramMap.put("amount", ""+order.getIntoMoney());
+        paramMap.put("amount", order.getIntoMoney().toString());
         //银行卡号
         paramMap.put("cardNo", order.getCardNo());
         //银行卡开户人姓名

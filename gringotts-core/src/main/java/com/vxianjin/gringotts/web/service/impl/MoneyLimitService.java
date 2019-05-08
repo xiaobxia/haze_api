@@ -100,17 +100,17 @@ public class MoneyLimitService implements IMoneyLimitService {
             put("userId", user_id);
         }});//用户通讯录列表
 
-        Map<String, Object> paramMap = new HashMap<>();
+        /*Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("userId", user_id);
         paramMap.put("status", BorrowOrder.STATUS_DCS);
-        BorrowOrder borrowOrder = borrowOrderDao.selectBorrowByParams(paramMap);
+        BorrowOrder borrowOrder = borrowOrderDao.selectBorrowByParams(paramMap);*/
 
         String model_name = "taoqianbao_v1";
-        String apply_time = DateUtil.formatDate(borrowOrder.getCreatedAt(),"yyyy-MM-dd HH:mm:ss");
+        String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
         String mobile = user.getUserName();
         String name = user.getRealname();
         String idcard = user.getIdNumber();
-        String phone_os = "1".equals(borrowOrder.getClientType()) ? "ios" : "android";
+        String phone_os = "2".equals(user.getBrowerType()) ? "ios" : "android";
         List<ZhimiEmergencyContact> e_contacts = new ArrayList<ZhimiEmergencyContact>();
         e_contacts.add(new ZhimiEmergencyContact(user.getFirstContactName(), user.getFirstContactPhone()));
         e_contacts.add(new ZhimiEmergencyContact(user.getSecondContactName(), user.getSecondContactPhone()));

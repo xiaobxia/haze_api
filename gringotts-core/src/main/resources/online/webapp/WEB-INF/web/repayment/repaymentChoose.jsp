@@ -45,18 +45,18 @@
             <ul class="zl_info tk_new">
                 <%--支付密码弹窗--%>
                 <li id="mima-btn_1">
-                    <a rel="external" href="${path}/repayment/repay-pay-yeepay?id=${bo.id}">
+                    <a rel="external" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}">
                         <span><img style="vertical-align: middle" src="${basePath}/images/b_01.png" alt="">一键还款</span>
                         <p><em>${info.bankName}（${info.card_no}）</em><img src="${basePath}/images/el_06.png" alt=""></p>
                     </a>
                 </li>
                     <!--支付宝维护，临时隐藏支付宝还款页面-->
-                <li class="nobd" id="alipay-choose" style="display: none">
+                <%--<li class="nobd" id="alipay-choose" style="display: none">
                     <a rel="external" href="${path}/repayment/repay-pay-alipay?id=${bo.id}&userId=${bo.userId}">
                         <span><img style="vertical-align: middle" src="${basePath}/images/b_02.png" alt="">支付宝转账</span>
                         <p><img src="${basePath}/images/el_06.png" alt=""></p>
                     </a>
-                </li>
+                </li>--%>
             </ul>
             <div class="tip">
                 <p>备注：若在借款期间内未主动发起还款，则默认于还款日当天从绑定银行卡${info.bankName}（${info.card_no}）自动扣除所借款项，请保证在扣款之前账户资金充足。</p>

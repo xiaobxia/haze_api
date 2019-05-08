@@ -45,7 +45,7 @@
             <ul class="zl_info tk_new">
                 <%--支付密码弹窗--%>
                 <li id="mima-btn_1">
-                    <a rel="external" href="${path}/repayment/repay-pay-yeepay?id=${bo.id}">
+                    <a rel="external" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}">
                         <span><img style="vertical-align: middle" src="${basePath}/images/b_01.png" alt="">一键还款</span>
                         <p><em>${info.bankName}（${info.card_no}）</em><img src="${basePath}/images/el_06.png" alt=""></p>
                     </a>
