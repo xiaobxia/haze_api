@@ -9,3 +9,4 @@ target/
 *.class
 *svn/
 .idea/
+catalina.home_IS_UNDEFINED
