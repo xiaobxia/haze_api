@@ -68,7 +68,7 @@
                         <span>预留手机<strong>${info.phone}</strong></span>
                     </a>
                 </li>
-                <li class="nobd gain-yzm gain-yzm1">
+                <li class="nobd gain-yzm gain-yzm1" style="display: none">
                     <a rel="external" href="javascript:;">
                         <span style="width: 4rem;">验证码</span>
                         <input style="width:45%;" type="text" placeholder="请输入验证码" data-role="none" id="smsCode">
@@ -213,12 +213,16 @@
 
         //密码弹窗
         $('#mima-btn-1').click(function(event) {
-            if(checkSmsCode() && checkRequestNo()){
-                $('#defray_withhold').show();
-                $('#defray_withhold i').removeClass('point');
-                $('#defray_withhold input').val('').focus();
-                $('#error_tip_withhold').html('');
-            }
+            // if(checkSmsCode() && checkRequestNo()){
+            //     $('#defray_withhold').show();
+            //     $('#defray_withhold i').removeClass('point');
+            //     $('#defray_withhold input').val('').focus();
+            //     $('#error_tip_withhold').html('');
+            // }
+            $('#defray_withhold').show();
+            $('#defray_withhold i').removeClass('point');
+            $('#defray_withhold input').val('').focus();
+            $('#error_tip_withhold').html('');
         });
 
         $('#defray_withhold .close').click(function(event){
