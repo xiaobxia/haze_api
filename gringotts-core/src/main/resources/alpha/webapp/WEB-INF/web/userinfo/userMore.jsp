@@ -58,11 +58,11 @@
                 </li>
               </ul>
         </div>
-          <a href="javascript:saveMore();" class="js-btn mt60" id="bc-btn" style="background-color: #ff244e">保存</a>
+          <a href="javascript:saveMore();" class="js-btn mt60" id="bc-btn" style="background-color: #FFA30D">保存</a>
           <span class="safe"><img src="${basePath }/images/dp.png" alt="">银行级数据加密防护</span>
           <div class="sure-tc">
              <p id="result_code">保存信息成功</p>
-            <a href="javascript:void 0;" class="btn sure-btn" style="background-color: #ff244e">确认</a>
+            <a href="javascript:void 0;" class="btn sure-btn" style="background-color: #FFA30D">确认</a>
           </div>
           <!-- 遮罩层 -->
           <div class="cover"></div>

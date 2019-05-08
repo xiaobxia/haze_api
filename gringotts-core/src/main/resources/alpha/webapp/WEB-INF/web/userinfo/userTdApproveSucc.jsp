@@ -32,9 +32,9 @@
             line-height: 2.25rem;
             text-align: center;
             background: transparent !important;
-            color: #ff244e !important;
+            color: #FFA30D !important;
             border-radius: 2.25rem;
-            border: 1px solid #ff244e;
+            border: 1px solid #FFA30D;
         }
         .rz-result p,
         .pannel-btn a {

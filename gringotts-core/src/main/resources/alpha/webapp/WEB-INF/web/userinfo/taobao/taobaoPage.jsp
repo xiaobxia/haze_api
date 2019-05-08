@@ -72,7 +72,7 @@
         .g-pannel .go-credit a {
             display: block;
             width: 100%;
-            background: #ff244e;
+            background: #FFA30D;
             color: #fff;
             padding: 8px 0;
             text-align: center;
