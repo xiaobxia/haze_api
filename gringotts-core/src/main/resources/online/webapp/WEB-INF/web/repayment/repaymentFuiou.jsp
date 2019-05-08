@@ -258,7 +258,7 @@
                 input.val(val.slice(0,6));
                 $('#error_tip_withhold').html("正在支付中，请稍等");
                 show_loading("正在支付中，请稍等")
-                $.post('${path}/fuiou/repayWithholdConfirm', {id:'${bo.id}',smsCode:$("#smsCode").val(),requestNo:$("#requestNo").val(),payPwd:input.val()} , function(data){
+                $.post('${path}/fuiou/repayWithholdConfirm', {id:'${bo.id}',bankId: gloabelBank_id,payPwd:input.val()} , function(data){
                     input.val("");
                     if(data.code == "-103"){
                         hide_loading();
