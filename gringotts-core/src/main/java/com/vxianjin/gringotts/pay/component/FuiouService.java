@@ -1,6 +1,7 @@
 package com.vxianjin.gringotts.pay.component;
 
 import com.vxianjin.gringotts.pay.model.*;
+import com.vxianjin.gringotts.pay.model.fuiou.FuiouRepayResultModel;
 
 import java.util.Map;
 
@@ -94,5 +95,5 @@ public interface FuiouService {
      * @param userId userId
      * @return result
      */
-    ResultModel<YPRepayResultModel> getYBRepayResult(YPRepayRecordReq ypRepayRecordReq, String userId);
+    ResultModel<FuiouRepayResultModel> getFuiouRepayResult(YPRepayRecordReq ypRepayRecordReq, String userId);
 }

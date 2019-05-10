@@ -69,6 +69,7 @@ public class OutOrders implements Serializable {
     private String addIp;
     private Date updateTime;
     private String status;
+    private String fuiouOrderId;
 
     public String getTablelastName() {
         return tablelastName;
@@ -190,9 +191,17 @@ public class OutOrders implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getFuiouOrderId() {
+        return fuiouOrderId;
+    }
+
+    public void setFuiouOrderId(String fuiouOrderId) {
+        this.fuiouOrderId = fuiouOrderId;
+    }
+
     @Override
     public String toString() {
-        return "RiskOrders [userId=" + userId + ", orderType=" + orderType + ", act=" + act + ", addIp=" + addIp + ", addTime=" + addTime + ", id=" + id + ", notifyParams=" + notifyParams + ", notifyTime=" + notifyTime + ", orderNo=" + orderNo + ", reqParams=" + reqParams + ", returnParams=" + returnParams + ", status=" + status + ", updateTime=" + updateTime + "]";
+        return "RiskOrders [userId=" + userId + ", orderType=" + orderType + ", act=" + act + ", addIp=" + addIp + ", addTime=" + addTime + ", id=" + id + ", notifyParams=" + notifyParams + ", notifyTime=" + notifyTime + ", orderNo=" + orderNo + ", reqParams=" + reqParams + ", returnParams=" + returnParams + ", status=" + status + ", updateTime=" + updateTime + "fuiouOrderId=" + fuiouOrderId + "]";
     }
 
 }

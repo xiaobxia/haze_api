@@ -6,6 +6,7 @@ import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.model.ResultModel;
 import com.vxianjin.gringotts.pay.model.YPRepayRecordReq;
 import com.vxianjin.gringotts.pay.model.YPRepayResultModel;
+import com.vxianjin.gringotts.pay.model.fuiou.FuiouRepayResultModel;
 import com.vxianjin.gringotts.pay.task.MqMessageSynTask;
 import com.vxianjin.gringotts.pay.task.PayStatusSynTask;
 import com.vxianjin.gringotts.pay.task.UserQuotaSynTask;
@@ -61,7 +62,7 @@ public class FuiouTaskController {
         YPRepayRecordReq repayRecordReq = new YPRepayRecordReq();
         repayRecordReq.setMerchantNo(PayConstants.MERCHANT_NO);
         repayRecordReq.setRequestNo(orderNo);
-        ResultModel<YPRepayResultModel> resultModel =  fuiouService.getYBRepayResult(repayRecordReq,userId);
+        ResultModel<FuiouRepayResultModel> resultModel =  fuiouService.getFuiouRepayResult(repayRecordReq,userId);
         logger.info(MessageFormat.format("用户支付状态,主动查询,查询结果: {0}", JSON.toJSONString(resultModel)));
         return resultModel;
     }

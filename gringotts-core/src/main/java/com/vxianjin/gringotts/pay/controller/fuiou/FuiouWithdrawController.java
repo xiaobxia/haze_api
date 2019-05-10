@@ -1,6 +1,8 @@
 package com.vxianjin.gringotts.pay.controller.fuiou;
 
+import com.fuiou.util.MD5;
 import com.vxianjin.gringotts.common.ResponseContent;
+import com.vxianjin.gringotts.pay.common.constants.FuiouConstants;
 import com.vxianjin.gringotts.pay.common.exception.BizException;
 import com.vxianjin.gringotts.pay.service.FuiouWithdrawService;
 import com.vxianjin.gringotts.web.controller.BaseController;
@@ -30,18 +32,41 @@ public class FuiouWithdrawController extends BaseController {
     private FuiouWithdrawService fuiouWithdrawService;
 
     /**
+     * 富友回调校验
+     * @param request
+     * @return
+     */
+    private boolean verifySign(HttpServletRequest request) {
+        String orderno = request.getParameter("orderno");
+        String merdt = request.getParameter("merdt");
+        String fuorderno = request.getParameter("fuorderno");
+        String accntno = request.getParameter("accntno");
+        String accntnm = request.getParameter("accntnm");
+        String bankno = request.getParameter("bankno");
+        String amt = request.getParameter("amt");
+        String state = request.getParameter("state");
+        String result = request.getParameter("result");
+        String reason = request.getParameter("reason");
+        String mac = request.getParameter("mac");
+
+        // 校验签名
+        String signPain = new StringBuffer().append(FuiouConstants.API_MCHNT_CD).append("|").append(FuiouConstants.API_MCHNT_KEY).append("|").append(orderno)
+                .append("|").append(merdt).append("|").append(accntno).append("|").append(amt).toString();
+        return MD5.MD5Encode(signPain).equals(mac);
+    }
+
+    /**
      * 用户提现（代付）回调接口
      */
     @ResponseBody
     @RequestMapping(value = "withdrawCallback")
     public String payWithdrawCallback(HttpServletRequest request) {
         logger.debug("YeepayWithdrawController.payWithdrawCallback params:【reqString:" + request.getParameter("response") + "】");
-        String reqString = request.getParameter("response");
 
-        if (StringUtils.isBlank(reqString)) {
-            return "数据解析失败";
+        if (!verifySign(request)) {
+            return "0";
         }
-        return fuiouWithdrawService.payWithdrawCallback(reqString);
+        return fuiouWithdrawService.payWithdrawCallback(request.getParameterMap());
     }
 
 

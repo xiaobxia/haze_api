@@ -17,6 +17,7 @@
         <result column="add_ip" property="addIp"/>
         <result column="update_time" property="updateTime"/>
         <result column="status" property="status"/>
+        <result column="fuiou_order_id" property="fuiouOrderId"/>
     </resultMap>
     <insert id="insert" parameterType="OutOrders" useGeneratedKeys="true"
             keyProperty="id">
@@ -49,6 +50,9 @@
             <if test="notifyTime != null">
                 notify_time = #{notifyTime},
             </if>
+            <if test="fuiouOrderId != null">
+                fuiou_order_id = #{fuiouOrderId},
+            </if>
         </set>
         where id=#{id}
     </update>
@@ -70,6 +74,9 @@
             <if test="notifyTime != null">
                 notify_time = #{notifyTime},
             </if>
+            <if test="fuiouOrderId != null">
+                fuiou_order_id = #{fuiouOrderId},
+            </if>
         </set>
         where order_no=#{orderNo}
     </update>
@@ -78,6 +85,9 @@
     </select>
     <select id="findByOrderNo" parameterType="OutOrders" resultMap="BaseResultMap">
         select * from out_orders where order_no =#{orderNo}
+    </select>
+    <select id="findByFuiouOrderId" parameterType="OutOrders" resultMap="BaseResultMap">
+        select * from out_orders where fuiou_order_id =#{fuiouOrderId}
     </select>
 
 
@@ -111,6 +121,9 @@
             <if test="notifyTime != null">
                 notify_time = #{notifyTime},
             </if>
+            <if test="fuiouOrderId != null">
+                fuiou_order_id = #{fuiouOrderId},
+            </if>
         </set>
         where id=#{id}
         <if test="orderNo != null">
@@ -131,6 +144,9 @@
             </if>
             <if test="notifyTime != null">
                 notify_time = #{notifyTime},
+            </if>
+            <if test="fuiouOrderId != null">
+                fuiou_order_id = #{fuiouOrderId},
             </if>
         </set>
         where order_no=#{orderNo}

@@ -33,6 +33,7 @@ public class FuiouConstants {
     public static final String NEW_PROTOCOL_QUERY_URL = FuiouConfiguration.getInstance().getValue("new_protocol_query_url");
     public static final String NEW_PROTOCOL_QUERYLIST_URL = FuiouConfiguration.getInstance().getValue("new_protocol_querylist_url");
     public static final String NEW_PROTOCOL_UNBIND_URL = FuiouConfiguration.getInstance().getValue("new_protocol_unbind_url");
+    public static final String NEW_PROTOCOL_CHECKRESULT_URL = FuiouConfiguration.getInstance().getValue("new_protocol_checkResult_url");
 
     public static final String PAYFORREQ_SINCOMEFORREQ_URL = FuiouConfiguration.getInstance().getValue("payforreq_sincomeforreq_url");
 

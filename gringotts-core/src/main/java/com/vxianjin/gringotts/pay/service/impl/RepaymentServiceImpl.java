@@ -10,8 +10,8 @@ import com.vxianjin.gringotts.pay.common.enums.PayRecordStatus;
 import com.vxianjin.gringotts.pay.common.exception.PayException;
 import com.vxianjin.gringotts.pay.common.publish.PublishAdapter;
 import com.vxianjin.gringotts.pay.common.publish.PublishFactory;
+import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.component.OrderLogComponent;
-import com.vxianjin.gringotts.pay.component.YeepayService;
 import com.vxianjin.gringotts.pay.dao.IRenewalRecordDao;
 import com.vxianjin.gringotts.pay.dao.IRepaymentDao;
 import com.vxianjin.gringotts.pay.dao.IRepaymentDetailDao;
@@ -21,6 +21,7 @@ import com.vxianjin.gringotts.pay.model.GeTuiJson;
 import com.vxianjin.gringotts.pay.model.ResultModel;
 import com.vxianjin.gringotts.pay.model.YPRepayRecordReq;
 import com.vxianjin.gringotts.pay.model.YPRepayResultModel;
+import com.vxianjin.gringotts.pay.model.fuiou.FuiouRepayResultModel;
 import com.vxianjin.gringotts.pay.pojo.OrderLogModel;
 import com.vxianjin.gringotts.pay.service.MqInfoService;
 import com.vxianjin.gringotts.pay.service.RepaymentDetailService;
@@ -40,20 +41,16 @@ import com.vxianjin.gringotts.web.service.IBorrowOrderService;
 import com.vxianjin.gringotts.web.service.IUserService;
 import com.vxianjin.gringotts.web.service.impl.UserClientInfoService;
 import org.apache.commons.collections.CollectionUtils;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import redis.clients.jedis.JedisCluster;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
@@ -100,7 +97,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 
     @Autowired
-    private YeepayService yeepayService;
+    private FuiouService fuiouService;
 
 
     @Autowired
@@ -658,19 +655,19 @@ public class RepaymentServiceImpl implements RepaymentService {
         repayRecordReq.setMerchantNo(PayConstants.MERCHANT_NO);
         repayRecordReq.setRequestNo(orderNo);
 
-        ResultModel<YPRepayResultModel> resultModel = yeepayService.getYBRepayResult(repayRecordReq, String.valueOf(repaymentDetail.getUserId()));
+        ResultModel<FuiouRepayResultModel> resultModel = fuiouService.getFuiouRepayResult(repayRecordReq, String.valueOf(repaymentDetail.getUserId()));
         if (!resultModel.isSucc()) {
             logger.error(MessageFormat.format("synReapymentDetailStatus  asset_repayment_detail.id= {0},无法从易宝查询到该笔订单明细", repaymentDetail.getId()));
-            throw new PayException("无法从易宝查询到该笔订单明细，请联系易宝客服");
+            throw new PayException("无法从富友查询到该笔订单明细，请联系易宝客服");
         }
 
-        YPRepayResultModel ypRepayResultModel = resultModel.getData();
-        if (!repaymentDetail.getOrderId().equals(ypRepayResultModel.getRequestNo())) {
+        FuiouRepayResultModel fuiouRepayResultModel = resultModel.getData();
+        if (!repaymentDetail.getOrderId().equals(fuiouRepayResultModel.getRequestNo())) {
             logger.error(MessageFormat.format("synReapymentDetailStatus  asset_repayment_detail.id= {0},请求易宝的订单号与捞取的订单号不一致", repaymentDetail.getId()));
-            throw new PayException("请求易宝的订单号与捞取的订单号不一致");
+            throw new PayException("请求富友的订单号与捞取的订单号不一致");
         }
 
-        String status = ypRepayResultModel.getStatus();
+        String status = fuiouRepayResultModel.getStatus();
         User user = userDao.selectCollectionByUserId(repaymentDetail.getUserId());
         Repayment re = repaymentService.selectByPrimaryKey(outOrders.getAssetOrderId());//获取还款记录
         try {
@@ -706,14 +703,6 @@ public class RepaymentServiceImpl implements RepaymentService {
                     repaymentDetail.setRemark("REPAY_DEBIT".equals(act) ? "主动代扣回调:" + errorMsg : "TASK_DEBIT".equals(act) ? "定时代扣回调:" + errorMsg : "催收代扣回调:" + errorMsg);
                     outOrders.setStatus(OutOrders.STATUS_OTHER);
                     repaymentDetailService.updateByPrimaryKey(repaymentDetail);
-                    // 定时代扣失败短信注释
-                    /*if (act.equals("TASK_DEBIT")
-                            && (!re.getStatus().equals("30")
-                            && DateUtil.fyFormatDate(re.getRepaymentTime()).equals(DateUtil.fyFormatDate(new Date())))
-                            && DateUtil.fyFormatDate(outOrders.getAddTime()).equals(DateUtil.fyFormatDate(new Date())) )  {
-                        //发送扣款失败短信
-                        sendRepayFailSms(user.getUserPhone(), user.getRealname(), re.getRepaymentAmount(), Integer.valueOf(user.getId()));
-                    }*/
                     break;
                 default:
                     break;

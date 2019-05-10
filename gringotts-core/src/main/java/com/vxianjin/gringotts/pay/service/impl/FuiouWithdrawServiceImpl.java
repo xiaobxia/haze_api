@@ -56,17 +56,17 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
      */
     @Transactional(rollbackFor = PayException.class)
     @Override
-    public String payWithdrawCallback(String requestXml) {
-        logger.info("payWithdrawCallback params:【requestXml:" + requestXml + "】");
+    public String payWithdrawCallback(Map<String, String> resultMap) {
+        logger.info("payWithdrawCallback params:【requestXml:" + resultMap.toString() + "】");
         try {
 
-            Map<String, Object> resultMap = YeepayApiUtil.getPayCallBackParamMap(requestXml);
+            //Map<String, Object> resultMap = YeepayApiUtil.getPayCallBackParamMap(requestXml);
             if (resultMap == null) {
                 logger.error("YeepayWithdrawServiceImpl.payWithdrawCallback  error resultMap is null");
                 return "数据解析异常";
             }
             //订单编号
-            String orderId = resultMap.get("orderId").toString();
+            String orderId = resultMap.get("orderno");
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("serialNo", orderId);
@@ -80,14 +80,12 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
             //订单处于放款中或放款失败状态且非放款成功状态
             if (!borrowOrder.getPaystatus().equals(BorrowOrder.SUB_PAY_SUCC) && (BorrowOrder.STATUS_FKZ.equals(borrowOrder.getStatus())
                     || BorrowOrder.STATUS_FKSB.equals(borrowOrder.getStatus()))) {
-                if ("S".equals(resultMap.get("bankTrxStatusCode").toString())) {
-                    borrowOrder.setOutTradeNo(resultMap.get("batchNo").toString());
+                if ("1".equals(resultMap.get("state"))) {
+                    borrowOrder.setOutTradeNo(resultMap.get("fuorderno"));
                     borrowOrderService.updateLoanNew(borrowOrder, "SUCCESS", "支付成功");
-
-                } else {
+                } else if ("2".equals(resultMap.get("state")) || "7".equals(resultMap.get("state"))) {
                     logger.info("fangkuan fail borrowOrder:" + orderId + " userId:" + borrowOrder.getUserId()
                             + " userPhone:" + borrowOrder.getUserPhone() + " msg:" + resultMap.get("message"), "fangkuan");
-
                     borrowOrderService.updateLoanNew(borrowOrder, "FAIL", "支付失败");
                 }
             }

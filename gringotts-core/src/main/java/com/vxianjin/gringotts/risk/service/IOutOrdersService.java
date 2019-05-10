@@ -48,10 +48,13 @@ public interface IOutOrdersService {
     /**
      * 查询
      *
-     * @param rderNo
+     * @param orderNo
      * @return
      */
     OutOrders findByOrderNo(String orderNo);
+
+
+    OutOrders findByFuiouOrderId(String fuiouOrderId);
 
 
     /**

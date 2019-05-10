@@ -92,11 +92,11 @@ public class FuiouBindCardController extends BaseController {
 
             //调整业务顺序，避免非登陆用户也要去查一次银行卡列表，查询数据库
             if (logUser == null || StringUtils.isBlank(logUser.getId())) {
-                logger.info("YeepayBindCardController firstUserBank 登录已失效,请重新登录");
+                logger.info("FuiouBindCardController firstUserBank 登录已失效,请重新登录");
                 model.addAttribute("msg", "登录已失效,请重新登录");
                 model.addAttribute("code", ResponseStatus.FAILD.getName());
             } else {
-                logger.info("YeepayBindCardController firstUserBank userId="+logUser.getId());
+                logger.info("FuiouBindCardController firstUserBank userId="+logUser.getId());
                 String deviceId = request.getParameter("deviceId");
                 String mobilePhone = request.getParameter("mobilePhone");
                 //查询所有的银行
@@ -266,7 +266,7 @@ public class FuiouBindCardController extends BaseController {
         User logUser = this.loginFrontUserByDeiceId(request);
         String deviceId = request.getParameter("deviceId");
         String mobilePhone = request.getParameter("mobilePhone");
-        logger.info("YeepayBindCardController firstUserBank userId="
+        logger.info("FuiouBindCardController firstUserBank userId="
                     + (logUser != null ? logUser.getId() : "null"));
         //查询所有的银行
         List<Map<String, Object>> mapList = userBankService.findAllBankInfo();
@@ -314,7 +314,7 @@ public class FuiouBindCardController extends BaseController {
             JSONUtil.toObjectJson(response, JSONUtil.beanToJson(map));
             return;
         }
-        logger.info("YeepayBindCardController switchDefaultCard userId=" + logUser.getId()
+        logger.info("FuiouBindCardController switchDefaultCard userId=" + logUser.getId()
                     + " checkResult=" + checkResult);
 
 
@@ -339,7 +339,7 @@ public class FuiouBindCardController extends BaseController {
             paramMap.put("userId", logUser.getId());
             paramMap.put("status", BorrowOrder.STATUS_FKSB);
             BorrowOrder hasBorrowOrder = borrowOrderDao.selectBorrowByParams(paramMap);
-            logger.info("YeepayBindCardController switchDefaultCard borrowOrder userId="
+            logger.info("FuiouBindCardController switchDefaultCard borrowOrder userId="
                     + logUser.getId() + " status="
                     + (hasBorrowOrder != null ? hasBorrowOrder.getStatus() : "null"));
 
@@ -363,13 +363,13 @@ public class FuiouBindCardController extends BaseController {
                 updateBorrowOrder.setPayRemark("可重新放款");
                 borrowOrderService.updateById(updateBorrowOrder);
                 logger.info(
-                        "YeepayBindCardController switchDefaultCard borrowOrder success userId="
+                        "FuiouBindCardController switchDefaultCard borrowOrder success userId="
                                 + logUser.getId());
 
                 orderLogComponent.addNewOrderLog(logModel);
             }
             logger.info(
-                    "YeepayBindCardController switchDefaultCard success userId=" + logUser.getId());
+                    "FuiouBindCardController switchDefaultCard success userId=" + logUser.getId());
 
             msg = "切换成功";
             code = ResponseStatus.SUCCESS.getName();
@@ -395,7 +395,7 @@ public class FuiouBindCardController extends BaseController {
                 msg = ResponseStatus.LOGIN.getValue();
                 return;
             }
-            logger.info("YeepayBindCardController validBorrowOrder userId=" + logUser.getId()
+            logger.info("FuiouBindCardController validBorrowOrder userId=" + logUser.getId()
                         + " user is not null");
             User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
             if (null == user) {
@@ -403,25 +403,25 @@ public class FuiouBindCardController extends BaseController {
                 msg = ResponseStatus.LOGIN.getValue();
                 return;
             }
-            logger.info("YeepayBindCardController validBorrowOrder userId=" + logUser.getId()
+            logger.info("FuiouBindCardController validBorrowOrder userId=" + logUser.getId()
                         + " user is not null userPhone=" + user.getUserPhone());
             Integer checkResult = borrowOrderService.checkBorrow(Integer.parseInt(logUser.getId()));
             /*   if (1 == checkResult) {
                 msg = "您有借款申请正在审核或未还款完成，暂不能修改银行卡。";
                 return;
             }*/
-            logger.info("YeepayBindCardController validBorrowOrder userId=" + logUser.getId()
+            logger.info("FuiouBindCardController validBorrowOrder userId=" + logUser.getId()
                         + " checkResult=" + checkResult);
             code = ResponseStatus.SUCCESS.getName();
             msg = ResponseStatus.SUCCESS.getValue();
         } catch (Exception e) {
-            logger.error("YeepayBindCardController validBorrowOrder userId="
+            logger.error("FuiouBindCardController validBorrowOrder userId="
                          + (null != logUser ? logUser.getId() : "") + " error",
                 e);
         } finally {
             retMap.put("code", code);
             retMap.put("message", msg);
-            logger.info("YeepayBindCardController validBorrowOrder userId="
+            logger.info("FuiouBindCardController validBorrowOrder userId="
                         + (null != logUser ? logUser.getId() : "") + " message=" + msg);
             JSONUtil.toObjectJson(response, JSONUtil.beanToJson(retMap));
         }
@@ -445,7 +445,7 @@ public class FuiouBindCardController extends BaseController {
                 msg = ResponseStatus.LOGIN.getValue();
                 return;
             }
-            logger.info("YeepayBindCardController userBankRequest userId=" + logUser.getId()
+            logger.info("FuiouBindCardController userBankRequest userId=" + logUser.getId()
                         + " user is not null");
 
             User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
@@ -454,7 +454,7 @@ public class FuiouBindCardController extends BaseController {
                 msg = ResponseStatus.LOGIN.getValue();
                 return;
             }
-            logger.info("YeepayBindCardController userBankRequest userId=" + logUser.getId()
+            logger.info("FuiouBindCardController userBankRequest userId=" + logUser.getId()
                         + " user is not null userPhone=" + user.getUserPhone());
 
             if ((StringUtils.isBlank(user.getRealname()))
@@ -464,7 +464,7 @@ public class FuiouBindCardController extends BaseController {
                 return;
             }
             logger.info(
-                "YeepayBindCardController userBankRequest userId=" + logUser.getId() + " 个人信息验证通过");
+                "FuiouBindCardController userBankRequest userId=" + logUser.getId() + " 个人信息验证通过");
 
             Map<String, String> pams = this.getParameters(request);
             //预留手机号
@@ -474,7 +474,7 @@ public class FuiouBindCardController extends BaseController {
             //银行卡号
             String cardNo = pams.get("card_no") == null ? "" : pams.get("card_no");
 
-            logger.info("YeepayBindCardController userBankRequest userId=" + logUser.getId()
+            logger.info("FuiouBindCardController userBankRequest userId=" + logUser.getId()
                         + " phone:" + phone + ",bankId:" + bankId + ",cardNo:" + cardNo);
             if (StringUtils.isBlank(phone)) {
                 code = ResponseStatus.FAILD.getName();
@@ -518,7 +518,7 @@ public class FuiouBindCardController extends BaseController {
 
             //发送银行卡绑定请求
             Map<String, Object> resultMap = fuiouService.getBindCardRequest(paramMap);
-            logger.info("YeepayBindCardController userBankRequest userId=" + logUser.getId()
+            logger.info("FuiouBindCardController userBankRequest userId=" + logUser.getId()
                         + " resultMap=" + JSON.toJSONString(resultMap));
             if ("0000".equals(String.valueOf(resultMap.get("code")))) {
 
@@ -535,13 +535,13 @@ public class FuiouBindCardController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error("YeepayBindCardController userBankRequest userId="
+            logger.error("FuiouBindCardController userBankRequest userId="
                          + (null != logUser ? logUser.getId() : "") + " error",
                 e);
         } finally {
             retMap.put("code", code);
             retMap.put("message", msg);
-            logger.info("YeepayBindCardController userBankRequest userId="
+            logger.info("FuiouBindCardController userBankRequest userId="
                         + (null != logUser ? logUser.getId() : "") + " message=" + msg);
             JSONUtil.toObjectJson(response, JSONUtil.beanToJson(retMap));
         }
@@ -559,7 +559,7 @@ public class FuiouBindCardController extends BaseController {
         User logUser = this.loginFrontUserByDeiceId(request);
 
         if (null == logUser) {
-            logger.info("YeepayBindCardController userBankConfirm userId=" + logUser.getId()
+            logger.info("FuiouBindCardController userBankConfirm userId=" + logUser.getId()
                         + " user is not null");
             userInfoCheckResult.setCode(ResponseStatus.LOGIN.getName());
             userInfoCheckResult.setMessage(ResponseStatus.LOGIN.getValue());
@@ -594,7 +594,7 @@ public class FuiouBindCardController extends BaseController {
         //短信验证码
         String smsCode = pams.get("sms_code") == null ? "" : pams.get("sms_code");
 
-        logger.info("YeepayBindCardController userBankConfirm userId=" + logUser.getId() + " phone:"
+        logger.info("FuiouBindCardController userBankConfirm userId=" + logUser.getId() + " phone:"
                     + phone + ",bankId:" + bankId + ",cardNo:" + cardNo + ",requestNo:" + requestNo
                     + ",smsCode:" + smsCode);
 
@@ -616,11 +616,11 @@ public class FuiouBindCardController extends BaseController {
             ResultModel<String> result = fuiouCardService.userBankConfirm(bindCardConfirmReq);
             JSONUtil.toObjectJson(response, JSON.toJSONString(result));
         } catch (Exception e) {
-            logger.error("YeepayBindCardController userBankRequest userId="
+            logger.error("FuiouBindCardController userBankRequest userId="
                             + (null != logUser ? logUser.getId() : "") + " error",
                     e);
         } finally {
-            logger.info("YeepayBindCardController userBankRequest userId="
+            logger.info("FuiouBindCardController userBankRequest userId="
                     + (null != logUser ? logUser.getId() : ""));
             JSONUtil.toObjectJson(response, JSONUtil.beanToJson(null));
         }

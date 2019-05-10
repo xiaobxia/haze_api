@@ -107,6 +107,7 @@ public class RepayService {
                 repaymentDetail.setTrueRepaymentMoney(Long.valueOf(payMoney) * 100);
                 repaymentDetail.setCreatedAt(outOrders.getAddTime());
                 repaymentDetail.setOrderId(outOrders.getOrderNo());
+                repaymentDetail.setBackOrderId(outOrders.getFuiouOrderId());//富友订单号暂存在该字段
                 if ("支付宝".equals(type)) {
                     repaymentDetail.setRepaymentType(RepaymentDetail.TYPE_ALIPAY);
                     repaymentDetail.setRemark(type + "还款回调：支付成功");

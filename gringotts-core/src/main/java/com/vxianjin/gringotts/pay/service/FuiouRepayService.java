@@ -34,7 +34,7 @@ public interface FuiouRepayService {
      * @return res
      */
     @Transactional(rollbackFor = Exception.class)
-    ResultModel payRenewalWithholdCallback(String req);
+    ResultModel payRenewalWithholdCallback(Map<String, String> callbackResult);
 
     /**
      * 主动支付（还款）
@@ -44,27 +44,6 @@ public interface FuiouRepayService {
      */
     @Transactional(rollbackFor = Exception.class)
     ResponseContent repaymentWithholdConfirm(Integer id, String payPwd, String bankId) throws Exception;
-
-    /**
-     * 主动支付短信重发（还款）
-     *
-     * @param req 请求内容
-     * @return res
-     */
-    @Transactional(rollbackFor = Exception.class)
-    YeepaySmsReSendResp repaymentWithholdResendSmscode(YeepayRepaySmsReq req);
-
-    /**
-     * 主动代扣（还款）
-     *
-     * @param id id
-     * @param payPwd pwd
-     * @return res
-     *  @throws Exception ex
-     */
-    @Transactional(rollbackFor = Exception.class)
-    ResponseContent repaymentWithhold(Integer id, String payPwd) throws Exception;
-
 
     /**
      * 续期代扣（一般充值）
@@ -128,7 +107,7 @@ public interface FuiouRepayService {
      * @param remark remark
      * @return res
      */
-    ResponseContent yeepayWithhold(Repayment repayment, User user, int withholdType, Long money, String debitType, String remark);
+    ResponseContent fuiouWithhold(Repayment repayment, User user, int withholdType, Long money, String debitType, String remark) throws Exception;
 
     /**
      * 易宝续期处理
@@ -140,7 +119,7 @@ public interface FuiouRepayService {
      * @return res
      * @throws Exception ex
      */
-    ResponseContent yeepayRenewalWithhold(RenewalRecord renewalRecord, User user, Long money, Integer bankId) throws Exception;
+    ResponseContent fuiouRenewalWithhold(RenewalRecord renewalRecord, User user, Long money, Integer bankId) throws Exception;
 
     /**
      * 易宝主动请求支付处理

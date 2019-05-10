@@ -3,7 +3,18 @@ package com.vxianjin.gringotts.pay.common.util.fuiou;
 import com.fuiou.mpay.encrypt.RSAUtils;
 import com.fuiou.util.MD5;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FuiouUtil {
+
+    public static List<String> XYCodeListSuc() {
+        return new ArrayList<String>(){{
+            add("0000");
+            add("P000");
+            add("51B3");
+        }};
+    }
 
     /**
      * 获取签名

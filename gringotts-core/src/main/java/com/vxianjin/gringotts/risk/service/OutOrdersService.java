@@ -56,6 +56,10 @@ public class OutOrdersService implements IOutOrdersService {
         return ordersDao.findByOrderNo(orderNo);
     }
 
+    @Override
+    public OutOrders findByFuiouOrderId(String fuiouOrderId) {
+        return ordersDao.findByFuiouOrderId(fuiouOrderId);
+    }
 
     @Override
     public int insertByTablelastName(OutOrders orders) {

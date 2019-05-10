@@ -5,12 +5,14 @@ import com.alibaba.fastjson.TypeReference;
 import com.fuiou.mpay.encrypt.DESCoderFUIOU;
 import com.vxianjin.gringotts.pay.common.constants.FuiouConstants;
 import com.vxianjin.gringotts.pay.common.constants.PayConstants;
+import com.vxianjin.gringotts.pay.common.enums.PayRecordStatus;
 import com.vxianjin.gringotts.pay.common.util.EncryUtil;
 import com.vxianjin.gringotts.pay.common.util.RSA;
 import com.vxianjin.gringotts.pay.common.util.RandomUtil;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolOrderResponse;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolResponse;
 import com.vxianjin.gringotts.pay.model.fuiou.PayforreqResponse;
+import com.vxianjin.gringotts.util.MapUtils;
 import com.vxianjin.gringotts.util.security.AESUtil;
 import com.yeepay.g3.sdk.yop.client.YopClient3;
 import com.yeepay.g3.sdk.yop.client.YopRequest;
@@ -62,25 +64,33 @@ public class FuiouApiUtil {
         String res = new HttpPoster(uri).postStr(map);
         res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
 
+
         NewProtocolResponse response = XMapUtil.parseStr2Obj(NewProtocolResponse.class, res);
 
-        logger.info("请求YOP之后结果：{}",response.toString());
+        logger.info("请求FUIOU-YOP之后结果：{}",response.toString());
         // 对结果进行处理
-        if (!"0000".equals(response.getResponseCode())) {
+        if (!FuiouUtil.XYCodeListSuc().contains(response.getResponseCode())) {
             if (response.getResponseMsg() != null){
+                logger.info("错误明细:{}",response.getResponseMsg());
+                result.put("payStatus", PayRecordStatus.PAY_FAIL);
                 result.put("errorcode", response.getResponseCode());
                 result.put("errormsg", response.getResponseMsg());
-                logger.info("错误明细:{}",response.getResponseMsg());
                 logger.info("系统处理异常结果:{}",result);
                 return result;
             }
+        } else {
+            // 成功则进行相关处理
+            if ("0000".equals(response.getResponseCode())) {
+                result.put("status", response.getResponseCode());
+                result.put("errorcode", response.getResponseCode());
+                result.put("payStatus", PayRecordStatus.PAY_SUCCESS);
+                result.put("errormsg", response.getResponseMsg());
+                result.put("agreeno", response.getProtocolNo());
+                result.put("mchntorderId", response.getMchntorderid());
+                logger.info("response.getResult:{}",result);
+            }
         }
-        // 成功则进行相关处理
-        if ("0000".equals(response.getResponseCode())) {
-            result.put("status", "0000");
-            result.put("agreeno", response.getProtocolNo());
-            logger.info("response.getResult:{}",result);
-        }
+
         return result;
     }
 
@@ -102,7 +112,7 @@ public class FuiouApiUtil {
 
         NewProtocolOrderResponse response = XMapUtil.parseStr2Obj(NewProtocolOrderResponse.class, res);
 
-        logger.info("请求YOP之后结果：{}",response.toString());
+        logger.info("请求FUIOU-OD之后结果：{}",response.toString());
         // 对结果进行处理
         if (!"0000".equals(response.getResponseCode()) && !"P000".equals(response.getResponseCode())) {
             if (response.getResponseMsg() != null){
@@ -144,7 +154,7 @@ public class FuiouApiUtil {
 
         PayforreqResponse response = XMapUtil.parseStr2Obj(PayforreqResponse.class, res);
 
-        logger.info("请求YOP之后结果：{}",response.toString());
+        logger.info("请求FUIOU-PS之后结果：{}",response.toString());
         // 对结果进行处理
         if (!"000000".equals(response.getRet()) && !"0000".equals(response.getRet())) {
             if (response.getMemo() != null){

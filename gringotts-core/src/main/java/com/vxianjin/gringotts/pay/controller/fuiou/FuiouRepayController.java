@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * 易宝支付代扣相关
- * @author jintian on 2018/7/17.
+ * 富友支付代扣相关
+ * @author fully on 2019/5/7.
  */
 @Controller
 @RequestMapping(value = "/fuiou")
@@ -35,7 +35,31 @@ public class FuiouRepayController extends BaseController {
     private FuiouRepayService fuiouRepayService;
 
     /**
-     * 代扣回调（还款）
+     * 富友回调校验
+     * @param req
+     * @return
+     */
+    private boolean verifySign(HttpServletRequest req) {
+        String version = req.getParameter("VERSION");
+        String type = req.getParameter("TYPE");
+        String responseCode = req.getParameter("RESPONSECODE");
+        String responseMsg = req.getParameter("RESPONSEMSG");
+        String mchntCd = req.getParameter("MCHNTCD");
+        String mchntOrderId = req.getParameter("MCHNTORDERID");
+        String orderId = req.getParameter("ORDERID");
+        String bankCard = req.getParameter("BANKCARD");
+        String amt = req.getParameter("AMT");
+        String sign = req.getParameter("SIGN");
+
+        // 校验签名
+        String signPain = new StringBuffer().append(type).append("|").append(version).append("|").append(responseCode)
+                .append("|").append(mchntCd).append("|").append(mchntOrderId).append("|").append(orderId).append("|")
+                .append(amt).append("|").append(bankCard).append("|").append(FuiouConstants.API_MCHNT_KEY).toString();
+        return MD5.MD5Encode(signPain).equals(sign);
+    }
+
+    /**
+     * 富友订单回调（还款）--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "withholdCallback/{userId}")
@@ -43,42 +67,30 @@ public class FuiouRepayController extends BaseController {
 
         logger.debug("FuiouRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】");
         try {
-            String version = req.getParameter("VERSION");
-            String type = req.getParameter("TYPE");
-            String responseCode = req.getParameter("RESPONSECODE");
-            String responseMsg = req.getParameter("RESPONSEMSG");
-            String mchntCd = req.getParameter("MCHNTCD");
-            String mchntOrderId = req.getParameter("MCHNTORDERID");
-            String orderId = req.getParameter("ORDERID");
-            String bankCard = req.getParameter("BANKCARD");
-            String amt = req.getParameter("AMT");
-            String sign = req.getParameter("SIGN");
-
-            // 校验签名
-            String signPain = new StringBuffer().append(type).append("|").append(version).append("|").append(responseCode)
-                    .append("|").append(mchntCd).append("|").append(mchntOrderId).append("|").append(orderId).append("|")
-                    .append(amt).append("|").append(bankCard).append("|").append(FuiouConstants.API_MCHNT_KEY).toString();
-            if (MD5.MD5Encode(signPain).equals(sign)) {//验签成功
+            if (verifySign(req)) {//验签成功
                 Map<String, String> parameterMap = req.getParameterMap();
                 return fuiouRepayService.payWithholdCallback(parameterMap).getCode();
             }
+            return "FAIL";
         } catch (Exception e) {
             logger.error("FuiouRepayController.payWithholdCallback(代扣回调) has error,params : 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】 ,error: ", e);
             return "FAIL";
         }
-        return "";
     }
 
     /**
-     * 续期回调（续期）
+     * 续期回调（续期）--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "renewalWithholdCallback/{userId}")
     public String payRenewalWithholdCallback(HttpServletRequest request, @PathVariable String userId) {
         logger.debug("FuiouRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
         try {
-            String req = request.getParameter("response");
-            return fuiouRepayService.payRenewalWithholdCallback(req).getCode();
+            if (verifySign(request)) {
+                Map<String, String> parameterMap = request.getParameterMap();
+                return fuiouRepayService.payRenewalWithholdCallback(parameterMap).getCode();
+            }
+            return "FAIL";
         } catch (Exception e) {
             logger.error("FuiouRepayController.payRenewalWithholdCallback(续期回调) has error ,params : 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】,error: ", e);
             return "FAIL";
@@ -86,7 +98,7 @@ public class FuiouRepayController extends BaseController {
     }
 
     /**
-     * 主动支付（还款）
+     * 主动支付（还款）--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "repayWithholdConfirm")
@@ -113,35 +125,7 @@ public class FuiouRepayController extends BaseController {
     }
 
     /**
-     * 主动代扣（还款）
-     *
-     * @param id     借款编号
-     * @param payPwd 支付密码
-     * @return res
-     */
-    @ResponseBody
-    @RequestMapping(value = "repay-withhold")
-    public ResponseContent repaymentWithhold(Integer id, String payPwd) {
-        logger.debug("FuiouRepayController.repaymentWithhold  params: 【borrowId：" + id + " payPwd：" + payPwd + "】");
-        if (id == null) {
-            return new ResponseContent("-101", "请求参数非法");
-        }
-        if (StringUtils.isBlank(payPwd)) {
-            return new ResponseContent("-101", "请输入交易密码");
-        }
-        try {
-            return fuiouRepayService.repaymentWithhold(id, payPwd);
-        } catch (BizException e) {
-            logger.error("FuiouRepayController.repaymentWithhold has BizException ,params: 【borrowId：" + id + " payPwd：" + payPwd + "】,errorCode:" + e.getErrorCode() + " errorMsg:" + e.getErrorMsg());
-            return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
-        } catch (Exception e) {
-            logger.error("FuiouRepayController.repaymentWithhold has BizException ,params: 【borrowId：" + id + " payPwd：" + payPwd + "】,error:", e);
-            return new ResponseContent("-101", "系统异常，请稍后重试");
-        }
-    }
-
-    /**
-     * 续期代扣（一般充值）
+     * 续期代扣（首笔验）--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "renewal-withhold")
@@ -164,9 +148,28 @@ public class FuiouRepayController extends BaseController {
         }
     }
 
+    /**
+     * 查询代扣支付结果（还款）--- Fuiou
+     */
+    @ResponseBody
+    @RequestMapping(value = "query-withhold")
+    public ResponseContent queryWithhold(Integer id, String orderNo) {
+        logger.debug("FuiouRepayController.queryWithhold params: 【id:" + id + " orderNo:" + orderNo + "】");
+        return fuiouRepayService.queryWithhold(id, orderNo);
+    }
 
     /**
-     * 定时代扣（还款）
+     * 查询代扣支付结果（还款）--- Fuiou
+     */
+    @ResponseBody
+    @RequestMapping(value = "query-renewalWithhold")
+    public ResponseContent queryRenewalWithhold(Integer id, String orderNo) {
+        logger.debug("FuiouRepayController.queryRenewalWithhold params:【id:" + id + " orderNo:" + orderNo + "】");
+        return fuiouRepayService.queryRenewalWithhold(id, orderNo);
+    }
+
+    /**
+     * 定时代扣（还款）--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "auto-withhold")
@@ -187,27 +190,7 @@ public class FuiouRepayController extends BaseController {
     }
 
     /**
-     * 查询代扣支付结果（还款）
-     */
-    @ResponseBody
-    @RequestMapping(value = "query-withhold")
-    public ResponseContent queryWithhold(Integer id, String orderNo) {
-        logger.debug("FuiouRepayController.queryWithhold params: 【id:" + id + " orderNo:" + orderNo + "】");
-        return fuiouRepayService.queryWithhold(id, orderNo);
-    }
-
-    /**
-     * 查询代扣支付结果（还款）
-     */
-    @ResponseBody
-    @RequestMapping(value = "query-renewalWithhold")
-    public ResponseContent queryRenewalWithhold(Integer id, String orderNo) {
-        logger.debug("FuiouRepayController.queryRenewalWithhold params:【id:" + id + " orderNo:" + orderNo + "】");
-        return fuiouRepayService.queryRenewalWithhold(id, orderNo);
-    }
-
-    /**
-     * 催收代扣（还款）
+     * 催收代扣（还款）--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "collection-withhold/{userId}/{repaymentId}/{money}/{withholdId}/{sign}")

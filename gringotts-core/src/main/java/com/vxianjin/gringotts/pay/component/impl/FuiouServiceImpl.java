@@ -15,7 +15,9 @@ import com.vxianjin.gringotts.pay.common.util.fuiou.HttpPoster;
 import com.vxianjin.gringotts.pay.common.util.fuiou.XMapUtil;
 import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.model.*;
+import com.vxianjin.gringotts.pay.model.fuiou.FuiouRepayResultModel;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolBindXmlBeanReq;
+import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolCheckResultXmlBeanReq;
 import com.vxianjin.gringotts.pay.model.fuiou.PayforreqXmlBeanReq;
 import com.vxianjin.gringotts.risk.service.IOutOrdersService;
 import com.vxianjin.gringotts.util.GenerateNo;
@@ -84,8 +86,8 @@ public class FuiouServiceImpl implements FuiouService {
      */
     @Override
     public Map<String, Object> getBindCardRequest(Map<String, String> paramMap) {
-        log.info("YeepayService getBindCardRequest start");
-        log.info("YeepayService getBindCardRequest paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService getBindCardRequest start");
+        log.info("FuiouService getBindCardRequest paramMap=" + JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", "500");
         resultMap.put("msg", "请求异常");
@@ -99,7 +101,7 @@ public class FuiouServiceImpl implements FuiouService {
         String cardNo = FuiouApiUtil.formatString(paramMap.get("cardNo"));
         String phone = FuiouApiUtil.formatString(paramMap.get("phone"));
 
-        log.info("YeepayService getBindCardRequest userId=" + userId);
+        log.info("FuiouService getBindCardRequest userId=" + userId);
         try {
             NewProtocolBindXmlBeanReq beanReq = new NewProtocolBindXmlBeanReq();
             beanReq.setVersion("1.0");
@@ -114,8 +116,8 @@ public class FuiouServiceImpl implements FuiouService {
             beanReq.setMchntSsn(requestNo);
             beanReq.setSign(FuiouUtil.getSign(beanReq.sendMsgSignStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
 
-            log.info("YeepayService getBindCardRequest requestUrl=" + requestUrl);
-            log.info("YeepayService getBindCardRequest dataMap=" + JSON.toJSONString(beanReq));
+            log.info("FuiouService getBindCardRequest requestUrl=" + requestUrl);
+            log.info("FuiouService getBindCardRequest dataMap=" + JSON.toJSONString(beanReq));
 
             String orderNo = GenerateNo.nextOrdId();
             OutOrders outOrders = new OutOrders();
@@ -143,7 +145,7 @@ public class FuiouServiceImpl implements FuiouService {
             OutOrders newOutOrder = new OutOrders();
             newOutOrder.setOrderNo(orderNo);
 
-            log.info("YeepayService getBindCardRequest resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
+            log.info("FuiouService getBindCardRequest resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
             if (resultMap == null) {
                 resultMap = new HashMap<>();
                 resultMap.put("code", "400");
@@ -154,7 +156,7 @@ public class FuiouServiceImpl implements FuiouService {
             }
 
             Object orderStatus = resultMap.get("status");
-            log.info("YeepayService getBindCardRequest userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
+            log.info("FuiouService getBindCardRequest userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
             //待短验
             if (orderStatus != null && "0000".equals(orderStatus.toString())) {
                 resultMap.put("code", "0000");
@@ -163,7 +165,7 @@ public class FuiouServiceImpl implements FuiouService {
                 outOrdersService.updateByOrderNo(newOutOrder);
                 return resultMap;
             }
-            log.info("YeepayService getBindCardRequest userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
+            log.info("FuiouService getBindCardRequest userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
             if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
                 resultMap.put("code", "400");
                 resultMap.put("msg", resultMap.get("errormsg"));
@@ -191,8 +193,8 @@ public class FuiouServiceImpl implements FuiouService {
      */
     @Override
     public ResultModel<Map<String, Object>> getBindCardConfirm(YPBindCardConfirmReq bindCardConfirmReq) {
-        log.info("YeepayService getBindCardConfirm start");
-        log.info("YeepayService getBindCardConfirm paramMap=" + JSON.toJSONString(bindCardConfirmReq));
+        log.info("FuiouService getBindCardConfirm start");
+        log.info("FuiouService getBindCardConfirm paramMap=" + JSON.toJSONString(bindCardConfirmReq));
 
         ResultModel<Map<String, Object>> resultModel = new ResultModel<>(false);
 
@@ -202,7 +204,7 @@ public class FuiouServiceImpl implements FuiouService {
         }
 
         String userId = bindCardConfirmReq.getUserId();
-        log.info("YeepayService getBindCardConfirm userId=" + userId);
+        log.info("FuiouService getBindCardConfirm userId=" + userId);
 
         //请求易宝api,获得返回结果
 //        Map<String, Object> resultMap = YeepayApiUtil.httpExecuteResult(bindCardConfirmReq.getDataMap(), userId, requestUrl, "getBindCardConfirm");
@@ -240,7 +242,7 @@ public class FuiouServiceImpl implements FuiouService {
         }
 
         resultModel.setData(resultMap);
-        log.info("YeepayService getBindCardConfirm userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
+        log.info("FuiouService getBindCardConfirm userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
         if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
             resultModel.setCode(String.valueOf(resultMap.get("errorcode")));
             resultModel.setMessage(String.valueOf(resultMap.get("errormsg")));
@@ -248,7 +250,7 @@ public class FuiouServiceImpl implements FuiouService {
         }
 
         String orderStatus = String.valueOf(resultMap.get("status"));
-        log.info("YeepayService getBindCardConfirm userId=" + userId + " status=" + orderStatus);
+        log.info("FuiouService getBindCardConfirm userId=" + userId + " status=" + orderStatus);
         //绑卡
         if (!"null".equals(orderStatus) && "0000".equals(orderStatus)) {
             resultModel.setSucc(true);
@@ -264,7 +266,7 @@ public class FuiouServiceImpl implements FuiouService {
 
     @Override
     public Map<String, Object> getBindCardSmsCode(Map<String, String> paramMap) {
-        log.info("YeepayService getBindCardSmsCode paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService getBindCardSmsCode paramMap=" + JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", "500");
         resultMap.put("msg", "请求异常");
@@ -272,11 +274,11 @@ public class FuiouServiceImpl implements FuiouService {
         String merchantNo = PayConstants.MERCHANT_NO;
         String requestNo = YeepayApiUtil.formatString(paramMap.get("requestNo"));
         String userId = YeepayApiUtil.formatString(paramMap.get("userId"));
-        log.info("YeepayService getBindCardSmsCode userId=" + userId);
+        log.info("FuiouService getBindCardSmsCode userId=" + userId);
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("merchantno", merchantNo);
         dataMap.put("requestno", requestNo);
-        log.info("YeepayService getBindCardSmsCode dataMap=" + JSON.toJSONString(dataMap));
+        log.info("FuiouService getBindCardSmsCode dataMap=" + JSON.toJSONString(dataMap));
 
         String orderNo = GenerateNo.nextOrdId();
         OutOrders outOrders = new OutOrders();
@@ -296,7 +298,7 @@ public class FuiouServiceImpl implements FuiouService {
         }catch (Exception e){
             log.error("post bindCard confirm resend error:{}",e);
         }
-        log.info("YeepayService getBindCardSmsCode resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
+        log.info("FuiouService getBindCardSmsCode resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
 
         if (resultMap == null) {
             resultMap = new HashMap<>();
@@ -307,7 +309,7 @@ public class FuiouServiceImpl implements FuiouService {
             return resultMap;
         }
         Object orderStatus = resultMap.get("status");
-        log.info("YeepayService getBindCardSmsCode userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
+        log.info("FuiouService getBindCardSmsCode userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
         //待短验
         if (orderStatus != null && "TO_VALIDATE".equals(orderStatus.toString())) {
             resultMap.put("code", "0000");
@@ -316,7 +318,7 @@ public class FuiouServiceImpl implements FuiouService {
             outOrdersService.updateByOrderNo(outOrders);
             return resultMap;
         }
-        log.info("YeepayService getBindCardSmsCode userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
+        log.info("FuiouService getBindCardSmsCode userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
         if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
             resultMap.put("code", "400");
             resultMap.put("msg", resultMap.get("errormsg"));
@@ -334,8 +336,8 @@ public class FuiouServiceImpl implements FuiouService {
 
     @Override
     public ResultModel updateUserBankInfo(Map<String, String> paramMap) throws Exception {
-        log.info("YeepayService updateUserBankInfo start");
-        log.info("YeepayService updateUserBankInfo paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService updateUserBankInfo start");
+        log.info("FuiouService updateUserBankInfo paramMap=" + JSON.toJSONString(paramMap));
 
         ResultModel resultModel = new ResultModel(true, "0", "绑卡成功");
 
@@ -364,7 +366,7 @@ public class FuiouServiceImpl implements FuiouService {
             cardInfo.setIsBand(1);
             cardInfo.setAgreeno(agreeno);
             boolean flag = userBankDao.saveUserbankCard(cardInfo);
-            log.info("YeepayService updateUserBankInfo userId=" + userId + " new flag=" + flag);
+            log.info("FuiouService updateUserBankInfo userId=" + userId + " new flag=" + flag);
 
             if (!flag) {
                 resultModel.setSucc(flag);
@@ -398,7 +400,7 @@ public class FuiouServiceImpl implements FuiouService {
             cardInfoSave.setIsBand(1);
             boolean flag = userBankService.updateUserBankCard(cardInfoSave);
 
-            log.info("YeepayService updateUserBankInfo userId=" + userId + " old flag=" + flag);
+            log.info("FuiouService updateUserBankInfo userId=" + userId + " old flag=" + flag);
 
             if (!flag) {
                 resultModel.setSucc(flag);
@@ -412,7 +414,7 @@ public class FuiouServiceImpl implements FuiouService {
             infoIndexService.authBankOld(map);
         }
 
-        log.info("YeepayService updateUserBankInfo end resultMap=" + JSON.toJSONString(resultModel));
+        log.info("FuiouService updateUserBankInfo end resultMap=" + JSON.toJSONString(resultModel));
         return resultModel;
     }
 
@@ -423,8 +425,8 @@ public class FuiouServiceImpl implements FuiouService {
      */
     @Override
     public Map<String, Object> getWithdrawRequest(Map<String, String> paramMap) throws Exception {
-        log.info("YeepayService getWithdrawRequest start");
-        log.info("YeepayService getWithdrawRequest paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService getWithdrawRequest start");
+        log.info("FuiouService getWithdrawRequest paramMap=" + JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", "500");
         resultMap.put("msg", "请求异常");
@@ -524,8 +526,8 @@ public class FuiouServiceImpl implements FuiouService {
      */
     @Override
     public Map<String, Object> getUnSendBindCardRequest(Map<String, String> paramMap) {
-        log.info("YeepayService getUnSendBindCardRequest start");
-        log.info("YeepayService getUnSendBindCardRequest paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService getUnSendBindCardRequest start");
+        log.info("FuiouService getUnSendBindCardRequest paramMap=" + JSON.toJSONString(paramMap));
 
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", "500");
@@ -552,8 +554,8 @@ public class FuiouServiceImpl implements FuiouService {
         dataMap.put("phone", phone);
         dataMap.put("requesttime", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
 
-        log.info("YeepayService getUnSendBindCardRequest requestUrl=" + requestUrl);
-        log.info("YeepayService getUnSendBindCardRequest dataMap=" + JSON.toJSONString(dataMap));
+        log.info("FuiouService getUnSendBindCardRequest requestUrl=" + requestUrl);
+        log.info("FuiouService getUnSendBindCardRequest dataMap=" + JSON.toJSONString(dataMap));
 
         String orderNo = GenerateNo.nextOrdId();
         OutOrders outOrders = new OutOrders();
@@ -575,7 +577,7 @@ public class FuiouServiceImpl implements FuiouService {
             log.error("getUnSendBindCardRequest error:{}",e);
         }
 
-        log.info("YeepayService getUnSendBindCardRequest resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
+        log.info("FuiouService getUnSendBindCardRequest resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
         if (resultMap == null) {
             resultMap = new HashMap<String, Object>();
             resultMap.put("code", "400");
@@ -586,7 +588,7 @@ public class FuiouServiceImpl implements FuiouService {
         }
 
         Object orderStatus = resultMap.get("status");
-        log.info("YeepayService getUnSendBindCardRequest userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
+        log.info("FuiouService getUnSendBindCardRequest userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
         if (orderStatus != null && "BIND_SUCCESS".equals(orderStatus.toString())) {
             resultMap.put("code", "0000");
             resultMap.put("msg", "绑卡成功");
@@ -595,7 +597,7 @@ public class FuiouServiceImpl implements FuiouService {
             outOrdersService.updateByOrderNo(newOutOrder);
             return resultMap;
         }
-        log.info("YeepayService getUnSendBindCardRequest userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
+        log.info("FuiouService getUnSendBindCardRequest userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
         if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
             resultMap.put("code", "400");
             resultMap.put("msg", resultMap.get("errormsg"));
@@ -620,8 +622,8 @@ public class FuiouServiceImpl implements FuiouService {
      */
     @Override
     public Map<String, Object> getRechargeSmsCode(Map<String, String> paramMap) {
-        log.info("YeepayService getRechargeSmsCode start");
-        log.info("YeepayService getRechargeSmsCode paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService getRechargeSmsCode start");
+        log.info("FuiouService getRechargeSmsCode paramMap=" + JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", "500");
         resultMap.put("msg", "请求异常");
@@ -629,12 +631,12 @@ public class FuiouServiceImpl implements FuiouService {
         String merchantNo = PayConstants.MERCHANT_NO;
         String requestNo = YeepayApiUtil.formatString(paramMap.get("requestNo"));
         String userId = YeepayApiUtil.formatString(paramMap.get("userId"));
-        log.info("YeepayService getRechargeSmsCode userId=" + userId);
+        log.info("FuiouService getRechargeSmsCode userId=" + userId);
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("merchantno", merchantNo);
         dataMap.put("requestno", requestNo);
         dataMap.put("advicesmstype", "MESSAGE");
-        log.info("YeepayService getRechargeSmsCode dataMap=" + JSON.toJSONString(dataMap));
+        log.info("FuiouService getRechargeSmsCode dataMap=" + JSON.toJSONString(dataMap));
 
         String orderNo = GenerateNo.nextOrdId();
 
@@ -659,7 +661,7 @@ public class FuiouServiceImpl implements FuiouService {
             log.error("getRechargeSmsCode post yeepay error:{}",e);
         }
 
-        log.info("YeepayService getRechargeSmsCode resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
+        log.info("FuiouService getRechargeSmsCode resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
         if (resultMap == null) {
             resultMap = new HashMap<>();
             resultMap.put("code", "400");
@@ -670,7 +672,7 @@ public class FuiouServiceImpl implements FuiouService {
         }
 
         Object orderStatus = resultMap.get("status");
-        log.info("YeepayService getBindCardSmsCode userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
+        log.info("FuiouService getBindCardSmsCode userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
         //待短验
         if (orderStatus != null && "TO_VALIDATE".equals(orderStatus.toString())) {
             resultMap.put("code", "0000");
@@ -679,7 +681,7 @@ public class FuiouServiceImpl implements FuiouService {
             outOrdersService.updateByOrderNo(outOrders);
             return resultMap;
         }
-        log.info("YeepayService getBindCardSmsCode userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
+        log.info("FuiouService getBindCardSmsCode userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
         if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
             resultMap.put("code", "400");
             resultMap.put("msg", resultMap.get("errormsg"));
@@ -706,8 +708,8 @@ public class FuiouServiceImpl implements FuiouService {
     public ResultModel<Map<String, Object>> getRechargeConfirm(Map<String, String> paramMap) {
 
         ResultModel resultModel = new ResultModel(false, ErrorCode.ERROR_500.getCode(), ErrorCode.ERROR_500.getMsg());
-        log.info("YeepayService getRechargeConfirm start");
-        log.info("YeepayService getRechargeConfirm paramMap=" + JSON.toJSONString(paramMap));
+        log.info("FuiouService getRechargeConfirm start");
+        log.info("FuiouService getRechargeConfirm paramMap=" + JSON.toJSONString(paramMap));
 
         //商户编号
         String merchantNo = PayConstants.MERCHANT_NO;
@@ -719,7 +721,7 @@ public class FuiouServiceImpl implements FuiouService {
         String userId = YeepayApiUtil.formatString(paramMap.get("userId"));
         String smsCode = YeepayApiUtil.formatString(paramMap.get("smsCode"));
 
-        log.info("YeepayService getRechargeConfirm userId=" + userId);
+        log.info("FuiouService getRechargeConfirm userId=" + userId);
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("merchantno", merchantNo);
         dataMap.put("requestno", requestNo);
@@ -728,8 +730,8 @@ public class FuiouServiceImpl implements FuiouService {
 //        String sign = EncryUtil.handleRSA(dataMap, merchantPrivateKey);
 //        dataMap.put("sign", sign);
 
-//        log.info("YeepayService getRechargeConfirm requestUrl=" + requestUrl);
-        log.info("YeepayService getRechargeConfirm dataMap=" + JSON.toJSONString(dataMap));
+//        log.info("FuiouService getRechargeConfirm requestUrl=" + requestUrl);
+        log.info("FuiouService getRechargeConfirm dataMap=" + JSON.toJSONString(dataMap));
 
         String orderNo = GenerateNo.nextOrdId();
 
@@ -755,7 +757,7 @@ public class FuiouServiceImpl implements FuiouService {
         }catch (Exception e){
             log.error("getRechargeConfirm post yeepay error:{}",e);
         }
-        log.info("YeepayService getRechargeConfirm resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
+        log.info("FuiouService getRechargeConfirm resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
         if (resultMap == null) {
             newOutOrder.setStatus(OutOrders.STATUS_OTHER);
             outOrdersService.updateByOrderNo(newOutOrder);
@@ -764,7 +766,7 @@ public class FuiouServiceImpl implements FuiouService {
             return resultModel;
         }
 
-        log.info("YeepayService getRechargeConfirm userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
+        log.info("FuiouService getRechargeConfirm userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
         if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
             resultModel.setCode(ErrorCode.ERROR_400.getCode());
             if ("TZ0200002".equals(resultMap.get("errorcode"))) {
@@ -782,7 +784,7 @@ public class FuiouServiceImpl implements FuiouService {
         String orderStatus = String.valueOf(resultMap.get("status"));
 
         if (!"null".equals(orderStatus)) {
-            log.info("YeepayService getRechargeConfirm userId=" + userId + " status=" + orderStatus);
+            log.info("FuiouService getRechargeConfirm userId=" + userId + " status=" + orderStatus);
             switch (PayRecordStatus.getByCode(orderStatus)) {
                 case TO_VALIDATE:
                     resultModel.setCode(ErrorCode.ERROR_400.getCode());
@@ -805,7 +807,7 @@ public class FuiouServiceImpl implements FuiouService {
                     break;
             }
         } else {
-            log.info("YeepayService getRechargeConfirm userId=" + userId + " status=null");
+            log.info("FuiouService getRechargeConfirm userId=" + userId + " status=null");
         }
         return resultModel;
     }
@@ -817,7 +819,7 @@ public class FuiouServiceImpl implements FuiouService {
      */
     @Override
     public PageResultModel<YPBatchPayResultModel> getYBPayResult(YPBatchPayResultReq ypBatchPayResultReq) {
-        log.info("YeepayService getYBPayResult ypBatchPayResultReq=" + JSON.toJSONString(ypBatchPayResultReq));
+        log.info("FuiouService getYBPayResult ypBatchPayResultReq=" + JSON.toJSONString(ypBatchPayResultReq));
 
         PageResultModel<YPBatchPayResultModel> result = new PageResultModel<>(false);
         //商户私钥
@@ -827,11 +829,11 @@ public class FuiouServiceImpl implements FuiouService {
         //【1】将请求的数据和商户自己的密钥拼成一个字符串,获得加密后的请求hmac
         String hmacStr = YeepayUtil.getBatchDetailQueryStr(ypBatchPayResultReq, hmacKey);
 
-        log.info("YeepayService getYBPayResult 签名之前的源数据=" + hmacStr);
+        log.info("FuiouService getYBPayResult 签名之前的源数据=" + hmacStr);
         //获得签名
         Map<String, Object> signMap = YeepayUtil.getSign(hmacStr);
 
-        log.info("YeepayService getYBPayResult 经过md5和数字证书签名之后的数据=" + signMap.get("sign").toString());
+        log.info("FuiouService getYBPayResult 经过md5和数字证书签名之后的数据=" + signMap.get("sign").toString());
         ypBatchPayResultReq.setHmac(String.valueOf(signMap.get("sign")));
 
         //【2】构建请求报文xml，并发送请求
@@ -848,12 +850,12 @@ public class FuiouServiceImpl implements FuiouService {
         }
 
         document.setXMLEncoding("GBK");
-        log.info("YeepayService getYBPayResult 完整xml请求报文==>:" + document.asXML());
+        log.info("FuiouService getYBPayResult 完整xml请求报文==>:" + document.asXML());
 
-        log.info("YeepayService getYBPayResult requestUrl=" + requestUrl);
+        log.info("FuiouService getYBPayResult requestUrl=" + requestUrl);
 
         String responseMsg = CallbackUtils.httpRequest(requestUrl, document.asXML(), "POST", "gbk", "text/xml ;charset=gbk", false);
-        log.info("YeepayService getYBPayResult 服务器响应xml报文:" + responseMsg);
+        log.info("FuiouService getYBPayResult 服务器响应xml报文:" + responseMsg);
 
 
         //【3】解析返回结构报文
@@ -880,7 +882,7 @@ public class FuiouServiceImpl implements FuiouService {
             result.setErrorMessage("代付失败【签名验证失败】");
             return result;
         }
-        log.info("YeepayService getYBPayResult resultMap=" + JSONObject.toJSONString(responseHeadMap));
+        log.info("FuiouService getYBPayResult resultMap=" + JSONObject.toJSONString(responseHeadMap));
 
 
         // List<YPBatchPayResultModel> resultList = new ArrayList<>(responseMap.size());
@@ -914,46 +916,49 @@ public class FuiouServiceImpl implements FuiouService {
      * @return result
      */
     @Override
-    public ResultModel<YPRepayResultModel> getYBRepayResult(YPRepayRecordReq ypRepayRecordReq, String userId) {
-        log.info("YeepayService getYBRepayResult start");
-        log.info("YeepayService getYBRepayResult paramMap=" + JSON.toJSONString(ypRepayRecordReq));
-        ResultModel<YPRepayResultModel> resultModel = new ResultModel<>(false);
+    public ResultModel<FuiouRepayResultModel> getFuiouRepayResult(YPRepayRecordReq ypRepayRecordReq, String userId) {
+        log.info("FuiouService getYBRepayResult start");
+        log.info("FuiouService getYBRepayResult paramMap=" + JSON.toJSONString(ypRepayRecordReq));
+        ResultModel<FuiouRepayResultModel> resultModel = new ResultModel<>(false);
         //商户私钥
 //        String merchantPrivateKey = PayConstants.MERCHANT_PRIVATE_KEY;
 //        String requestUrl = ;
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("merchantno", ypRepayRecordReq.getMerchantNo());
         dataMap.put("requestno", ypRepayRecordReq.getRequestNo());
-        log.info("YeepayService getYBRepayResult reqData=" + JSON.toJSONString(ypRepayRecordReq));
+        log.info("FuiouService getYBRepayResult reqData=" + JSON.toJSONString(ypRepayRecordReq));
         //调用易宝api,获取返回map
 //        Map<String, Object> resultMap = YeepayApiUtil.httpExecuteResult(dataMap, userId, requestUrl, "getYBRepayResult");
         Map<String, Object> resultMap = new HashMap<>();
         try{
-            resultMap = YeepayApiUtil.yeepayYOP(dataMap,PayConstants.REPAY_RECORD_QUERY_REQURL);
+
+            NewProtocolCheckResultXmlBeanReq beanReq = new NewProtocolCheckResultXmlBeanReq();
+            beanReq.setVersion("3.0");
+            beanReq.setMchntCd(FuiouConstants.API_MCHNT_CD);
+            beanReq.setMchntOrderId(ypRepayRecordReq.getRequestNo());
+            beanReq.setSign(FuiouUtil.getSign(beanReq.signStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
+
+            String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
+            APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+
+            resultMap = FuiouApiUtil.FuiouYOP(APIFMS,FuiouConstants.NEW_PROTOCOL_CHECKRESULT_URL);
         }catch (Exception e){
             log.error("getYBRepayResult error:{}",e);
         }
         if (resultMap == null) {
-            log.info("YeepayService getYBRepayResult resultMap= null");
+            log.info("FuiouService getYBRepayResult resultMap= null");
             resultModel.setCode(ErrorCode.ERROR_400.getCode());
-            resultModel.setMessage("绑卡失败，请重试");
+            resultModel.setMessage("查询失败，请重试");
             return resultModel;
         }
-        log.info("YeepayService getYBRepayResult resultMap= " + JSON.toJSONString(resultMap));
+        log.info("FuiouService getYBRepayResult resultMap= " + JSON.toJSONString(resultMap));
         resultModel.setSucc(true);
         resultModel.setCode(resultMap.get("errorcode") == null ? null : String.valueOf(resultMap.get("errorcode")));
         resultModel.setMessage(resultMap.get("errormsg") == null ? null : String.valueOf(resultMap.get("errormsg")));
 
-        YPRepayResultModel repayResultModel = new YPRepayResultModel();
-        repayResultModel.setMerchantNo(resultMap.get("merchantno") == null ? null : String.valueOf(resultMap.get("merchantno")));
-        repayResultModel.setRequestNo(resultMap.get("requestno") == null ? null : String.valueOf(resultMap.get("requestno")));
-        repayResultModel.setYbOrderId(resultMap.get("yborderid") == null ? null : String.valueOf(resultMap.get("yborderid")));
-        repayResultModel.setStatus(resultMap.get("status") == null ? null : String.valueOf(resultMap.get("status")));
-        repayResultModel.setAmount(resultMap.get("amount") == null ? null : String.valueOf(resultMap.get("amount")));
-        repayResultModel.setCardTop(resultMap.get("cardtop") == null ? null : String.valueOf(resultMap.get("cardtop")));
-        repayResultModel.setCardLast(resultMap.get("cardlast") == null ? null : String.valueOf(resultMap.get("cardlast")));
-        repayResultModel.setBankCode(resultMap.get("bankcode") == null ? null : String.valueOf(resultMap.get("bankcode")));
-        repayResultModel.setSign(resultMap.get("sign") == null ? null : String.valueOf(resultMap.get("sign")));
+        FuiouRepayResultModel repayResultModel = new FuiouRepayResultModel();
+        repayResultModel.setRequestNo(resultMap.get("mchntorderId") == null ? null : String.valueOf(resultMap.get("mchntorderId")));
+        repayResultModel.setStatus(resultMap.get("payStatus") == null ? null : String.valueOf(resultMap.get("payStatus")));
         resultModel.setData(repayResultModel);
         return resultModel;
     }

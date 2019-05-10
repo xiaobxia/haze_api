@@ -3,6 +3,8 @@ package com.vxianjin.gringotts.pay.service;
 import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.pay.common.exception.BizException;
 
+import java.util.Map;
+
 /**
  * 易宝支付代付处理
  * @author  jintian on 2018/7/17.
@@ -12,10 +14,10 @@ public interface FuiouWithdrawService {
 
     /**
      * 用户提现（代付）回调接口
-     * @param  reqStr req
+     * @param  resultMap req
      * @return  str
      */
-    String payWithdrawCallback(String reqStr);
+    String payWithdrawCallback(Map<String, String> resultMap);
 
     /**
      * 用户提现（代付）请求接口

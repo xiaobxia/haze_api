@@ -42,7 +42,7 @@ public class PayStatusSynTask {
         params.put("begDate",DateUtil.getDateFormat(new Date(),"yyyy-MM-dd 00:00:00"));
         params.put("endDate",DateUtil.getDateFormat(new Date(),"yyyy-MM-dd 23:59:59"));
         params.put("status",0);
-        params.put("orderType","YEEPAY");
+        params.put("orderType","FUIOU");
         List<RepaymentDetail> repaymentDetails =  repaymentDetailService.queryOrderResultForSYN(params);
 
         if (repaymentDetails == null || repaymentDetails.size() <= 0){

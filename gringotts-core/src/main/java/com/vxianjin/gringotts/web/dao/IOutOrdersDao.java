@@ -42,10 +42,18 @@ public interface IOutOrdersDao {
     /**
      * 查询
      *
-     * @param rderNo
+     * @param orderNo
      * @return
      */
     OutOrders findByOrderNo(String orderNo);
+
+
+    /**
+     * 根据富友订单号查询
+     * @param fuiouOrderId
+     * @return
+     */
+    OutOrders findByFuiouOrderId(String fuiouOrderId);
 
 
     /**

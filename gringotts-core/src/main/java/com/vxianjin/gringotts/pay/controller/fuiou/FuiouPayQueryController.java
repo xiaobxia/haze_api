@@ -24,7 +24,7 @@ import java.util.Map;
 public class FuiouPayQueryController {
     private static final Logger log = LoggerFactory.getLogger(FuiouPayQueryController.class);
 
-    @PostMapping("queryPayRecord")
+    /*@PostMapping("queryPayRecord")
     public String queryPayRecordStatus(String merchantNo,String requestNo ){
         Map<String,String> map = new HashMap<>();
         map.put("merchantno",merchantNo);
@@ -37,7 +37,7 @@ public class FuiouPayQueryController {
             log.error("queryPayRecordStatus error:{}",e);
         }
         return JSON.toJSONString(resultMap);
-    }
+    }*/
 
 //    public static void main(String[] args) {
 //        Map<String,String> map = new HashMap<>();
