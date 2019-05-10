@@ -100,11 +100,6 @@ public class MoneyLimitService implements IMoneyLimitService {
             put("userId", user_id);
         }});//用户通讯录列表
 
-        /*Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userId", user_id);
-        paramMap.put("status", BorrowOrder.STATUS_DCS);
-        BorrowOrder borrowOrder = borrowOrderDao.selectBorrowByParams(paramMap);*/
-
         String model_name = "taoqianbao_v1";
         String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
         String mobile = user.getUserName();
@@ -161,7 +156,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 riskRecord.setCreateTime(new Date());
                 userDao.saveRiskRecord(riskRecord);
 
-
+                //原有的强风控回调储存改为同步得到结果判断结果，进行持久化
                 StrongRiskResult riskResult = new StrongRiskResult();
                 riskResult.setUserId(userId);
                 riskResult.setAmount("1000");
