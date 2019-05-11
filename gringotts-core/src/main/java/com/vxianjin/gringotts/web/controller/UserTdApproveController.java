@@ -287,7 +287,7 @@ public class UserTdApproveController extends BaseController {
 
                 //判断芝麻认证和同盾运营商认证是否都认证完，如果都认证完，则给予默认额度
                 logger.info("mobileTdCallback userId=" + user.getId() + " zmStatus=" + user.getZmStatus() + " tdStatus=" + newUser.getTdStatus());
-                if ("2".equals(newUser.getTdStatus())) {
+                /*if ("2".equals(newUser.getTdStatus())) {
                     //更新newFlag
                     userDao.updateUserNewFlagById(newUser);
                     //初始额度
@@ -301,9 +301,9 @@ public class UserTdApproveController extends BaseController {
 
                     if ("1".equals(user.getNewFlag())) {
                         // 用户额度更新
-                            /*logger.info("update user quotaSnapShot start userId: " + user.getId());
+                            *//*logger.info("update user quotaSnapShot start userId: " + user.getId());
                             quotaSnapshotService.updateUserQuotaSnapshots(user);
-                            logger.info("update user quotaSnapShot end userId: " + user.getId());*/
+                            logger.info("update user quotaSnapShot end userId: " + user.getId());*//*
                         logger.info("mobileTdCallback changeUserLimit start userId=" + userId);
                         borrowOrderService.changeUserLimit(map);
                         //初始化用户额度配置
@@ -324,6 +324,48 @@ public class UserTdApproveController extends BaseController {
 
                     ThreadPool.getInstance().execute(() -> {
                         logger.info("mobileTdCallback thread run start userId = " + USER_ID);
+                        //发送风控信审操作
+                        moneyLimitService.dealEd(USER_ID + "", gxbToken);
+                    });
+                }*/
+                if ("2".equals(newUser.getTdStatus())) {
+                    //更新newFlag
+                    userDao.updateUserNewFlagById(newUser);
+                    //初始额度
+                    String amountMax = "1000";
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("userId", user.getId());
+
+                    map.put("newAmountMax", new BigDecimal(amountMax).multiply(
+                            new BigDecimal(100)).intValue());
+
+                    if ("1".equals(user.getNewFlag())) {
+                        // 用户额度更新 认证完
+                       /* logger.info("update user quotaSnapShot start userId: " + user.getId());
+                        quotaSnapshotService.updateUserQuotaSnapshots(user);
+                        logger.info("update user quotaSnapShot end userId: " + user.getId());*/
+
+                        logger.info("createGXBNotifyCallback changeUserLimit start userId=" + userId);
+                        borrowOrderService.changeUserLimit(map);
+                        logger.info("createGXBNotifyCallback changeUserLimit end userId=" + userId);
+                        try{
+                            //初始化用户额度配置
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put("borrowAmount","100000");
+                            params.put("borrowDay","7");
+                            int configId = borrowProductConfigDao.selectConfigId(params);
+                            logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + configId + ";moneyLimit:" + 100000);
+                            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),configId,new BigDecimal("100000"),7);
+                        }catch (Exception e){
+                            logger.error("addUserQuota has error:{}" , e);
+                        }
+                    }
+                    logger.info("createGXBNotifyCallback success");
+
+                    final int USER_ID = Integer.parseInt(userId);
+
+                    ThreadPool.getInstance().execute(() -> {
+                        logger.info("createGXBNotifyCallback thread run start userId = " + USER_ID);
                         //发送风控信审操作
                         moneyLimitService.dealEd(USER_ID + "", gxbToken);
                     });

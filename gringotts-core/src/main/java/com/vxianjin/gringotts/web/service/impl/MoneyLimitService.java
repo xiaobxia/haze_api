@@ -163,7 +163,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
                 riskResult.setResult(jsonObject.getInteger("score") > 560 ? "10" : "30");
                 riskResult.setRiskStatusType("px");
-                riskResult.setType("0");
+                riskResult.setType("2");
                 riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
                 userDao.insertUserStrongRiskResult(riskResult);
 

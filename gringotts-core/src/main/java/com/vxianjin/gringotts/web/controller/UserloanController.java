@@ -256,9 +256,9 @@ public class UserloanController extends BaseController {
             throw new PayException("请完善紧急联系人信息");
         }
 
-        if ("1".equals(user.getZmStatus())) {
+        /*if ("1".equals(user.getZmStatus())) {
             throw new PayException("芝麻信用未认证");
-        }
+        }*/
 
         if (!"2".equals(user.getTdStatus())) {
             if ("1".equals(user.getTdStatus())) {

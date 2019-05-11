@@ -852,7 +852,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         beanReq.setSign(FuiouUtil.getSign(beanReq.signStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
 
         String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
-        APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+        //APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
 
         return APIFMS;
     }

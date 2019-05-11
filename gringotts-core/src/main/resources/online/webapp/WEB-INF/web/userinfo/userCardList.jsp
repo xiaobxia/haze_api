@@ -500,7 +500,7 @@
         var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
         var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
         show_loading('切换中');
-        $.post('${path}/yeepayBindCard/credit-card/switchDefaultCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}',{bankId: gloabelbank_id},function (data) {
+        $.post('${path}/fuiouBindCard/credit-card/switchDefaultCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}',{bankId: gloabelbank_id},function (data) {
             $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
             var msg = data.msg;
             if(data.code == "0"){
@@ -519,12 +519,12 @@
     // 添加银行卡，超过3张提示
     $('#add-card').on('click',function () {
         show_loading("");
-        $.post('${path}/yeepayBindCard/credit-card/addCardOrNot?deviceId=${deviceId}&mobilePhone=${mobilePhone}',function (data) {
+        $.post('${path}/fuiouBindCard/credit-card/addCardOrNot?deviceId=${deviceId}&mobilePhone=${mobilePhone}',function (data) {
             var msg = data.msg;
             hideLoader();
             //可以绑卡
             if(data.code == "0"){
-                window.location.href = "${path}/yeepayBindCard/credit-card/bindNewCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}";
+                window.location.href = "${path}/fuiouBindCard/credit-card/bindNewCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}";
             }
             //超过绑卡数量
             else if(data.code == "1"){

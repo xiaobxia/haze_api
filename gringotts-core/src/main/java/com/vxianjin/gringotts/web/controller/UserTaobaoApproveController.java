@@ -308,7 +308,7 @@ public class UserTaobaoApproveController extends BaseController {
                 userService.updateZm(userNew);
                 //判断芝麻认证和同盾运营商认证是否都认证完，如果都认证完，则给予默认额度
                 logger.info("createTaobaoNotifyCallback userId=" + user.getId() + " zmStatus=" + userNew.getZmStatus() + " tdStatus=" + user.getTdStatus());
-                if ("2".equals(userNew.getZmStatus()) && "2".equals(user.getTdStatus())) {
+                /*if ("2".equals(userNew.getZmStatus()) && "2".equals(user.getTdStatus())) {
                     //更新newFlag
                     userDao.updateUserNewFlagById(userNew);
                     //初始额度
@@ -321,9 +321,9 @@ public class UserTaobaoApproveController extends BaseController {
 
                     if ("1".equals(user.getNewFlag())) {
                         // 用户额度更新 认证完
-                       /* logger.info("update user quotaSnapShot start userId: " + user.getId());
+                       *//* logger.info("update user quotaSnapShot start userId: " + user.getId());
                         quotaSnapshotService.updateUserQuotaSnapshots(user);
-                        logger.info("update user quotaSnapShot end userId: " + user.getId());*/
+                        logger.info("update user quotaSnapShot end userId: " + user.getId());*//*
 
                         logger.info("createTaobaoNotifyCallback changeUserLimit start userId=" + userId);
                         borrowOrderService.changeUserLimit(map);
@@ -352,7 +352,7 @@ public class UserTaobaoApproveController extends BaseController {
                             moneyLimitService.dealEd(USER_ID + "");
                         }
                     });
-                }
+                }*/
 
                 HashMap<String, String> resMap = new HashMap<>();
                 resMap.put("code", "0");

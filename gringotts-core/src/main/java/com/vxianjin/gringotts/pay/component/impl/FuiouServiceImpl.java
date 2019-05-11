@@ -134,7 +134,7 @@ public class FuiouServiceImpl implements FuiouService {
     //        resultMap = YeepayApiUtil.httpExecuteResult(dataMap, userId, requestUrl, "getBindCardRequest");
             //Map<String,String> map = new HashMap<String, String>();
             String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
-            APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+            //APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
             //map.put("MCHNTCD",merchantNo);
             //map.put("APIFMS", APIFMS);
             //String result = new HttpPoster(requestUrl).postStr(map);
@@ -225,10 +225,10 @@ public class FuiouServiceImpl implements FuiouService {
             beanReq.setMobileNo(bindCardConfirmReq.getPhone());
             beanReq.setMchntSsn(bindCardConfirmReq.getRequestNo());
             beanReq.setMsgCode(bindCardConfirmReq.getSmsCode());
-            beanReq.setSign(FuiouUtil.getSign(beanReq.sendMsgSignStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
+            beanReq.setSign(FuiouUtil.getSign(beanReq.proBindSignStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
 
             String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
-            APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+            //APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
 
             resultMap = FuiouApiUtil.FuiouYOP(APIFMS,FuiouConstants.NEW_PROTOCOL_BINDCOMMIT_URL);
 
@@ -939,7 +939,7 @@ public class FuiouServiceImpl implements FuiouService {
             beanReq.setSign(FuiouUtil.getSign(beanReq.signStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
 
             String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
-            APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+            //APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
 
             resultMap = FuiouApiUtil.FuiouYOP(APIFMS,FuiouConstants.NEW_PROTOCOL_CHECKRESULT_URL);
         }catch (Exception e){
