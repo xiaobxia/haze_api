@@ -162,12 +162,12 @@ public class AutoRiskService implements IAutoRiskService {
                 loanStatus = BorrowOrder.STATUS_FKZ;
             }else{
                 loanStatus = BorrowOrder.STATUS_AI;
-//                User user = userDao.searchByUserid(userId);
-//
-//                Map<String,String> map = new HashMap<>();
-//                map.put("phone",user.getUserPhone());
-//                map.put("name",user.getRealname());
-//                RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
+                User user = userDao.searchByUserid(userId);
+
+                Map<String,String> map = new HashMap<>();
+                map.put("phone",user.getUserPhone());
+                map.put("name",user.getRealname());
+                RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
             }
             //22:放款中
             //复审备注信息
@@ -191,9 +191,11 @@ public class AutoRiskService implements IAutoRiskService {
         orderLogComponent.addNewOrderLog(logModel);
 
         //订单最终状态
-        borrowOrderAutoRisk.setStatus(-3==loanStatus?loanStatus:0);
+        borrowOrderAutoRisk.setStatus(loanStatus);
+        //borrowOrderAutoRisk.setStatus(-3==loanStatus?loanStatus:0);
 
-        logger.info("3.16 adviceExecute end assetBorrowId=" + assetBorrowId + " status=" + loanStatus);
+        logger.info("adviceExecute end assetBorrowId=" + assetBorrowId + " status=" + loanStatus);
+        //logger.info("3.16 adviceExecute end assetBorrowId=" + assetBorrowId + " status=" + loanStatus);
 
         //乐观锁，只允许修改订单状态原先为0的借款订单
         int flag = borrowOrderDao.updateByPrimaryKeySelectiveAndStatus(borrowOrderAutoRisk);

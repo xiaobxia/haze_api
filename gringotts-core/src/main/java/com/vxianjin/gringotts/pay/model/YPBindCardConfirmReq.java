@@ -27,6 +27,8 @@ public class YPBindCardConfirmReq {
     //申请订单号
     private String orderNo;
 
+    private String bankId;
+
     //请求data
     private Map<String, String> dataMap;
 
@@ -84,6 +86,14 @@ public class YPBindCardConfirmReq {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public String getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(String bankId) {
+        this.bankId = bankId;
     }
 
     public Map<String, String> getDataMap() {
