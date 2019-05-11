@@ -102,8 +102,8 @@
         <div class="sure-tc">
             <p>您已逾期，不能申请续期，请先去还款</p>
             <div class="btn-both clearfix" style="padding:0 0.5rem;">
-                <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #ff244e;height:2rem;line-height:2rem;">去还款</a>
-                <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #ff244e; color:#fff !important;height:2rem;line-height:2rem;">取消</a>
+                <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">去还款</a>
+                <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #FF8240; color:#fff !important;height:2rem;line-height:2rem;">取消</a>
             </div>
         </div>
         <!-- 遮罩层 -->

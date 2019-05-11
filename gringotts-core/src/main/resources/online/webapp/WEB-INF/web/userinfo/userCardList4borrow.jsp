@@ -180,8 +180,8 @@
             text-align: center;
             width: 100%;
             margin: 8px 0 0;
-            background: #ff244e;
-            border: 1px solid #ff244e;
+            background: #FF8240;
+            border: 1px solid #FF8240;
             color: #fff;
             font-size: 15px;
             letter-spacing: 1px;

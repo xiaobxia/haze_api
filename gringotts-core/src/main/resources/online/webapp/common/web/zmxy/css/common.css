@@ -85,7 +85,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .ui-corner-all { border-radius: 0; }
 
 /* 公用btn */
-.com_btn { width: 14.5rem; height: 2.2rem; display: block; background-color: #ff244e; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 0.2rem; margin: 0 auto; }
+.com_btn { width: 14.5rem; height: 2.2rem; display: block; background-color: #FF8240; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 0.2rem; margin: 0 auto; }
 
 /* 公用btn */
 
@@ -117,7 +117,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .user-info-list { height: 1.95rem; line-height: 1.95rem; font-size: 0.95rem; color: #493d00; overflow-y: hidden; }
 .user-info-list img { width: 1.95rem; height: 1.95rem; float: left; }
 .user-info-list span { float: left; width: 4.5rem; text-align: center; }
-.reward-btn { display: block; width: 13.8rem; height: 1.9rem; background-color: #ff244e; font-size: 0.8rem; color: #fff !important; text-align: center; line-height: 1.9rem; margin: 0 auto 0.75rem; border-radius: 1.5rem; border-bottom: 4px solid #c43d3e; }
+.reward-btn { display: block; width: 13.8rem; height: 1.9rem; background-color: #FF8240; font-size: 0.8rem; color: #fff !important; text-align: center; line-height: 1.9rem; margin: 0 auto 0.75rem; border-radius: 1.5rem; border-bottom: 4px solid #c43d3e; }
 #rwd-btn { font-size: 0.7rem; color: #a04a1a; text-align: center; display: block; }
 .reward-middle { width: 100%; padding-top: 2.375rem; background: url(../images/a_05.png) 0 0 no-repeat; -webkit-background-size: 100% auto; background-size: 100% auto; position: relative; }
 .reward-middle .a_14 { width: 6.175rem; position: absolute; top: 0; right: 0.5rem; }
@@ -178,7 +178,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .kj-info .ck-btn { display: block; width: 9.4rem; height: 1.7rem; background-color: #ffdf61; border-radius: 1.5rem; font-size: 0.85rem; color: #534f3b; text-align: center; line-height: 1.7rem; margin: 0 auto; }
 
 /* 授权 2016-12-12*/
-.btn { width: 17.5rem; height: 2.2rem; display: block; background-color: #ff244e; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 0.2rem; margin: 2.2rem auto 0; }
+.btn { width: 17.5rem; height: 2.2rem; display: block; background-color: #FF8240; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 0.2rem; margin: 2.2rem auto 0; }
 .sq-wrap p { text-align: center; font-size: 0.6rem; color: #a2a3a3; line-height: 0.85rem; }
 .sq-wrap .logo { display: block; width: 4.45rem; height: auto; margin: 2.25rem auto 1.5rem; }
 .sq-wrap span { text-align: center; display: block; height: 0.7rem; line-height: 0.7rem; margin-top: 1.2rem; font-size: 0.5rem; color: #ff2f56; }
@@ -265,7 +265,7 @@ background-color: #ff5145; font-size: 0.85rem; line-height: 2.2rem; text-align: 
 .jk-list li p { font-size: 0.8rem; line-height: 0.85rem; color: #333; margin-bottom: 0.25rem; }
 .jk-list li p span { margin-left: 0.5rem; color: #666; }
 .btn-box { position: fixed; bottom: 0; width: 17.75rem; padding: 0.5rem; background-color: #fff; }
-.btn-box a { float: right; display: block; width: 8.6rem; height: 2.2rem; background-color: #ff244e; font-size: 0.9rem; color: #fff; line-height: 2.2rem; text-align: center; border-radius: 0.25rem; }
+.btn-box a { float: right; display: block; width: 8.6rem; height: 2.2rem; background-color: #FF8240; font-size: 0.9rem; color: #fff; line-height: 2.2rem; text-align: center; border-radius: 0.25rem; }
 .btn-box a:first-child { float: left; }
 .jk-step { position: relative; }
 .jk-step dd { overflow: hidden; }
@@ -327,7 +327,7 @@ border-left: none; border-right: none; }
 .mt60 { margin-top: 1.5rem; }
 .sure-tc { width: 15.75rem; height: 8.25rem; background-color: #fff; border-radius: 0.25rem; position: fixed; left: 50%; margin-left: -7.875rem; top: 50%; margin-top: -4.125rem; text-align: center; z-index: 1000; display: none; }
 .sure-tc p { font-size: 0.8rem; color: #333; line-height: 1.3rem; padding: 1.5rem 1rem 1rem; }
-.sure-btn { display: block; width: 14.25rem; margin-top: 0; background-color: #ff244e !important; }
+.sure-btn { display: block; width: 14.25rem; margin-top: 0; background-color: #FF8240 !important; }
 .more-info .forget { font-size: 0.8rem; color: #5abcfa; float: right; display: inline; position: absolute; right: 0.75rem; top: 0rem; }
 .pd40 { padding-bottom: 1rem; }
 
@@ -470,7 +470,7 @@ border-left: none; border-right: none; }
 #jf li{ float:left; text-align:center; width:100%; height:2.1rem; }
 #jf li a{ display:block;font-size:0.75rem; line-height:2.1rem;color:#626262; background-color:#f7f6f6; box-shadow:3px 0px 3px 2px #d9d9d9; }
 #jf li a img{ width:1.5rem; height:1.2rem; display:inline-block; margin-right:0.3rem;}
-#jf li.jf_z a{color:#fff; background-color: #ff244e;}
+#jf li.jf_z a{color:#fff; background-color: #FF8240;}
 
 .yh_in{ margin:0 0.75rem;}
 .yh_in h2{ font-size:0.75rem; color:#626262; border-bottom:1px solid #c9c9c9; line-height:1.6rem; cursor:pointer;}
@@ -530,18 +530,18 @@ border-left: none; border-right: none; }
 .find-mm-wrap .tc-btn { overflow: hidden; height: 1.05rem; font-size: 0.75rem; line-height: 1.05rem; color: #6e6e6f; text-align: right; }
 .find-mm-wrap .tc-btn p { float: right; }
 .find-mm-wrap .tc-btn img { float: left; width: 1.05rem; height: 1.05rem; margin-right: 0.35rem; }
-.rz-btn { display: block; width: 14.925rem; height: 2rem; text-align: center; line-height: 2rem; font-size: 0.9rem; color: #fff !important; background: #ff244e; }
+.rz-btn { display: block; width: 14.925rem; height: 2rem; text-align: center; line-height: 2rem; font-size: 0.9rem; color: #fff !important; background: #FF8240; }
 .mrt88 { margin-top: 2.2rem; }
 .mrt8 { margin-top: 8rem; }
 
 /* 弹窗 */
 .tc-box { width: 16.6rem; height: 12.1rem; background-color: #fff; border-radius: 0.25rem; overflow: hidden; position: fixed; top: 50%; margin-top: -6.05rem; left: 50%; margin-left: -8.3rem; z-index: 1000; }
-.tc-box .tc-title { height: 2.7rem; line-height: 2.7rem; text-align: center; font-size: 1rem; color: #fff; background-color: #ff244e; }
+.tc-box .tc-title { height: 2.7rem; line-height: 2.7rem; text-align: center; font-size: 1rem; color: #fff; background-color: #FF8240; }
 .tc-box .tc-con { text-align: center; padding: 0 1.95rem; font-size: 0.75rem; color: #55555a; }
 .tc-box .tc-con p { font-size: 0.75rem; color: #55555a; }
 .tc-box .find-mm { padding-top: 1rem; }
 .tc-box .find-mm dd .input { width: 5.625rem; }
-.tc-box .reset-btn { display: block; width: 12.75rem; height: 2rem; text-align: center; line-height: 2rem; font-size: 0.95rem; color: #fff !important; margin: 0 auto; background: #ff244e; }
+.tc-box .reset-btn { display: block; width: 12.75rem; height: 2rem; text-align: center; line-height: 2rem; font-size: 0.95rem; color: #fff !important; margin: 0 auto; background: #FF8240; }
 .tc-box .other-way { display: block; text-align: right; font-size: 0.6rem; color: #518fd5; margin-top: 0.25rem; }
 .unicom { display: none; }
 .Mobile { display: none; height: 10.75rem; margin-top: -5.375rem; }
@@ -560,7 +560,7 @@ border-left: none; border-right: none; }
 /*重新办卡新*/
 .js-btn2{width: 92% ;margin: 2.2rem 4% 0;    height: 2.2rem;
 	display: block;
-	background-color: #ff244e;
+	background-color: #FF8240;
 	font-size: 0.85rem;
 	line-height: 2.2rem;
 	text-align: center;
@@ -613,13 +613,13 @@ padding-left: 2%;
 .tk_new li a{ position:relative;}
 #ckr{ background:url(../images/ckr.png) no-repeat center; width:0.95rem; height:0.975rem; background-size:0.95rem auto; position:absolute; right:0.75rem; margin-top:0.6rem;}
 #xl{ background:url(../images/xl.png) no-repeat center; width:0.575rem; height:0.55rem; background-size:0.55rem auto; position:absolute; right:0.75rem; margin-top:0.8rem;}
-.js-btn {height: 2.2rem; display: block; background-color: #ff244e !important; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 2.2rem; margin: 2.2rem auto 0; }
+.js-btn {height: 2.2rem; display: block; background-color: #FF8240 !important; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 2.2rem; margin: 2.2rem auto 0; }
 
 #ttc{ width:100%; height:100%; background-color:#000; opacity:0.3; filter:alpha(opacity=30); position:fixed; left:0; top:0; z-index:3; }
 .wind4{ width:17rem; height:11.2rem; border-radius:0.5rem; top:50%; left:50%; margin-top:-5.6rem; margin-left:-8.5rem; position:fixed; background:#fff; z-index:1001;}
-.wind4 h2{ height:2.9rem; line-height:2.9rem; color:#fff; font-size:0.9rem; background-color:#ff244e; border-radius:0.5rem 0.5rem 0 0; text-align:center;}
+.wind4 h2{ height:2.9rem; line-height:2.9rem; color:#fff; font-size:0.9rem; background-color:#FF8240; border-radius:0.5rem 0.5rem 0 0; text-align:center;}
 .wind4 p{ padding:1.75rem 1.5rem 1.2rem; text-align:center; color:#525256; font-size:0.75rem;}
-#close4{ background: #ff244e; width:11.25rem; height:2rem; background-size:11.25rem auto; display:block; margin:0 auto; text-align:center; line-height:2rem; color:#fff; font-size:0.95rem;}
+#close4{ background: #FF8240; width:11.25rem; height:2rem; background-size:11.25rem auto; display:block; margin:0 auto; text-align:center; line-height:2rem; color:#fff; font-size:0.95rem;}
 
 .wind2{ width:17rem; height:10.75rem; border-radius:0.5rem; top:50%; left:50%; margin-top:-5.375rem; margin-left:-8.5rem; position:fixed; background:#fff; z-index:1001;}
 .wind2 h2{ height:2.9rem; line-height:2.9rem; color:#fff; background-color:#ff5145; border-radius:0.5rem 0.5rem 0 0; text-align:center; font-size:0.85rem;}

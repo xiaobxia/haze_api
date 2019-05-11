@@ -116,7 +116,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
  }
 .user-info-list img { width: 1.95rem; height: 1.95rem; float: left; }
 .user-info-list span { float: left; width: 4.5rem; text-align: center; }
-.reward-btn { display: block; width: 13.8rem; height: 1.9rem; background-color: #ff244e; font-size: 0.8rem; color: #fff !important; text-align: center; line-height: 1.9rem; margin: 0 auto 0.75rem; border-radius: 1.5rem; border-bottom: 4px solid #c43d3e; }
+.reward-btn { display: block; width: 13.8rem; height: 1.9rem; background-color: #FF8240; font-size: 0.8rem; color: #fff !important; text-align: center; line-height: 1.9rem; margin: 0 auto 0.75rem; border-radius: 1.5rem; border-bottom: 4px solid #c43d3e; }
 #rwd-btn { font-size: 0.7rem; color: #a04a1a; text-align: center; display: block; }
 .reward-middle { width: 100%; padding-top: 2.375rem; background: url(../images/a_05.png) 0 0 no-repeat; -webkit-background-size: 100% auto; background-size: 100% auto; position: relative; }
 .reward-middle .a_14 { width: 6.175rem; position: absolute; top: 0; right: 0.5rem; }
