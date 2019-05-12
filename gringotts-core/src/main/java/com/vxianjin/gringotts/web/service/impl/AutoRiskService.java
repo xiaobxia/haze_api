@@ -159,7 +159,7 @@ public class AutoRiskService implements IAutoRiskService {
             Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
             int time = c.get(Calendar.HOUR_OF_DAY);
             if(time > 20 || time <9){
-                loanStatus = BorrowOrder.STATUS_FKZ;
+                loanStatus = BorrowOrder.STATUS_AI;
             }else{
                 loanStatus = BorrowOrder.STATUS_AI;
                 User user = userDao.searchByUserid(userId);
