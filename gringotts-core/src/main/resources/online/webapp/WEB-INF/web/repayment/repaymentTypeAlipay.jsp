@@ -198,7 +198,7 @@
                 </a>
                 <div class="content">
                     <div class="ewm bank_desc">
-                        <p>户名：鸾鸟网络科技（上海）有限公司</p>
+                        <p>户名：伟福科技有限公司</p>
                         <p>账号：<span class="content_num" id="card_num">31050180363700000448</span><button id="copy_card_num" class="copy_btn" href="javascript:;">复制</button></p>
                         <p>开户行：中国建设银行上海市分行松江新城支行</p>
                     </div>
@@ -230,7 +230,7 @@
                         <img src="${qr_code}" alt="">
                         <p>支付宝账号<br/></p>
                         <p><span class="content_num" id="content">${pay_account}</span><button class="copy_btn" id="copy" href="javascript:;">复制</button></p>
-                        <%--<p class="company_txt"><p class="company_txt"><span>鸾鸟网络科技(上海)有限公司</span><button class="copy_btn" id="copy_company_txt" href="javascript:;">复制</button></p ></p>--%>
+                        <%--<p class="company_txt"><p class="company_txt"><span>伟福科技(上海)有限公司</span><button class="copy_btn" id="copy_company_txt" href="javascript:;">复制</button></p ></p>--%>
                         <p class="company_txt">收款人姓名:<span>${account_name}</span><button class="copy_btn" id="copy_company_txt" href="javascript:;">复制</button></p>
                     </div>
                     <ul class="warn">
