@@ -82,7 +82,7 @@ public class FuiouApiUtil {
             // 成功则进行相关处理
             if ("0000".equals(response.getResponseCode())) {
                 result.put("status", response.getResponseCode());
-                result.put("errorcode", response.getResponseCode());
+                //result.put("errorcode", response.getResponseCode());
                 result.put("payStatus", PayRecordStatus.PAY_SUCCESS);
                 result.put("errormsg", response.getResponseMsg());
                 result.put("agreeno", response.getProtocolNo());

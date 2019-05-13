@@ -606,6 +606,7 @@ public class FuiouBindCardController extends BaseController {
             bindCardConfirmReq.setRequestNo(requestNo.trim());
             bindCardConfirmReq.setSmsCode(smsCode.trim());
             bindCardConfirmReq.setUserId(logUser.getId());
+            bindCardConfirmReq.setBankId(bankId);
             getBindCardConfirmDataMap(bindCardConfirmReq);
             bindCardConfirmReq.setOrderNo(orderNo);
             bindCardConfirmReq.setPhone(phone);
