@@ -149,10 +149,10 @@
 
                     <input type="hidden" placeholder="来源" data-role="none" name="user_from" id="user_from" value="${user_from}">
                     <input type="hidden" data-role="none" name="token" id="token" value="${token}">
-                    <p id="voice-code" class="none_code">获取不到验证码？</p>
+                    <p style="display: none;" id="voice-code" class="none_code">获取不到验证码？</p>
                     <p style="display:none;" >注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《多米优注册协议》</a>
                         <a rel="external" href="${path}/agreement/creditExtension.do?appName=${appKey}" class="ui-link">《信用授权协议》</a></p>
-                    <a rel="external" id="registerClick" onclick="nextStep()" href="javascript:;" class="com-btn ui-link">注册即可领取</a>
+                    <a style="margin-top: 0.5rem;" rel="external" id="registerClick" onclick="nextStep()" href="javascript:;" class="com-btn ui-link">注册即可领取</a>
                     <p class="beizhu">*注：注册下载多米优app后即可申请领取</p>
                     <!-- <ul class="odds">
                         <li><img src="${basePath}/images/pic_01.png" alt=""></li>
