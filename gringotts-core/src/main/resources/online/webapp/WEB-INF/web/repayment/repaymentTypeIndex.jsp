@@ -62,7 +62,7 @@
           </div> -->
 <!-- main start -->
 <div class="wrapper">
-    <div class="jf">
+    <div class="jf no-top">
         <div id="jf">
             <ul>
                 <li class="" id="jf_1"><a><img src="${basePath}/images/yhk_icon.png">银行卡</a></li>

@@ -465,6 +465,7 @@ border-left: none; border-right: none; }
 
 /**/
 .jf{ margin-top:0.5rem;}
+.jf.no-top{ margin-top:0;}
 #jf{ width:100%; height:auto; margin-bottom:0.3rem;}
 #jf ul{ height:2.1rem;}
 #jf li{ float:left; text-align:center; width:100%; height:2.1rem; }
