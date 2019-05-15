@@ -23,7 +23,8 @@ import com.vxianjin.gringotts.risk.service.IOutOrdersService;
 import com.vxianjin.gringotts.util.GenerateNo;
 import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
-import com.vxianjin.gringotts.util.fuiou.MD5Util;
+//import com.vxianjin.gringotts.util.fuiou.MD5Util;
+import com.vxianjin.gringotts.util.security.MD5Util;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.dao.IUserBankDao;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
@@ -31,8 +32,6 @@ import com.vxianjin.gringotts.web.pojo.OutOrders;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.*;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -432,7 +431,7 @@ public class FuiouServiceImpl implements FuiouService {
         resultMap.put("msg", "请求异常");
         Map<String, Object> params = new HashMap<>();
         //集团编号
-        params.put("customerNumber", FuiouConstants.API_MCHNT_CD);
+        params.put("customerNumber", FuiouConstants.DSF_API_MCHNT_CD);
         //商户编号
         params.put("groupNumber", PayConstants.GROUP_ID);
         //批次号
@@ -475,12 +474,12 @@ public class FuiouServiceImpl implements FuiouService {
 
         String xml = XMapUtil.toXML(payforreqXmlBeanReq, FuiouConstants.charset);
 
-        String macSource = FuiouConstants.API_MCHNT_CD + "|" + FuiouConstants.API_MCHNT_KEY + "|"+ FuiouConstants.PAYFORREQ + "|" + xml;
-        String mac = MD5Util.encode(macSource, "UTF-8").toUpperCase();
+        String macSource = FuiouConstants.DSF_API_MCHNT_CD + "|" + FuiouConstants.DSF_API_PWD + "|"+ FuiouConstants.PAYFORREQ + "|" + xml;
+        String mac = MD5Util.md5(macSource, "UTF-8").toUpperCase();
         String url = FuiouConstants.PAYFORREQ_SINCOMEFORREQ_URL;
         Map<String, String> map = new HashMap();
-        map.put("merid", FuiouConstants.API_MCHNT_CD);
-        map.put("reqtype", "payforreq");
+        map.put("merid", FuiouConstants.DSF_API_MCHNT_CD);
+        map.put("reqtype", FuiouConstants.PAYFORREQ);
         map.put("xml", xml);
         map.put("mac", mac);
 
@@ -497,7 +496,7 @@ public class FuiouServiceImpl implements FuiouService {
         ordersNew.setId(outOrders.getId());
         if(yopresponsemap!=null){
 
-            if(!"0000".equals(yopresponsemap.get("errorCode"))){
+            if(yopresponsemap.get("errorCode") != null && (!"0000".equals(yopresponsemap.get("errorCode")) || !"000000".equals(yopresponsemap.get("errorCode")))){
                 resultMap = new HashMap<>();
                 resultMap.put("code", "400");
                 resultMap.put("msg", "代付失败" + yopresponsemap.get("errorCode").toString() + ":【" + yopresponsemap.get("errorMsg").toString() + "】");
@@ -505,10 +504,18 @@ public class FuiouServiceImpl implements FuiouService {
                 outOrdersService.updateByOrderNo(ordersNew);
                 return resultMap;
             }
-            if ("0000".equals(yopresponsemap.get("status").toString())) {
+            if ("000000".equals(yopresponsemap.get("status").toString())) {
                 resultMap = new HashMap<>();
                 resultMap.put("code", BorrowOrder.SUB_SUBMIT);
                 resultMap.put("msg", "支付正在处理中");
+                ordersNew.setStatus(OutOrders.STATUS_SUC);
+                outOrdersService.updateByOrderNo(ordersNew);
+                return resultMap;
+            }
+            if ("0000".equals(yopresponsemap.get("status").toString())) {
+                resultMap = new HashMap<>();
+                resultMap.put("code", BorrowOrder.SUB_PAY_SUCC);
+                resultMap.put("msg", "支付成功");
                 ordersNew.setStatus(OutOrders.STATUS_SUC);
                 outOrdersService.updateByOrderNo(ordersNew);
                 return resultMap;

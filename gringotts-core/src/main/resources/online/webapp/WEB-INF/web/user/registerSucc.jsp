@@ -66,13 +66,13 @@
             var browers = brower_info();
             // 安卓用户微信打开提示到浏览器下载
             if (browers.is_android()) {
-                location="https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
+                location="http://fir.im/tng5?release_id=5cda246e548b7a1459dab454&fir_source=1&fir_campaign=2";
 
             } else if (browers.is_iPhone()) {
-                location="https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
+                location="http://fir.im/1vrt?release_id=5cda23cbca87a81cc8b5946d&fir_source=1&fir_campaign=2";
 
             } else {
-                location="https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
+                location="http://fir.im/tng5?release_id=5cda246e548b7a1459dab454&fir_source=1&fir_campaign=2";
             }
         }
     </script>

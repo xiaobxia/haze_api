@@ -62,8 +62,8 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
 
             //Map<String, Object> resultMap = YeepayApiUtil.getPayCallBackParamMap(requestXml);
             if (resultMap == null) {
-                logger.error("YeepayWithdrawServiceImpl.payWithdrawCallback  error resultMap is null");
-                return "数据解析异常";
+                logger.error("FuiouWithdrawServiceImpl.payWithdrawCallback  error resultMap is null");
+                return "-1";
             }
             //订单编号
             String orderId = resultMap.get("orderno");
@@ -77,6 +77,10 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
                 return "非法回调参数";
             }
             logger.info("borrowOrder " + orderId + " borrowOrder status is" + borrowOrder.getStatus());
+
+            if (borrowOrder.getPaystatus().equals(BorrowOrder.SUB_PAY_SUCC)) {
+                return "1";
+            }
             //订单处于放款中或放款失败状态且非放款成功状态
             if (!borrowOrder.getPaystatus().equals(BorrowOrder.SUB_PAY_SUCC) && (BorrowOrder.STATUS_FKZ.equals(borrowOrder.getStatus())
                     || BorrowOrder.STATUS_FKSB.equals(borrowOrder.getStatus()))) {
@@ -90,7 +94,7 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
                 }
             }
             withdrawService.removePayKey(borrowOrder.getId() + "");
-            return "SUCCESS";
+            return "1";
         } catch (Exception e) {
             logger.error("payWithdrawCallback error:", e);
             throw new PayException("系统异常");
@@ -111,9 +115,9 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         logger.info("payWithdraw userId=" + userId + " borrowId=" + borrowId + " uuid=" + uuid + " sign=" + sign);
         ResponseContent result;
         //验证签名
-        if (!MD5Util.MD5(AESUtil.encrypt("" + userId + borrowId + uuid, CollectionConstant.getCollectionSign())).equals(sign)) {
+        /*if (!MD5Util.MD5(AESUtil.encrypt("" + userId + borrowId + uuid, CollectionConstant.getCollectionSign())).equals(sign)) {
             return new ResponseContent("-101", "代付失败,请求参数非法");
-        }
+        }*/
         // 获取代付相关信息
         NeedPayInfo needPayInfo = withdrawService.getNeedPayInfo(userId, borrowId);
 
@@ -146,8 +150,15 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         logModel.setBeforeStatus(String.valueOf(needPayInfo.getBorrowOrder().getStatus()));
 
         if (BorrowOrder.SUB_SUBMIT.equals(String.valueOf(resultMap.get("code")))) {
-            result = new ResponseContent("0000", "支付正在处理中");
+            result = new ResponseContent("000000", "支付正在处理中");
             logModel.setAfterStatus(BorrowOrder.STATUS_FKZ.toString());
+            logModel.setRemark("放款中");
+        } else if (BorrowOrder.SUB_PAY_SUCC.equals(String.valueOf(resultMap.get("code")))) {
+            result = new ResponseContent("0000", "支付成功");
+            BorrowOrder borrowOrder = borrowOrderDao.selectByPrimaryKey(Integer.parseInt(borrowId));
+            borrowOrderService.updateLoanNew(borrowOrder, "SUCCESS", "支付成功");
+
+            logModel.setAfterStatus(BorrowOrder.STATUS_HKZ.toString());
             logModel.setRemark("放款中");
         } else {
             logger.info("borrowOrderId is" + borrowId + "payWithdraw fail to request yeePay,errorCode:" + resultMap.get("code") + " errorMsg:" + resultMap.get("msg"));
@@ -164,47 +175,6 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         //更新借款订单
         borrowOrderService.updateById(orderNew);
         return result;
-    }
-
-    @Override
-    public String payWithdrawCallbackForOnline(String requestXml) {
-        logger.info("payWithdrawCallbackForOnline params:【requestXml:" + requestXml + "】");
-        try {
-            Map<String, Object> resultMap = YeepayUtil.getResponseMap(requestXml);
-            if (resultMap == null) {
-                logger.error("payWithdrawCallbackForOnline error resultMap is null");
-                return "数据解析异常";
-            }
-            //订单编号
-            String orderId = resultMap.get("order_Id").toString();
-
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("serialNo", orderId);
-            BorrowOrder borrowOrder = borrowOrderDao.selectBorrowByParams(paramMap);
-            logger.info("payWithdrawCallbackForOnline borrowOrder=" + (borrowOrder != null ? JSON.toJSONString(borrowOrder) : "null"));
-            if (borrowOrder == null) {
-                logger.error("payWithdrawCallbackForOnline error borrowOrder is null orderId=" + orderId);
-                return "非法回调参数";
-            }
-            //订单处于放款中或放款失败状态且非放款成功状态
-            if (!borrowOrder.getPaystatus().equals(BorrowOrder.SUB_PAY_SUCC) && (BorrowOrder.STATUS_FKZ.equals(borrowOrder.getStatus())
-                    || BorrowOrder.STATUS_FKSB.equals(borrowOrder.getStatus()))) {
-                if ("S".equals(resultMap.get("status").toString())) {
-                    borrowOrder.setOutTradeNo(resultMap.get("batch_No").toString());
-                    borrowOrderService.updateLoanNew(borrowOrder, "SUCCESS", "支付成功");
-
-                } else {
-                    logger.info("fangkuan fail userId:" + borrowOrder.getUserId()
-                            + " userPhone:" + borrowOrder.getUserPhone() + " msg:" + resultMap.get("message").toString(), "fangkuan");
-                    borrowOrderService.updateLoanNew(borrowOrder, "FAIL", resultMap.get("message").toString());
-                }
-            }
-            withdrawService.removePayKey(borrowOrder.getId() + "");
-            return YeepayUtil.getNotifyResponseXml(resultMap, "");
-        } catch (Exception e) {
-            logger.error("payWithdrawCallback error:", e);
-            throw new PayException("系统异常");
-        }
     }
 
     private Map<String, String> prepareParamsToFuiou(User user, BorrowOrder order, UserCardInfo info) {

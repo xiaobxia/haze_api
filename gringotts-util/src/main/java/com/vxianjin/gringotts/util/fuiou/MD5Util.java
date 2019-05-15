@@ -6,32 +6,32 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MD5Util {
+public class MD5Util{
 
 	private final static String[] hexDigits = { "0", "1", "2", "3", "4", "5",
 			"6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
-    public static String encode(String origin, String charsetname){
-        String resultString = null;
-        resultString = new String(origin);
-        MessageDigest md;
-        try{
-            md = MessageDigest.getInstance("MD5");
-        }catch(NoSuchAlgorithmException e){
-            throw new RuntimeException(e);
-        }
-        if(charsetname == null || "".equals(charsetname)){
-            resultString = Hex.encodeHexString(md.digest(resultString.getBytes()));
-        }else{
-            try{
-                resultString = Hex.encodeHexString(md.digest(resultString.getBytes(charsetname)));
-            }catch(UnsupportedEncodingException e){
-                throw new RuntimeException(e);
-            }
-        }
-        return resultString;
-    }
-    
-    public static String MD5Encode(String origin, String charsetName) {
+	public static String encode(String origin, String charsetname){
+		String resultString = null;
+		resultString = new String(origin);
+		MessageDigest md;
+		try{
+			md = MessageDigest.getInstance("MD5");
+		}catch(NoSuchAlgorithmException e){
+			throw new RuntimeException(e);
+		}
+		if(charsetname == null || "".equals(charsetname)){
+			resultString = Hex.encodeHexString(md.digest(resultString.getBytes()));
+		}else{
+			try{
+				resultString = Hex.encodeHexString(md.digest(resultString.getBytes(charsetname)));
+			}catch(UnsupportedEncodingException e){
+				throw new RuntimeException(e);
+			}
+		}
+		return resultString;
+	}
+
+	public static String MD5Encode(String origin,String charsetName) {
 		origin =origin.trim();
 		String resultString = null;
 		try {
@@ -43,16 +43,16 @@ public class MD5Util {
 		}
 		return resultString;
 	}
-    public static String byteArrayToHexString(byte[] b) {
+	public static String byteArrayToHexString(byte[] b) {
 		StringBuffer resultSb = new StringBuffer();
 		for (int i = 0; i < b.length; i++) {
 			resultSb.append(byteToHexString(b[i]));
 		}
 		return resultSb.toString();
 	}
-    /**
+	/**
 	 * J ת��byte��16����
-	 * 
+	 *
 	 * @param b
 	 * @return
 	 */
@@ -66,18 +66,18 @@ public class MD5Util {
 		return hexDigits[d1] + hexDigits[d2];
 	}
 	public static void main(String[] args) {
-		
+
 		//����
 		String merid="0002900F0345178";
-    	String key="123456";
-    	String reqtype="payforreq";
-    	String xml="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><payforreq><cityno>1000</cityno><ver>1.00</ver><orderno>201702280001</orderno><merdt>20170228</merdt><accntnm>???</accntnm><bankno>0301</bankno><amt>10000</amt><accntno>6222620170000939236</accntno></payforreq>";
-    	String str=merid+"|"+key+"|"+reqtype+"|"+xml;
-    	System.out.println(str);
-    	String mac= MD5Util.MD5Encode(str,"UTF-8");
-    	System.out.println();
-    	System.out.println(mac);
-		
+		String key="123456";
+		String reqtype="payforreq";
+		String xml="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><payforreq><cityno>1000</cityno><ver>1.00</ver><orderno>201702280001</orderno><merdt>20170228</merdt><accntnm>???</accntnm><bankno>0301</bankno><amt>10000</amt><accntno>6222620170000939236</accntno></payforreq>";
+		String str=merid+"|"+key+"|"+reqtype+"|"+xml;
+		System.out.println(str);
+		String mac= MD5Util.MD5Encode(str,"UTF-8");
+		System.out.println();
+		System.out.println(mac);
+
 		//��Ŀ¼��
     	/*String merid="0002220F0306644";
     	String key="u8q09wbd7qh7agxvaa7zbxaj7awndu8c";
@@ -87,7 +87,7 @@ public class MD5Util {
     	String mac= MD5Util.MD5Encode(str,"UTF-8");
     	System.out.println();
     	System.out.println(mac);*/
-    	//��ѯ����
+		//��ѯ����
     	/*String merid="0002900F0345178";
     	String key="123456";
     	String reqtype="qrytransreq";
@@ -97,7 +97,7 @@ public class MD5Util {
     	String mac= MD5Util.MD5Encode(str,"UTF-8");
     	System.out.println();
     	System.out.println(mac);*/
-    	
-    	
+
+
 	}
 }

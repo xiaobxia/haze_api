@@ -26,12 +26,9 @@ public class PayListenerComponent implements ApplicationListener<BaseEvent> {
     @Override
     public void onApplicationEvent(BaseEvent baseEvent) {
         System.out.println("PayListenerComponent 接收消息======================>");
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                logger.info(MessageFormat.format("用户 : {0}, {1}发送短信通知===>",baseEvent.getUserPhone(),baseEvent.getType()));
-                SendSmsUtil.sendSmsDiyCL(baseEvent.getUserPhone(), baseEvent.getMsg());
-            }
+        executorService.submit(() -> {
+            logger.info(MessageFormat.format("用户 : {0}, {1}发送短信通知===>",baseEvent.getUserPhone(),baseEvent.getType()));
+            SendSmsUtil.sendSmsDiyCL(baseEvent.getUserPhone(), SendSmsUtil.templateld44636, baseEvent.getMsg());
         });
     }
 }

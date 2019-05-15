@@ -389,14 +389,8 @@ public class UserTdApproveController extends BaseController {
                 params.put("syskey", "service_phone");
                 List<BackConfigParams> list = backConfigParamsService.findParams(params);
 
-                final String msg = "尊敬的" + user.getRealname() + "您好，由于运营商数据维护，造成您运营商认证未能成功，建议您在1~2天后重新发起认证。给您带来不便，敬请谅解。" +
-                        "客服：" + (list.size() == 1 ? list.get(0).getSysValue() : "");
-                ThreadPool.getInstance().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), msg);
-                    }
-                });
+                final String msg = user.getRealname();
+                ThreadPool.getInstance().execute(() -> SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), SendSmsUtil.templateld45235, msg));
             }
 
             //将认证中的状态改为认证失败状态

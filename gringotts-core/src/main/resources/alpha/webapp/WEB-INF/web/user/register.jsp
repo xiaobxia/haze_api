@@ -421,25 +421,25 @@
             if (browers.is_weixin()) {
                 $("#android_msg").show();
                 downBtn.on('click', function () {
-                    window.location.href = 'https://fir.im/31je';
+                    window.location.href = 'http://fir.im/tng5?release_id=5cda246e548b7a1459dab454&fir_source=1&fir_campaign=2';
                 });
             } else {
                 $("#android_msg").show();
                 downBtn.on('click', function () {
-                    window.location.href = 'https://fir.im/31je';
+                    window.location.href = 'http://fir.im/tng5?release_id=5cda246e548b7a1459dab454&fir_source=1&fir_campaign=2';
                 });
             }
         } else if (browers.is_iPhone()) {
             $("#ios_msg").show();
             downBtn.on('click', function () {
-                window.location.href = "https://fir.im/tng5?release_id=5cd13e6bca87a81b9dac21c7&fir_source=testchannel&fir_campaign=test";
+                window.location.href = "http://fir.im/1vrt?release_id=5cda23cbca87a81cc8b5946d&fir_source=1&fir_campaign=2";
             });
 
         } else {
             $('#download_btn').addClass('jqqd').text('温馨提示');
             $('#other_msg').show();
             downBtn.on('click', function () {
-                window.location.href = "https://fir.im/31je";
+                window.location.href = "http://fir.im/tng5?release_id=5cda246e548b7a1459dab454&fir_source=1&fir_campaign=2";
             })
         }
 

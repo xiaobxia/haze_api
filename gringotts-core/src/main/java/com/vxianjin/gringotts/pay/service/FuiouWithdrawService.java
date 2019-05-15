@@ -30,10 +30,4 @@ public interface FuiouWithdrawService {
      */
     ResponseContent payWithdraw(String userId, String borrowId, String uuid, String sign) throws BizException;
 
-    /**
-     * 用户提现（代付）回调接口预生产环境
-     * @param reqString req
-     * @return str
-     */
-    String payWithdrawCallbackForOnline(String reqString);
 }

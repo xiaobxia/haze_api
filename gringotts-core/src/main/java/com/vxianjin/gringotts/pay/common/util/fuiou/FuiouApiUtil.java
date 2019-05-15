@@ -149,7 +149,7 @@ public class FuiouApiUtil {
      */
     public static Map<String, Object> FuiouPS(Map<String,String> map, String uri) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        String res = new HttpPoster(uri).postStr(map);
+        String res = HttpPoster.requestPost(uri, map);
         //res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
 
         PayforreqResponse response = XMapUtil.parseStr2Obj(PayforreqResponse.class, res);

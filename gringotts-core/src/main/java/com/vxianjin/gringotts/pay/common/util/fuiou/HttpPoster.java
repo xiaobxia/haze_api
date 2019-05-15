@@ -11,6 +11,16 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.http.HttpEntity;
+//import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,6 +38,40 @@ import java.util.Set;
  *
  */
 public class HttpPoster {
+
+	private static final String ENCODEING="UTF-8";
+	public static String requestPost(String url,Map<String, String> params) throws ClientProtocolException, IOException {
+		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+
+        List<org.apache.http.NameValuePair> nameValuePairs = new ArrayList(params.size());
+        //Set<Entry<String, String>> set = params.entrySet();
+        //int i = 0;
+
+        params.forEach((s, s2) -> {
+            nameValuePairs.add(new BasicNameValuePair(s, s2));
+        });
+
+        //设置查询参数
+        /*for (Entry<String, String> entry : set) {
+            NameValuePair pair = new NameValuePair(entry.getKey(), entry.getValue());
+            nameValuePairs[i] = pair;
+            i++;
+        }*/
+
+		HttpPost httppost = new HttpPost(url);
+		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,ENCODEING));
+
+		CloseableHttpResponse response = httpclient.execute(httppost);
+		System.out.println(response.toString());
+
+		HttpEntity entity = response.getEntity();
+		String jsonStr = EntityUtils.toString(entity, "utf-8");
+		System.out.println(jsonStr);
+
+		httppost.releaseConnection();
+
+		return jsonStr;
+	}
 
 	public HttpPoster() {
 	}

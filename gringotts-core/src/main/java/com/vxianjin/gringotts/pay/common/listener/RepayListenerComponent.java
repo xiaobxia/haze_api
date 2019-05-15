@@ -26,12 +26,9 @@ public class RepayListenerComponent implements ApplicationListener<RepayEvent> {
     @Override
     public void onApplicationEvent(RepayEvent baseEvent) {
         System.out.println("RepayListenerComponent 接收消息======================>");
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                logger.info(MessageFormat.format("用户 : {0}, {1}发送短信通知===>",baseEvent.getUserPhone(),baseEvent.getType()));
-                SendSmsUtil.sendSmsDiyCL(baseEvent.getUserPhone(), baseEvent.getMsg());
-            }
+        executorService.submit(() -> {
+            logger.info(MessageFormat.format("用户 : {0}, {1}发送短信通知===>",baseEvent.getUserPhone(),baseEvent.getType()));
+            SendSmsUtil.sendSmsDiyCL(baseEvent.getUserPhone(),SendSmsUtil.templateld45234, baseEvent.getMsg());
         });
     }
 }

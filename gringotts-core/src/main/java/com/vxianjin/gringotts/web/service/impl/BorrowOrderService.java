@@ -678,18 +678,8 @@ public class BorrowOrderService implements IBorrowOrderService {
                             final String userPhone = user.getUserPhone();
                             final Integer normAmountT = normAmount / 100;
                             final Integer addAmountT = addAmount / 100;
-                            ThreadPool.getInstance().run(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // 发送提额短信
-                                    try {
-                                        SendSmsUtil.sendSmsDiyCL(userPhone, "恭喜您已经正常还款累计" + normAmountT + "元，获得提额：" + addAmountT + "元，请继续保持良好的还款习惯！");
-
-                                    }catch (Exception e){
-                                        logger.error("send sms error:{}",e);
-                                    }
-                                }
-                            });
+                            // 发送提额短信
+                            ThreadPool.getInstance().run(() -> SendSmsUtil.sendSmsDiyCL(userPhone, SendSmsUtil.templateld44634, normAmountT + "##" + addAmountT));
 
                         }
                     }
@@ -897,10 +887,10 @@ public class BorrowOrderService implements IBorrowOrderService {
         //拦截成功
         if (flag) {
             logger.info("sendFangkuanFailNotice success userId=" + user.getId());
-            final String msg = "尊敬的用户您好，因银行卡原因您当前的银行卡无法进行收款，请尽快登录APP绑定新的银行卡并切换默认卡。";
+            final String msg = user.getRealname();
 
             ThreadPool pool = ThreadPool.getInstance();
-            pool.run(() -> SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), msg));
+            pool.run(() -> SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), SendSmsUtil.templateld45236, msg));
         }
     }
 
@@ -950,8 +940,8 @@ public class BorrowOrderService implements IBorrowOrderService {
 
 
                 String cardNo = borrowOrder.getCardNo();
-                final String msg = "尊敬的" + user.getRealname() + "，您在" + PropertiesConfigUtil.get("APP_NAME") + "申请的" + (borrowOrder.getMoneyAmount() / 100) + ".00元借款，" +
-                        "已经成功发放至您尾号为" + cardNo.substring(cardNo.length() - 4) + "的银行卡，请注意查收，祝您用款愉快。";
+                final String msg = user.getRealname() + "##" + PropertiesConfigUtil.get("APP_NAME") + "##" + (borrowOrder.getMoneyAmount() / 100) + "##" +
+                        cardNo.substring(cardNo.length() - 4);
                 String userClientId = userClientInfoService.queryClientIdByUserId(borrowOrder.getUserId());
 
                 String mqMsg = "您好，您的" + (borrowOrder.getMoneyAmount() / 100) + ".00元借款已经放款成功，祝您用款愉快！";
@@ -959,16 +949,7 @@ public class BorrowOrderService implements IBorrowOrderService {
                 // 通过mq推送放款成功消息到oss系统
 //                producer.sendMessage(ossMqTopic, ossMqTarget, JSON.toJSONString(new GeTuiJson(4, userClientId, "到账成功", mqMsg, mqMsg)));
                 ThreadPool pool = ThreadPool.getInstance();
-                pool.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-                            SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), msg);
-                        }catch (Exception e){
-                            logger.error("send sms error:{}",e);
-                        }
-                    }
-                });
+                pool.run(() -> SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), SendSmsUtil.templateld44641, msg));
 
             } else {
                 borrowOrderNew.setPayRemark("支付失败:" + desc);

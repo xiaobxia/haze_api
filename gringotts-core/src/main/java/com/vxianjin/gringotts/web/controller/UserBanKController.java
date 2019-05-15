@@ -102,6 +102,7 @@ public class UserBanKController extends BaseController {
                 //认证需求列表
                 List<UserCertification> mapList = userService.findCerticationList();
                 if (mapList != null) {
+                    //int mustBeCount = 0;
                     int mustBeCount = 0;
                     //验证用户已认证的选项
                     Map<String, Object> cret = userService.checkUserCalendar(Integer.parseInt(logUser.getId()));
@@ -212,6 +213,13 @@ public class UserBanKController extends BaseController {
                     } else if (mustBeCount >= 4) {
                         mustBeCount = 100;
                     }
+                    /*if (mustBeCount == 1) {
+                        mustBeCount = 50;
+                    } else if (mustBeCount == 2) {
+                        mustBeCount = 75;
+                    } else if (mustBeCount == 3) {
+                        mustBeCount = 100;
+                    }*/
                     listMap.put("mustBeCount", mustBeCount);
                     if ("1".equals(user.getRealnameStatus())) {
                         listMap.put("real_verify_status", "1");
@@ -271,6 +279,9 @@ public class UserBanKController extends BaseController {
                     break;
                 default:
                     break;
+            }
+            if ("personalRegister".equals(key)) {
+                operator = "已填写";
             }
         }
         return operator;

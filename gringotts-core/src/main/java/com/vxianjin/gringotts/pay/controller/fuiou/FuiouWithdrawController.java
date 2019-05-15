@@ -61,7 +61,7 @@ public class FuiouWithdrawController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "withdrawCallback")
     public String payWithdrawCallback(HttpServletRequest request) {
-        logger.debug("YeepayWithdrawController.payWithdrawCallback params:【reqString:" + request.getParameter("response") + "】");
+        logger.debug("FuiouWithdrawController.payWithdrawCallback params:【reqString:" + request.getParameter("response") + "】");
 
         if (!verifySign(request)) {
             return "0";
@@ -73,15 +73,15 @@ public class FuiouWithdrawController extends BaseController {
     /**
      * 用户提现（代付）回调接口
      */
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping(value = "withdrawCallback_2")
     public String payWithdrawCallbackForTest(@RequestBody String reqString) {
-        logger.debug("YeepayWithdrawController.payWithdrawCallback params:【reqString:" + reqString + "】");
+        logger.debug("FuiouWithdrawController.payWithdrawCallback params:【reqString:" + reqString + "】");
         if (StringUtils.isBlank(reqString)) {
             return "数据解析失败";
         }
         return fuiouWithdrawService.payWithdrawCallbackForOnline(reqString);
-    }
+    }*/
 
 
     /**
@@ -95,11 +95,11 @@ public class FuiouWithdrawController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "withdraw/{userId}/{borrowId}/{uuid}/{sign}")
     public ResponseContent payWithdraw(@PathVariable String userId, @PathVariable String borrowId, @PathVariable String uuid, @PathVariable String sign) {
-        logger.info("YeepayWithdrawController.payWithdraw userId=" + userId + " borrowId=" + borrowId + " uuid=" + uuid + " sign=" + sign);
+        logger.info("FuiouWithdrawController.payWithdraw userId=" + userId + " borrowId=" + borrowId + " uuid=" + uuid + " sign=" + sign);
         //校验请求参数
-        if (StringUtils.isBlank(userId) || StringUtils.isBlank(borrowId) || StringUtils.isBlank(uuid) || StringUtils.isBlank(sign)) {
+        /*if (StringUtils.isBlank(userId) || StringUtils.isBlank(borrowId) || StringUtils.isBlank(uuid) || StringUtils.isBlank(sign)) {
             return new ResponseContent("-101", "代付失败,请求参数不符合要求");
-        }
+        }*/
         try {
             return fuiouWithdrawService.payWithdraw(userId, borrowId, uuid, sign);
         } catch (BizException e) {

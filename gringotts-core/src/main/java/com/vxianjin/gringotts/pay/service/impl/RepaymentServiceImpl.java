@@ -609,7 +609,7 @@ public class RepaymentServiceImpl implements RepaymentService {
             final String userPhone = borrowOrder.getUserPhone();
             final double intoMoney = (borrowOrder.getIntoMoney() / 100.00);
 
-            String content = MessageFormat.format("你收到{0}打款{1}元,预计很快到账，请注意查收！", PropertiesConfigUtil.get("APP_NAME"), intoMoney);
+            String content = PropertiesConfigUtil.get("APP_NAME") + "##" + intoMoney;
             // 将打款消息通过mq推送给运营平台
             //producer.sendMessage(ossMqTopic, ossMqTarget, JSON.toJSONString(new GeTuiJson(4, content)));
 
@@ -718,7 +718,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 
     private void sendRepaySuccessSms(final String phone, final String realName, final long amount, final String userIdStr) {
 
-        String content = MessageFormat.format("尊敬的{0}：您的{1}元借款已经还款成功，您的该笔交易将计入您的信用记录，好的记录将有助于提升您的可用额度。", realName, (amount / 100));
+        String content = realName + "##" + (amount / 100);
         String userClientId = userClientInfoService.queryClientIdByUserId(Integer.valueOf(userIdStr));
         String mqMsg = "您好，您的" + (amount / 100) + "元借款已经还款成功，该笔交易将有助于提升您的信用额。";
         logger.info("prepared send mqMsg:" + mqMsg + " userClientId:" + userClientId);

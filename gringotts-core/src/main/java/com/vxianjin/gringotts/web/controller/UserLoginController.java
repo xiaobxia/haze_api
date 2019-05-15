@@ -3851,14 +3851,14 @@ public class UserLoginController extends BaseController {
                         String content = "您的语音验证码是" + voice_code;
                         Date sendTime = new Date();
                         try {
-                            if (SendSmsUtil.sendSmsVoiceCode(userPhone, content)) {
+                            /*if (SendSmsUtil.sendSmsVoiceCode(userPhone, content)) {
                                 code = "0";
                                 msg = "语音验证码即将发送，请注意接听";
                                 log.info("语音验证码发送成功=" + voice_code + "***" + msg);
                                 log.info("注册语音验证码sendSms:" + userPhone + "-->" + voice_code);
-                            } else {
+                            } else {*/
                                 msg = "获取验证码失败";
-                            }
+                            //}
 
                         } catch (Exception e) {
                             log.error("send voice code error", e);

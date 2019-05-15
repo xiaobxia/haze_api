@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -68,7 +69,18 @@ public class FuiouRepayController extends BaseController {
         logger.debug("FuiouRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】");
         try {
             if (verifySign(req)) {//验签成功
-                Map<String, String> parameterMap = req.getParameterMap();
+                Map<String, String> parameterMap = new HashMap();
+                parameterMap.put("VERSION", req.getParameter("VERSION"));
+                parameterMap.put("TYPE", req.getParameter("TYPE"));
+                parameterMap.put("RESPONSECODE", req.getParameter("RESPONSECODE"));
+                parameterMap.put("RESPONSEMSG", req.getParameter("RESPONSEMSG"));
+                parameterMap.put("MCHNTCD", req.getParameter("MCHNTCD"));
+                parameterMap.put("MCHNTORDERID", req.getParameter("MCHNTORDERID"));
+                parameterMap.put("ORDERID", req.getParameter("ORDERID"));
+                parameterMap.put("BANKCARD", req.getParameter("BANKCARD"));
+                parameterMap.put("AMT", req.getParameter("AMT"));
+                parameterMap.put("SIGN", req.getParameter("SIGN"));
+
                 return fuiouRepayService.payWithholdCallback(parameterMap).getCode();
             }
             return "FAIL";
@@ -87,7 +99,17 @@ public class FuiouRepayController extends BaseController {
         logger.debug("FuiouRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
         try {
             if (verifySign(request)) {
-                Map<String, String> parameterMap = request.getParameterMap();
+                Map<String, String> parameterMap = new HashMap();
+                parameterMap.put("VERSION", request.getParameter("VERSION"));
+                parameterMap.put("TYPE", request.getParameter("TYPE"));
+                parameterMap.put("RESPONSECODE", request.getParameter("RESPONSECODE"));
+                parameterMap.put("RESPONSEMSG", request.getParameter("RESPONSEMSG"));
+                parameterMap.put("MCHNTCD", request.getParameter("MCHNTCD"));
+                parameterMap.put("MCHNTORDERID", request.getParameter("MCHNTORDERID"));
+                parameterMap.put("ORDERID", request.getParameter("ORDERID"));
+                parameterMap.put("BANKCARD", request.getParameter("BANKCARD"));
+                parameterMap.put("AMT", request.getParameter("AMT"));
+                parameterMap.put("SIGN", request.getParameter("SIGN"));
                 return fuiouRepayService.payRenewalWithholdCallback(parameterMap).getCode();
             }
             return "FAIL";

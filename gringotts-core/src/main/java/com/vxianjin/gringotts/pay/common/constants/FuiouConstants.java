@@ -13,6 +13,11 @@ public class FuiouConstants {
     /**商户密钥 */
     public static final String API_MCHNT_KEY = "5old71wihg2tqjug9kkpxnhx9hiujoqj";//FuiouConfiguration.getInstance().getValue("apimchntkey");
 
+    /**代收付商户号 */
+    public static final String DSF_API_MCHNT_CD = "0002900F0345178";//FuiouConfiguration.getInstance().getValue("apimchntcd");
+    /**代收付商户密钥 */
+    public static final String DSF_API_PWD = "123456";//FuiouConfiguration.getInstance().getValue("apimchntkey");
+
     public static final String PAYFORREQ = "payforreq";
 
     public static final String SINCOMEFORREQ = "sincomeforreq";
