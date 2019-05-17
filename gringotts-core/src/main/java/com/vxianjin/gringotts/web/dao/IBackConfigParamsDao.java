@@ -25,4 +25,6 @@ public interface IBackConfigParamsDao {
      * @return
      */
     int updateValue(List<BackConfigParams> list);
+
+    String  findMachine();
 }

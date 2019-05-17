@@ -30,4 +30,10 @@ public class BackConfigParamsService implements IBackConfigParamsService {
         }
         return result;
     }
+
+    @Override
+    public String findMachine() {
+        String result = backConfigParamsDao.findMachine();
+        return result;
+    }
 }
