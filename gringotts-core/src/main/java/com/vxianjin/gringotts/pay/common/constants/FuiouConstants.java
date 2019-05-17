@@ -1,6 +1,6 @@
 package com.vxianjin.gringotts.pay.common.constants;
 
-import com.vxianjin.gringotts.pay.common.util.fuiou.FuiouConfiguration;
+import com.vxianjin.gringotts.pay.common.util.Configuration;
 
 /**
  * @Author: fully
@@ -9,14 +9,14 @@ import com.vxianjin.gringotts.pay.common.util.fuiou.FuiouConfiguration;
  */
 public class FuiouConstants {
     /**商户号 */
-    public static final String API_MCHNT_CD = "0002900F0096235";//FuiouConfiguration.getInstance().getValue("apimchntcd");
+    public static final String API_MCHNT_CD = Configuration.getInstance().getValue("apimchntcd");
     /**商户密钥 */
-    public static final String API_MCHNT_KEY = "5old71wihg2tqjug9kkpxnhx9hiujoqj";//FuiouConfiguration.getInstance().getValue("apimchntkey");
+    public static final String API_MCHNT_KEY = Configuration.getInstance().getValue("apimchntkey");
 
     /**代收付商户号 */
-    public static final String DSF_API_MCHNT_CD = "0002900F0345178";//FuiouConfiguration.getInstance().getValue("apimchntcd");
+    public static final String DSF_API_MCHNT_CD = Configuration.getInstance().getValue("dsfmchntcd");
     /**代收付商户密钥 */
-    public static final String DSF_API_PWD = "123456";//FuiouConfiguration.getInstance().getValue("apimchntkey");
+    public static final String DSF_API_PWD = Configuration.getInstance().getValue("dsfmchntkey");
 
     public static final String PAYFORREQ = "payforreq";
 
@@ -27,20 +27,22 @@ public class FuiouConstants {
     /**响应吗：已支付 */
     public static final String RESP_CODE_PAIED = "5185";
 
-    public static final String FUIOU_PUB_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBCcvUDkw3ONsVx7Rzh9IJoKKurwBnKSjJEJbLXQWDKIPZMtmxcHa5jNu6OgpQ0BatOYl4p4BmgH3HzVwWyn6iDOsDlxwZezFzArtPjtECq241nfmoGhbz9lMr7T56yY5PhATws32Dm1ZQbY8DvsFvTe2hKgmIGbZQ030seRnfSwIDAQAB";//FuiouConfiguration.getInstance().getValue("fuioupubkey");
+    public static final String FUIOU_PUB_KEY = Configuration.getInstance().getValue("fuioupubkey");
 
-    public static final String CHECK_ID_REQ_URL = "http://www-1.fuiou.com:18670/mobile_pay/checkInfo/checkIdentity.pay";//FuiouConfiguration.getInstance().getValue("checkidrequrl");
-    public static final String NEW_PROTOCOL_BINDMSG_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/bindMsg.pay";//FuiouConfiguration.getInstance().getValue("newprotocolbindmsgurl");
-    public static final String NEW_PROTOCOL_BINDCOMMIT_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/bindCommit.pay";//FuiouConfiguration.getInstance().getValue("newprotocolbindcommiturl");
-    public static final String NEW_PROTOCOL_ORDER_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/order.pay";//FuiouConfiguration.getInstance().getValue("newprotocolorderurl");
-    public static final String NEW_PROTOCOL_COMMIT_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/commit.pay";//FuiouConfiguration.getInstance().getValue("newprotocolcommiturl");
-    public static final String NEW_PROTOCOL_SENDMSG_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/sendMsg.pay";//FuiouConfiguration.getInstance().getValue("newprotocolsendmsgurl");
-    public static final String NEW_PROTOCOL_QUERY_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/bindQuery.pay";//FuiouConfiguration.getInstance().getValue("newprotocolqueryurl");
-    public static final String NEW_PROTOCOL_QUERYLIST_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/bindQueryList.pay";//FuiouConfiguration.getInstance().getValue("newprotocolquerylisturl");
-    public static final String NEW_PROTOCOL_UNBIND_URL = "http://www-1.fuiou.com:18670/mobile_pay/newpropay/unbind.pay";//FuiouConfiguration.getInstance().getValue("newprotocolunbindurl");
-    public static final String NEW_PROTOCOL_CHECKRESULT_URL = "http://www-1.fuiou.com:18670/mobile_pay/checkInfo/checkResult.pay";//FuiouConfiguration.getInstance().getValue("newprotocolcheckResulturl");
+    public static final String CHECK_ID_REQ_URL = Configuration.getInstance().getValue("checkidrequrl");
+    public static final String NEW_PROTOCOL_BINDMSG_URL = Configuration.getInstance().getValue("newprotocolbindmsgurl");
+    public static final String NEW_PROTOCOL_BINDCOMMIT_URL = Configuration.getInstance().getValue("newprotocolbindcommiturl");
+    public static final String NEW_PROTOCOL_ORDER_URL = Configuration.getInstance().getValue("newprotocolorderurl");
 
-    public static final String PAYFORREQ_SINCOMEFORREQ_URL = "https://fht-test.fuioupay.com/fuMer/req.do";//FuiouConfiguration.getInstance().getValue("payforreqsincomeforrequrl");
+
+    public static final String NEW_PROTOCOL_COMMIT_URL = Configuration.getInstance().getValue("newprotocolcommiturl");
+    public static final String NEW_PROTOCOL_SENDMSG_URL = Configuration.getInstance().getValue("newprotocolsendmsgurl");
+    public static final String NEW_PROTOCOL_QUERY_URL = Configuration.getInstance().getValue("newprotocolqueryurl");
+    public static final String NEW_PROTOCOL_QUERYLIST_URL = Configuration.getInstance().getValue("newprotocolquerylisturl");
+    public static final String NEW_PROTOCOL_UNBIND_URL = Configuration.getInstance().getValue("newprotocolunbindurl");
+    public static final String NEW_PROTOCOL_CHECKRESULT_URL = Configuration.getInstance().getValue("newprotocolcheckResulturl");
+
+    public static final String PAYFORREQ_SINCOMEFORREQ_URL = Configuration.getInstance().getValue("payforreqsincomeforrequrl");
 
     public static String charset = "UTF-8";
 
@@ -48,7 +50,7 @@ public class FuiouConstants {
 
     public static String signtp = "MD5";
 
-    public static String backnotifyurl = "";//FuiouConfiguration.getInstance().getValue("backnotifyurl");
+    //public static String backnotifyurl = "";//FuiouConfiguration.getInstance().getValue("backnotifyurl");
 
 
 }

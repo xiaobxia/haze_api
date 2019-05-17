@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 public class Configuration {
 
 
-    private static final String CONFIG_FILE = "yeepay";
+    private static final String CONFIG_FILE = "fuiou";
     private static Object lock = new Object();
     private static Configuration config = null;
     private static ResourceBundle rb = null;

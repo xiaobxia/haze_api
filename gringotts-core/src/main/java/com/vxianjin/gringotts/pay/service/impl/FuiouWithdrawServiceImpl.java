@@ -115,9 +115,9 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         logger.info("payWithdraw userId=" + userId + " borrowId=" + borrowId + " uuid=" + uuid + " sign=" + sign);
         ResponseContent result;
         //验证签名
-        /*if (!MD5Util.MD5(AESUtil.encrypt("" + userId + borrowId + uuid, CollectionConstant.getCollectionSign())).equals(sign)) {
+        if (!MD5Util.MD5(AESUtil.encrypt("" + userId + borrowId + uuid, CollectionConstant.getCollectionSign())).equals(sign)) {
             return new ResponseContent("-101", "代付失败,请求参数非法");
-        }*/
+        }
         // 获取代付相关信息
         NeedPayInfo needPayInfo = withdrawService.getNeedPayInfo(userId, borrowId);
 

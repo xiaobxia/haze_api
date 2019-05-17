@@ -97,9 +97,9 @@ public class FuiouWithdrawController extends BaseController {
     public ResponseContent payWithdraw(@PathVariable String userId, @PathVariable String borrowId, @PathVariable String uuid, @PathVariable String sign) {
         logger.info("FuiouWithdrawController.payWithdraw userId=" + userId + " borrowId=" + borrowId + " uuid=" + uuid + " sign=" + sign);
         //校验请求参数
-        /*if (StringUtils.isBlank(userId) || StringUtils.isBlank(borrowId) || StringUtils.isBlank(uuid) || StringUtils.isBlank(sign)) {
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(borrowId) || StringUtils.isBlank(uuid) || StringUtils.isBlank(sign)) {
             return new ResponseContent("-101", "代付失败,请求参数不符合要求");
-        }*/
+        }
         try {
             return fuiouWithdrawService.payWithdraw(userId, borrowId, uuid, sign);
         } catch (BizException e) {
