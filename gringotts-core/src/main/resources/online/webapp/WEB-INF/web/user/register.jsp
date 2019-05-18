@@ -357,6 +357,15 @@
             LUOCAPTCHA.reset();
             return;
         }
+        function isQQWechat() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) === "micromessenger") {
+                return 2;
+            } else if (ua.match(/QQ/i) === "qq") {
+                return 1;
+            }
+            return 0;
+        }
         var url = "${path}/act/light-loan-xjx/register";
         var param = {
             phone:userPhone,
@@ -366,6 +375,7 @@
             user_from:user_from,
             token:token,
             brower_type:brower_type,
+            qq_wechat: isQQWechat(),
             apply_ins: apply_ins
         };
         $.ajax({
