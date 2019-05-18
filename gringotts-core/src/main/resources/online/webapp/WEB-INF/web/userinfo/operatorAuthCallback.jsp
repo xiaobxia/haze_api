@@ -57,8 +57,16 @@
     <!-- main start -->
     <div class="op-wrapper">
         <form action="/www.closewebcontroller.com" id="tempForm" method="get" data-ajax="false"></form>
-        <img src="${basePath}/images/b_06.png" alt="">
-        <div class="op-title">运营商认证成功</div>
+        <c:choose>
+            <c:when test="${success == 1}">
+                <img src="${basePath}/images/b_06.png" alt="">
+                <div class="op-title">运营商认证成功</div>
+            </c:when>
+            <c:otherwise>
+                <img src="${basePath}/images/b_09.png" alt="">
+                <div class="op-title">${remark}</div>
+            </c:otherwise>
+        </c:choose>
         <div class="back-btn">返回</div>
     </div>
 </div>

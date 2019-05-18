@@ -1,6 +1,7 @@
 package com.vxianjin.gringotts.web.controller;
 
 import com.vxianjin.gringotts.common.ResponseContent;
+import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.IUserClientInfoService;
@@ -51,7 +52,11 @@ public class UserClientInfoController extends BaseController {
      * 回调页面
      */
     @RequestMapping("operatorAuthCallback")
-    public String operatorAuthCallback() {
+    public String operatorAuthCallback(HttpServletRequest request, Model model) {
+        String success = request.getParameter("success");
+        String remark = request.getParameter("remark");
+        model.addAttribute("success", StringUtils.isNotBlank(success) ? Integer.parseInt(success) : 0);
+        model.addAttribute("remark", remark);
         return "userinfo/operatorAuthCallback";
     }
 }
