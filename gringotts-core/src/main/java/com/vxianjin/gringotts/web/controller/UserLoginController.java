@@ -3924,7 +3924,7 @@ public class UserLoginController extends BaseController {
             Object pushId = dataMap.get("pushId");
             //浏览器类型（1、android 2、ios 3、pc）
             String brower_type = dataMap.get("brower_type") + "";
-            Object  qq_wechat = dataMap.get("qq_wechat");
+            String  qq_wechat = dataMap.get("qq_wechat")+"";
             // 手机验证码验证
             if (StringUtils.isBlank(smsCode)) {
                 msg = "手机验证码不能为空";
@@ -4016,7 +4016,7 @@ public class UserLoginController extends BaseController {
             user.setClientType(3);
             // 注册保存新用户
             //添加渠道来源 0 都不是 1 qq 2 微信
-            user.setQqWechat((Integer) qq_wechat);
+            user.setQqWechat(qq_wechat);
             userService.saveUser(user);
             /*添加地推用户，推广ID(地推系统推送的PUSHID)*/
 //            try {
