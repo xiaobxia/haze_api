@@ -39,7 +39,7 @@
     .regist-bg .register .com-btn{background:#ff7700;display:block;width:200px;height:44px;color:#fff;font-size:16px;line-height:44px;text-align:center;text-decoration:none;border-radius:35px;margin: 0 auto 15px;}
     .regist-bg .register li input{font-size:14px;font-weight: 300;padding:0;height:45px;line-height:45px;display:block;width:100%}
     .regist-bg .register li .pst00{position:absolute;top:0;right:0}
-    .regist-bg .register li .gain-yzm{font-size:16px;color:#FF1400;line-height:45px;right:10px;cursor: pointer;}
+    .regist-bg .register li .gain-yzm{font-size:16px;color:#FF1400;line-height:45px;right:10px;}
     .regist-bg .register li .captcha-pic{width:128px;height:auto;position:absolute;top:0;right:0}
     .regist-bg .register .odds{font-size:0;text-align:center;display:table;width: 100%;}
     .regist-bg .register .odds>li{display:table-cell;border:none;width:24%;padding:0}
