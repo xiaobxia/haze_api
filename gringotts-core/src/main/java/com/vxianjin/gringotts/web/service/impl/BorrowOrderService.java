@@ -592,8 +592,8 @@ public class BorrowOrderService implements IBorrowOrderService {
 
                     normCount = normOrders.size();//成功借款次数
                 }
-                if (!(normAmount < 100000)) {//总的成功借款额度 > 100000
-                    tgMoneyType = normAmount / 100000;// 获取本次提额等级
+                if (!(normAmount < 160000)) {//总的成功借款额度 > 100000
+                    tgMoneyType = normAmount / 160000;// 获取本次提额等级
 
                     params.clear();
                     params.put("userId", user.getId());
@@ -624,7 +624,7 @@ public class BorrowOrderService implements IBorrowOrderService {
                             }
                             sucCount += yqOrders.size();//累加借款次数
                         }
-                        tgJs = tgMoneyType * 100000;//计算提额金额的基数
+                        tgJs = tgMoneyType * 160000;//计算提额金额的基数
                         addAmount = (tgJs * tgApr / 100);//计算本次提升的借款额度
                         Integer oldAmountMax = Integer.parseInt(user.getAmountMax());//获取用户当前最大借款额度
                         Integer newAmountMax = oldAmountMax + addAmount;//更新用户最大借款额度

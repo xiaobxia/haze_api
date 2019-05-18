@@ -19,4 +19,6 @@ public interface IBackConfigParamsService {
      * @return
      */
     int updateValue(List<BackConfigParams> list, String type);
+
+    String findMachine();
 }

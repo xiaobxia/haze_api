@@ -16,9 +16,11 @@ import com.vxianjin.gringotts.web.dao.IUserDao;
 import com.vxianjin.gringotts.web.pojo.*;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
 import com.vxianjin.gringotts.web.service.IAutoRiskService;
+import com.vxianjin.gringotts.web.service.IBackConfigParamsService;
 import com.vxianjin.gringotts.web.util.aliyun.RocketMqUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,9 @@ public class AutoRiskService implements IAutoRiskService {
 
     @Resource
     private OrderLogComponent orderLogComponent;
+
+    @Autowired
+    IBackConfigParamsService backConfigParamsService;
 
     /**
      * 用户执行借款订单的风控信息
@@ -158,6 +163,15 @@ public class AutoRiskService implements IAutoRiskService {
         if (advice) {
             Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
             int time = c.get(Calendar.HOUR_OF_DAY);
+            //判断系统是机审还是人审
+            String result = backConfigParamsService.findMachine();
+            if(!"null".equals(result) && result.equals("1")){
+                  //此时系统选择为人审 将订单状态改为待放款
+                loanStatus = BorrowOrder.STATUS_CSTG;
+                borrowOrderAutoRisk.setVerifyReviewUser("人工信审，人审放款");
+                borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
+            }else{
+                //此时系统选择为机审
             if(time > 20 || time <9){
                 loanStatus = BorrowOrder.STATUS_AI;
             }else{
@@ -173,6 +187,7 @@ public class AutoRiskService implements IAutoRiskService {
             //复审备注信息
             borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
             borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
+            }
         } else  {
             //-3:初审驳回
             loanStatus = BorrowOrder.STATUS_CSBH;

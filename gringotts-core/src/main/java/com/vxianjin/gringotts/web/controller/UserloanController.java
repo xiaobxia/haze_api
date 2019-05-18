@@ -116,8 +116,8 @@ public class UserloanController extends BaseController {
         BigDecimal userMaxBorrowAmount;
         if (quotaModel == null) {
             //TODO:新版本兼容配置，如果用户没有默认的1000/7天的产品线则插入
-            if (period.equals("7") && money.compareTo(1000) == 0){
-                userMaxBorrowAmount = new BigDecimal("1000");
+            if (period.equals("7") && money.compareTo(1600) == 0){
+                userMaxBorrowAmount = new BigDecimal("1600");
                 userQuotaSnapshotDao.addUserQuota(Integer.valueOf(userId),config.getId(),config.getBorrowAmount(),config.getBorrowDay());
             }else{
                 serviceResult.setMsg("用户该借款期限下无可借金额");

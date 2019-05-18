@@ -331,8 +331,8 @@ public class UserTdApproveController extends BaseController {
                 if ("2".equals(newUser.getTdStatus())) {
                     //更新newFlag
                     userDao.updateUserNewFlagById(newUser);
-                    //初始额度
-                    String amountMax = "1000";
+                    //TODO 现状：初始额度，需求：改为可配置
+                    String amountMax = "1600";
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("userId", user.getId());
 
@@ -351,11 +351,11 @@ public class UserTdApproveController extends BaseController {
                         try{
                             //初始化用户额度配置
                             HashMap<String, String> params = new HashMap<>();
-                            params.put("borrowAmount","100000");
+                            params.put("borrowAmount","160000");
                             params.put("borrowDay","7");
                             int configId = borrowProductConfigDao.selectConfigId(params);
-                            logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + configId + ";moneyLimit:" + 100000);
-                            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),configId,new BigDecimal("100000"),7);
+                            logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + configId + ";moneyLimit:" + 160000);
+                            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),configId,new BigDecimal("160000"),7);
                         }catch (Exception e){
                             logger.error("addUserQuota has error:{}" , e);
                         }

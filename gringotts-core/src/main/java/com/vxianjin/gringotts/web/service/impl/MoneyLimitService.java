@@ -159,7 +159,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 //原有的强风控回调储存改为同步得到结果判断结果，进行持久化
                 StrongRiskResult riskResult = new StrongRiskResult();
                 riskResult.setUserId(userId);
-                riskResult.setAmount("1000");
+                riskResult.setAmount("1600");
                 riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
                 riskResult.setResult(jsonObject.getInteger("score") > 560 ? "10" : "30");
                 riskResult.setRiskStatusType("px");
