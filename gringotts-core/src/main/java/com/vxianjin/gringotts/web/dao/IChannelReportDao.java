@@ -2,6 +2,7 @@ package com.vxianjin.gringotts.web.dao;
 
 import com.vxianjin.gringotts.web.pojo.ChannelInfo;
 import com.vxianjin.gringotts.web.pojo.ChannelReport;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -68,5 +69,6 @@ public interface IChannelReportDao {
 
     int findIntoMoney(Map<String, Object> param);
 
+    ChannelReport findChannelReportById(@Param("id") Integer id );
 
 }

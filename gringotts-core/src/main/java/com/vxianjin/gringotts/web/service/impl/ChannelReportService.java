@@ -152,5 +152,16 @@ public class ChannelReportService implements IChannelReportService {
         return false;
     }
 
+    @Override
+    public void insert(ChannelReport channelReport) {
+        channelReportDao.insert(channelReport);
+    }
+
+    @Override
+    public ChannelReport findChannelReportById(Integer id) {
+        ChannelReport channelReport = channelReportDao.findChannelReportById(id);
+        return channelReport;
+    }
+
 
 }

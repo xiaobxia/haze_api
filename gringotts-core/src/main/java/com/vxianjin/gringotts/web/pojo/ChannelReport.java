@@ -69,6 +69,7 @@ public class ChannelReport implements Serializable {
     private Integer dayBlackUserCount;
     private Integer dayBorrowApplyCount;
     private Integer dayBorrowSucCount;
+    private Integer uvCount;
 
     public static long getSerialversionuid() {
         return serialVersionUID;
@@ -312,6 +313,14 @@ public class ChannelReport implements Serializable {
 
     public void setBorrowSucCount(Integer borrowSucCount) {
         this.borrowSucCount = borrowSucCount;
+    }
+
+    public Integer getUvCount() {
+        return uvCount;
+    }
+
+    public void setUvCount(Integer uvCount) {
+        this.uvCount = uvCount;
     }
 
     public BigDecimal getPassRate() {
