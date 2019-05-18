@@ -2,15 +2,18 @@ package com.vxianjin.gringotts.web.controller;
 
 import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.IUserClientInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jintian
@@ -41,5 +44,14 @@ public class UserClientInfoController extends BaseController {
             logger.error("UserClientInfoController.saveUserClientInfo has error,", e);
             return new ResponseContent("-101", "系统异常");
         }
+    }
+
+
+    /**
+     * 回调页面
+     */
+    @RequestMapping("operatorAuthCallback")
+    public String operatorAuthCallback() {
+        return "userinfo/operatorAuthCallback";
     }
 }

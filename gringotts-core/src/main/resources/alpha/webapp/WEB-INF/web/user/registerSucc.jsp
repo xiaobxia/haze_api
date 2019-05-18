@@ -51,7 +51,7 @@
             //location = "http://www.xianjinxia.com:8086/xjx-platform/a/jsaward/awardCenter/drawAwardIndex";
         }
         function downApp(){
-            location="https://fir.im/31je";
+            location="https://fir.im/tng5";
         }
     </script>
     <style>
