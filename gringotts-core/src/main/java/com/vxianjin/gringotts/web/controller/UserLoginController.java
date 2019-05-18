@@ -25,6 +25,7 @@ import com.vxianjin.gringotts.web.common.result.Status;
 import com.vxianjin.gringotts.web.dao.impl.UserContactsDao;
 import com.vxianjin.gringotts.web.pojo.*;
 import com.vxianjin.gringotts.web.service.*;
+import com.vxianjin.gringotts.web.service.impl.ChannelReportService;
 import com.vxianjin.gringotts.web.util.ConfigLoader;
 import com.vxianjin.gringotts.web.util.SendSmsUtil;
 import com.vxianjin.gringotts.web.util.TokenUtils;
@@ -160,6 +161,9 @@ public class UserLoginController extends BaseController {
     @Resource
     private BorrowProductConfigDao borrowProductConfigDao;
     private String result;
+
+    @Resource
+    private ChannelReportService channelReportService;
 
     /**
      * 注册 生成手机认证码
@@ -3697,6 +3701,14 @@ public class UserLoginController extends BaseController {
             if (StringUtils.isNotBlank(token)) {
                 model.addAttribute("token", token);
             }
+            //添加uv 统计功能
+            String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
+            ChannelReport channelReport = channelReportService.findChannelReportById(Integer.valueOf(channelId));
+            if(!"null".equals(channelReport.getUvCount()) && channelReport.getUvCount() != ' '){
+                channelReport.setUvCount(channelReport.getUvCount()+1);
+                channelReportService.insert(channelReport);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3705,7 +3717,6 @@ public class UserLoginController extends BaseController {
         model.addAttribute("companyTitle", getAppConfig(request.getParameter("appName"), "COMPANY_TITLE"));
         //备案号
         model.addAttribute("bah", getAppConfig(request.getParameter("appName"), "XJX_BAH"));
-
         model.addAttribute("RCaptchaKey", "R" + request.getSession().getId());
         return "user/register";
     }
@@ -3790,7 +3801,9 @@ public class UserLoginController extends BaseController {
             json.put("message", msg);
             json.put("data", dataMap);
             JSONUtil.toObjectJson(response, json.toString());
+
         }
+
     }
 
     /**
@@ -3911,6 +3924,7 @@ public class UserLoginController extends BaseController {
             Object pushId = dataMap.get("pushId");
             //浏览器类型（1、android 2、ios 3、pc）
             String brower_type = dataMap.get("brower_type") + "";
+            String  qq_wechat = dataMap.get("qq_wechat")+"";
             // 手机验证码验证
             if (StringUtils.isBlank(smsCode)) {
                 msg = "手机验证码不能为空";
@@ -4001,6 +4015,8 @@ public class UserLoginController extends BaseController {
             //注册终端类型（设备类型 1、Android 2、ios 3、wap 4、pc）
             user.setClientType(3);
             // 注册保存新用户
+            //添加渠道来源 0 都不是 1 qq 2 微信
+            user.setQqWechat(qq_wechat);
             userService.saveUser(user);
             /*添加地推用户，推广ID(地推系统推送的PUSHID)*/
 //            try {

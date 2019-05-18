@@ -23,7 +23,7 @@
 
     <sql id="Base_Column_List">
         report_date,register_count,attestation_realname_count,attestation_bank_count,contact_count,jxl_count,alipay_count,zhima_count,
-        company_count,borrow_apply_count,borrow_suc_count,borrow_suc_count,pass_rate,into_money,approve_error_count,channelid
+        company_count,borrow_apply_count,borrow_suc_count,borrow_suc_count,pass_rate,into_money,approve_error_count,channelid,uc_count
     </sql>
 
 
@@ -230,7 +230,7 @@
         pass_rate,
         into_money,
         approve_error_count,
-        channelid)
+        channelid,uv_count)
         VALUES (
         #{reportDate},
         #{registerCount},
@@ -246,7 +246,13 @@
         #{passRate},
         #{intoMoney},
         #{approveErrorCount},
-        #{channelid});
+        #{channelid}),
+        #{uvCount};
     </insert>
-
+    <select id="findChannelReportById" resultType="com.vxianjin.gringotts.web.pojo.ChannelReport" parameterType="java.lang.Integer">
+     SELECT
+        <include refid="Base_Column_List"/>
+        from channel_report
+        where channelid =#{id}
+    </select>
 </mapper>

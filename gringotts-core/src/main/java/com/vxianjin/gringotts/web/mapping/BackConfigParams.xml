@@ -42,4 +42,7 @@
             where id = #{item.id}
         </foreach>
     </update>
+    <select id ="findMachine" resultType="java.lang.String">
+        select sys_value from back_config_params where sys_key="MACHINE_OPEN"
+    </select>
 </mapper>

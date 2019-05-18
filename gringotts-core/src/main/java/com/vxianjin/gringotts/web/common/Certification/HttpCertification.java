@@ -150,14 +150,14 @@ public class HttpCertification implements IHttpCertification {
         params.put("api_key", apiKey);
         params.put("api_secret", apiSecret);
         // 返回身份证照片合法性检查结果，值只取“0”或“1”。“1”：返回； “0”：不返回。默认“0”。
-        params.put("legality", "1");
+        //params.put("legality", "1");
         Map<String, String> fileMap = new HashMap<>();
         /*图片地址*/
         fileMap.put("image", map.get("filePath"));
         String contentType = "";//image/png
 //		System.out.println("请求参数"+params.toString());
         logger.info("idcardScanning 请求参数" + fileMap.toString());
-        String ret = HttpUtil.formUploadImage(FaceConfig.FACE_API_BASE_URL + "/faceid/v1/ocridcard", params, fileMap, contentType);
+        String ret = HttpUtil.formUploadImage(FaceConfig.FACE_API_BASE_URL + "/faceid/v3/ocridcard", params, fileMap, contentType);
         Map<String, Object> checkResult;
         logger.info("idcardScanning 返回结果" + ret);
         try {
@@ -171,7 +171,7 @@ public class HttpCertification implements IHttpCertification {
             resultCode.setMsg("识别失败,请重新尝试");
             return resultCode;
         }
-        boolean isIdCardImageFront = "front".equals(checkResult.get("side"));
+        boolean isIdCardImageFront = 0 == Integer.parseInt(checkResult.get("side") + "");
         // 保存附件信息至数据库
         // 保存一次身份证信息至数据库  但是不更新该用户的人脸识别状态
         // 判断该图片是否为身份证件正面 如果是正面那么将识别出的姓名和身份证号信息保存至
@@ -199,21 +199,21 @@ public class HttpCertification implements IHttpCertification {
             }
             //正面
         } else if (isIdCardImageFront) {
-            String idCard = checkResult.get("id_card_number") + "";
-            String userName = checkResult.get("name") + "";
-            String gender = checkResult.get("gender") + "";
-            String race = checkResult.get("race") + "";
+            String idCard = getResult(checkResult.get("idcard_number") + "");
+            String userName = getResult(checkResult.get("name") + "");
+            String gender = getResult(checkResult.get("gender") + "");
+            String race = getResult(checkResult.get("nationality") + "");
 
             resultMap.put("id_card_number", idCard);
             resultMap.put("name", userName);
             resultMap.put("gender", gender);
             resultMap.put("race", race);
-            resultMap.put("address", checkResult.get("address") + "");
+            resultMap.put("address", getResult(checkResult.get("address") + ""));
             resultCode.setCode("0");
             resultCode.setMsg("扫描成功");
         } else {//背面
-            String validDate = checkResult.get("valid_date") + "";
-            String issuedBy = checkResult.get("issued_by") + "";
+            String validDate = getResult(checkResult.get("valid_date_start") + "") + "-" + getResult(checkResult.get("valid_date_end") + "");
+            String issuedBy = getResult(checkResult.get("issued_by") + "");
             resultMap.put("valid_date", validDate);
             resultMap.put("issued_by", issuedBy);
             resultCode.setCode("0");
@@ -221,6 +221,11 @@ public class HttpCertification implements IHttpCertification {
         }
         resultCode.setParamsMap(resultMap);
         return resultCode;
+    }
+
+    private String getResult(String arg) {
+        Map<String, Object> map = JSONUtil.parseJSON2Map(arg);
+        return map.get("result").toString();
     }
 
     /**
@@ -232,15 +237,15 @@ public class HttpCertification implements IHttpCertification {
     private int checkIdPhoto(Map<String, Object> checkResult) {
         try {
             JSONObject legalityJson = (JSONObject) checkResult.get("legality");
-            if (legalityJson.getDouble("ID Photo") >= legalityJson.getDouble("Edited")
-                    && legalityJson.getDouble("ID Photo") >= legalityJson.getDouble("Photocopy")
-                    && legalityJson.getDouble("ID Photo") >= legalityJson.getDouble("Screen")
-                    && legalityJson.getDouble("ID Photo") >= legalityJson.getDouble("Temporary ID Photo")) {
+            if ("1001".equals(checkResult.get("result")+"") && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Edited")
+                    && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Photocopy")
+                    && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Screen")
+                    && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Temporary_ID_Photo")) {
                 return 1;
             } else if (legalityJson.getDouble("Screen") > legalityJson.getDouble("Edited")
                     && legalityJson.getDouble("Screen") > legalityJson.getDouble("Photocopy")
-                    && legalityJson.getDouble("Screen") > legalityJson.getDouble("ID Photo")
-                    && legalityJson.getDouble("Screen") > legalityJson.getDouble("Temporary ID Photo")) {
+                    && legalityJson.getDouble("Screen") > legalityJson.getDouble("ID_Photo")
+                    && legalityJson.getDouble("Screen") > legalityJson.getDouble("Temporary_ID_Photo")) {
                 return -2;
             } else {
                 return -3;

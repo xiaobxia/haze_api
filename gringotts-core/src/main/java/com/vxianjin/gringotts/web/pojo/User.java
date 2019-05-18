@@ -235,7 +235,7 @@ public class User implements Serializable {
     private String tdFqzData;//同盾反欺诈数据
 
     private Integer signSwitch;//是否需要签署 0需要 1免签
-
+    private String  qqWechat;
     /**
      * 工作行业
      */
@@ -1179,5 +1179,13 @@ public class User implements Serializable {
 
     public void setUserFrom(String userFrom) {
         this.userFrom = userFrom;
+    }
+
+    public String getQqWechat() {
+        return qqWechat;
+    }
+
+    public void setQqWechat(String qqWechat) {
+        this.qqWechat = qqWechat;
     }
 }

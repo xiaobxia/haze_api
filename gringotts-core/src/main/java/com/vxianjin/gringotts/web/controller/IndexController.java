@@ -320,7 +320,7 @@ public class IndexController extends BaseController {
 
                 JSONObject item = JSONObject.fromObject(data.get("item"));
                 // 可借额度默认1000
-                String cardAmount = "100000";
+                String cardAmount = "160000";
                 if (null != user) {
                     cardAmount = user.getAmountMax();
                 }

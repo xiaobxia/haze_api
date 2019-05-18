@@ -30,6 +30,10 @@
             text-align: center;
             padding-top: 100px;
         }
+        .op-wrapper img {
+            display: inline-block;
+            width: 75px;
+        }
         .op-title {
             text-align: center;
             margin: 30px 0 50px 0;
@@ -43,6 +47,8 @@
             border-radius:24px;
             line-height: 48px;
             font-size: 20px;
+            display: inline-block;
+            width: 80%;
         }
     </style>
 </head>
@@ -50,12 +56,17 @@
 <div class="ui-page ui-page-theme-a ui-page-active" data-role="page">
     <!-- main start -->
     <div class="op-wrapper">
-        <c:if test="${code == 1}">
-            <img src="${basePath}/images/b_06.png" alt="">
-            <div class="op-title">运营商认证成功</div>
-        </c:if>
-        <img src="${basePath}/images/b_06.png" alt="">
-        <div class="op-title">运营商认证成功</div>
+        <form action="/www.closewebcontroller.com" id="tempForm" method="get" data-ajax="false"></form>
+        <c:choose>
+            <c:when test="${success == 1}">
+                <img src="${basePath}/images/b_06.png" alt="">
+                <div class="op-title">运营商认证成功</div>
+            </c:when>
+            <c:otherwise>
+                <img src="${basePath}/images/b_09.png" alt="">
+                <div class="op-title">${remark}</div>
+            </c:otherwise>
+        </c:choose>
         <div class="back-btn">返回</div>
     </div>
 </div>
@@ -64,7 +75,7 @@
         var u = navigator.userAgent, app = navigator.appVersion;
         var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
         var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-        $("#tempForm").attr("action","/www.close.com");
+        $("#tempForm").attr("action","/www.closewebcontroller.com");
         if (isAndroid) {
             nativeMethod.close();
         }else if(isIOS){

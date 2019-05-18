@@ -403,7 +403,8 @@
 				tg_flag,
 				client_type,
 				brower_type,
-				update_time
+				update_time,
+				qq_wechat
 			)
 			values(
 				#{id},
@@ -421,7 +422,8 @@
 				#{tgFlag},
 				#{clientType},
 				#{browerType},
-				NOW()
+				NOW(),
+				#{qqWechat}
 			)
 		]]>
 	</insert>

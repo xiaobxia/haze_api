@@ -33,5 +33,7 @@ public interface IChannelReportService {
      */
     boolean saveChannelReport();
 
+    void insert(ChannelReport channelReport);
 
+    ChannelReport findChannelReportById(Integer id );
 }
