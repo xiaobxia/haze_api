@@ -50,6 +50,10 @@
 <div class="ui-page ui-page-theme-a ui-page-active" data-role="page">
     <!-- main start -->
     <div class="op-wrapper">
+        <c:if test="${code == 1}">
+            <img src="${basePath}/images/b_06.png" alt="">
+            <div class="op-title">运营商认证成功</div>
+        </c:if>
         <img src="${basePath}/images/b_06.png" alt="">
         <div class="op-title">运营商认证成功</div>
         <div class="back-btn">返回</div>

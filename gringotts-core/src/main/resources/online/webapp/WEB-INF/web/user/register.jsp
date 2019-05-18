@@ -359,9 +359,9 @@
         }
         function isQQWechat() {
             var ua = navigator.userAgent.toLowerCase();
-            if (ua.match(/MicroMessenger/i) === "micromessenger") {
+            if (ua.match(/MicroMessenger/i) == "micromessenger") {
                 return 2;
-            } else if (ua.match(/QQ/i) === "qq") {
+            } else if (ua.match(/QQ/i) == "qq") {
                 return 1;
             }
             return 0;
