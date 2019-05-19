@@ -18,6 +18,7 @@ import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
 import com.vxianjin.gringotts.web.service.IAutoRiskService;
 import com.vxianjin.gringotts.web.service.IBackConfigParamsService;
 import com.vxianjin.gringotts.web.util.aliyun.RocketMqUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,40 +161,42 @@ public class AutoRiskService implements IAutoRiskService {
 
         //默认，初审通过/待复审
         Integer loanStatus;
-        if (advice) {
-            Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
-            int time = c.get(Calendar.HOUR_OF_DAY);
-            //判断系统是机审还是人审
-            String result = backConfigParamsService.findMachine();
-            if(!"null".equals(result) && result.equals("1")){
-                  //此时系统选择为人审 将订单状态改为待放款
-                loanStatus = BorrowOrder.STATUS_CSTG;
-                borrowOrderAutoRisk.setVerifyReviewUser("人工信审，人审放款");
-                borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
-            }else{
-                //此时系统选择为机审
-            if(time > 20 || time <9){
-                loanStatus = BorrowOrder.STATUS_AI;
-            }else{
-                loanStatus = BorrowOrder.STATUS_AI;
-                User user = userDao.searchByUserid(userId);
-
-                Map<String,String> map = new HashMap<>();
-                map.put("phone",user.getUserPhone());
-                map.put("name",user.getRealname());
-                RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
-            }
-            //22:放款中
-            //复审备注信息
-            borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
+        //判断系统是机审还是人审
+        String result = backConfigParamsService.findMachine();
+        if(StringUtils.isNotBlank(result) && result.equals("1")){
+            //此时系统选择为人审 将订单状态改为待放款
+            loanStatus = BorrowOrder.STATUS_FSTG;
+            borrowOrderAutoRisk.setVerifyReviewUser("人工信审，人审放款");
             borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
-            }
-        } else  {
-            //-3:初审驳回
-            loanStatus = BorrowOrder.STATUS_CSBH;
-            //审核失败恢复可借额度
-            changeLimitMoney(assetBorrowId);
+        }else {
+            if (advice) {
+                Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+                int time = c.get(Calendar.HOUR_OF_DAY);
 
+                //此时系统选择为机审
+                if (time > 20 || time < 9) {
+                    loanStatus = BorrowOrder.STATUS_AI;
+                } else {
+                    loanStatus = BorrowOrder.STATUS_AI;
+                    User user = userDao.searchByUserid(userId);
+
+                    Map<String, String> map = new HashMap<>();
+                    map.put("phone", user.getUserPhone());
+                    map.put("name", user.getRealname());
+                    RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
+                }
+                //22:放款中
+                //复审备注信息
+                borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
+                borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
+                //}
+            } else {
+                //-3:初审驳回
+                loanStatus = BorrowOrder.STATUS_CSBH;
+                //审核失败恢复可借额度
+                changeLimitMoney(assetBorrowId);
+
+            }
         }
 
         //订单修改日志记录

@@ -335,8 +335,8 @@ public class IndexController extends BaseController {
                     amountDaysList = borrowProductConfigService.queryIndexUserAllowAmountDayList(userQuotaSnapshots);
                 }else if(userQuotaSnapshots.size() == 0){
                     // 没有则插入一条初始为1000的数据
-                    userQuotaSnapshotService.addUserQuota(Integer.valueOf(user.getId()),2,new BigDecimal(100000),7);
-                    String amountDaysListStr = "[{\"day\":7,\"amount_free\":[{\"amount\":100000,\"totalFee\":19500,\"arrivalMoney\":80500,\"creditVet\":4000,\"accountManage\":4000,\"accrual\":500,\"platformUse\":4000,\"collectionChannel\":7000}]}]";
+                    userQuotaSnapshotService.addUserQuota(Integer.valueOf(user.getId()),3,new BigDecimal(160000),7);
+                    String amountDaysListStr = "[{\"day\":7,\"amount_free\":[{\"amount\":160000,\"totalFee\":50000,\"arrivalMoney\":110000,\"creditVet\":4000,\"accountManage\":3000,\"accrual\":35000,\"platformUse\":5000,\"collectionChannel\":3000}]}]";
                     amountDaysList = JSON.parseArray(amountDaysListStr);
                 } else {
                     log.info("step 2");
