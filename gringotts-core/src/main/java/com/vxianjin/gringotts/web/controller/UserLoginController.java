@@ -3704,7 +3704,10 @@ public class UserLoginController extends BaseController {
             //添加uv 统计功能
             String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
             ChannelReport channelReport = channelReportService.findChannelReportById(Integer.valueOf(channelId));
-            if(!"null".equals(channelReport.getUvCount()) && channelReport.getUvCount() != ' '){
+            if(null != channelReport.getUvCount()){
+                if(channelReport.getUvCount() == ' '){
+                    channelReport.setUvCount(0);
+                }
                 channelReport.setUvCount(channelReport.getUvCount()+1);
                 channelReportService.insert(channelReport);
             }
