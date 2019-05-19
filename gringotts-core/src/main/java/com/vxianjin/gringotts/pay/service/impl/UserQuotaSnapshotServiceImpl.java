@@ -108,7 +108,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
     }
 
     @Override
-    public Map<String, String> queryUserQuotaSnapshot(int userId) {
+    public Map<String, String> queryUserQuotaSnapshot(int userId, String oldAmount) {
         //return null;
 //        Map map = new HashMap();
 //        map.put("uid", userId);
@@ -119,9 +119,22 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 //            String respString = creditLineService.newEvaluate(DateUtil.dateFormat(startTime,"yyyy-MM-dd HH:mm:ss"), userId,systemName);
 //            JSONObject jsonObject = JSON.parseObject(respString);
 //            if(jsonObject!=null){
-                String amount = "100000";
+                if (StringUtils.isNotBlank(oldAmount)) {
+                    switch (oldAmount) {
+                        case "160000":
+                            resultMap.put("7", "180000");
+                            break;
+                        case "180000":
+                        case "200000":
+                            resultMap.put("7", "200000");
+                            break;
+                    }
+                } else {
+                    resultMap.put("7", "160000");
+                }
+                //String amount = "160000";
 //                log.info("userQuota respString :" + respString);
-                resultMap.put("7", amount);
+
 //            }
             return resultMap;
         }catch (Exception e){
@@ -133,8 +146,8 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 
     @Override
     @Transactional(timeout = TransactionDefinition.PROPAGATION_NOT_SUPPORTED)
-    public void updateUserQuotaSnapshots(int userId, long applyId) {
-        userIncreaseLimitExecutor.execute(new UserIncreaseLimitThread(userId, applyId));
+    public void updateUserQuotaSnapshots(int userId, long applyId, String repaymentedAmount) {
+        userIncreaseLimitExecutor.execute(new UserIncreaseLimitThread(userId, applyId, repaymentedAmount));
     }
 
     @Override
@@ -160,7 +173,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             userQuotaLogService.addUserQuotaLog(userId, userQuotaSnapshot.getUserAmountLimit(), new BigDecimal(nowLimit));
         } else {
             log.info("add user qupta ,nowProductConfig " + nowProductConfig.getId());
-            userQuotaLogService.addUserQuotaLog(userId, new BigDecimal(100000), new BigDecimal(nowLimit));
+            userQuotaLogService.addUserQuotaLog(userId, new BigDecimal(160000), new BigDecimal(nowLimit));
             addUserQuota(userId, nowProductConfig.getId(), new BigDecimal(nowLimit), borrowDay);
         }
         return true;
@@ -192,6 +205,8 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 
         private long applyId;
 
+        private String repaymentedAmount;
+
         @Override
         public void run() {
             TimeKey.clear();
@@ -203,7 +218,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                     // 睡2秒，防止数据同步问题
                     Thread.sleep(2000);
                 }
-                userLimits = queryUserQuotaSnapshot(userId);
+                userLimits = queryUserQuotaSnapshot(userId, repaymentedAmount);
                 if (userLimits == null && userLimits.size() == 0) {
                     if (applyId > 0) {
                         userQuotaApplyLogMapper.updateToFail(applyId);
@@ -310,9 +325,10 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
         }
 
 
-        public UserIncreaseLimitThread(int userId, long applyId) {
+        public UserIncreaseLimitThread(int userId, long applyId, String repaymentedAmount) {
             this.userId = userId;
             this.applyId = applyId;
+            this.repaymentedAmount = repaymentedAmount;
         }
 
         public int getUserId() {

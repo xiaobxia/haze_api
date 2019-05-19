@@ -92,7 +92,7 @@ public class IndexService implements IIndexService {
      */
     @Override
     public String getLoanInfos(InfoIndexInfo indexInfo) {
-        HashMap<String, Object> orderMap = new HashMap<String, Object>();
+         HashMap<String, Object> orderMap = new HashMap<String, Object>();
         orderMap.put("USER_ID", indexInfo.getUserId());
         BorrowOrder bo = this.indexDao.searchBorrowOrderByIndex(orderMap);
         return IndexUtil.getLoanInfos(indexInfo, bo, repaymentService);

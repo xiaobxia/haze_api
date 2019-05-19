@@ -278,7 +278,7 @@ public class RepaymentServiceImpl implements RepaymentService {
                     if (STATUS_COMMITTED == status) {
                         try {
                             // 更新用户额度
-                            userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1);
+                            userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -414,7 +414,7 @@ public class RepaymentServiceImpl implements RepaymentService {
                         if (STATUS_COMMITTED == status) {
                             try {
                                 // 更新用户额度
-                                userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1);
+                                userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, null);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

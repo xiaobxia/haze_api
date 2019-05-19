@@ -23,12 +23,12 @@ public interface UserQuotaSnapshotService {
      * 远端获取用户额度
      * @return
      */
-    Map<String,String> queryUserQuotaSnapshot(int userId);
+    Map<String,String> queryUserQuotaSnapshot(int userId, String amount);
 
     /**
      * 用户额度更新
      */
-    void updateUserQuotaSnapshots(int userId,long applyId);
+    void updateUserQuotaSnapshots(int userId,long applyId,String repaymentedAmount);
 
     /**
      * 插入或更新用户借款额度

@@ -37,7 +37,7 @@ public class UserQuotaSynTask {
                 TimeKey.start();
                 List<UserQuotaApplyLog> userQuotaApplyLogs = quotaApplyLogMapper.queryFail();
                 for (UserQuotaApplyLog userQuotaApplyLog : userQuotaApplyLogs) {
-                    userQuotaSnapshotService.updateUserQuotaSnapshots(userQuotaApplyLog.getUserId(),userQuotaApplyLog.getId());
+                    userQuotaSnapshotService.updateUserQuotaSnapshots(userQuotaApplyLog.getUserId(),userQuotaApplyLog.getId(), null);
                     // 更新成已再次同步
                     quotaApplyLogMapper.updateToSended(userQuotaApplyLog.getId(),userQuotaApplyLog.getErrorNum() + 1);
                 }
@@ -55,7 +55,7 @@ public class UserQuotaSynTask {
                 TimeKey.start();
                 List<UserQuotaApplyLog> userQuotaApplyLogs = quotaApplyLogMapper.queryTodayFail();
                 for (UserQuotaApplyLog userQuotaApplyLog : userQuotaApplyLogs) {
-                    userQuotaSnapshotService.updateUserQuotaSnapshots(userQuotaApplyLog.getUserId(),userQuotaApplyLog.getId());
+                    userQuotaSnapshotService.updateUserQuotaSnapshots(userQuotaApplyLog.getUserId(),userQuotaApplyLog.getId(), null);
                     // 更新成已再次同步
                     quotaApplyLogMapper.updateToSended(userQuotaApplyLog.getId(),userQuotaApplyLog.getErrorNum() + 1);
                 }
