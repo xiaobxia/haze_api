@@ -11,6 +11,7 @@ public class RiskRecord {
     private String requestId;//流水号
     private Integer returnCode;//返回编码
     private String returnInfo;//接口请求结果
+    private String gxbReportUrl;//公信宝运营商报告URL
     private Integer score;//风控分数
     private Date createTime;//创建时间
 
@@ -54,6 +55,14 @@ public class RiskRecord {
         this.returnInfo = returnInfo;
     }
 
+    public String getGxbReportUrl() {
+        return gxbReportUrl;
+    }
+
+    public void setGxbReportUrl(String gxbReportUrl) {
+        this.gxbReportUrl = gxbReportUrl;
+    }
+
     public Integer getScore() {
         return score;
     }
@@ -78,6 +87,7 @@ public class RiskRecord {
                 ", requestId='" + requestId + '\'' +
                 ", returnCode=" + returnCode +
                 ", returnInfo='" + returnInfo + '\'' +
+                ", gxbReportUrl='" + gxbReportUrl + '\'' +
                 ", score=" + score +
                 ", createTime=" + createTime +
                 '}';
