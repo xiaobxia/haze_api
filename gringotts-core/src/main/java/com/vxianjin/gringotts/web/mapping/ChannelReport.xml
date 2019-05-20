@@ -255,4 +255,8 @@
         from channel_report
         where channelid =#{id}
     </select>
+
+    <update id="updateUVCountByChannelId" parameterType="java.lang.String">
+        update channel_report set uv_count = uv_count + 1  where channelid = #{channelId} and to_days(report_date) = to_days(now())
+    </update>
 </mapper>

@@ -214,7 +214,7 @@ public class BorrowOrderService implements IBorrowOrderService {
 
         Integer loanInterest = config.getTotalFeeRate().intValue();
         //借款利率,万分之一
-        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount()).multiply(new BigDecimal("10000")).intValue();
+        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
         Integer intoMoney = money - config.getTotalFeeRate().intValue();//借款金额 - 服务费金额
 
         Date date = new Date();
@@ -399,7 +399,7 @@ public class BorrowOrderService implements IBorrowOrderService {
 
         Integer loanInterest = config.getTotalFeeRate().intValue();
         //借款利率,万分之一
-        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount()).multiply(new BigDecimal("10000")).intValue();
+        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
         Integer intoMoney = money - config.getTotalFeeRate().intValue();//借款金额 - 服务费金额
 
         Date date = new Date();
@@ -420,7 +420,7 @@ public class BorrowOrderService implements IBorrowOrderService {
         bo.setRenewalPoundage(config.getRenewalPoundage());
 
         //滞纳金利率，单位为万分之几
-        Integer lateApr = config.getLateFee().divide(config.getBorrowAmount()).multiply(new BigDecimal("10000")).intValue();
+        Integer lateApr = config.getLateFee().divide(config.getBorrowAmount(), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
         bo.setLateFeeApr(lateApr);//滞纳金利率，单位为万分之几
 
         bo.setReceiveCardId(cardInfo.getBank_id());//打款银行卡ID

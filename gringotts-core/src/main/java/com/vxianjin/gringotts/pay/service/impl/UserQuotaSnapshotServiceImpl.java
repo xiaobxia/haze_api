@@ -229,15 +229,23 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 }
                 log.info("query user limits size:" + userLimits.size());
                 log.info("start update user quotasnapshot");
+                String nowLimit = "160000";
                 for (String key : userLimits.keySet()) {
                     // 用户额度
                     String userLimit = userLimits.get(key);
                     // 更新到用户额度表中，并将用户额度信息变更记录存入变更记录表中
                     addOrUpdateUserQuotaSnapShot(userId, userLimit, Integer.valueOf(key));
+
+                    if (Integer.parseInt(nowLimit) < Integer.parseInt(userLimit)) {
+                        nowLimit = userLimit;
+                    }
                 }
                 log.info("end update user quotasnapshot");
                 // 获取用户最高额度
                 BigDecimal bigDecimal = userQuotaSnapshotMapper.queryUserMaxLimit(userId);
+                if (!nowLimit.equals(bigDecimal.toString())) {
+                    bigDecimal = BigDecimal.valueOf(Long.parseLong(nowLimit));
+                }
                 // 修改用户额度(user_info)
                 if (bigDecimal == null) {
                     log.info("userId :" + userId + " not found max limit ");

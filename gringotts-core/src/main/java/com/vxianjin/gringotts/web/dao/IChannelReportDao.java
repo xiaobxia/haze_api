@@ -71,4 +71,6 @@ public interface IChannelReportDao {
 
     ChannelReport findChannelReportById(@Param("id") Integer id );
 
+    int updateUVCountByChannelId(@Param("channelId") String channelId);
+
 }

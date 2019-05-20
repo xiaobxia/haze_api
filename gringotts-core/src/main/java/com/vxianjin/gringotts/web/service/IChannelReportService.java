@@ -35,5 +35,7 @@ public interface IChannelReportService {
 
     void insert(ChannelReport channelReport);
 
-    ChannelReport findChannelReportById(Integer id );
+    ChannelReport findChannelReportById(Integer id);
+
+    int updateUVCountByChannelId(String channelId);
 }

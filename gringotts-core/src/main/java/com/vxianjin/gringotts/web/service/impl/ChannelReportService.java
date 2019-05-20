@@ -163,5 +163,8 @@ public class ChannelReportService implements IChannelReportService {
         return channelReport;
     }
 
-
+    @Override
+    public int updateUVCountByChannelId(String channelId) {
+        return channelReportDao.updateUVCountByChannelId(channelId);
+    }
 }

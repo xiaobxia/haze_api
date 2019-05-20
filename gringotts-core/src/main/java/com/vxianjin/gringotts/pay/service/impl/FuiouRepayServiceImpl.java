@@ -117,9 +117,9 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     public ResultModel payWithholdCallback(Map<String, String> callbackResult) {
         ResultModel resultModel = new ResultModel(false);
 
-        /*logger.info("YeepayRepayServiceImpl.payWithholdCallback params:【" + JSON.toJSONString(req) + "】");
-        Map<String, String> callbackResult = YeepayApiUtil.getCallBackParamMap(req);*/
-        logger.info("YeepayRepayServiceImpl.payWithholdCallback callbackResult=" + (callbackResult != null ? JSON.toJSONString(callbackResult) : "null"));
+        /*logger.info("FuiouRepayServiceImpl.payWithholdCallback params:【" + JSON.toJSONString(req) + "】");
+        Map<String, String> callbackResult = FuiouApiUtil.getCallBackParamMap(req);*/
+        logger.info("FuiouRepayServiceImpl.payWithholdCallback callbackResult=" + (callbackResult != null ? JSON.toJSONString(callbackResult) : "null"));
         if (callbackResult == null) {
             resultModel.setMessage("数据解析失败");
             return resultModel;
@@ -136,7 +136,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         String orderMoney = FuiouApiUtil.formatString(callbackResult.get("AMT"));
         // 获取外部订单
         OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
-        logger.info("YeepayRepayService.payWithholdCallback orderNo: " + orderNo + ",outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
+        logger.info("FuiouRepayService.payWithholdCallback orderNo: " + orderNo + ",outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
         // 暂时还是以判断成功是否处理，看代码里请求代扣如果超时等情况会改订单为失败，但是可能第三方收到请求代扣成功了
         if (null != outOrders && (!OutOrders.STATUS_SUC.equals(outOrders.getStatus()))) {
             if (null != outOrders.getAssetOrderId()) {
@@ -156,11 +156,14 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                 outOrders.setFuiouOrderId(fuiouOrderId);
                 //支付成功
                 if ("0000".equals(status)) {
-                    logger.info("YeepayRepayServiceImpl.payWithholdCallback orderNo:" + orderNo + " pay success");
+                    logger.info("FuiouRepayServiceImpl.payWithholdCallback orderNo:" + orderNo + " pay success");
                     // 还款回调处理
                     repayService.repayCallBackHandler(re, detail, outOrders, orderMoney, true, "", "富友",user);
                     //发送扣款成功短信
-                    String content = MessageFormat.format("尊敬的{0}：您的{1}元借款已经还款成功，您的该笔交易将计入您的信用记录，好的记录将有助于提升您的可用额度。", realName, (amount / 100.00));
+                    String content = realName + "##" + (amount / 100.00);
+
+                    String key = "LOAN_"+ outOrders.getUserId();
+                    jedisCluster.del(key);
 
                     try {
                         PublishAdapter publishAdapter = PublishFactory.getPublishAdapter(EventTypeEnum.REPAY.getCode());
@@ -170,7 +173,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                     }
 
                 } else {//支付失败
-                    logger.info("YeepayRepayServiceImpl.payWithholdCallback orderNo: " + orderNo + " pay fail");
+                    logger.info("FuiouRepayServiceImpl.payWithholdCallback orderNo: " + orderNo + " pay fail");
                     outOrders.setNotifyParams(JSON.toJSONString(callbackResult));
                     // 还款回调处理
                     repayService.repayCallBackHandler(re, detail, outOrders, orderMoney, false, errorMsg, "富友",user);
@@ -200,7 +203,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
 
         /*logger.info("payRenewalWithholdCallback params;【" + JSON.toJSONString(req) + "】");
 
-        Map<String, String> callbackResult = YeepayApiUtil.getCallBackParamMap(req);*/
+        Map<String, String> callbackResult = FuiouApiUtil.getCallBackParamMap(req);*/
         logger.info("payRenewalWithholdCallback callbackResult=" + (callbackResult != null ? JSON.toJSONString(callbackResult) : "null"));
         if (callbackResult == null) {
             resultModel.setMessage("数据解析失败");
@@ -575,7 +578,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         // 组装发送到第三方请求
         String paramMap = prepareParams(orderNo, user, info, money, "/fuiou/withholdCallback/");
         //发送代扣请求
-//        Map<String, Object> resultMap = YeepayApiUtil.httpExecuteResult(paramMap, user.getId(), PayConstants.UNSENDBIND_PAY_REQUEST_URL, "getWithholdRequest");
+//        Map<String, Object> resultMap = FuiouApiUtil.httpExecuteResult(paramMap, user.getId(), PayConstants.UNSENDBIND_PAY_REQUEST_URL, "getWithholdRequest");
         Map<String, Object> resultMap = new HashMap<>();
         try{
             resultMap = FuiouApiUtil.FuiouOD(paramMap, FuiouConstants.NEW_PROTOCOL_ORDER_URL);
