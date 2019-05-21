@@ -907,7 +907,7 @@ public class YeepayServiceImpl implements YeepayService {
     @Override
     public String getHmacKey() {
         //商户私钥
-        return Configuration.getInstance().getValue("hmacKey");
+        return "";//Configuration.getInstance().getValue("hmacKey");
     }
 
 //    public static void main(String[] args) {
