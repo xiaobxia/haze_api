@@ -865,6 +865,8 @@
 		request_id,
 		return_code,
 		return_info,
+		gxb_report_url,
+		gxb_token,
 		score,
 		create_time
 		)VALUES (
@@ -873,6 +875,8 @@
 		#{requestId},
 		#{returnCode},
 		#{returnInfo},
+		#{gxbReportUrl},
+		#{gxbToken},
 		#{score},
 		#{createTime}
 		)

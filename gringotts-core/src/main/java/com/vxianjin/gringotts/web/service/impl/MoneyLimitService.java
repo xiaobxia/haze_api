@@ -157,6 +157,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
                 riskRecord.setReturnInfo(jsonObject.getString("return_info"));
                 riskRecord.setGxbReportUrl(DataHtmlUrl);
+                riskRecord.setGxbToken(gxbToken);
                 riskRecord.setScore(jsonObject.getInteger("score"));
                 riskRecord.setCreateTime(new Date());
                 userDao.saveRiskRecord(riskRecord);
@@ -171,7 +172,6 @@ public class MoneyLimitService implements IMoneyLimitService {
                 riskResult.setType("2");
                 riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
                 userDao.insertUserStrongRiskResult(riskResult);
-
             }
         } catch(IOException e){
             e.printStackTrace();
