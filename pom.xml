@@ -27,18 +27,18 @@
         <repository>
             <id>nexus</id>
             <name>Team Nexus Repository</name>
-            <url>http://139.196.88.8:8081/nexus/content/groups/public/</url>
+            <url>http://47.110.153.34:8081/nexus/content/groups/public/</url>
         </repository>
     </repositories>
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://139.196.88.8:8081/nexus/content/repositories/apache-snapshots/</url>
+            <url>http://47.110.153.34:8081/nexus/content/repositories/apache-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
             <!--<name>Team Nexus Repository</name>-->
-            <url>http://139.196.88.8:8081/nexus/content/repositories/releases/</url>
+            <url>http://47.110.153.34:8081/nexus/content/repositories/releases/</url>
         </repository>
     </distributionManagement>
 
