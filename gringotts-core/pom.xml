@@ -108,6 +108,12 @@
             </properties>
         </profile>
         <profile>
+            <id>uat</id>
+            <properties>
+                <profiles.active>uat</profiles.active>
+            </properties>
+        </profile>
+        <profile>
             <id>online</id>
             <properties>
                 <profiles.active>online</profiles.active>
