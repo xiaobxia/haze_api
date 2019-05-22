@@ -195,7 +195,10 @@ public class UserLoginController extends BaseController {
                 // 查询手机号码是否存在
                 User user = userService.searchUserByCheckTel(map);
                 // 6位固定长度
-                String rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+                String rand = "123456";
+                if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                    rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+                }
                 String content = "";
                 // 被注销的账户
                 if (user == null || user.getStatus().equals(User.USER_STATUS_THREE)) {
@@ -326,7 +329,10 @@ public class UserLoginController extends BaseController {
             log.info("sendSmsCodeV211 phone=" + userPhone + " type=" + type);
 
             // 6位固定长度
-            String rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+            String rand = "123456";
+            if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+            }
             String content = "";
             // 被注销的账户
             Long remainTime = checkForFront(codeCheck, userPhone);
@@ -472,7 +478,11 @@ public class UserLoginController extends BaseController {
                     msg = serviceResult.getMsg();
                 } else {
                     if (isSend) {
-                        String rand = String.valueOf(Math.random()).substring(2).substring(0, 6);// 6位固定长度
+                        String rand = "123456";
+                        if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                            rand = String.valueOf(Math.random()).substring(2).substring(0, 6);// 6位固定长度
+                        }
+                        //String rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
                         String content = "";
                         String messageTitle = "手机短信认证";
                         // 登录密码找回验证码
@@ -602,7 +612,10 @@ public class UserLoginController extends BaseController {
             } else {
                 code = "0";
                 // 6位固定长度
-                String rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+                String rand = "123456";
+                if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                    rand = String.valueOf(Math.random()).substring(2).substring(0, 6);// 6位固定长度
+                }
                 String content = "";
                 // 登录密码找回验证码
                 if (param.containsKey("type") && "find_pwd".equals(param.get("type"))) {
@@ -3766,7 +3779,10 @@ public class UserLoginController extends BaseController {
             // 查询手机号码是否存在
             User user = userService.searchUserByCheckTel(map);
             // 6位固定长度
-            String rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+            String rand = "123456";
+            if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+            }
             String content = "";
             // 注册验证码
             if (user == null) {

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.vxianjin.gringotts.constant.Constant;
 import com.vxianjin.gringotts.constant.SmsConfigConstant;
 import com.vxianjin.gringotts.util.HttpUtil;
+import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URLEncoder;
@@ -49,6 +50,9 @@ public class SendSmsUtil {
      */
     public static boolean sendSmsCL(String telephone, String sms){
         loger.info("sendSms:" + telephone + "   sms=" + sms);
+        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+            return true;
+        }
         return cloudsp(telephone, templateld, sms, account, pswd, sign);
     }
 
