@@ -114,12 +114,12 @@ public class MoneyLimitService implements IMoneyLimitService {
         String GXBRAWDATA = "https://prod.gxb.io/crawler/data/rawdata/%s?appId=%s&timestamp=%s&sign=%s";
 
 
-        String GXBDATALIST = "https://prod.gxb.io/datalist.html?appId=%s&sign=%s&timestamp=%s&token=%s&isReport=true";
+        String GXBDATALIST = "https://prod.gxb.io/datalist.html?timestamp=%s&appId=%s&sign=%s&token=%s&isReport=true";
         String timestamp = new Date().getTime()+"";
         String md5Hex = DigestUtils.md5Hex(String.format("%s%s%s", this.appId, this.appSecret, timestamp));
         String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
         String rawDataUrl = String.format(GXBRAWDATA, gxbToken, this.appId, timestamp, md5Hex);
-        String DataHtmlUrl = String.format(GXBDATALIST, this.appId, md5Hex, timestamp, gxbToken);
+        String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);
         String gxb_report = HttpUtil.post(reportUrl, null);
         String gxb_raw = HttpUtil.post(rawDataUrl, null);
 
