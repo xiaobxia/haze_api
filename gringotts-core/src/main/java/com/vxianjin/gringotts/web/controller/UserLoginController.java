@@ -3704,6 +3704,11 @@ public class UserLoginController extends BaseController {
             //添加uv 统计功能
             String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
             channelReportService.updateUVCountByChannelId(channelId);
+            //判断该渠道是否是开启状态
+            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelId));
+             if(channelInfo != null){
+                 model.addAttribute("status",channelInfo.getStatus());
+             }
             /*ChannelReport channelReport = channelReportService.findChannelReportById(Integer.valueOf(channelId));
             if(null != channelReport.getUvCount()){
                 if(channelReport.getUvCount() == ' '){
