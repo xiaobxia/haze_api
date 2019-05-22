@@ -6,6 +6,7 @@ import com.vxianjin.gringotts.constant.FaceConfig;
 import com.vxianjin.gringotts.util.HttpUtil;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.json.JSONUtil;
+import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.pojo.BackConfigParams;
 import com.vxianjin.gringotts.web.pojo.FaceRecognition;
 import com.vxianjin.gringotts.web.pojo.User;
@@ -237,6 +238,9 @@ public class HttpCertification implements IHttpCertification {
     private int checkIdPhoto(Map<String, Object> checkResult) {
         try {
             JSONObject legalityJson = (JSONObject) checkResult.get("legality");
+            if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+                return 1;//测试环境下直接返回为正式身份证
+            }
             if ("1001".equals(checkResult.get("result")+"") && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Edited")
                     && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Photocopy")
                     && legalityJson.getDouble("ID_Photo") >= legalityJson.getDouble("Screen")
