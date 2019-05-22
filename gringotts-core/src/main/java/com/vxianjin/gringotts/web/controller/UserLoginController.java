@@ -1934,12 +1934,15 @@ public class UserLoginController extends BaseController {
 
                 log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",result:" + result.toString());
 
-                if (!result.isSuccessed()) {
-                    log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",result successed is false");
-                    code = "-1";
-                    msg = result.getMsg();
-                    return;
+                if ("online".equals(PropertiesConfigUtil.get("profile"))) {//只有正式环境才需要走这段代码
+                    if (!result.isSuccessed()) {
+                        log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",result successed is false");
+                        code = "-1";
+                        msg = result.getMsg();
+                        return;
+                    }
                 }
+
                 // 已认证
                 usr.setRealnameStatus("1");
                 // 实名认证时间
