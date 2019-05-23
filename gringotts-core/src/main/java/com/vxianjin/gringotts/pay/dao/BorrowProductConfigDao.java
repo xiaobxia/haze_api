@@ -96,4 +96,6 @@ public interface BorrowProductConfigDao {
     BorrowProductConfig queryMaxLimitProduct(Map params);
 
     BorrowProductConfig queryByBorrowDayAndAmount(@Param("amount")BigDecimal amount,@Param("borrowDay") int borrowDay);
+
+    BorrowProductConfig queryByBorrowByStatus(@Param("status") Integer status);
 }

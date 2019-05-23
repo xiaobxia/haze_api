@@ -30,24 +30,26 @@ public interface UserQuotaSnapshotService {
      * 根据用户提额机制来返回应该提的额度---19.05.23版本
      * @param userId 用户ID
      * @param amount 本次还款金额
-     * @param productrepaymentedCount 该产品的已还次数，含本次
+     * @param orderId 订单id
      * @return
      */
-    Map<String,String> newQueryUserQuotaSnapshot(int userId, String amount, int productrepaymentedCount);
+    Map<String,String> newQueryUserQuotaSnapshot(int userId, String amount, int orderId);
+
+    void newUpdateUserQuotaSnapshots(int userId,long applyId,String repaymentedAmount, int orderId);
 
     /**
      * 用户额度更新
      */
     void updateUserQuotaSnapshots(int userId,long applyId,String repaymentedAmount);
 
+
     /**
      * 插入或更新用户借款额度
      * @param userId 用户id
-     * @param nowLimit 最新用户借款额度
-     * @param borrowDay 借款天数
+     * @param productId 最新用户可借产品
      * @return
      */
-    boolean addOrUpdateUserQuotaSnapShot(int userId,String nowLimit,int borrowDay);
+    boolean addOrUpdateUserQuotaSnapShot(int userId, int productId);
 
     /**
      * 更新

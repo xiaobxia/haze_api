@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.vxianjin.gringotts.pay.dao.BorrowProductConfigDao;
 import com.vxianjin.gringotts.pay.dao.UserQuotaSnapshotDao;
+import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
 import com.vxianjin.gringotts.util.HttpUtil;
 import com.vxianjin.gringotts.util.IdUtil;
 import com.vxianjin.gringotts.util.StringUtils;
@@ -350,12 +351,12 @@ public class UserTdApproveController extends BaseController {
                         logger.info("createGXBNotifyCallback changeUserLimit end userId=" + userId);
                         try{
                             //初始化用户额度配置
-                            HashMap<String, String> params = new HashMap<>();
+                            /*HashMap<String, String> params = new HashMap<>();
                             params.put("borrowAmount","160000");
-                            params.put("borrowDay","7");
-                            int configId = borrowProductConfigDao.selectConfigId(params);
-                            logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + configId + ";moneyLimit:" + 160000);
-                            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),configId,new BigDecimal("160000"),7);
+                            params.put("borrowDay","7");*/
+                            BorrowProductConfig borrowProductConfig = borrowProductConfigDao.queryByBorrowByStatus(0);
+                            logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + borrowProductConfig.getId() + ";moneyLimit:" + borrowProductConfig.getBorrowAmount());
+                            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),borrowProductConfig.getId(),borrowProductConfig.getBorrowAmount(),borrowProductConfig.getBorrowDay());
                         }catch (Exception e){
                             logger.error("addUserQuota has error:{}" , e);
                         }

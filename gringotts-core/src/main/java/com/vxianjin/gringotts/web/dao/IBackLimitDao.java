@@ -1,5 +1,6 @@
 package com.vxianjin.gringotts.web.dao;
 
+import com.vxianjin.gringotts.pay.model.BackLimit;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -7,5 +8,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface IBackLimitDao {
+
+    BackLimit selectById(int id);
 
 }

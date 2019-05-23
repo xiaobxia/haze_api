@@ -83,4 +83,6 @@ public interface IBorrowOrderDao {
     void updateBorrowStatus(@Param("id") String id, @Param("status") String status);
 
     List<BorrowOrder> getWaitAiList();
+
+    int getRepaidCount(@Param("userId") int userId);
 }

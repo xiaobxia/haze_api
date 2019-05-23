@@ -59,4 +59,8 @@ public interface BorrowProductConfigService {
      * @return
      */
     BorrowProductConfig queryMaxLimitProduct(int nowLimit, int borrowDay);
+
+    BorrowProductConfig queryByBorrowByStatus(Integer status);
+
+    BorrowProductConfig queryProductById(Integer id);
 }

@@ -82,6 +82,7 @@
 		<result column="cfca_contract_id" property="cfcaContractId" jdbcType="VARCHAR" />
 		<result column="renewal_fee" property="renewalFee" jdbcType="DECIMAL" />
 		<result column="renewal_poundage" property="renewalPoundage" jdbcType="DECIMAL" />
+		<result column="product_id" property="productId" jdbcType="INTEGER" />
 	</resultMap>
 
 	<resultMap id="ResultMapWithBLOBs" type="BorrowOrder"
@@ -104,7 +105,7 @@
 		verify_trial_user,verify_trial_time,verify_trial_remark,
 		verify_review_user,verify_review_time,verify_review_remark,
 		verify_loan_user,verify_loan_time,verify_loan_remark,pay_status,pay_remark,bank_iscmb,user_phone,realname,card_no,bank_number,yurref,customer_type,client_type,
-		auto_loan_flag,cfca_contract_id,renewal_fee,renewal_poundage
+		auto_loan_flag,cfca_contract_id,renewal_fee,renewal_poundage,product_id
 	</sql>
 	<sql id="Blob_Column_List">
 		remark
@@ -455,6 +456,9 @@
 			<if test="renewalPoundage != null">
 				renewal_poundage,
 			</if>
+			<if test="prodcutId != null">
+				prodcut_id,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -576,6 +580,9 @@
 			</if>
 			<if test="renewalPoundage != null">
 				#{renewalPoundage,jdbcType=DECIMAL},
+			</if>
+			<if test="productId != null">
+				#{product_id,jdbcType=INTEGER},
 			</if>
 		</trim>
 
@@ -1171,6 +1178,10 @@
 	</update>
 	<select id="getWaitAiList" resultMap="BaseResultMap">
 		select id,user_id from asset_borrow_order where status = 666
+	</select>
+
+	<select id="getRepaidCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select COUNT(1) from asset_borrow_order where status = 30 and user_id = #{userId}
 	</select>
 
 </mapper>

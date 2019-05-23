@@ -49,4 +49,5 @@ public class BorrowProductConfig implements Serializable {
 
     private Integer status;
 
+    private String productName;
 }

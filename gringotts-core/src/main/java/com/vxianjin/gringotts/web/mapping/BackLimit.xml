@@ -10,5 +10,13 @@
         <result column="limit_remark" property="limitRemark" jdbcType="VARCHAR" />
     </resultMap>
 
+    <sql id="base_sql">
+        id, limit_name, limit_count, limit_product_id, limit_status, limit_remark
+    </sql>
+
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="base_sql"/> from back_limit where id = #{id} and limit_status = 1
+    </select>
 
 </mapper>

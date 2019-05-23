@@ -135,7 +135,7 @@ public class BorrowOrderService implements IBorrowOrderService {
         borrowOrderDao.updateRiskCreditUserById(riskCreditUser);
     }
 
-    @Override
+    /*@Override
     public Map<String, Object> saveLoan(Map<String, String> params, User user) {
         Map<String, Object> result = new HashMap<>();
 
@@ -283,7 +283,7 @@ public class BorrowOrderService implements IBorrowOrderService {
         result.put("msg", ResponseStatus.SUCCESS.getValue());
         result.put("orderId", bo.getId());
         return result;
-    }
+    }*/
 
 
     //校验用户是否有已存在的借款订单
@@ -381,7 +381,14 @@ public class BorrowOrderService implements IBorrowOrderService {
         HashMap<String, String> query = new HashMap<String, String>();
         query.put("borrowAmount",String.valueOf(money));
         query.put("borrowDay",params.get("period"));
-        BorrowProductConfig config =  borrowProductConfigDao.selectByBorrowMoneyAndPeriod(query);
+        //
+        BorrowProductConfig config;
+        if (params.get("productId") == null) {//灵活配置
+            config = borrowProductConfigDao.selectByBorrowMoneyAndPeriod(query);
+        } else {
+            config =  borrowProductConfigDao.selectByPrimaryKey(Integer.parseInt(params.get("productId")));
+        }
+
 
         if (config == null){
             logger.error(MessageFormat.format("产品线配置不存在，借款金额{0},期限{1}",money,params.get("period")));
@@ -409,6 +416,7 @@ public class BorrowOrderService implements IBorrowOrderService {
         bo.setApr(borrowRate);//借款利率
         bo.setLoanInterests(loanInterest);//借款利息
 
+        bo.setProductId(config.getId());//产品ID
         bo.setIntoMoney(intoMoney);//实际打款金额
 
         bo.setLoanTerm(Integer.parseInt(params.get("period")));//借款期限
@@ -982,5 +990,10 @@ public class BorrowOrderService implements IBorrowOrderService {
     @Override
     public List<BorrowOrder> getWaitAiList() {
         return borrowOrderDao.getWaitAiList();
+    }
+
+    @Override
+    public int getRepaidCount(int userId) {
+        return 0;
     }
 }

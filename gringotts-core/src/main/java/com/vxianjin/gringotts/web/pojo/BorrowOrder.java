@@ -358,6 +358,8 @@ public class BorrowOrder implements Serializable {
     //续期手续费
     private BigDecimal renewalPoundage;
 
+    private Integer productId;
+
 
 
     //因银行卡原因导致放款失败
@@ -907,5 +909,13 @@ public class BorrowOrder implements Serializable {
 
     public void setCfcaContractId(String cfcaContractId) {
         this.cfcaContractId = cfcaContractId;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
 }

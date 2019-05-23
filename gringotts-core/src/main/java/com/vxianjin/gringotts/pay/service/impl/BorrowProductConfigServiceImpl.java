@@ -75,6 +75,7 @@ public class BorrowProductConfigServiceImpl implements BorrowProductConfigServic
             amount_free.put("collectionChannel", borrowProductConfig.getCollectChannelFee());
             amount_free.put("totalFee", borrowProductConfig.getTotalFeeRate());
             amount_free.put("arrivalMoney",borrowProductConfig.getBorrowAmount().subtract(borrowProductConfig.getTotalFeeRate()));
+            amount_free.put("productId",borrowProductConfig.getId());
             // 将产品添加到产品期限列表中
             amountList.add(amount_free);
         }
@@ -108,6 +109,7 @@ public class BorrowProductConfigServiceImpl implements BorrowProductConfigServic
                 amount_free.put("collectionChannel", borrowProductConfig.getCollectChannelFee());
                 amount_free.put("totalFee", borrowProductConfig.getTotalFeeRate());
                 amount_free.put("arrivalMoney",borrowProductConfig.getBorrowAmount().subtract(borrowProductConfig.getTotalFeeRate()));
+                amount_free.put("productId",borrowProductConfig.getId());
                 // 将产品添加到产品期限列表中
                 amountList.add(amount_free);
             }
@@ -128,5 +130,15 @@ public class BorrowProductConfigServiceImpl implements BorrowProductConfigServic
         map.put("nowLimit", nowLimit);
         map.put("borrowDay", borrowDay);
         return borrowProductConfigMapper.queryMaxLimitProduct(map);
+    }
+
+    @Override
+    public BorrowProductConfig queryByBorrowByStatus(Integer status) {
+        return borrowProductConfigMapper.queryByBorrowByStatus(status);
+    }
+
+    @Override
+    public BorrowProductConfig queryProductById(Integer id) {
+        return borrowProductConfigMapper.selectByPrimaryKey(id);
     }
 }

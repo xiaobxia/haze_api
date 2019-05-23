@@ -3,6 +3,7 @@ package com.vxianjin.gringotts.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.vxianjin.gringotts.constant.Constant;
+import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
 import com.vxianjin.gringotts.pay.model.UserQuotaSnapshot;
 import com.vxianjin.gringotts.pay.service.BorrowProductConfigService;
 import com.vxianjin.gringotts.pay.service.RepaymentService;
@@ -320,7 +321,8 @@ public class IndexController extends BaseController {
 
                 JSONObject item = JSONObject.fromObject(data.get("item"));
                 // 可借额度默认1000
-                String cardAmount = "160000";
+                BorrowProductConfig defaultConfig = borrowProductConfigService.queryByBorrowByStatus(0);//默认
+                String cardAmount = defaultConfig.getBorrowAmount().toString();
                 if (null != user) {
                     cardAmount = user.getAmountMax();
                 }
@@ -334,9 +336,12 @@ public class IndexController extends BaseController {
                     //  根据额度获取用户的可借产品线
                     amountDaysList = borrowProductConfigService.queryIndexUserAllowAmountDayList(userQuotaSnapshots);
                 }else if(userQuotaSnapshots.size() == 0){
-                    // 没有则插入一条初始为1000的数据
-                    userQuotaSnapshotService.addUserQuota(Integer.valueOf(user.getId()),3,new BigDecimal(160000),7);
-                    String amountDaysListStr = "[{\"day\":7,\"amount_free\":[{\"amount\":160000,\"totalFee\":50000,\"arrivalMoney\":110000,\"creditVet\":4000,\"accountManage\":3000,\"accrual\":35000,\"platformUse\":5000,\"collectionChannel\":3000}]}]";
+                    // 没有则插入一条初始为后台默认的数据
+                    userQuotaSnapshotService.addUserQuota(Integer.valueOf(user.getId()), defaultConfig.getId(), defaultConfig.getBorrowAmount(), defaultConfig.getBorrowDay());
+                    String amountDaysListStr = "[{\"day\":"+ defaultConfig.getBorrowDay() +",\"amount_free\":[{\"amount\":"+ defaultConfig.getBorrowAmount() +",\"totalFee\":"+ defaultConfig.getTotalFeeRate() +",\"arrivalMoney" +
+                            "\":"+ defaultConfig.getBorrowAmount().subtract(defaultConfig.getTotalFeeRate()) +",\"creditVet\":"+ defaultConfig.getTurstTrial() +",\"accountManage\":"+
+                            defaultConfig.getAccountManagerFee() +",\"accrual\":" + defaultConfig.getBorrowInterest() + ",\"platformUse\":"+ defaultConfig.getPlatformLicensing() +
+                            ",\"collectionChannel\":"+ defaultConfig.getCollectChannelFee() +"}]}]";
                     amountDaysList = JSON.parseArray(amountDaysListStr);
                 } else {
                     log.info("step 2");

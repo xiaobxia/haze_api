@@ -72,7 +72,7 @@ public interface IBorrowOrderService {
     //提额需求
     Map<String, Object> saveLoanV2(Map<String, String> params, User user);
 
-    Map<String, Object> saveLoan(Map<String, String> params, User user);
+    /*Map<String, Object> saveLoan(Map<String, String> params, User user);*/
 
 //    /**
 //     * 计算用户借款服务费
@@ -170,4 +170,6 @@ public interface IBorrowOrderService {
      * @return list
      */
     List<BorrowOrder> getWaitAiList();
+
+    int getRepaidCount(int userId);
 }

@@ -81,7 +81,7 @@ public class UserloanController extends BaseController {
         return "borrow/borrowDescription";
     }
 
-    public ResponseContent allowBorrowV2(String userId,String period,Integer money){
+    public ResponseContent allowBorrowV2(String userId,String period,Integer money, Integer productId){
         ResponseContent serviceResult = new ResponseContent("500", "未知异常");
         if (money == null || StringUtils.isBlank(period)) {
             serviceResult.setMsg("参数错误");
@@ -105,7 +105,13 @@ public class UserloanController extends BaseController {
         queryMap.put("borrowDay",period);
 
         //【2】判断该产品线是否存在
-        BorrowProductConfig config= borrowProductConfigDao.queryByBorrowDayAndAmount(new BigDecimal(queryMap.get("borrowAmount")),Integer.valueOf(period));
+        BorrowProductConfig config;
+        if (productId == null) {
+            config= borrowProductConfigDao.queryByBorrowDayAndAmount(new BigDecimal(queryMap.get("borrowAmount")),Integer.valueOf(period));
+        } else {
+            config= borrowProductConfigDao.selectByPrimaryKey(productId);
+        }
+
         if (config == null){
             serviceResult.setMsg("该借款期限下无法借款");
             return serviceResult;
@@ -115,20 +121,22 @@ public class UserloanController extends BaseController {
         UserQuotaModel quotaModel = userQuotaSnapshotDao.querUserQuota(queryMap);
         BigDecimal userMaxBorrowAmount;
         if (quotaModel == null) {
-            //TODO:新版本兼容配置，如果用户没有默认的1000/7天的产品线则插入
-            if (period.equals("7") && money.compareTo(1600) == 0){
+            BorrowProductConfig borrowProductConfig = borrowProductConfigDao.queryByBorrowByStatus(0);//0为默认
+            /*if (period.equals("7") && money.compareTo(1600) == 0){
                 userMaxBorrowAmount = new BigDecimal("1600");
                 userQuotaSnapshotDao.addUserQuota(Integer.valueOf(userId),config.getId(),config.getBorrowAmount(),config.getBorrowDay());
             }else{
                 serviceResult.setMsg("用户该借款期限下无可借金额");
                 return serviceResult;
-            }
+            }*/
+            userMaxBorrowAmount = borrowProductConfig.getBorrowAmount().divide(BigDecimal.valueOf(100));
+            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(userId),config.getId(),config.getBorrowAmount(),config.getBorrowDay());
         }else{
             userMaxBorrowAmount =  quotaModel.getBorrowAmount().divide(new BigDecimal("100"));
         }
 
 
-        int minAmount = Integer.parseInt(user.getAmountMin()) / 100;
+        /*int minAmount = Integer.parseInt(user.getAmountMin()) / 100;
         if (money < minAmount) {
             serviceResult.setMsg("您的最低借款额度为" + minAmount + "元。");
             return serviceResult;
@@ -136,6 +144,11 @@ public class UserloanController extends BaseController {
 
        if (money > userMaxBorrowAmount.intValue()) {
             serviceResult.setMsg("您的最高借款额度为" + userMaxBorrowAmount.intValue() + "元。");
+            return serviceResult;
+        }*/
+
+        if (money != userMaxBorrowAmount.intValue()) {
+            serviceResult.setMsg("您的最高借款额度为" + userMaxBorrowAmount.intValue() + "元，只能申请全额借款。");
             return serviceResult;
         }
 
@@ -297,13 +310,20 @@ public class UserloanController extends BaseController {
     }
 
     //申请成功后
-    private void confirLoanSucc(Integer userId,HttpServletRequest request,Integer money,Integer period,Map<String, Object> data,Map<String, Object> json){
+    private void confirLoanSucc(Integer userId,Integer productId, HttpServletRequest request,Integer money,Integer period,Map<String, Object> data,Map<String, Object> json){
         //查询当前用户的借款和期限对应的费率配置
         // 借款金额
         HashMap<String, String> query = new HashMap<>();
         query.put("borrowAmount",String.valueOf(money * 100));
         query.put("borrowDay",String.valueOf(period));
-        BorrowProductConfig config =  borrowProductConfigDao.selectByBorrowMoneyAndPeriod(query);
+
+        BorrowProductConfig config;
+        if (productId == null) {//灵活配置
+            config = borrowProductConfigDao.selectByBorrowMoneyAndPeriod(query);
+        } else {
+            config =  borrowProductConfigDao.selectByPrimaryKey(productId);
+        }
+
 
         if (config == null){
             logger.error(MessageFormat.format("产品线配置不存在，借款金额{0},期限{1}",money * 100,period));
@@ -348,6 +368,7 @@ public class UserloanController extends BaseController {
 
         // 结算服务费
         double apr_fee = config.getTotalFeeRate().divide(new BigDecimal("100")).doubleValue();
+        json.put("productId", productId);
         json.put("counter_fee", String.valueOf(apr_fee));
         json.put("true_money", String.valueOf(money - apr_fee));
         json.put("period",String.valueOf(period));
@@ -444,7 +465,7 @@ public class UserloanController extends BaseController {
      * @param request req
      * @param response res
      */
-    @RequestMapping("get-confirm-loan")
+    /*@RequestMapping("get-confirm-loan")
     public void confirmLoan(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         String code = ResponseStatus.FAILD.getName();
@@ -473,6 +494,7 @@ public class UserloanController extends BaseController {
         }
         Integer borrowMoney = Integer.valueOf(params.get("money"));
         Integer period = Integer.valueOf(params.get("period"));
+        Integer productId = Integer.valueOf(params.get("productId"));
 
         //【3】校验用户是否可以借款
         ResponseContent serviceResult = allowBorrowV2(String.valueOf(user.getId()),
@@ -482,7 +504,7 @@ public class UserloanController extends BaseController {
         Map<String, Object> json = new HashMap<>();
         try {
             if (serviceResult.isSuccessed()) {
-                confirLoanSucc(Integer.valueOf(user.getId()), request, borrowMoney, period, data, json);
+                confirLoanSucc(Integer.valueOf(user.getId()), productId, request, borrowMoney, period, data, json);
                 code = ResponseStatus.SUCCESS.getName();
                 msg = ResponseStatus.SUCCESS.getValue();
             } else {
@@ -511,7 +533,7 @@ public class UserloanController extends BaseController {
             result.put("data", data);
             JSONUtil.toObjectJson(response, JSONUtil.beanToJson(result));
         }
-    }
+    }*/
     /**
      * 申请借款v2 （提额新需求）
      *
@@ -550,16 +572,17 @@ public class UserloanController extends BaseController {
 
         Integer borrowMoney = Integer.valueOf(params.get("money"));
         Integer period = Integer.valueOf(params.get("period"));
+        Integer productId = Integer.valueOf(params.get("productId"));
 
         //【3】校验用户是否可以借款
-        ResponseContent serviceResult = allowBorrowV2(String.valueOf(user.getId()),params.get("period"),borrowMoney);
+        ResponseContent serviceResult = allowBorrowV2(String.valueOf(user.getId()),params.get("period"),borrowMoney,productId);
 
         Map<String, Object> data = new HashMap<>();
         Map<String, Object> json = new HashMap<>();
         try {
             //【4】用户可以借款，返回借款费率和信息
             if (serviceResult.isSuccessed()) {
-                confirLoanSucc(Integer.valueOf(user.getId()),request,borrowMoney,period,data,json);
+                confirLoanSucc(Integer.valueOf(user.getId()),productId,request,borrowMoney,period,data,json);
                 code = ResponseStatus.SUCCESS.getName();
                 msg = ResponseStatus.SUCCESS.getValue();
             } else {
@@ -625,7 +648,7 @@ public class UserloanController extends BaseController {
      * @param request req
      * @param response res
      */
-    @RequestMapping("apply-loan")
+    /*@RequestMapping("apply-loan")
     public void applyLoan(HttpServletRequest request, HttpServletResponse response) {
         logger.info("apply-loan start");
         Map<String, Object> result = new HashMap<>();
@@ -732,7 +755,7 @@ public class UserloanController extends BaseController {
             result.put("data", data);
             JSONUtil.toObjectJson(response, JSONUtil.beanToJson(result));
         }
-    }
+    }*/
 
 
     /**
@@ -788,10 +811,11 @@ public class UserloanController extends BaseController {
             } else {
                 //【1】校验用户是否可以借款
                 Integer borrowMoney = Integer.valueOf(params.get("money"));
+                Integer productId = Integer.valueOf(params.get("productId"));
 //                Integer period = Integer.valueOf(params.get("period"));
 
                 //【3】校验用户是否可以借款
-                ResponseContent serviceResult = allowBorrowV2(String.valueOf(user.getId()),params.get("period"),borrowMoney);
+                ResponseContent serviceResult = allowBorrowV2(String.valueOf(user.getId()),params.get("period"),borrowMoney,productId);
 
                 if (serviceResult.isSuccessed()) {
 //                    AESUtil aesEncrypt = new AESUtil();
