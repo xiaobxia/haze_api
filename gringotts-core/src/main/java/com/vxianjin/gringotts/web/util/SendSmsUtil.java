@@ -41,6 +41,7 @@ public class SendSmsUtil {
     public static final String templateld45235 = "45235";//运营商异常
     public static final String templateld45234 = "45234";//正常还款通知
     public static final String templateld45236 = "45236";//绑卡无法收款通知
+    public static final String templateld46366 = "46366";//提额短信通知
 
     /**
      * 验证码类短信

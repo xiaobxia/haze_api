@@ -22,6 +22,9 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="extend_id" property="extendId" jdbcType="INTEGER" />
+    <result column="limit_id" property="limitId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     <!--
@@ -30,7 +33,7 @@
     -->
     id, borrow_amount, total_fee_rate, borrow_interest, turst_trial, platform_licensing,
     collect_channel_fee, account_manager_fee, late_fee, renewal_fee, renewal_poundage,
-    borrow_day, deal_flag, create_time, update_time, remark
+    borrow_day, deal_flag, create_time, update_time, remark, extend_id, limit_id, status
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     <!--

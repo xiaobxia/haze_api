@@ -1,8 +1,11 @@
 package com.vxianjin.gringotts.pay.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.tools.mq.producer.CommonProducer;
+import com.vxianjin.gringotts.pay.common.enums.EventTypeEnum;
+import com.vxianjin.gringotts.pay.common.exception.PayException;
+import com.vxianjin.gringotts.pay.common.publish.PublishAdapter;
+import com.vxianjin.gringotts.pay.common.publish.PublishFactory;
 import com.vxianjin.gringotts.pay.dao.UserQuotaApplyLogMapper;
 import com.vxianjin.gringotts.pay.dao.UserQuotaSnapshotDao;
 import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
@@ -12,26 +15,27 @@ import com.vxianjin.gringotts.pay.model.UserQuotaSnapshot;
 import com.vxianjin.gringotts.pay.service.BorrowProductConfigService;
 import com.vxianjin.gringotts.pay.service.UserQuotaLogService;
 import com.vxianjin.gringotts.pay.service.UserQuotaSnapshotService;
-import com.vxianjin.gringotts.risk.service.ICreditLineService;
 import com.vxianjin.gringotts.util.TimeKey;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.dao.impl.UserDao;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.service.impl.UserClientInfoService;
+import com.vxianjin.gringotts.web.util.SendSmsUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +79,9 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 
     @Autowired
     private UserClientInfoService userClientInfoService;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     @Value("#{mqSettings['oss_topic']}")
     private String ossMqTopic;
@@ -142,6 +149,26 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             return null;
         }
 
+    }
+
+    @Override
+    public Map<String, String> newQueryUserQuotaSnapshot(int userId, String amount, int productrepaymentedCount) {
+
+        // TODO 产品额度、提额机制算法
+        /**
+         *  第一步：根据还款额度查询出对应产品
+         *  关联查询出提额配置表数据
+         *
+         *  第二步：根据提额机制，先判断该产品配置的提额次数限制有没有达标
+         *  达标进入下一步
+         *  不达标直接返回当前产品额度与期限
+         *
+         *  第三步：达标后获取提额配置里面的产品ID
+         *  将该产品ID对应的产品额度与产品期限返回
+         * */
+
+
+        return null;
     }
 
     @Override
@@ -309,17 +336,17 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 
             String userClientId = userClientInfoService.queryClientIdByUserId(Integer.valueOf(user.getId()));
             //短信
-            String shortMessage = "尊敬的" + user.getRealname() + "，经评估，因您的借款信用记录极好，现对您的可用额度进行调整，当前最大可用额度为" + afterMaxAmount.divide(new BigDecimal(100)) + "元。";
+            String shortMessage = user.getRealname() + "##" + afterMaxAmount.divide(new BigDecimal(100));
             //内推消息
             String message = "您好，因您的借款信用记录极好，当前最大可用额度已提升至" + afterMaxAmount.divide(new BigDecimal(100)) + "元。";
             //短信消息发送
-//            SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), shortMessage);
-//            try {
-//                PublishAdapter publishAdapter = PublishFactory.getPublishAdapter(EventTypeEnum.REPAY.getCode());
-//                publishAdapter.publishMsg(applicationContext, EventTypeEnum.REPAY.getCode(), shortMessage, user.getUserPhone());
-//            } catch (PayException e) {
-//                log.error(MessageFormat.format("用户{0},还款提示短信发送失败====>e :{1}", user.getUserPhone(), e.getMessage()));
-//            }
+            SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), SendSmsUtil.templateld46366, shortMessage);
+            try {
+                PublishAdapter publishAdapter = PublishFactory.getPublishAdapter(EventTypeEnum.REPAY.getCode());
+                publishAdapter.publishMsg(applicationContext, EventTypeEnum.REPAY.getCode(), shortMessage, user.getUserPhone());
+            } catch (PayException e) {
+                log.error(MessageFormat.format("用户{0},还款提示短信发送失败====>e :{1}", user.getUserPhone(), e.getMessage()));
+            }
             GeTuiJson geTuiJson = new GeTuiJson(0, userClientId, "提额通知", message, message);
 
             if (afterMaxAmount.compareTo(new BigDecimal(200000)) >= 0) {

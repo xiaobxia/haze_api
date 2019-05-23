@@ -25,6 +25,16 @@ public interface UserQuotaSnapshotService {
      */
     Map<String,String> queryUserQuotaSnapshot(int userId, String amount);
 
+
+    /**
+     * 根据用户提额机制来返回应该提的额度---19.05.23版本
+     * @param userId 用户ID
+     * @param amount 本次还款金额
+     * @param productrepaymentedCount 该产品的已还次数，含本次
+     * @return
+     */
+    Map<String,String> newQueryUserQuotaSnapshot(int userId, String amount, int productrepaymentedCount);
+
     /**
      * 用户额度更新
      */
