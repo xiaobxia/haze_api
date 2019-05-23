@@ -62,31 +62,25 @@ public class FuiouRepayController extends BaseController {
     /**
      * 富友订单回调（还款）--- Fuiou
      */
-    @ResponseBody
     @RequestMapping(value = "withholdCallback/{userId}")
-    public String payWithholdCallback(HttpServletRequest req, @PathVariable String userId) {
+    public void payWithholdCallback(HttpServletRequest req, @PathVariable String userId) throws Exception {
 
-        logger.debug("FuiouRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】");
-        try {
-            if (verifySign(req)) {//验签成功
-                Map<String, String> parameterMap = new HashMap();
-                parameterMap.put("VERSION", req.getParameter("VERSION"));
-                parameterMap.put("TYPE", req.getParameter("TYPE"));
-                parameterMap.put("RESPONSECODE", req.getParameter("RESPONSECODE"));
-                parameterMap.put("RESPONSEMSG", req.getParameter("RESPONSEMSG"));
-                parameterMap.put("MCHNTCD", req.getParameter("MCHNTCD"));
-                parameterMap.put("MCHNTORDERID", req.getParameter("MCHNTORDERID"));
-                parameterMap.put("ORDERID", req.getParameter("ORDERID"));
-                parameterMap.put("BANKCARD", req.getParameter("BANKCARD"));
-                parameterMap.put("AMT", req.getParameter("AMT"));
-                parameterMap.put("SIGN", req.getParameter("SIGN"));
+        logger.info("FuiouRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】");
 
-                return fuiouRepayService.payWithholdCallback(parameterMap).getCode();
-            }
-            return "FAIL";
-        } catch (Exception e) {
-            logger.error("FuiouRepayController.payWithholdCallback(代扣回调) has error,params : 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】 ,error: ", e);
-            return "FAIL";
+        if (verifySign(req)) {//验签成功
+            Map<String, String> parameterMap = new HashMap();
+            parameterMap.put("VERSION", req.getParameter("VERSION"));
+            parameterMap.put("TYPE", req.getParameter("TYPE"));
+            parameterMap.put("RESPONSECODE", req.getParameter("RESPONSECODE"));
+            parameterMap.put("RESPONSEMSG", req.getParameter("RESPONSEMSG"));
+            parameterMap.put("MCHNTCD", req.getParameter("MCHNTCD"));
+            parameterMap.put("MCHNTORDERID", req.getParameter("MCHNTORDERID"));
+            parameterMap.put("ORDERID", req.getParameter("ORDERID"));
+            parameterMap.put("BANKCARD", req.getParameter("BANKCARD"));
+            parameterMap.put("AMT", req.getParameter("AMT"));
+            parameterMap.put("SIGN", req.getParameter("SIGN"));
+
+            fuiouRepayService.payWithholdCallback(parameterMap);
         }
     }
 

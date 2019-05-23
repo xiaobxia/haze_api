@@ -114,15 +114,15 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultModel payWithholdCallback(Map<String, String> callbackResult) throws Exception {
-        ResultModel resultModel = new ResultModel(false);
+    public void payWithholdCallback(Map<String, String> callbackResult) throws Exception {
+        //ResultModel resultModel = new ResultModel(false);
 
         /*logger.info("FuiouRepayServiceImpl.payWithholdCallback params:【" + JSON.toJSONString(req) + "】");
         Map<String, String> callbackResult = FuiouApiUtil.getCallBackParamMap(req);*/
         logger.info("FuiouRepayServiceImpl.payWithholdCallback callbackResult=" + (callbackResult != null ? JSON.toJSONString(callbackResult) : "null"));
         if (callbackResult == null) {
-            resultModel.setMessage("数据解析失败");
-            return resultModel;
+            //resultModel.setMessage("数据解析失败");
+            throw new Exception("数据解析失败");
         }
         // 解析数据
         //支付编号
@@ -136,7 +136,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         String orderMoney = FuiouApiUtil.formatString(callbackResult.get("AMT"));
         // 获取外部订单
         OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
-        if (outOrders == null) throw new Exception("系统错误");
+        if (outOrders == null) throw new Exception("系统异常");
 
         logger.info("FuiouRepayService.payWithholdCallback orderNo: " + orderNo + ",outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
         // 暂时还是以判断成功是否处理，看代码里请求代扣如果超时等情况会改订单为失败，但是可能第三方收到请求代扣成功了
@@ -181,16 +181,14 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                     repayService.repayCallBackHandler(re, detail, outOrders, orderMoney, false, errorMsg, "富友",user);
                 }
             }
-            resultModel.setSucc(true);
+            /*resultModel.setSucc(true);
             resultModel.setCode(ErrorBase.SUCCESS.getCode());
-            resultModel.setMessage(ErrorBase.SUCCESS.getMessage());
+            resultModel.setMessage(ErrorBase.SUCCESS.getMessage());*/
         } else {
-            resultModel.setSucc(false);
-            resultModel.setCode(ErrorBase.FAIL.getCode());
-            resultModel.setMessage(ErrorBase.FAIL.getMessage());
+            throw new Exception("系统异常");
         }
-        logger.info("payWithholdCallback order is " + orderNo + "  result is " + JSON.toJSONString(resultModel));
-        return resultModel;
+        logger.info("payWithholdCallback order is " + orderNo );//"  result is " + JSON.toJSONString(resultModel));
+        //return resultModel;
 
     }
 
