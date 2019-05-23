@@ -964,6 +964,8 @@ public class FuiouServiceImpl implements FuiouService {
         resultModel.setMessage(resultMap.get("errormsg") == null ? null : String.valueOf(resultMap.get("errormsg")));
 
         FuiouRepayResultModel repayResultModel = new FuiouRepayResultModel();
+        repayResultModel.setRequestNo(ypRepayRecordReq.getRequestNo());
+
         repayResultModel.setRequestNo(resultMap.get("mchntorderId") == null ? null : String.valueOf(resultMap.get("mchntorderId")));
         repayResultModel.setStatus(resultMap.get("payStatus") == null ? null : String.valueOf(resultMap.get("payStatus")));
         resultModel.setData(repayResultModel);
