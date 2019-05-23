@@ -396,11 +396,12 @@ public class RepayService {
      * @param detail    还款明细
      */
     @Transactional(propagation = Propagation.MANDATORY)
-    public void beforeRepayHandler(OutOrders outOrders, RepaymentDetail detail) {
+    public boolean beforeRepayHandler(OutOrders outOrders, RepaymentDetail detail) {
         // 外部订单入库
-        outOrdersService.insert(outOrders);
+        int insert = outOrdersService.insert(outOrders);
         // 还款明细入库
-        repaymentDetailService.insertSelective(detail);
+        boolean b = repaymentDetailService.insertSelective(detail);
+        return insert > 0 && b;
     }
 
     /**
