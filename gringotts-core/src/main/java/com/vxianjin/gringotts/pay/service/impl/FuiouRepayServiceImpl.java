@@ -448,7 +448,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                 break;
             //支付处理中
             case RepaymentDetail.STATUS_WAIT:
-                //repaymentService.synReapymentDetailStatus(detail);
+                repaymentService.synReapymentDetailStatus(detail);
                 result = new ResponseContent("-101", "支付处理中");
                 break;
             default:
@@ -755,34 +755,33 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         outOrders.setReqParams(paramMap);
 
         //请求第三方之前，数据先存入库
-        boolean beforeRepayHandler = repayService.beforeRepayHandler(outOrders, detail);
-        if (beforeRepayHandler) {
-            //发送支付请求
-            Map<String, Object> result = FuiouApiUtil.FuiouOD(paramMap,FuiouConstants.NEW_PROTOCOL_ORDER_URL);
-            //outOrders.setReturnParams(JSON.toJSONString(result));
-            // 发送还款请求到第三方后处理
-            OutOrders afterOutOrders = new OutOrders();
-            afterOutOrders.setOrderNo(outOrders.getOrderNo());
-            afterOutOrders.setReturnParams(JSON.toJSONString(result));
-            outOrdersService.updateByOrderNo(afterOutOrders);
+        repayService.beforeRepayHandler(outOrders, detail);
 
-            if (result != null && "P000".equals(result.get("status"))) {
-                serviceResult = new ResponseContent("P000", "收到请求");
-            } else if (result != null && "0000".equals(result.get("status"))) {
-                //支付成功，提前处理回调
-                serviceResult = new ResponseContent("0000", "收到请求");
+        //发送支付请求
+        Map<String, Object> result = FuiouApiUtil.FuiouOD(paramMap,FuiouConstants.NEW_PROTOCOL_ORDER_URL);
+        //outOrders.setReturnParams(JSON.toJSONString(result));
+        // 发送还款请求到第三方后处理
+        OutOrders afterOutOrders = new OutOrders();
+        afterOutOrders.setOrderNo(outOrders.getOrderNo());
+        afterOutOrders.setReturnParams(JSON.toJSONString(result));
+        outOrdersService.updateByOrderNo(afterOutOrders);
+
+        if (result != null && "P000".equals(result.get("status"))) {
+            serviceResult = new ResponseContent("P000", "收到请求");
+        } else if (result != null && "0000".equals(result.get("status"))) {
+            //支付成功，提前处理回调
+            serviceResult = new ResponseContent("0000", "收到请求");
+        } else {
+            logger.info("repaymentId " + repayment.getId() + "fail ");
+            serviceResult.setCode("400");
+            if (result != null && result.containsKey("errorcode") && !"".equals(result.get("errorcode"))) {
+                logger.info("repaymentId " + repayment.getId() + " fail ,errorcode is " + result.get("errorcode") + " errormsg is " + result.get("errormsg"));
+                serviceResult.setMsg(result.get("errormsg").toString());
             } else {
-                logger.info("repaymentId " + repayment.getId() + "fail ");
-                serviceResult.setCode("400");
-                if (result != null && result.containsKey("errorcode") && !"".equals(result.get("errorcode"))) {
-                    logger.info("repaymentId " + repayment.getId() + " fail ,errorcode is " + result.get("errorcode") + " errormsg is " + result.get("errormsg"));
-                    serviceResult.setMsg(result.get("errormsg").toString());
-                } else {
-                    serviceResult.setMsg("请求失败，请重试");
-                }
-                // 更新订单状态为失败
-                outOrdersService.updateOrderStatus(requestNo, OutOrders.STATUS_OTHER);
+                serviceResult.setMsg("请求失败，请重试");
             }
+            // 更新订单状态为失败
+            outOrdersService.updateOrderStatus(requestNo, OutOrders.STATUS_OTHER);
         }
 
         return serviceResult;
