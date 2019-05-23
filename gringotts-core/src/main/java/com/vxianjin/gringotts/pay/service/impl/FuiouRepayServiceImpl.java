@@ -20,6 +20,7 @@ import com.vxianjin.gringotts.pay.common.util.fuiou.XMapUtil;
 import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.dao.IRenewalRecordDao;
 import com.vxianjin.gringotts.pay.model.*;
+import com.vxianjin.gringotts.pay.model.fuiou.FuiouRepayResultModel;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolOrderXmlBeanReq;
 import com.vxianjin.gringotts.pay.service.*;
 import com.vxianjin.gringotts.pay.service.base.RepayService;
@@ -185,7 +186,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
             resultModel.setCode(ErrorBase.SUCCESS.getCode());
             resultModel.setMessage(ErrorBase.SUCCESS.getMessage());*/
         } else {
-            throw new Exception("系统异常");
+            throw new Exception("该笔订单已经处理");
         }
         logger.info("payWithholdCallback order is " + orderNo );//"  result is " + JSON.toJSONString(resultModel));
         //return resultModel;
@@ -433,6 +434,8 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         //获取还款详情记录
         RepaymentDetail detail = repaymentDetailService.selectByOrderId(orderNo);
 
+
+
         logger.info("queryWithhold detail=" + JSON.toJSONString(detail));
 
         if (detail == null || detail.getStatus() == null) {
@@ -445,6 +448,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                 break;
             //支付处理中
             case RepaymentDetail.STATUS_WAIT:
+                repaymentService.synReapymentDetailStatus(detail);
                 result = new ResponseContent("-101", "支付处理中");
                 break;
             default:
