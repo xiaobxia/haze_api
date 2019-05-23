@@ -25,7 +25,7 @@ public interface FuiouRepayService {
      * @param callbackResult
      */
 
-    ResultModel payWithholdCallback(Map<String, String> callbackResult);
+    ResultModel payWithholdCallback(Map<String, String> callbackResult) throws Exception;
 
     /**
      * 续期回调（续期）

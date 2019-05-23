@@ -114,7 +114,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultModel payWithholdCallback(Map<String, String> callbackResult) {
+    public ResultModel payWithholdCallback(Map<String, String> callbackResult) throws Exception {
         ResultModel resultModel = new ResultModel(false);
 
         /*logger.info("FuiouRepayServiceImpl.payWithholdCallback params:【" + JSON.toJSONString(req) + "】");
@@ -136,6 +136,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         String orderMoney = FuiouApiUtil.formatString(callbackResult.get("AMT"));
         // 获取外部订单
         OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
+        if (outOrders == null) throw new Exception("系统错误");
 
         logger.info("FuiouRepayService.payWithholdCallback orderNo: " + orderNo + ",outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
         // 暂时还是以判断成功是否处理，看代码里请求代扣如果超时等情况会改订单为失败，但是可能第三方收到请求代扣成功了
