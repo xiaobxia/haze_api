@@ -62,7 +62,9 @@ public class FuiouApiUtil {
         map.put("MCHNTCD",FuiouConstants.API_MCHNT_CD);
         map.put("APIFMS", APIFMS);
         String res = new HttpPoster(uri).postStr(map);
-        res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+        if (!uri.contains(FuiouConstants.NEW_PROTOCOL_CHECKRESULT_URL)) {
+            res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+        }
 
 
         NewProtocolResponse response = XMapUtil.parseStr2Obj(NewProtocolResponse.class, res);
