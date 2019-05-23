@@ -80,6 +80,7 @@ public class FuiouRepayController extends BaseController {
             parameterMap.put("AMT", req.getParameter("AMT"));
             parameterMap.put("SIGN", req.getParameter("SIGN"));
 
+            Thread.sleep(2000);//异步回来等两秒
             fuiouRepayService.payWithholdCallback(parameterMap);
         }
     }

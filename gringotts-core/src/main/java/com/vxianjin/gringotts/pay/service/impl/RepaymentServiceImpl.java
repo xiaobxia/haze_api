@@ -662,10 +662,10 @@ public class RepaymentServiceImpl implements RepaymentService {
         }
 
         FuiouRepayResultModel fuiouRepayResultModel = resultModel.getData();
-        if (!repaymentDetail.getOrderId().equals(fuiouRepayResultModel.getRequestNo())) {
+        /*if (!repaymentDetail.getOrderId().equals(fuiouRepayResultModel.getRequestNo())) {
             logger.error(MessageFormat.format("synReapymentDetailStatus  asset_repayment_detail.id= {0},请求易宝的订单号与捞取的订单号不一致", repaymentDetail.getId()));
             throw new PayException("请求富友的订单号与捞取的订单号不一致");
-        }
+        }*/
 
         String status = fuiouRepayResultModel.getStatus();
         User user = userDao.selectCollectionByUserId(repaymentDetail.getUserId());
