@@ -136,6 +136,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         String orderMoney = FuiouApiUtil.formatString(callbackResult.get("AMT"));
         // 获取外部订单
         OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
+
         logger.info("FuiouRepayService.payWithholdCallback orderNo: " + orderNo + ",outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
         // 暂时还是以判断成功是否处理，看代码里请求代扣如果超时等情况会改订单为失败，但是可能第三方收到请求代扣成功了
         if (null != outOrders && (!OutOrders.STATUS_SUC.equals(outOrders.getStatus()))) {
@@ -749,11 +750,17 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         String paramMap = prepareParams(requestNo, user, info, money, "/fuiou/withholdCallback/");
         // 外部订单记录
         outOrders.setReqParams(paramMap);
+
+        //请求第三方之前，数据先存入库
+        repayService.beforeRepayHandler(outOrders, detail);
         //发送支付请求
         Map<String, Object> result = FuiouApiUtil.FuiouOD(paramMap,FuiouConstants.NEW_PROTOCOL_ORDER_URL);
-        outOrders.setReturnParams(JSON.toJSONString(result));
+        //outOrders.setReturnParams(JSON.toJSONString(result));
         // 发送还款请求到第三方后处理
-        repayService.beforeRepayHandler(outOrders, detail);
+        OutOrders afterOutOrders = new OutOrders();
+        afterOutOrders.setId(outOrders.getId());
+        afterOutOrders.setReturnParams(JSON.toJSONString(result));
+        outOrdersService.updateByOrderNo(afterOutOrders);
 
         if (result != null && "P000".equals(result.get("status"))) {
             serviceResult = new ResponseContent("P000", "收到请求");

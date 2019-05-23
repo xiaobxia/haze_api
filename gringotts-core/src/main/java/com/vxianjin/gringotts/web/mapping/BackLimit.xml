@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IBackLimitDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.pay.model.BackLimit">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="limit_name" property="limitName" jdbcType="VARCHAR" />
+        <result column="limit_count" property="limitCount" jdbcType="INTEGER" />
+        <result column="limit_product_id" property="limitProductId" jdbcType="INTEGER" />
+        <result column="limit_status" property="limitStatus" jdbcType="INTEGER" />
+        <result column="limit_remark" property="limitRemark" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>

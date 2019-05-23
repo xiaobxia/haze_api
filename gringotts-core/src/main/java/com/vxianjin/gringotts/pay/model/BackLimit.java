@@ -6,6 +6,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * 提额配置实体
+ * @author fully 2019-05-23
+ */
 @Data
 public class BackLimit implements Serializable {
 
@@ -13,14 +17,14 @@ public class BackLimit implements Serializable {
 
     private Integer id;
 
-    private String limit_name;
+    private String limitName;
 
-    private Integer limit_count;
+    private Integer limitCount;
 
-    private Integer limit_product_id;
+    private Integer limitProductId;
 
-    private Integer limit_status;
+    private Integer limitStatus;
 
-    private String limit_remark;
+    private String limitRemark;
 
 }
