@@ -78,6 +78,19 @@
     .insure-box .icon-select {width: 18px;height: 18px;display: inline-block;background: #666;cursor:pointer;border-radius: 6px;vertical-align: middle;margin-right: 3px;}
     .insure-box .icon-select.selected {background: transparent url(${basePath}/zmxy/images/ic_selected.png) no-repeat;background-size: 100%;}
     .insure-box p a {color:#E93326;text-decoration: none;}
+    .fix-mask {
+        z-index: 2000;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        padding-top: 60%;
+        background-color: rgba(0,0,0,0.5);
+        color: #fff;
+        text-align: center;
+        font-size: 30px;
+    }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="//captcha.luosimao.com/static/js/api.js"></script>
@@ -208,6 +221,15 @@
     </div>
 </div>
 <div class="voice-popup-shadow"></div>
+
+<c:choose>
+    <c:when test="${status == 2}">
+        <div class="fix-mask">当前渠道已被关闭</div>
+    </c:when>
+    <c:otherwise>
+        <div></div>
+    </c:otherwise>
+</c:choose>
 
 <!--统计代码-->
 <style type="text/css">
