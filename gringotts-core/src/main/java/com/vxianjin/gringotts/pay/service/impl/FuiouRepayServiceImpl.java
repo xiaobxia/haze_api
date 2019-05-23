@@ -759,7 +759,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         //outOrders.setReturnParams(JSON.toJSONString(result));
         // 发送还款请求到第三方后处理
         OutOrders afterOutOrders = new OutOrders();
-        afterOutOrders.setId(outOrders.getId());
+        afterOutOrders.setOrderNo(outOrders.getOrderNo());
         afterOutOrders.setReturnParams(JSON.toJSONString(result));
         outOrdersService.updateByOrderNo(afterOutOrders);
 
