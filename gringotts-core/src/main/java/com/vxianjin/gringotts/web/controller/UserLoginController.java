@@ -3752,12 +3752,17 @@ public class UserLoginController extends BaseController {
     @RequestMapping("act/light-loan-xjx/registerCode")
     public void registerCode(HttpServletRequest request, HttpServletResponse response) {
         String registerCodeCheck = "h5_register_code_check";
-
         JSONObject json = new JSONObject();
         Map<String, Object> dataMap = this.getParametersO(request);
         Printer.print("UserLoginController#registerCode", dataMap);
         HashMap<String, Object> map = new HashMap<>();
-
+      /* //判断该渠道是否是开启状态
+        String userFrom = request.getParameter("user_from");
+        String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
+        ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelId));
+        if(channelInfo != null){
+            json.put("status",channelInfo.getStatus());
+        }*/
         String msg = "";
         String code = "-1";
         String userPhone = "";
@@ -3848,6 +3853,13 @@ public class UserLoginController extends BaseController {
         String registerVoiceCode = "h5_register_voice_code_check";
         String code = "-1";
         String msg = "";
+       /* //判断该渠道是否是开启状态
+        String userFrom = request.getParameter("user_from");
+        String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
+        ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelId));
+        if(channelInfo != null){
+            json.put("status",channelInfo.getStatus());
+        }*/
         String userPhone = null == request.getParameter("phone") ? "" : request.getParameter("phone");
         // 4位语音验证码固定长度
         String voice_code = String.valueOf(Math.random()).substring(2).substring(0, 4);
@@ -3939,6 +3951,18 @@ public class UserLoginController extends BaseController {
         String code = "-1";
         String userPhone;
         try {
+            //判断该渠道是否是开启状态
+            String userFroms = request.getParameter("user_from");
+            String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
+            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
+            if(channelInfo != null){
+                json.put("status",channelInfo.getStatus());
+                if(channelInfo.getStatus() == 2){
+                    msg="该渠道已关闭,不能注册";
+                    json.put("message", msg);
+                    return;
+                }
+            }
             userPhone = dataMap.get("phone") + "";
             // 获取密码
             String passWord = dataMap.get("password") + "";
