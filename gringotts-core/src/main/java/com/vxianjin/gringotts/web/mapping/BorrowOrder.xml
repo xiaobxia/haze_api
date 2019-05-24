@@ -456,8 +456,8 @@
 			<if test="renewalPoundage != null">
 				renewal_poundage,
 			</if>
-			<if test="prodcutId != null">
-				prodcut_id,
+			<if test="productId != null">
+				product_id,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
