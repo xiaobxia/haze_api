@@ -341,7 +341,7 @@ public class IndexController extends BaseController {
                     String amountDaysListStr = "[{\"day\":"+ defaultConfig.getBorrowDay() +",\"amount_free\":[{\"amount\":"+ defaultConfig.getBorrowAmount() +",\"totalFee\":"+ defaultConfig.getTotalFeeRate() +",\"arrivalMoney" +
                             "\":"+ defaultConfig.getBorrowAmount().subtract(defaultConfig.getTotalFeeRate()) +",\"creditVet\":"+ defaultConfig.getTurstTrial() +",\"accountManage\":"+
                             defaultConfig.getAccountManagerFee() +",\"accrual\":" + defaultConfig.getBorrowInterest() + ",\"platformUse\":"+ defaultConfig.getPlatformLicensing() +
-                            ",\"collectionChannel\":"+ defaultConfig.getCollectChannelFee() +"}]}]";
+                            ",\"collectionChannel\":"+ defaultConfig.getCollectChannelFee() +",\"productId\":"+ defaultConfig.getId() +"}]}]";
                     amountDaysList = JSON.parseArray(amountDaysListStr);
                 } else {
                     log.info("step 2");
