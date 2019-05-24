@@ -192,9 +192,9 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             Integer limitProductId = backLimit.getLimitProductId();//提额至哪个产品
             BorrowProductConfig newProductConfig = borrowProductConfigService.queryProductById(limitProductId);
             if (count >= limitCount) {//还款成功笔数大于提额配置限制则返回新额度
-                resultMap.put(newProductConfig.getId().toString(), newProductConfig.getBorrowAmount().toString());//
+                resultMap.put(newProductConfig.getId().toString(), newProductConfig.getBorrowAmount().intValue()+"");//
             } else {
-                resultMap.put(productConfig.getId().toString(), productConfig.getBorrowAmount().toString());//不达标返回老产品的参数
+                resultMap.put(productConfig.getId().toString(), productConfig.getBorrowAmount().intValue()+"");//不达标返回老产品的参数
             }
             return resultMap;
         }catch (Exception e){
@@ -457,7 +457,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 }
                 log.info("query user limits size:" + userLimits.size());
                 log.info("start update user quotasnapshot");
-                String nowLimit = borrowProductConfigService.queryByBorrowByStatus(0).getBorrowAmount().toString();
+                String nowLimit = borrowProductConfigService.queryByBorrowByStatus(0).getBorrowAmount().intValue() + "";
                 for (String key : userLimits.keySet()) {
                     // 用户额度
                     String userLimit = userLimits.get(key);
@@ -471,7 +471,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 log.info("end update user quotasnapshot");
                 // 获取用户最高额度
                 BigDecimal bigDecimal = userQuotaSnapshotMapper.queryUserMaxLimit(userId);
-                if (!nowLimit.equals(bigDecimal.toString())) {
+                if (!nowLimit.equals("" + bigDecimal.intValue())) {
                     bigDecimal = BigDecimal.valueOf(Long.parseLong(nowLimit));
                 }
                 // 修改用户额度(user_info)
