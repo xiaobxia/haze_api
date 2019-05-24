@@ -582,7 +582,7 @@
 				#{renewalPoundage,jdbcType=DECIMAL},
 			</if>
 			<if test="productId != null">
-				#{product_id,jdbcType=INTEGER},
+				#{productId,jdbcType=INTEGER},
 			</if>
 		</trim>
 

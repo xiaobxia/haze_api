@@ -803,6 +803,14 @@ public class BorrowOrder implements Serializable {
         this.renewalPoundage = renewalPoundage;
     }
 
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
     @Override
     public String toString() {
         return "BorrowOrder [apr=" + apr + ", autoRiskCheckStatus="
@@ -911,11 +919,4 @@ public class BorrowOrder implements Serializable {
         this.cfcaContractId = cfcaContractId;
     }
 
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
 }
