@@ -90,7 +90,9 @@ public class FuiouRepayController extends BaseController {
         if (verifySign(req)) {//验签成功
             Map<String, String> parameterMap = toStringMap(req);
 
-            Thread.sleep(2000);//异步回来等一等同步数据入库
+            if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+                Thread.sleep(2000);//异步回来等一等同步数据入库
+            }
             fuiouRepayService.payWithholdCallback(parameterMap);
         }
     }
@@ -107,9 +109,11 @@ public class FuiouRepayController extends BaseController {
             throw new Exception("校验异常");
         }
         Map<String, String> parameterMap = toStringMap(request);
+        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+            Thread.sleep(2000);//异步回来等一等同步数据入库
+        }
         fuiouRepayService.payRenewalWithholdCallback(parameterMap);
 
-        Thread.sleep(2000);//异步回来等一等同步数据入库
         logger.error("FuiouRepayController.payRenewalWithholdCallback(续期回调) has error ,params : 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
     }
 
