@@ -998,7 +998,7 @@ public class BorrowOrderService implements IBorrowOrderService {
 
     @Override
     public int getRepaidCount(int userId) {
-        return 0;
+        return borrowOrderDao.getRepaidCount(userId);
     }
 
     @Override
