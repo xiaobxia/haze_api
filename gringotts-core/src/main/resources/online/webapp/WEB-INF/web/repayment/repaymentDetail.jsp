@@ -94,7 +94,9 @@
         <c:if test="${repayment.status == 21 || repayment.status == 23 || repayment.status == -11}">
             <c:if test="${not applying eq 'true'}">
                 <div class="btn-box clearfix">
-                    <a data-ajax="false" onclick="toRenewal()" href="javascript:;">申请续期</a>
+                    <c:if test="${extendStatus == true}">
+                        <a data-ajax="false" onclick="toRenewal()" href="javascript:;">申请续期</a>
+                    </c:if>
                     <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}">立即还款</a>
                 </div>
             </c:if>

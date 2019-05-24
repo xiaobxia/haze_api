@@ -82,6 +82,7 @@ public class RepaymentWebController extends BaseController {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         //查找借款订单
         BorrowOrder bo = borrowOrderService.findOneBorrow(id);
+
         UserCardInfo info = null;
         try {
 
@@ -213,6 +214,7 @@ public class RepaymentWebController extends BaseController {
         model.addAttribute("list", list);
         model.addAttribute("info", info);
         model.addAttribute("bo", bo);
+        model.addAttribute("extendStatus", borrowOrderService.getExtendStatus(bo.getUserId()));
         model.addAttribute("appName", request.getParameter("appName"));
         if (isTg) {
             model.addAttribute("sgd", request.getParameter("sgd"));

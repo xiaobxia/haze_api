@@ -16,7 +16,7 @@
 
 
     <select id="selectById" resultMap="BaseResultMap">
-        select <include refid="base_sql"/> from back_limit where id = #{id} and limit_status = 1
+        select <include refid="base_sql"/> from back_limit where id = #{id} and limit_status = 0
     </select>
 
 </mapper>

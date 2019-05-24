@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vxianjin.gringotts.web.dao.IBackExtendDao">
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.pay.model.BackExtend">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="extend_name" property="extendName" jdbcType="VARCHAR" />
+        <result column="extend_count" property="extendCount" jdbcType="INTEGER" />
+        <result column="extend_money" property="extendMoney" jdbcType="INTEGER" />
+        <result column="extend_status" property="extendStatus" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="extend_day" property="extendDay" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="base_sql">
+        id, extend_name, extend_count, extend_money, extend_status, remark, extend_day
+    </sql>
+
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="base_sql"/> from back_extend where id = #{id} and extend_status = 0
+    </select>
+
+    <select id="selectStatusByExtendId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select extend_status from back_extend
+        where id = (select extend_id from borrow_product_config
+        where id = (select product_id from asset_borrow_order where id = #{userId} ))
+        and extend_status = 0
+    </select>
+
+</mapper>

@@ -6,6 +6,7 @@ import com.vxianjin.gringotts.common.ResponseStatus;
 import com.vxianjin.gringotts.constant.Constant;
 import com.vxianjin.gringotts.pay.dao.BorrowProductConfigDao;
 import com.vxianjin.gringotts.pay.dao.IRepaymentDao;
+import com.vxianjin.gringotts.pay.model.BackExtend;
 import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
 import com.vxianjin.gringotts.pay.component.OrderLogComponent;
 import com.vxianjin.gringotts.pay.enums.OperateType;
@@ -95,6 +96,9 @@ public class BorrowOrderService implements IBorrowOrderService {
 
     @Autowired
     private OrderLogComponent orderLogComponent;
+
+    @Autowired
+    private IBackExtendDao backExtendDao;
 
     @Override
     public List<BorrowOrder> findAll(HashMap<String, Object> params) {
@@ -995,5 +999,31 @@ public class BorrowOrderService implements IBorrowOrderService {
     @Override
     public int getRepaidCount(int userId) {
         return 0;
+    }
+
+    @Override
+    public boolean getExtendStatus(int userId) {
+        Integer status = backExtendDao.selectStatusByExtendId(userId);
+        return status != null && status == 0;
+    }
+
+    @Override
+    public Map<String, Object> extend(Integer orderId) {
+
+        BorrowOrder borrowOrder = borrowOrderDao.selectByPrimaryKey(orderId);
+        Integer productId = borrowOrder.getProductId();
+
+        BorrowProductConfig borrowProductConfig = borrowProductConfigDao.selectByPrimaryKey(productId);
+
+        Integer extendId = borrowProductConfig.getExtendId();
+
+        BackExtend backExtend = backExtendDao.selectById(extendId);
+
+        Integer extendCount = backExtend.getExtendCount();
+        Integer extendMoney = backExtend.getExtendMoney();
+
+
+
+        return null;
     }
 }
