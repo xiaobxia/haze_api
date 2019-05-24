@@ -288,4 +288,10 @@
        remark = #{remark,jdbcType=LONGVARCHAR}
     where id = #{recordId,jdbcType=INTEGER}
   </update>
+
+  <select id="borrowOrderRenewalRecordCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    SELECT COUNT(1) FROM asset_renewal_record WHERE asset_repayment_id = (
+	    SELECT id FROM asset_repayment WHERE asset_order_id = #{borrowOrderId}
+    )
+  </select>
 </mapper>

@@ -199,16 +199,12 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultModel payRenewalWithholdCallback(Map<String, String> callbackResult) {
+    public void payRenewalWithholdCallback(Map<String, String> callbackResult) throws Exception {
         ResultModel resultModel = new ResultModel(false);
 
-        /*logger.info("payRenewalWithholdCallback params;【" + JSON.toJSONString(req) + "】");
-
-        Map<String, String> callbackResult = FuiouApiUtil.getCallBackParamMap(req);*/
         logger.info("payRenewalWithholdCallback callbackResult=" + (callbackResult != null ? JSON.toJSONString(callbackResult) : "null"));
         if (callbackResult == null) {
-            resultModel.setMessage("数据解析失败");
-            return resultModel;
+            throw new Exception("数据解析失败");
         }
         // 解析内容
         //支付编号
@@ -238,16 +234,8 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                     repayService.continuCallBackHandler(outOrders, renewalRecord, re, false, errorMsg, "富友");
                 }
             }
-            resultModel.setSucc(true);
-            resultModel.setCode(ErrorBase.SUCCESS.getCode());
-            resultModel.setMessage(ErrorBase.SUCCESS.getMessage());
-        } else {
-            resultModel.setSucc(false);
-            resultModel.setCode(ErrorBase.FAIL.getCode());
-            resultModel.setMessage(ErrorBase.FAIL.getMessage());
         }
         logger.info("renewalWithholdCallback end,order " + orderNo + " result : " + JSON.toJSONString(resultModel));
-        return resultModel;
     }
 
     /**

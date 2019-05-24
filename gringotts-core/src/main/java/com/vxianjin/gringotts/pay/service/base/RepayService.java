@@ -4,6 +4,8 @@ import com.vxianjin.gringotts.pay.common.exception.BizException;
 import com.vxianjin.gringotts.pay.component.OrderLogComponent;
 import com.vxianjin.gringotts.pay.enums.OperateType;
 import com.vxianjin.gringotts.pay.enums.OrderChangeAction;
+import com.vxianjin.gringotts.pay.model.BackExtend;
+import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
 import com.vxianjin.gringotts.pay.model.NeedRenewalInfo;
 import com.vxianjin.gringotts.pay.model.NeedRepayInfo;
 import com.vxianjin.gringotts.pay.pojo.OrderLogModel;
@@ -285,6 +287,9 @@ public class RepayService {
 
         BorrowOrder bo = borrowOrderService.findOneBorrow(id);//获取借款订单信息
 
+        //BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
+        BackExtend extend = borrowOrderService.extend(bo.getProductId());
+
         // 续期手续费 分为单位
         BigDecimal renewalFee = bo.getRenewalPoundage();
         if (bo == null) {
@@ -303,10 +308,10 @@ public class RepayService {
         // 待还本金
         Long waitAmount = waitRepay - waitLate;
         // 续期费 分为单位
-        Integer loanApr = bo.getRenewalFee().intValue();
+        Integer loanApr = extend.getExtendMoney();//bo.getRenewalFee().intValue();
 
         //总服务费（待还总金额 + 待还滞纳金 + 服务费）
-        Long allCount = waitLate + loanApr + renewalFee.longValue();
+        Long allCount = extend.getExtendMoney().longValue();//waitLate + loanApr + renewalFee.longValue();
 
         User user = userService.searchByUserid(bo.getUserId());//借款用户信息
 
@@ -331,6 +336,7 @@ public class RepayService {
         needRenewalInfo.setWaitAmount(waitAmount);
         needRenewalInfo.setWaitLate(waitLate);
         needRenewalInfo.setWaitRepay(waitRepay);
+        needRenewalInfo.setExtendDay(Integer.parseInt(extend.getExtendDay()));
         return needRenewalInfo;
     }
 
@@ -422,7 +428,8 @@ public class RepayService {
         renewalRecord.setPlanLateFee(needRenewalInfo.getWaitLate().intValue());//滞纳金
         renewalRecord.setRenewalFee(Integer.valueOf(needRenewalInfo.getRenewalFee()));//续期费
         renewalRecord.setOldRepaymentTime(needRenewalInfo.getRepayment().getRepaymentTime());//续期前预期还款时间
-        renewalRecord.setRenewalDay(needRenewalInfo.getBorrowOrder().getLoanTerm());//续期天数
+        //renewalRecord.setRenewalDay(needRenewalInfo.getBorrowOrder().getLoanTerm());//续期天数
+        renewalRecord.setRenewalDay(needRenewalInfo.getExtendDay());//续期天数
         renewalRecord.setStatus(RenewalRecord.STATUS_PAYING);//付款中状态
         renewalRecord.setMoneyAmount(needRenewalInfo.getRepayment().getRepaymentPrincipal() + needRenewalInfo.getRepayment().getRepaymentInterest());//借款总金额
 //        renewalRecord.setRepaymentTime(DateUtil.addDay(re.getRepaymentTime(), bo.getLoanTerm()));//续期后预期还款时间

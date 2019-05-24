@@ -55,6 +55,8 @@ public class NeedRenewalInfo {
      */
     private Integer loanApr;
 
+    private Integer extendDay;
+
     public BorrowOrder getBorrowOrder() {
         return borrowOrder;
     }
@@ -125,5 +127,13 @@ public class NeedRenewalInfo {
 
     public void setLoanApr(Integer loanApr) {
         this.loanApr = loanApr;
+    }
+
+    public Integer getExtendDay() {
+        return extendDay;
+    }
+
+    public void setExtendDay(Integer extendDay) {
+        this.extendDay = extendDay;
     }
 }

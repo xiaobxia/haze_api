@@ -11,6 +11,10 @@ public interface IBackExtendDao {
 
     BackExtend selectById(int id);
 
-    Integer selectStatusByExtendId(int userId);
+    Integer selectStatusByExtendId(int id);
+
+    BackExtend selectByProductId(int prodcutId);
+
+    BackExtend selectByBorrowOrderId(int BorrowOrderId);
 
 }

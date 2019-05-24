@@ -24,17 +24,14 @@ public interface FuiouRepayService {
      * @return res
      * @param callbackResult
      */
-
     void payWithholdCallback(Map<String, String> callbackResult) throws Exception;
 
     /**
      * 续期回调（续期）
      *
-     * @param req req
      * @return res
      */
-    @Transactional(rollbackFor = Exception.class)
-    ResultModel payRenewalWithholdCallback(Map<String, String> callbackResult);
+    void payRenewalWithholdCallback(Map<String, String> callbackResult) throws Exception;
 
     /**
      * 主动支付（还款）

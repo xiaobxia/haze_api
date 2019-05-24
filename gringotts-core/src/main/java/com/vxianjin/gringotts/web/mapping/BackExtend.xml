@@ -23,8 +23,22 @@
     <select id="selectStatusByExtendId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         select extend_status from back_extend
         where id = (select extend_id from borrow_product_config
-        where id = (select product_id from asset_borrow_order where id = #{userId} ))
+        where id = (select product_id from asset_borrow_order where id = #{id} ))
         and extend_status = 0
+    </select>
+
+    <select id="selectByProductId" resultMap="BaseResultMap">
+        select <include refid="base_sql"/> from back_extend where id = (
+        select extend_id from borrow_product_config where id = #{prodcutId}
+        ) and extend_status = 0
+    </select>
+
+    <select id="selectByBorrowOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT * FROM back_extend WHERE id = (
+            SELECT extend_id FROM borrow_product_config WHERE id = (
+                SELECT product_id FROM asset_borrow_order WHERE id = #{BorrowOrderId}
+            )
+        )
     </select>
 
 </mapper>

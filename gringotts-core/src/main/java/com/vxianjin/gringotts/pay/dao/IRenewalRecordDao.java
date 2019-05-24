@@ -26,4 +26,6 @@ public interface IRenewalRecordDao {
     List<RenewalRecord> findParams(Map<String, Object> map);
 
     RenewalRecord getRenewalRecordByOrderId(String orderId);
+
+    int borrowOrderRenewalRecordCount(Integer borrowOrderId);
 }

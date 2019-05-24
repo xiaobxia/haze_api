@@ -1002,28 +1002,14 @@ public class BorrowOrderService implements IBorrowOrderService {
     }
 
     @Override
-    public boolean getExtendStatus(int userId) {
-        Integer status = backExtendDao.selectStatusByExtendId(userId);
+    public boolean getExtendStatus(int id) {
+        Integer status = backExtendDao.selectStatusByExtendId(id);
         return status != null && status == 0;
     }
 
     @Override
-    public Map<String, Object> extend(Integer orderId) {
-
-        BorrowOrder borrowOrder = borrowOrderDao.selectByPrimaryKey(orderId);
-        Integer productId = borrowOrder.getProductId();
-
-        BorrowProductConfig borrowProductConfig = borrowProductConfigDao.selectByPrimaryKey(productId);
-
-        Integer extendId = borrowProductConfig.getExtendId();
-
-        BackExtend backExtend = backExtendDao.selectById(extendId);
-
-        Integer extendCount = backExtend.getExtendCount();
-        Integer extendMoney = backExtend.getExtendMoney();
-
-
-
-        return null;
+    public BackExtend extend(Integer productId) {
+        BackExtend backExtend = backExtendDao.selectByProductId(productId);
+        return backExtend;
     }
 }

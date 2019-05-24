@@ -9,7 +9,9 @@ import com.vxianjin.gringotts.pay.model.YeepayRepayReq;
 import com.vxianjin.gringotts.pay.model.YeepayRepaySmsReq;
 import com.vxianjin.gringotts.pay.model.YeepaySmsReSendResp;
 import com.vxianjin.gringotts.pay.service.FuiouRepayService;
+import com.vxianjin.gringotts.pay.service.RenewalRecordService;
 import com.vxianjin.gringotts.util.StringUtils;
+import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.controller.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,9 @@ public class FuiouRepayController extends BaseController {
     @Resource
     private FuiouRepayService fuiouRepayService;
 
+    @Resource
+    private RenewalRecordService renewalRecordService;
+
     /**
      * 富友回调校验
      * @param req
@@ -59,8 +64,23 @@ public class FuiouRepayController extends BaseController {
         return MD5.MD5Encode(signPain).equals(sign);
     }
 
+    private Map<String, String> toStringMap(HttpServletRequest request) {
+        Map<String, String> parameterMap = new HashMap();
+        parameterMap.put("VERSION", request.getParameter("VERSION"));
+        parameterMap.put("TYPE", request.getParameter("TYPE"));
+        parameterMap.put("RESPONSECODE", request.getParameter("RESPONSECODE"));
+        parameterMap.put("RESPONSEMSG", request.getParameter("RESPONSEMSG"));
+        parameterMap.put("MCHNTCD", request.getParameter("MCHNTCD"));
+        parameterMap.put("MCHNTORDERID", request.getParameter("MCHNTORDERID"));
+        parameterMap.put("ORDERID", request.getParameter("ORDERID"));
+        parameterMap.put("BANKCARD", request.getParameter("BANKCARD"));
+        parameterMap.put("AMT", request.getParameter("AMT"));
+        parameterMap.put("SIGN", request.getParameter("SIGN"));
+        return parameterMap;
+    }
+
     /**
-     * 富友订单回调（还款）--- Fuiou
+     * 富友还款回调--- Fuiou
      */
     @RequestMapping(value = "withholdCallback/{userId}")
     public void payWithholdCallback(HttpServletRequest req, @PathVariable String userId) throws Exception {
@@ -68,50 +88,33 @@ public class FuiouRepayController extends BaseController {
         logger.info("FuiouRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(req.getParameterMap()) + "  userId:" + userId + "】");
 
         if (verifySign(req)) {//验签成功
-            Map<String, String> parameterMap = new HashMap();
-            parameterMap.put("VERSION", req.getParameter("VERSION"));
-            parameterMap.put("TYPE", req.getParameter("TYPE"));
-            parameterMap.put("RESPONSECODE", req.getParameter("RESPONSECODE"));
-            parameterMap.put("RESPONSEMSG", req.getParameter("RESPONSEMSG"));
-            parameterMap.put("MCHNTCD", req.getParameter("MCHNTCD"));
-            parameterMap.put("MCHNTORDERID", req.getParameter("MCHNTORDERID"));
-            parameterMap.put("ORDERID", req.getParameter("ORDERID"));
-            parameterMap.put("BANKCARD", req.getParameter("BANKCARD"));
-            parameterMap.put("AMT", req.getParameter("AMT"));
-            parameterMap.put("SIGN", req.getParameter("SIGN"));
+            Map<String, String> parameterMap = toStringMap(req);
 
-            Thread.sleep(2000);//异步回来等两秒
+            if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+                Thread.sleep(1500);//异步回来等一等同步数据入库
+            }
             fuiouRepayService.payWithholdCallback(parameterMap);
         }
     }
 
     /**
-     * 续期回调（续期）--- Fuiou
+     * 富友续期回调--- Fuiou
      */
     @ResponseBody
     @RequestMapping(value = "renewalWithholdCallback/{userId}")
-    public String payRenewalWithholdCallback(HttpServletRequest request, @PathVariable String userId) {
-        logger.debug("FuiouRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
-        try {
-            if (verifySign(request)) {
-                Map<String, String> parameterMap = new HashMap();
-                parameterMap.put("VERSION", request.getParameter("VERSION"));
-                parameterMap.put("TYPE", request.getParameter("TYPE"));
-                parameterMap.put("RESPONSECODE", request.getParameter("RESPONSECODE"));
-                parameterMap.put("RESPONSEMSG", request.getParameter("RESPONSEMSG"));
-                parameterMap.put("MCHNTCD", request.getParameter("MCHNTCD"));
-                parameterMap.put("MCHNTORDERID", request.getParameter("MCHNTORDERID"));
-                parameterMap.put("ORDERID", request.getParameter("ORDERID"));
-                parameterMap.put("BANKCARD", request.getParameter("BANKCARD"));
-                parameterMap.put("AMT", request.getParameter("AMT"));
-                parameterMap.put("SIGN", request.getParameter("SIGN"));
-                return fuiouRepayService.payRenewalWithholdCallback(parameterMap).getCode();
-            }
-            return "FAIL";
-        } catch (Exception e) {
-            logger.error("FuiouRepayController.payRenewalWithholdCallback(续期回调) has error ,params : 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】,error: ", e);
-            return "FAIL";
+    public void payRenewalWithholdCallback(HttpServletRequest request, @PathVariable String userId) throws Exception {
+        logger.info("FuiouRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
+
+        if (!verifySign(request)) {
+            throw new Exception("校验异常");
         }
+        Map<String, String> parameterMap = toStringMap(request);
+        fuiouRepayService.payRenewalWithholdCallback(parameterMap);
+
+        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+            Thread.sleep(1500);//异步回来等一等同步数据入库
+        }
+        logger.error("FuiouRepayController.payRenewalWithholdCallback(续期回调) has error ,params : 【req：" + JSON.toJSONString(request.getParameter("response")) + " userId:" + userId + "】");
     }
 
     /**
@@ -122,7 +125,7 @@ public class FuiouRepayController extends BaseController {
     public ResponseContent repaymentWithholdConfirm(Integer id, String smsCode, String requestNo, String payPwd, String bankId) {
 
         logger.debug("FuiouRepayController.repaymentWithholdConfirm params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + " payPwd:" + payPwd + " bankId:" + bankId + "】");
-        ResponseContent result = null;
+        ResponseContent result;
         if (id == null) {
             return new ResponseContent("-101", "请求参数非法");
         }
@@ -154,6 +157,11 @@ public class FuiouRepayController extends BaseController {
         if (StringUtils.isBlank(payPwd)) {
             return new ResponseContent("-101", "请输入交易密码");
         }
+        //成立提示
+        if (renewalRecordService.borrowOrderRenewalRecordFlag(id)) {
+            return new ResponseContent("-101", "续期次数超过限制");
+        }
+
         try {
             return fuiouRepayService.renewalWithhold(id, payPwd, money, bankId, sgd);
         } catch (BizException e) {

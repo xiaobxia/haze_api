@@ -1,6 +1,7 @@
 package com.vxianjin.gringotts.web.service;
 
 import com.vxianjin.gringotts.common.PageConfig;
+import com.vxianjin.gringotts.pay.model.BackExtend;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
 import com.vxianjin.gringotts.web.pojo.RiskCreditUser;
 import com.vxianjin.gringotts.web.pojo.User;
@@ -173,7 +174,7 @@ public interface IBorrowOrderService {
 
     int getRepaidCount(int userId);
 
-    boolean getExtendStatus(int userId);
+    boolean getExtendStatus(int id);
 
-    Map<String, Object> extend(Integer orderId);
+    BackExtend extend(Integer productId);
 }

@@ -51,4 +51,11 @@ public interface RenewalRecordService {
 
 
     public RenewalRecord getRenewalRecordByOrderId(String orderId);
+
+    /**
+     * 获取当前borrowId关联的产品线的续期次数=a，再获取当前用户该borrowId对应的repayment下的续期列表个数=b，b<a该项成立
+     * @param borrowOrderId
+     * @return
+     */
+    boolean borrowOrderRenewalRecordFlag(Integer borrowOrderId);
 }

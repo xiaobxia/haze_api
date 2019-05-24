@@ -62,7 +62,7 @@
                 </li>
                 <li>
                     <a rel="external" href="javascript:;">
-                        <span>续期天数<strong>${bo.loanTerm}</strong><em>天</em></span>
+                        <span>续期天数<strong>${loanTerm}</strong><em>天</em></span>
                     </a>
                 </li>
                 <li>
@@ -70,11 +70,11 @@
                         <span>服务费<strong><fmt:formatNumber pattern='###,###,##0.00' value="${loanApr / 100.00}"/></strong><em>元</em></span>
                     </a>
                 </li>
-                <li>
+                <%--<li>
                     <a rel="external" href="javascript:;">
                         <span>续期费<strong><fmt:formatNumber pattern='###,###,##0.00' value="${renewalFee / 100.00}"/></strong><em>元</em></span>
                     </a>
-                </li>
+                </li>--%>
                 <li class="nobd">
                     <a rel="external" href="javascript:;">
                         <span>逾期费<strong><fmt:formatNumber pattern='###,###,##0.00' value="${waitLate / 100.00}"/></strong><em>元</em></span>
