@@ -61,6 +61,7 @@
         <property name="maxRedirections" value="1000"/>
         <property name="genericObjectPoolConfig" ref="genericObjectPoolConfig"/>
         <property name="tryNum" value="100"/>
+        <property name="password" value="testredispwd"/>
     </bean>
 
     <!-- ali mq -->
