@@ -3719,7 +3719,15 @@ public class UserLoginController extends BaseController {
             }
             //添加uv 统计功能
             String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
-            channelReportService.updateUVCountByChannelId(channelId);
+            String ip = RequestUtils.getIpAddr(request);
+            String key = jedisCluster.get("UV_REPORT_" + ip);
+
+            if (StringUtils.isBlank(key)) {
+                int updateUV = channelReportService.updateUVCountByChannelId(channelId);
+                if (updateUV > 0)
+                    jedisCluster.set("UV_REPORT_" + ip, "true");
+            }
+
             //判断该渠道是否是开启状态
             ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelId));
              if(channelInfo != null){
