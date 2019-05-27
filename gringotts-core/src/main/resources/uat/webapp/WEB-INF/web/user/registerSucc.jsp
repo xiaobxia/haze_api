@@ -66,13 +66,13 @@
             var browers = brower_info();
             // 安卓用户微信打开提示到浏览器下载
             if (browers.is_android()) {
-                location="https://fir.im/tng5";
+                location="https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk";
 
             } else if (browers.is_iPhone()) {
-                location="https://fir.im/1vrt";
+                location="itms-services://?action=download-manifest&url=https://test-fully.oss-cn-hangzhou.aliyuncs.com/iOS/ipa/manifest.plist";
 
             } else {
-                location="https://fir.im/tng5";
+                location="https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk";
             }
         }
     </script>

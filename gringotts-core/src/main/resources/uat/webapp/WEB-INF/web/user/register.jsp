@@ -453,25 +453,25 @@
             if (browers.is_weixin()) {
                 $("#android_msg").show();
                 downBtn.on('click', function () {
-                    window.location.href = 'https://fir.im/tng5';
+                    window.location.href = 'https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk';
                 });
             } else {
                 $("#android_msg").show();
                 downBtn.on('click', function () {
-                    window.location.href = 'https://fir.im/tng5';
+                    window.location.href = 'https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk';
                 });
             }
         } else if (browers.is_iPhone()) {
             $("#ios_msg").show();
             downBtn.on('click', function () {
-                window.location.href = "https://fir.im/1vrt";
+                window.location.href = "itms-services://?action=download-manifest&url=https://test-fully.oss-cn-hangzhou.aliyuncs.com/iOS/ipa/manifest.plist";
             });
 
         } else {
             $('#download_btn').addClass('jqqd').text('温馨提示');
             $('#other_msg').show();
             downBtn.on('click', function () {
-                window.location.href = "https://fir.im/tng5";
+                window.location.href = "https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk";
             })
         }
 

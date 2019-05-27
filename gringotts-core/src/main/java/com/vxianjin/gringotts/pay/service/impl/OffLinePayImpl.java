@@ -6,6 +6,8 @@ import com.vxianjin.gringotts.pay.common.enums.ErrorCode;
 import com.vxianjin.gringotts.pay.component.OrderLogComponent;
 import com.vxianjin.gringotts.pay.enums.OperateType;
 import com.vxianjin.gringotts.pay.enums.OrderChangeAction;
+import com.vxianjin.gringotts.pay.model.BackExtend;
+import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
 import com.vxianjin.gringotts.pay.model.OffPayResponse;
 import com.vxianjin.gringotts.pay.pojo.OrderLogModel;
 import com.vxianjin.gringotts.pay.service.*;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +59,9 @@ public class OffLinePayImpl implements OffLinePay {
 
     @Autowired
     private OrderLogService orderLogService;
+
+    @Autowired
+    private BorrowProductConfigService borrowProductConfigService;
 
 
     @Autowired
@@ -90,6 +96,15 @@ public class OffLinePayImpl implements OffLinePay {
 
 
         BorrowOrder bo = borrowOrderService.findOneBorrow(repayment.getAssetOrderId());
+        if (bo.getProductId() != null) {
+            BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
+            BackExtend extend = borrowOrderService.extend(bo.getProductId());
+
+            // 续期手续费
+            BigDecimal renewalFee = productConfig.getRenewalPoundage();
+        }
+
+
         // 待还总金额
         Long waitRepay = repayment.getRepaymentAmount() - repayment.getRepaymentedAmount();
         // 待还滞纳金
