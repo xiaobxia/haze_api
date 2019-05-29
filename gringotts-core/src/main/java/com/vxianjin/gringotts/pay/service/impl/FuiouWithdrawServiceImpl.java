@@ -5,8 +5,6 @@ import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.constant.CollectionConstant;
 import com.vxianjin.gringotts.pay.common.exception.BizException;
 import com.vxianjin.gringotts.pay.common.exception.PayException;
-import com.vxianjin.gringotts.pay.common.util.YeepayApiUtil;
-import com.vxianjin.gringotts.pay.common.util.YeepayUtil;
 import com.vxianjin.gringotts.pay.component.FuiouService;
 import com.vxianjin.gringotts.pay.component.OrderLogComponent;
 import com.vxianjin.gringotts.pay.enums.OperateType;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +57,6 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
         logger.info("payWithdrawCallback params:【requestXml:" + resultMap.toString() + "】");
         try {
 
-            //Map<String, Object> resultMap = YeepayApiUtil.getPayCallBackParamMap(requestXml);
             if (resultMap == null) {
                 logger.error("FuiouWithdrawServiceImpl.payWithdrawCallback  error resultMap is null");
                 return "-1";
@@ -161,7 +157,7 @@ public class FuiouWithdrawServiceImpl implements FuiouWithdrawService {
             logModel.setAfterStatus(BorrowOrder.STATUS_HKZ.toString());
             logModel.setRemark("放款中");
         } else {
-            logger.info("borrowOrderId is" + borrowId + "payWithdraw fail to request yeePay,errorCode:" + resultMap.get("code") + " errorMsg:" + resultMap.get("msg"));
+            logger.info("borrowOrderId is" + borrowId + "payWithdraw fail to request fuiou,errorCode:" + resultMap.get("code") + " errorMsg:" + resultMap.get("msg"));
             //放款失败
             orderNew.setStatus(BorrowOrder.STATUS_FKSB);
             withdrawService.removePayKey(borrowId);

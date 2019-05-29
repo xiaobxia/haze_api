@@ -2,10 +2,8 @@ package com.vxianjin.gringotts.pay.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.vxianjin.gringotts.common.ResponseStatus;
-import com.vxianjin.gringotts.constant.QbmBankEnums;
 import com.vxianjin.gringotts.pay.common.enums.ErrorCode;
 import com.vxianjin.gringotts.pay.component.FuiouService;
-import com.vxianjin.gringotts.pay.component.YeepayService;
 import com.vxianjin.gringotts.pay.model.ResultModel;
 import com.vxianjin.gringotts.pay.model.YPBindCardConfirmReq;
 import com.vxianjin.gringotts.pay.service.FuiouCardService;
@@ -43,7 +41,7 @@ public class FuiouCardServiceImpl implements FuiouCardService {
     /**
      * 当天失败认证次数
      */
-    private final static String YEEPAY_BIND_FAIL_COUNT = "YEEPAY_BIND_FAIL_COUNT_";
+    private final static String FUIOU_BIND_FAIL_COUNT = "FUIOU_BIND_FAIL_COUNT_";
 
     @Override
     public ResultModel<String> userBankConfirm(YPBindCardConfirmReq bindCardConfirmReq) {
@@ -56,7 +54,7 @@ public class FuiouCardServiceImpl implements FuiouCardService {
 //            Date date = new Date();
             OutOrders outOrders = new OutOrders();
             outOrders.setUserId(bindCardConfirmReq.getUserId());
-            outOrders.setOrderType("YEEPAY");
+            outOrders.setOrderType("FUIOU");
             outOrders.setOrderNo(GenerateNo.nextOrdId());
             outOrders.setAct("BINDCARD_CONFIRM");
             outOrders.setReqParams(JSON.toJSONString(bindCardConfirmReq.getDataMap()));
@@ -68,14 +66,14 @@ public class FuiouCardServiceImpl implements FuiouCardService {
             ResultModel<Map<String, Object>> result = fuiouService.getBindCardConfirm(bindCardConfirmReq);
 
             Map<String, Object> resultMap = result.getData();
-            logger.info("YeepayBindCardController userBankConfirm userId=" + userId + " resultMap="
+            logger.info("fuiouBindCardController userBankConfirm userId=" + userId + " resultMap="
                         + JSON.toJSONString(resultMap));
 
             OutOrders newOutOrder = new OutOrders();
             //当前日期
             String currentDate = (new SimpleDateFormat("yyyyMMdd")).format(new Date());
             //认证失败次数
-            String failCount = jedisCluster.get(YEEPAY_BIND_FAIL_COUNT + currentDate + "_" + userId);
+            String failCount = jedisCluster.get(FUIOU_BIND_FAIL_COUNT + currentDate + "_" + userId);
             //失败次数超过3次，则次日再请求
             if (failCount != null && Integer.parseInt(failCount) >= 3) {
                 resultModel.setCode(ResponseStatus.FAILD.getName());
@@ -115,7 +113,7 @@ public class FuiouCardServiceImpl implements FuiouCardService {
                 //失败次数加1
                 int count = failCount != null ? Integer.parseInt(failCount) + 1 : 1;
 
-                jedisCluster.setex(YEEPAY_BIND_FAIL_COUNT + currentDate + "_" + userId,
+                jedisCluster.setex(FUIOU_BIND_FAIL_COUNT + currentDate + "_" + userId,
                     60 * 60 * 24, count + "");
 
                 resultModel.setCode(ResponseStatus.FAILD.getName());
@@ -128,13 +126,13 @@ public class FuiouCardServiceImpl implements FuiouCardService {
             }
             return resultModel;
         } catch (Exception e) {
-            logger.error("YeepayBindCardController userBankConfirm userId=" + userId + " error", e);
+            logger.error("fuiouBindCardController userBankConfirm userId=" + userId + " error", e);
             resultModel.setSucc(false);
             resultModel.setMessage(ErrorCode.ERROR_500.getCode());
             resultModel.setMessage(ErrorCode.ERROR_500.getMsg());
             return resultModel;
         } finally {
-            logger.info("YeepayBindCardController userBankConfirm userId=" + userId + " message="
+            logger.info("fuiouBindCardController userBankConfirm userId=" + userId + " message="
                         + resultModel.getMessage());
         }
     }

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 易宝支付代付相关
@@ -36,23 +38,35 @@ public class FuiouWithdrawController extends BaseController {
      * @param request
      * @return
      */
-    private boolean verifySign(HttpServletRequest request) {
+    private Map<String, String> verifySign(HttpServletRequest request) {
         String orderno = request.getParameter("orderno");
         String merdt = request.getParameter("merdt");
-        String fuorderno = request.getParameter("fuorderno");
         String accntno = request.getParameter("accntno");
-        String accntnm = request.getParameter("accntnm");
-        String bankno = request.getParameter("bankno");
         String amt = request.getParameter("amt");
         String state = request.getParameter("state");
         String result = request.getParameter("result");
         String reason = request.getParameter("reason");
         String mac = request.getParameter("mac");
 
+        Map<String, String> map = new HashMap<>();
+        map.put("orderno", orderno);
+        map.put("merdt", merdt);
+        map.put("fuorderno", request.getParameter("fuorderno"));
+        map.put("accntno", accntno);
+        map.put("accntno", request.getParameter("accntnm"));
+        map.put("bankno", request.getParameter("bankno"));
+        map.put("amt", amt);
+        map.put("state", request.getParameter("state"));
+        map.put("state", request.getParameter("state"));
+        map.put("result", request.getParameter("result"));
+        map.put("reason", request.getParameter("reason"));
+        map.put("mac", mac);
+
         // 校验签名
         String signPain = new StringBuffer().append(FuiouConstants.API_MCHNT_CD).append("|").append(FuiouConstants.API_MCHNT_KEY).append("|").append(orderno)
                 .append("|").append(merdt).append("|").append(accntno).append("|").append(amt).toString();
-        return MD5.MD5Encode(signPain).equals(mac);
+        map.put("verify", MD5.MD5Encode(signPain).equals(mac) ? "1" : "0");
+        return map;
     }
 
     /**
@@ -63,10 +77,12 @@ public class FuiouWithdrawController extends BaseController {
     public String payWithdrawCallback(HttpServletRequest request) {
         logger.debug("FuiouWithdrawController.payWithdrawCallback params:【reqString:" + request.getParameter("response") + "】");
 
-        if (!verifySign(request)) {
+        Map<String, String> map = verifySign(request);
+
+        if (map.get("verify").equals("0")) {
             return "0";
         }
-        return fuiouWithdrawService.payWithdrawCallback(request.getParameterMap());
+        return fuiouWithdrawService.payWithdrawCallback(map);
     }
 
 

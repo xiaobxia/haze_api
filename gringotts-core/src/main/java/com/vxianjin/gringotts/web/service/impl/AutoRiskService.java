@@ -160,15 +160,10 @@ public class AutoRiskService implements IAutoRiskService {
         borrowOrderAutoRisk.setUpdatedAt(nowDate);
 
         //默认，初审通过/待复审
-        Integer loanStatus;
+        Integer loanStatus = BorrowOrder.STATUS_DCS;
         //判断系统是机审还是人审
         String result = backConfigParamsService.findMachine();
-        if(StringUtils.isNotBlank(result) && result.equals("1")){
-            //此时系统选择为人审 将订单状态改为待放款
-            loanStatus = BorrowOrder.STATUS_FSTG;
-            borrowOrderAutoRisk.setVerifyReviewUser("人工信审，人审放款");
-            borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
-        }else {
+        if(StringUtils.isBlank(result) || result.equals("0")) {
             if (advice) {
                 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
                 int time = c.get(Calendar.HOUR_OF_DAY);
