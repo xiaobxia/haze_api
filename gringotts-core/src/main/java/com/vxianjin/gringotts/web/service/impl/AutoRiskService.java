@@ -169,6 +169,7 @@ public class AutoRiskService implements IAutoRiskService {
                 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
                 int time = c.get(Calendar.HOUR_OF_DAY);
 
+
                 //此时系统选择为机审
                 if (time > 20 || time < 9) {
                     loanStatus = BorrowOrder.STATUS_AI;
