@@ -164,6 +164,8 @@ public class UserLoginController extends BaseController {
 
     @Resource
     private ChannelReportService channelReportService;
+    @Resource
+    private IAppDownloadConfigService appDownloadConfigService;
 
     /**
      * 注册 生成手机认证码
@@ -3753,6 +3755,11 @@ public class UserLoginController extends BaseController {
         //备案号
         model.addAttribute("bah", getAppConfig(request.getParameter("appName"), "XJX_BAH"));
         model.addAttribute("RCaptchaKey", "R" + request.getSession().getId());
+        AppDownloadConfig config = appDownloadConfigService.selectAppConfigSelective(new HashMap() {{
+            put("status", "1");
+        }});
+        model.addAttribute("androidUrl", config.getAndroidUrl());
+        model.addAttribute("iosUrl", config.getIosUrl());
         return "user/register";
     }
 
@@ -4150,7 +4157,12 @@ public class UserLoginController extends BaseController {
      * H5 注册成功界面
      */
     @RequestMapping("act/light-loan-xjx/succ")
-    public String registerSuccs() {
+    public String registerSuccs(Model model) {
+        AppDownloadConfig config = appDownloadConfigService.selectAppConfigSelective(new HashMap() {{
+            put("status", "1");
+        }});
+        model.addAttribute("androidUrl", config.getAndroidUrl());
+        model.addAttribute("iosUrl", config.getIosUrl());
         return "user/registerSucc";
     }
 

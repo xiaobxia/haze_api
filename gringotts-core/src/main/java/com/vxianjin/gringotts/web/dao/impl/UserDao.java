@@ -132,6 +132,11 @@ public class UserDao extends BaseDao implements IUserDao {
     }
 
     @Override
+    public Integer searchBrowserSource(Integer userId) {
+        return this.getSqlSessionTemplate().selectOne("searchBrowserSource", userId);
+    }
+
+    @Override
     public int updateTdNewFlag(User user) {
         return this.getSqlSessionTemplate().update("updateUserNewFlagById", user);
     }

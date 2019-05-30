@@ -884,6 +884,6 @@
 	</insert>
 
 	<select id="searchBrowserSource" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-
+		select qq_wechat from user_info where id = #{userId}
 	</select>
 </mapper>

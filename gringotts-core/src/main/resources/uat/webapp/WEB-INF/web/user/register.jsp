@@ -269,6 +269,9 @@
 <%--})();--%>
 <%--</script>--%>
 <script type="text/javascript">
+    var android_url = '${androidUrl}';
+    var ios_url = '${iosUrl}';
+
     var apply_ins = 1;
     function trackEvenUserPhone(){
         var nowTime = new Date();
@@ -453,25 +456,25 @@
             if (browers.is_weixin()) {
                 $("#android_msg").show();
                 downBtn.on('click', function () {
-                    window.location.href = 'https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk';
+                    window.location.href = android_url;
                 });
             } else {
                 $("#android_msg").show();
                 downBtn.on('click', function () {
-                    window.location.href = 'https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk';
+                    window.location.href = android_url;
                 });
             }
         } else if (browers.is_iPhone()) {
             $("#ios_msg").show();
             downBtn.on('click', function () {
-                window.location.href = "itms-services://?action=download-manifest&url=https://test-fully.oss-cn-hangzhou.aliyuncs.com/iOS/ipa/manifest.plist";
+                window.location.href = ios_url;
             });
 
         } else {
             $('#download_btn').addClass('jqqd').text('温馨提示');
             $('#other_msg').show();
             downBtn.on('click', function () {
-                window.location.href = "https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk";
+                window.location.href = android_url;
             })
         }
 

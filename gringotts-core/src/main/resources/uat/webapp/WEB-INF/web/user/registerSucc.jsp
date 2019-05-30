@@ -47,6 +47,9 @@
         _czc.push(["_setAccount", "1271438488"]);
     </script>
     <script type="text/javascript">
+        var android_url = '${androidUrl}';
+        var ios_url = '${iosUrl}';
+
         function gotoxjxapp(){
             //location = "http://www.xianjinxia.com:8086/xjx-platform/a/jsaward/awardCenter/drawAwardIndex";
         }
@@ -66,13 +69,13 @@
             var browers = brower_info();
             // 安卓用户微信打开提示到浏览器下载
             if (browers.is_android()) {
-                location="https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk";
+                location=android_url;
 
             } else if (browers.is_iPhone()) {
-                location="itms-services://?action=download-manifest&url=https://test-fully.oss-cn-hangzhou.aliyuncs.com/iOS/ipa/manifest.plist";
+                location=ios_url;
 
             } else {
-                location="https://test-fully.oss-cn-hangzhou.aliyuncs.com/android/dmy.apk";
+                location=android_url;
             }
         }
     </script>
