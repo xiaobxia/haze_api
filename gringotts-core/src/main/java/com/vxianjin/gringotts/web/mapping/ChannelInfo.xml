@@ -16,6 +16,8 @@
         <result column="apr" property="apr" jdbcType="REAL"/>
         <result column="remark" property="remark" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="qq_status" property="qqStatus" jdbcType="INTEGER"/>
+        <result column="wechat_status" property="wechatStatus" jdbcType="INTEGER"/>
         <association property="user" column="user_id"
                      javaType="com.vxianjin.gringotts.web.pojo.User"
                      select="com.vxianjin.gringotts.web.dao.IUserDao.selectByPrimaryKey"/>
@@ -24,7 +26,7 @@
 
     <sql id="Base_Column_List">
         id,channel_name,channel_code,operator_name,channel_tel,channel_province,channel_city,channel_area,
-        created_at,updated_at,apr,remark,status
+        created_at,updated_at,apr,remark,status,qq_status,wechat_status
     </sql>
     <sql id="sql">
         FROM channel_info

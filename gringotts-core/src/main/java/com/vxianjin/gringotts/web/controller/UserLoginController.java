@@ -3732,6 +3732,8 @@ public class UserLoginController extends BaseController {
             ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelId));
              if(channelInfo != null){
                  model.addAttribute("status",channelInfo.getStatus());
+                 model.addAttribute("qqStatus",channelInfo.getQqStatus());
+                 model.addAttribute("wechatStatus",channelInfo.getWechatStatus());
              }
             /*ChannelReport channelReport = channelReportService.findChannelReportById(Integer.valueOf(channelId));
             if(null != channelReport.getUvCount()){
@@ -3959,15 +3961,29 @@ public class UserLoginController extends BaseController {
         String code = "-1";
         String userPhone;
         try {
+            String  qq_wechat = dataMap.get("qq_wechat")+"";
             //判断该渠道是否是开启状态
             String userFroms = request.getParameter("user_from");
             String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
             ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
             if(channelInfo != null){
                 json.put("status",channelInfo.getStatus());
+                //判断该渠道是否是关闭状态
                 if(channelInfo.getStatus() == 2){
                     msg="该渠道已关闭,不能注册";
                     json.put("message", msg);
+                    return;
+                }
+                //判断该渠道是否是从qq进入
+                if(channelInfo.getQqStatus() == 1 && qq_wechat.equals("1")){
+                   msg="该渠道暂不可用";
+                   json.put("message",msg);
+                   return;
+                }
+                //判断该渠道是否是从微信进入
+                if(channelInfo.getWechatStatus() == 1 && qq_wechat.equals("2")){
+                    msg="该渠道暂不可用";
+                    json.put("message",msg);
                     return;
                 }
             }
@@ -3984,7 +4000,6 @@ public class UserLoginController extends BaseController {
             Object pushId = dataMap.get("pushId");
             //浏览器类型（1、android 2、ios 3、pc）
             String brower_type = dataMap.get("brower_type") + "";
-            String  qq_wechat = dataMap.get("qq_wechat")+"";
             // 手机验证码验证
             if (StringUtils.isBlank(smsCode)) {
                 msg = "手机验证码不能为空";

@@ -47,6 +47,9 @@ public class ChannelInfo implements Serializable {
     private String toutiaoConvertId;
     private Long userInfoId;
 
+    private Integer qqStatus;
+    private Integer wechatStatus;
+
     public String getApkUrl() {
         return apkUrl;
     }
@@ -311,4 +314,19 @@ public class ChannelInfo implements Serializable {
         this.channelPassword = channelPassword;
     }
 
+    public Integer getQqStatus() {
+        return qqStatus;
+    }
+
+    public void setQqStatus(Integer qqStatus) {
+        this.qqStatus = qqStatus;
+    }
+
+    public Integer getWechatStatus() {
+        return wechatStatus;
+    }
+
+    public void setWechatStatus(Integer wechatStatus) {
+        this.wechatStatus = wechatStatus;
+    }
 }
