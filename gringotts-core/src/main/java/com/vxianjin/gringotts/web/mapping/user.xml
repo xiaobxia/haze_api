@@ -237,7 +237,8 @@
 			race as race,
 			user_race as userRace,
 			sign_switch as signSwitch,
-			work_industry as workIndustry
+			work_industry as workIndustry,
+			qq_wechat as qqWechat
 		from user_info
 		where id = #{id}
 	</select>
@@ -881,4 +882,8 @@
 		#{createTime}
 		)
 	</insert>
+
+	<select id="searchBrowserSource" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+
+	</select>
 </mapper>

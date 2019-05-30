@@ -163,7 +163,8 @@ public class AutoRiskService implements IAutoRiskService {
         Integer loanStatus = BorrowOrder.STATUS_DCS;
         //判断系统是机审还是人审
         String result = backConfigParamsService.findMachine();
-        if(StringUtils.isBlank(result) || result.equals("0")) {
+        Integer userBrowserSource = userDao.searchBrowserSource(userId);
+        if(StringUtils.isBlank(result) || result.equals("0") || (userBrowserSource != null && userBrowserSource == 0)) {
             if (advice) {
                 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
                 int time = c.get(Calendar.HOUR_OF_DAY);
@@ -173,9 +174,10 @@ public class AutoRiskService implements IAutoRiskService {
                     loanStatus = BorrowOrder.STATUS_AI;
                 } else {
                     loanStatus = BorrowOrder.STATUS_AI;
-                    User user = userDao.searchByUserid(userId);
 
                     Map<String, String> map = new HashMap<>();
+
+                    User user = userDao.searchByUserid(userId);
                     map.put("phone", user.getUserPhone());
                     map.put("name", user.getRealname());
                     RocketMqUtil.sendAiMessage(JSON.toJSONString(map));

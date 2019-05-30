@@ -154,4 +154,6 @@ public interface IUserDao {
     StrongRiskResult getStrongRiskResultByUserId(String userId);
 
     void saveRiskRecord(RiskRecord riskRecord);
+
+    Integer searchBrowserSource(Integer userId);
 }
