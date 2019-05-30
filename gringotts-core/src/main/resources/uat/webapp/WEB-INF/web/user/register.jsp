@@ -231,6 +231,8 @@
     </c:otherwise>
 </c:choose>
 
+<div class="fix-mask" style="display: none;" id="qq-wechat">该渠道暂不可用</div>
+
 <!--统计代码-->
 <style type="text/css">
     #cnzz_stat_icon_1271438488 {
@@ -271,7 +273,21 @@
 <script type="text/javascript">
     var android_url = '${androidUrl}';
     var ios_url = '${iosUrl}';
+    function isQQWechat() {
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.match(/MicroMessenger/i) == "micromessenger") {
+            return 2;
+        } else if (ua.match(/QQ/i) == "qq") {
+            return 1;
+        }
+        return 0;
+    }
+    var ifQQUse = '${qqStatus}'
+    var ifWechatUse = '${wechatStatus}'
 
+    if ((ifQQUse === '1' && isQQWechat() === 1) || (ifWechatUse === '1' && isQQWechat() === 2)) {
+        $('#qq-wechat').show()
+    }
     var apply_ins = 1;
     function trackEvenUserPhone(){
         var nowTime = new Date();
@@ -381,15 +397,6 @@
             showLoader($(".error-popop"),'密码必须大于等于6位!',800);
             LUOCAPTCHA.reset();
             return;
-        }
-        function isQQWechat() {
-            var ua = navigator.userAgent.toLowerCase();
-            if (ua.match(/MicroMessenger/i) == "micromessenger") {
-                return 2;
-            } else if (ua.match(/QQ/i) == "qq") {
-                return 1;
-            }
-            return 0;
         }
         var url = "${path}/act/light-loan-xjx/register";
         var param = {
