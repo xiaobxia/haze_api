@@ -102,9 +102,9 @@ public class MoneyLimitService implements IMoneyLimitService {
         User user = userDao.searchByUserid(user_id);//用户实体
 
         UserBlack userBlack = userBlackDao.findSelective(new HashMap<String, Object>() {{
-            put("userName", user.getRealname());
+            //put("userName", user.getRealname());
             put("userPhone", user.getUserPhone());
-            put("idNumber", user.getIdNumber());
+            //put("idNumber", user.getIdNumber());
         }});
 
         if (userBlack == null) {
