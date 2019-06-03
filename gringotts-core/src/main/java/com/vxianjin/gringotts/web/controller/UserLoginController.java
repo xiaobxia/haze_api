@@ -197,7 +197,7 @@ public class UserLoginController extends BaseController {
                 // 查询手机号码是否存在
                 User user = userService.searchUserByCheckTel(map);
                 // 6位固定长度
-                String rand = "123456";
+                String rand = "159369";
                 if ("online".equals(PropertiesConfigUtil.get("profile"))) {
                     rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
                 }
@@ -331,7 +331,7 @@ public class UserLoginController extends BaseController {
             log.info("sendSmsCodeV211 phone=" + userPhone + " type=" + type);
 
             // 6位固定长度
-            String rand = "123456";
+            String rand = "159369";
             if ("online".equals(PropertiesConfigUtil.get("profile"))) {
                 rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
             }
@@ -480,7 +480,7 @@ public class UserLoginController extends BaseController {
                     msg = serviceResult.getMsg();
                 } else {
                     if (isSend) {
-                        String rand = "123456";
+                        String rand = "159369";
                         if ("online".equals(PropertiesConfigUtil.get("profile"))) {
                             rand = String.valueOf(Math.random()).substring(2).substring(0, 6);// 6位固定长度
                         }
@@ -614,7 +614,7 @@ public class UserLoginController extends BaseController {
             } else {
                 code = "0";
                 // 6位固定长度
-                String rand = "123456";
+                String rand = "159369";
                 if ("online".equals(PropertiesConfigUtil.get("profile"))) {
                     rand = String.valueOf(Math.random()).substring(2).substring(0, 6);// 6位固定长度
                 }
@@ -3804,7 +3804,7 @@ public class UserLoginController extends BaseController {
             // 查询手机号码是否存在
             User user = userService.searchUserByCheckTel(map);
             // 6位固定长度
-            String rand = "123456";
+            String rand = "159369";
             if ("online".equals(PropertiesConfigUtil.get("profile"))) {
                 rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
             }
