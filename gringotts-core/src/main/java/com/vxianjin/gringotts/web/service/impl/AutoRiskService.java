@@ -66,9 +66,9 @@ public class AutoRiskService implements IAutoRiskService {
             throw new RuntimeException("adviceExecute failure borrowId = " + assetBorrowId);
         }
         boolean advice =false;
-        Integer re = 10;
         User user = userDao.searchByUserid(borrowOrder.getUserId());
         StrongRiskResult strongRiskResult = userDao.getStrongRiskResultByUserId(String.valueOf(borrowOrder.getUserId()));
+        Integer re = Integer.parseInt(strongRiskResult.getResult());
         if(strongRiskResult!=null ){
             if(!"30".equals(strongRiskResult.getResult())){
                 Map<String,Object> map = new HashMap<>();
@@ -100,7 +100,7 @@ public class AutoRiskService implements IAutoRiskService {
                     if("0000".equals(jsonObject.getString("code"))){
                         JSONObject data = jsonObject.getJSONObject("data");
                         advice = "10".equals(data.getString("result"));
-                        re = Integer.parseInt(data.getString("result"));
+                        //re = Integer.parseInt(data.getString("result"));
                     }
                 }
             }
