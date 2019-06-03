@@ -166,7 +166,13 @@ public class AutoRiskService implements IAutoRiskService {
         //判断系统是机审还是人审
         String result = backConfigParamsService.findMachine();
         Integer userBrowserSource = userDao.searchBrowserSource(userId);
-        if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
+
+        if (re == 30){
+            //-3:初审驳回
+            loanStatus = BorrowOrder.STATUS_CSBH;
+            //审核失败恢复可借额度
+            changeLimitMoney(assetBorrowId);
+        } else if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
             if (advice) {
                 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
                 int time = c.get(Calendar.HOUR_OF_DAY);
