@@ -1180,8 +1180,8 @@
 		select id,user_id from asset_borrow_order where status = 666
 	</select>
 
-	<select id="getRepaidCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-		select COUNT(1) from asset_borrow_order where status = 30 and user_id = #{userId}
+	<select id="getRepaidCount" resultType="java.lang.Integer">
+		select COUNT(1) from asset_borrow_order where status = 30 and user_id = #{userId} and product_id = #{productId}
 	</select>
 
 </mapper>

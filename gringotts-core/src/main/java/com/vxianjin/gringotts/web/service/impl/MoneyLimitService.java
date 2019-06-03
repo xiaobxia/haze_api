@@ -12,10 +12,12 @@ import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.util.security.RsaUtil;
 import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
+import com.vxianjin.gringotts.web.dao.IUserBlackDao;
 import com.vxianjin.gringotts.web.dao.IUserContactsDao;
 import com.vxianjin.gringotts.web.dao.IUserDao;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.UserBlack;
 import com.vxianjin.gringotts.web.pojo.UserContacts;
 import com.vxianjin.gringotts.web.pojo.risk.*;
 import com.vxianjin.gringotts.web.service.IMoneyLimitService;
@@ -50,6 +52,8 @@ public class MoneyLimitService implements IMoneyLimitService {
     private IUserContactsDao userContactsDao;
     @Resource
     private IBorrowOrderDao borrowOrderDao;
+    @Resource
+    private IUserBlackDao userBlackDao;
 
     private String appId = "gxb79554ed8a02eeb28";
     private String appSecret = "da1855416a844cdba918800b9b0f1dc3";
@@ -96,86 +100,114 @@ public class MoneyLimitService implements IMoneyLimitService {
 
         int user_id = Integer.parseInt(userId);
         User user = userDao.searchByUserid(user_id);//用户实体
-        List<UserContacts> userContacts = userContactsDao.selectUserContacts(new HashMap<String, Object>(){{
-            put("userId", user_id);
-        }});//用户通讯录列表
 
-        String model_name = "taoqianbao_v1";
-        String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
-        String mobile = user.getUserName();
-        String name = user.getRealname();
-        String idcard = user.getIdNumber();
-        String phone_os = "2".equals(user.getBrowerType()) ? "ios" : "android";
-        List<ZhimiEmergencyContact> e_contacts = new ArrayList<ZhimiEmergencyContact>();
-        e_contacts.add(new ZhimiEmergencyContact(user.getFirstContactName(), user.getFirstContactPhone()));
-        e_contacts.add(new ZhimiEmergencyContact(user.getSecondContactName(), user.getSecondContactPhone()));
+        UserBlack userBlack = userBlackDao.findSelective(new HashMap<String, Object>() {{
+            put("userName", user.getRealname());
+            put("userPhone", user.getUserPhone());
+            put("idNumber", user.getIdNumber());
+        }});
 
-        String GXBREPORT = "https://prod.gxb.io/crawler/data/report/%s?appId=%s&timestamp=%s&sign=%s";
-        String GXBRAWDATA = "https://prod.gxb.io/crawler/data/rawdata/%s?appId=%s&timestamp=%s&sign=%s";
+        if (userBlack == null) {
+            List<UserContacts> userContacts = userContactsDao.selectUserContacts(new HashMap<String, Object>(){{
+                put("userId", user_id);
+            }});//用户通讯录列表
+
+            String model_name = "taoqianbao_v1";
+            String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
+            String mobile = user.getUserName();
+            String name = user.getRealname();
+            String idcard = user.getIdNumber();
+            String phone_os = "2".equals(user.getBrowerType()) ? "ios" : "android";
+            List<ZhimiEmergencyContact> e_contacts = new ArrayList<ZhimiEmergencyContact>();
+            e_contacts.add(new ZhimiEmergencyContact(user.getFirstContactName(), user.getFirstContactPhone()));
+            e_contacts.add(new ZhimiEmergencyContact(user.getSecondContactName(), user.getSecondContactPhone()));
+
+            String GXBREPORT = "https://prod.gxb.io/crawler/data/report/%s?appId=%s&timestamp=%s&sign=%s";
+            String GXBRAWDATA = "https://prod.gxb.io/crawler/data/rawdata/%s?appId=%s&timestamp=%s&sign=%s";
 
 
-        String GXBDATALIST = "https://prod.gxb.io/datalist.html?timestamp=%s&appId=%s&sign=%s&token=%s&isReport=true";
-        String timestamp = new Date().getTime()+"";
-        String md5Hex = DigestUtils.md5Hex(String.format("%s%s%s", this.appId, this.appSecret, timestamp));
-        String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
-        String rawDataUrl = String.format(GXBRAWDATA, gxbToken, this.appId, timestamp, md5Hex);
-        String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);
-        String gxb_report = HttpUtil.post(reportUrl, null);
-        String gxb_raw = HttpUtil.post(rawDataUrl, null);
+            String GXBDATALIST = "https://prod.gxb.io/datalist.html?timestamp=%s&appId=%s&sign=%s&token=%s&isReport=true";
+            String timestamp = new Date().getTime()+"";
+            String md5Hex = DigestUtils.md5Hex(String.format("%s%s%s", this.appId, this.appSecret, timestamp));
+            String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
+            String rawDataUrl = String.format(GXBRAWDATA, gxbToken, this.appId, timestamp, md5Hex);
+            String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);
+            String gxb_report = HttpUtil.post(reportUrl, null);
+            String gxb_raw = HttpUtil.post(rawDataUrl, null);
 
-        Map<String, String> carrier_data = new HashMap<String, String>();
-        carrier_data.put("gxb_report", gxb_report);
-        carrier_data.put("gxb_raw", gxb_raw);
+            Map<String, String> carrier_data = new HashMap<String, String>();
+            carrier_data.put("gxb_report", gxb_report);
+            carrier_data.put("gxb_raw", gxb_raw);
 
-        List<ZhimiContact> contact = userContacts.stream().map(uc -> new ZhimiContact(uc.getContactName(), uc.getContactPhone(), DateUtil.formatDate(uc.getCreateTime(), "yyyy-MM-dd HH:mm:ss"))).collect(Collectors.toList());
+            List<ZhimiContact> contact = userContacts.stream().map(uc -> new ZhimiContact(uc.getContactName(), uc.getContactPhone(), DateUtil.formatDate(uc.getCreateTime(), "yyyy-MM-dd HH:mm:ss"))).collect(Collectors.toList());
 
-        ZhimiRiskRequest request = new ZhimiRiskRequest();
-        request.setModel_name(model_name);
-        request.setApply_time(apply_time);
-        request.setMobile(mobile);
-        request.setName(name);
-        request.setIdcard(idcard);
-        request.setPhone_os(phone_os);
-        request.setCarrier_data(carrier_data);
-        request.setE_contacts(e_contacts);
-        request.setContact(contact);
+            ZhimiRiskRequest request = new ZhimiRiskRequest();
+            request.setModel_name(model_name);
+            request.setApply_time(apply_time);
+            request.setMobile(mobile);
+            request.setName(name);
+            request.setIdcard(idcard);
+            request.setPhone_os(phone_os);
+            request.setCarrier_data(carrier_data);
+            request.setE_contacts(e_contacts);
+            request.setContact(contact);
 
-        String requestStr = JSON.toJSONString(request, SerializerFeature.WriteMapNullValue);
+            String requestStr = JSON.toJSONString(request, SerializerFeature.WriteMapNullValue);
 
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost("http://47.93.185.26/risk/gzip/");
-        post.setEntity(new ByteArrayEntity(ZhimiUtils.gzip(requestStr)));
-        try {
-            HttpResponse response = client.execute(post);
-            String responseStr = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost post = new HttpPost("http://47.93.185.26/risk/gzip/");
+            post.setEntity(new ByteArrayEntity(ZhimiUtils.gzip(requestStr)));
+            try {
+                HttpResponse response = client.execute(post);
+                String responseStr = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
 
-            if (responseStr != null) {
-                JSONObject jsonObject = JSONObject.parseObject(responseStr);
-                RiskRecord riskRecord = new RiskRecord();
-                riskRecord.setRequestId(jsonObject.getString("request_id"));
-                riskRecord.setUserId(Integer.parseInt(userId));
-                riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
-                riskRecord.setReturnInfo(jsonObject.getString("return_info"));
-                riskRecord.setGxbReportUrl(DataHtmlUrl);
-                riskRecord.setGxbToken(gxbToken);
-                riskRecord.setScore(jsonObject.getInteger("score"));
-                riskRecord.setCreateTime(new Date());
-                userDao.saveRiskRecord(riskRecord);
+                if (responseStr != null) {
+                    JSONObject jsonObject = JSONObject.parseObject(responseStr);
+                    RiskRecord riskRecord = new RiskRecord();
+                    riskRecord.setRequestId(jsonObject.getString("request_id"));
+                    riskRecord.setUserId(Integer.parseInt(userId));
+                    riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
+                    riskRecord.setReturnInfo(jsonObject.getString("return_info"));
+                    riskRecord.setGxbReportUrl(DataHtmlUrl);
+                    riskRecord.setGxbToken(gxbToken);
+                    riskRecord.setScore(jsonObject.getInteger("score"));
+                    riskRecord.setCreateTime(new Date());
+                    userDao.saveRiskRecord(riskRecord);
 
-                //原有的强风控回调储存改为同步得到结果判断结果，进行持久化
-                StrongRiskResult riskResult = new StrongRiskResult();
-                riskResult.setUserId(userId);
-                riskResult.setAmount("1600");
-                riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
-                riskResult.setResult(jsonObject.getInteger("score") > 560 ? "10" : "30");
-                riskResult.setRiskStatusType("px");
-                riskResult.setType("2");
-                riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
-                userDao.insertUserStrongRiskResult(riskResult);
+                    //原有的强风控回调储存改为同步得到结果判断结果，进行持久化
+                    StrongRiskResult riskResult = new StrongRiskResult();
+                    riskResult.setUserId(userId);
+                    riskResult.setAmount("1600");
+                    riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
+                    Integer score = jsonObject.getInteger("score");
+                    String result = score >= 530 ? (score > 560 ? "10" : "20") : "30";
+                    riskResult.setResult(result);
+                    riskResult.setRiskStatusType("px");
+                    riskResult.setType("2");
+                    riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
+                    userDao.insertUserStrongRiskResult(riskResult);
+                }
+            } catch(IOException e){
+                e.printStackTrace();
             }
-        } catch(IOException e){
-            e.printStackTrace();
+        } else {
+            StrongRiskResult riskResult = new StrongRiskResult();
+            riskResult.setUserId(userId);
+            riskResult.setAmount("1600");
+            riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
+            riskResult.setRiskStatusType("px");
+            riskResult.setType("2");
+            riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
+
+            if (userBlack.getUserType() == 0) {//黑名单直接拒绝
+                riskResult.setResult("30");
+            } else {
+                riskResult.setResult("20");//白名单进入初审列表
+            }
+            userDao.insertUserStrongRiskResult(riskResult);
         }
+
+
         logger.info(" MoneyLimitService dealEd end");
     }
 

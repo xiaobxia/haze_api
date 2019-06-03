@@ -66,10 +66,11 @@ public class AutoRiskService implements IAutoRiskService {
             throw new RuntimeException("adviceExecute failure borrowId = " + assetBorrowId);
         }
         boolean advice =false;
+        Integer re = 10;
         User user = userDao.searchByUserid(borrowOrder.getUserId());
         StrongRiskResult strongRiskResult = userDao.getStrongRiskResultByUserId(String.valueOf(borrowOrder.getUserId()));
         if(strongRiskResult!=null ){
-            if("10".equals(strongRiskResult.getResult())){
+            if(!"30".equals(strongRiskResult.getResult())){
                 Map<String,Object> map = new HashMap<>();
                 map.put("orderNo", "wr"+DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+IdUtil.generateRandomStr(6));
                 map.put("consumerNo",PropertiesConfigUtil.get("RISK_BUSINESS")+borrowOrder.getUserId());
@@ -99,12 +100,13 @@ public class AutoRiskService implements IAutoRiskService {
                     if("0000".equals(jsonObject.getString("code"))){
                         JSONObject data = jsonObject.getJSONObject("data");
                         advice = "10".equals(data.getString("result"));
+                        re = Integer.parseInt(data.getString("result"));
                     }
                 }
             }
         }
 
-        adviceExecute(assetBorrowId,borrowOrder.getUserId(),advice);
+        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, re);
 
 
 //        orderNo:jqxRI7PG02267222080000  订单号
@@ -149,7 +151,7 @@ public class AutoRiskService implements IAutoRiskService {
      * @param assetBorrowId     订单号
      * @param userId            用户id
      */
-    public void adviceExecute(Integer assetBorrowId, Integer userId, boolean advice) {
+    public void adviceExecute(Integer assetBorrowId, Integer userId, boolean advice, Integer re) {
         logger.info("adviceExecute start assetBorrowId=" + assetBorrowId);
         BorrowOrder borrowOrderAutoRisk = new BorrowOrder();
         borrowOrderAutoRisk.setId(assetBorrowId);
@@ -164,7 +166,7 @@ public class AutoRiskService implements IAutoRiskService {
         //判断系统是机审还是人审
         String result = backConfigParamsService.findMachine();
         Integer userBrowserSource = userDao.searchBrowserSource(userId);
-        if(StringUtils.isBlank(result) || result.equals("0") || (userBrowserSource != null && userBrowserSource == 0)) {
+        if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
             if (advice) {
                 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
                 int time = c.get(Calendar.HOUR_OF_DAY);

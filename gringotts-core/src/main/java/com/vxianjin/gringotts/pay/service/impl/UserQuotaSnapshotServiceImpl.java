@@ -181,7 +181,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             Integer productId = oneBorrow.getProductId();
 
             //该用户的成功还款次数
-            int count = borrowOrderService.getRepaidCount(oneBorrow.getUserId());
+            int count = borrowOrderService.getRepaidCount(oneBorrow.getUserId(), productId);
 
             BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(productId);
             Integer limitId = productConfig.getLimitId();
