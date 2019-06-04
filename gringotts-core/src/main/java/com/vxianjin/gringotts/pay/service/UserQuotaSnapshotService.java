@@ -33,9 +33,9 @@ public interface UserQuotaSnapshotService {
      * @param orderId 订单id
      * @return
      */
-    Map<String,String> newQueryUserQuotaSnapshot(int userId, String amount, int orderId);
+    Map<String,String> newQueryUserQuotaSnapshot(int userId, String amount, int orderId, int lateDay);
 
-    void newUpdateUserQuotaSnapshots(int userId,long applyId,String repaymentedAmount, int orderId);
+    void newUpdateUserQuotaSnapshots(int userId,long applyId,String repaymentedAmount, int orderId, int lateDay);
 
     /**
      * 用户额度更新

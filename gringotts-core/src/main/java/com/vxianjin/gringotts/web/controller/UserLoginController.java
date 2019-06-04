@@ -932,59 +932,59 @@ public class UserLoginController extends BaseController {
             User user = userService.searchUserByLogin(param);
             if (null != user) {
                 // 正常用户登录
-                if (User.USER_STATUS_WHITE.equals(user.getStatus())) {
-                    if (checkPassWord.equals(user.getPassword())) {
-                        loginSucc(request, user);
-                        // 登录成功
-                        code = "0";
-                        msg = "登录成功";
-                        resultMap.put("uid", user.getId());
-                        resultMap.put("username", user.getUserName());
-                        String realname = "";
-                        if (user.getRealname() != null) {
-                            realname = user.getRealname();
-                        }
-                        resultMap.put("realname", realname);
-                        String generateToken = TokenUtils.generateToken(user);
-                        resultMap.put("token", generateToken);
-                        resultMap.put("sessionid", session.getId());
-                        Map<String, String> params = new HashMap<>();
-                        params.put("deviceId", equipmentNumber);
-                        params.put("userName", user.getUserName());
-                        params.put("userId", String.valueOf(user.getId()));
-                        // 查询是否有登录记录
-                        UserLoginLog loginLog = this.userLoginLogService.selectByParams(params);
-                        if (loginLog == null) {
-                            loginLog = new UserLoginLog();
-                            loginLog.setUserId(user.getId());
-                            loginLog.setUserName(user.getUserName());
-                            loginLog.setPassword(user.getPassword());
-                            loginLog.setLoginTime(new Date());
-                            loginLog.setLoginIp(this.getIpAddr(request));
-                            Date effTime = DateUtil.addDay(new Date(), 3);
-                            loginLog.setEffTime(effTime);
-                            loginLog.setToken(generateToken);
-                            loginLog.setEquipmentNumber(equipmentNumber);
-                            userLoginLogService.saveUserLoginLog(loginLog);
-                        } else {
-                            loginLog.setUserName(user.getUserName());
-                            loginLog.setPassword(user.getPassword());
-                            loginLog.setLoginTime(new Date());
-                            loginLog.setLoginIp(this.getIpAddr(request));
-                            Date effTime = DateUtil.addDay(new Date(), 3);
-                            loginLog.setEffTime(effTime);
-                            loginLog.setToken(generateToken);
-                            loginLog.setEquipmentNumber(equipmentNumber);
-                            userLoginLogService.updateUserLoginLog(loginLog);
-                        }
-
-                        log.info("login user_id=" + user.getId() + " userLogin=" + JSON.toJSONString(loginLog));
-                    } else if (user.getStatus().equals(User.USER_STATUS_BLACK)) {
-                        msg = "密码不正确，请重新输入。";
+                //if (User.USER_STATUS_WHITE.equals(user.getStatus())) {
+                if (checkPassWord.equals(user.getPassword())) {
+                    loginSucc(request, user);
+                    // 登录成功
+                    code = "0";
+                    msg = "登录成功";
+                    resultMap.put("uid", user.getId());
+                    resultMap.put("username", user.getUserName());
+                    String realname = "";
+                    if (user.getRealname() != null) {
+                        realname = user.getRealname();
                     }
-                } else {
-                    msg = "黑名单用户禁止登录";
+                    resultMap.put("realname", realname);
+                    String generateToken = TokenUtils.generateToken(user);
+                    resultMap.put("token", generateToken);
+                    resultMap.put("sessionid", session.getId());
+                    Map<String, String> params = new HashMap<>();
+                    params.put("deviceId", equipmentNumber);
+                    params.put("userName", user.getUserName());
+                    params.put("userId", String.valueOf(user.getId()));
+                    // 查询是否有登录记录
+                    UserLoginLog loginLog = this.userLoginLogService.selectByParams(params);
+                    if (loginLog == null) {
+                        loginLog = new UserLoginLog();
+                        loginLog.setUserId(user.getId());
+                        loginLog.setUserName(user.getUserName());
+                        loginLog.setPassword(user.getPassword());
+                        loginLog.setLoginTime(new Date());
+                        loginLog.setLoginIp(this.getIpAddr(request));
+                        Date effTime = DateUtil.addDay(new Date(), 3);
+                        loginLog.setEffTime(effTime);
+                        loginLog.setToken(generateToken);
+                        loginLog.setEquipmentNumber(equipmentNumber);
+                        userLoginLogService.saveUserLoginLog(loginLog);
+                    } else {
+                        loginLog.setUserName(user.getUserName());
+                        loginLog.setPassword(user.getPassword());
+                        loginLog.setLoginTime(new Date());
+                        loginLog.setLoginIp(this.getIpAddr(request));
+                        Date effTime = DateUtil.addDay(new Date(), 3);
+                        loginLog.setEffTime(effTime);
+                        loginLog.setToken(generateToken);
+                        loginLog.setEquipmentNumber(equipmentNumber);
+                        userLoginLogService.updateUserLoginLog(loginLog);
+                    }
+
+                    log.info("login user_id=" + user.getId() + " userLogin=" + JSON.toJSONString(loginLog));
+                } else if (user.getStatus().equals(User.USER_STATUS_BLACK)) {
+                    msg = "密码不正确，请重新输入。";
                 }
+                /*} else {
+                    msg = "黑名单用户禁止登录";
+                }*/
             } else {
                 msg = "你输入的用户或密码不正确，请重新输入。";
             }

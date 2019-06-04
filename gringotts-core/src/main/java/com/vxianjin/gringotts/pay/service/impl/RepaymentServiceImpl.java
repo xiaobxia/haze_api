@@ -279,7 +279,7 @@ public class RepaymentServiceImpl implements RepaymentService {
                         try {
                             // 更新用户额度
                             //userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()));
-                            userQuotaSnapshotService.newUpdateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()), re.getAssetOrderId());
+                            userQuotaSnapshotService.newUpdateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()), re.getAssetOrderId(), re.getLateDay());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

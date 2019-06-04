@@ -329,16 +329,13 @@ public class UserTdApproveController extends BaseController {
                         moneyLimitService.dealEd(USER_ID + "", gxbToken);
                     });
                 }*/
+                BorrowProductConfig borrowProductConfig = borrowProductConfigDao.queryByBorrowByStatus(0);
                 if ("2".equals(newUser.getTdStatus())) {
                     //更新newFlag
                     userDao.updateUserNewFlagById(newUser);
-                    //TODO 现状：初始额度，需求：改为可配置
-                    String amountMax = "1600";
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("userId", user.getId());
-
-                    map.put("newAmountMax", new BigDecimal(amountMax).multiply(
-                            new BigDecimal(100)).intValue());
+                    map.put("newAmountMax", borrowProductConfig.getBorrowAmount().intValue());
 
                     if ("1".equals(user.getNewFlag())) {
                         // 用户额度更新 认证完
@@ -354,7 +351,6 @@ public class UserTdApproveController extends BaseController {
                             /*HashMap<String, String> params = new HashMap<>();
                             params.put("borrowAmount","160000");
                             params.put("borrowDay","7");*/
-                            BorrowProductConfig borrowProductConfig = borrowProductConfigDao.queryByBorrowByStatus(0);
                             logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + borrowProductConfig.getId() + ";moneyLimit:" + borrowProductConfig.getBorrowAmount());
                             userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),borrowProductConfig.getId(),borrowProductConfig.getBorrowAmount(),borrowProductConfig.getBorrowDay());
                         }catch (Exception e){
