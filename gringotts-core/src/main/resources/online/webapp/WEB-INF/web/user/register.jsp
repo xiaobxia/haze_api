@@ -142,7 +142,7 @@
                 <div class="register">
                     <ul class="info-list">
                         <li>
-                            <input type="text" placeholder="注册手机号" onfocus="trackEvenUserPhone()" data-role="none" name="userPhone" id="userPhone">
+                            <input type="text" maxlength="11" placeholder="注册手机号" onfocus="trackEvenUserPhone()" data-role="none" name="userPhone" id="userPhone">
                         </li>
                         <!--<li style="padding: 0;">
                             <%--<input type="hidden" name="RCaptchaKey" id="RCaptchaKey" value="${RCaptchaKey}">--%>
