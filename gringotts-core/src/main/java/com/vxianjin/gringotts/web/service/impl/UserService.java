@@ -2,11 +2,9 @@ package com.vxianjin.gringotts.web.service.impl;
 
 import com.vxianjin.gringotts.common.PageConfig;
 import com.vxianjin.gringotts.constant.Constant;
-import com.vxianjin.gringotts.web.dao.IPaginationDao;
-import com.vxianjin.gringotts.web.dao.IUserBankDao;
-import com.vxianjin.gringotts.web.dao.IUserDao;
-import com.vxianjin.gringotts.web.dao.UserCerticationDao;
+import com.vxianjin.gringotts.web.dao.*;
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.UserBlack;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.pojo.UserCertification;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
@@ -18,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,8 @@ public class UserService implements IUserService {
     private IUserBankDao userBankDao;
     @Autowired
     private IInfoIndexService infoIndexService;
+    @Resource
+    private IUserBlackDao userBlackDao;
 
     /**
      * 查询用户是否存在
@@ -103,6 +104,10 @@ public class UserService implements IUserService {
      */
     @Override
     public void saveUser(User user) {
+        UserBlack userBlack = userBlackDao.findSelective(new HashMap<String, Object>() {{
+            put("userPhone", user.getUserName());
+        }});
+        if (userBlack != null && userBlack.getUserType().intValue() == 0) user.setStatus("2");
         this.userDao.saveUser(user);
     }
 

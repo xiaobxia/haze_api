@@ -173,7 +173,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
      *  将该产品ID对应的产品额度与产品期限返回
      * */
     @Override
-    public Map<String, String> newQueryUserQuotaSnapshot(int userId, String amount, int orderId) {
+    public Map<String, String> newQueryUserQuotaSnapshot(int userId, String amount, int orderId, int lateDay) {
         Map<String, String> resultMap = new HashMap<>();
         try{
 
@@ -181,7 +181,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             Integer productId = oneBorrow.getProductId();
 
             //该用户的成功还款次数
-            int count = borrowOrderService.getRepaidCount(oneBorrow.getUserId());
+            int count = borrowOrderService.getRepaidCount(oneBorrow.getUserId(), productId);
 
             BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(productId);
             Integer limitId = productConfig.getLimitId();
@@ -193,8 +193,12 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             BorrowProductConfig newProductConfig = borrowProductConfigService.queryProductById(limitProductId);
 
             log.info("用户ID{0}，还款成功笔数：{1}，提额配置限制次数{2}", userId, count, limitCount);
-            if (count >= limitCount) {//还款成功笔数大于提额配置限制则返回新额度
-                resultMap.put(newProductConfig.getId().toString(), newProductConfig.getBorrowAmount().intValue()+"");//
+            if (count >= limitCount && lateDay <= 0   ) {//还款成功笔数大于提额配置限制则返回新额度
+                resultMap.put(newProductConfig.getId().toString(), newProductConfig.getBorrowAmount().intValue()+"");
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("userId", userId);
+                map.put("newAmountMax", newProductConfig.getBorrowAmount().intValue());
+                borrowOrderService.changeUserLimit(map);
             } else {
                 resultMap.put(productConfig.getId().toString(), productConfig.getBorrowAmount().intValue()+"");//不达标返回老产品的参数
             }
@@ -206,8 +210,8 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
     }
 
     @Override
-    public void newUpdateUserQuotaSnapshots(int userId, long applyId, String repaymentedAmount, int orderId) {
-        userIncreaseLimitExecutor.execute(new NewUserIncreaseLimitThread(userId, applyId, repaymentedAmount, orderId));
+    public void newUpdateUserQuotaSnapshots(int userId, long applyId, String repaymentedAmount, int orderId, int lateDay) {
+        userIncreaseLimitExecutor.execute(new NewUserIncreaseLimitThread(userId, applyId, repaymentedAmount, orderId, lateDay));
     }
 
     @Override
@@ -437,6 +441,8 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 
         private Integer orderId;
 
+        private Integer lateDay;
+
         @Override
         public void run() {
             TimeKey.clear();
@@ -448,7 +454,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                     // 睡2秒，防止数据同步问题
                     Thread.sleep(2000);
                 }
-                userLimits = newQueryUserQuotaSnapshot(userId, repaymentedAmount, orderId);
+                userLimits = newQueryUserQuotaSnapshot(userId, repaymentedAmount, orderId, lateDay);
                 if (userLimits == null && userLimits.size() == 0) {
                     if (applyId > 0) {
                         userQuotaApplyLogMapper.updateToFail(applyId);

@@ -172,7 +172,7 @@ public interface IBorrowOrderService {
      */
     List<BorrowOrder> getWaitAiList();
 
-    int getRepaidCount(int userId);
+    int getRepaidCount(int userId, int productId);
 
     boolean getExtendStatus(int id);
 

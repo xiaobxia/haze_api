@@ -538,7 +538,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     }
 
     /**
-     * 易宝代扣请求处理
+     * 富友代扣请求处理
      *
      * @param repayment    还款信息
      * @param user         用户
@@ -614,7 +614,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     }
 
     /**
-     * 组装用户代付发送到易宝请求
+     * 组装用户代付发送到富友请求
      *
      * @param orderNo 订单号
      * @param user user
@@ -641,7 +641,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     }
 
     /**
-     * 易宝续期处理
+     * 富友续期处理
      *
      * @param renewalRecord 续期订单
      * @param user user
@@ -707,7 +707,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
 
 
     /**
-     * 易宝主动请求支付处理
+     * 富友主动请求支付处理 主动支付
      *
      * @param requestNo 请求订单号
      * @param repayment 还款信息
@@ -824,7 +824,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
     }
 
     /**
-     * 组装对易宝的支付请求
+     * 组装对富友的支付请求
      *
      * @param orderNo orderNo
      * @param user user

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- user_black表:黑白名单模块 -->
+<mapper namespace="com.vxianjin.gringotts.web.dao.IUserBlackDao">
+    <!--返回Map-->        
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.UserBlack">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="id_number" property="idNumber" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="user_type" property="userType" jdbcType="INTEGER" />
+    </resultMap>
+    
+    <!--基本的sql查询字段 公共引用...-->
+    <sql id="Base_Column_List">
+        id,user_name,user_phone,id_number,status,remark,create_time,user_type 
+    </sql>
+    
+    <!-- 基本的sql查询条件公共引用 -->
+    <sql id="searchBy">
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id !=null and id !=''">
+                id  = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and user_phone = #{userPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="idNumber != null and idNumber != ''">
+                and id_number = #{idNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime !=null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="userType != null and userType != ''">
+                and user_type = #{userType,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </sql>
+    
+    
+    <insert id="save" parameterType="com.vxianjin.gringotts.web.pojo.UserBlack">
+        insert into user_black(user_name,user_phone,id_number,status,remark,create_time,user_type)values(#{userName,jdbcType=VARCHAR},#{userPhone,jdbcType=VARCHAR},#{idNumber,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{remark,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{userType,jdbcType=INTEGER})
+    </insert>
+
+    
+    <insert id="saveRecord" parameterType="com.vxianjin.gringotts.web.pojo.UserBlack" keyProperty="id">
+    	<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+    
+        insert into user_black
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+	        <if test="userName != null">        
+	            user_name,
+	        </if>
+	        <if test="userPhone != null">        
+	            user_phone,
+	        </if>
+	        <if test="idNumber != null">        
+	            id_number,
+	        </if>
+	        <if test="status != null">        
+	            status,
+	        </if>
+	        <if test="remark != null">        
+	            remark,
+	        </if>
+	        <if test="createTime != null">        
+	            create_time,
+	        </if>
+	        <if test="userType != null">        
+	            user_type,
+	        </if>
+        </trim>
+        
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+		    <if test="userName != null" >
+		       #{userName,jdbcType=VARCHAR},
+		    </if>
+		    <if test="userPhone != null" >
+		       #{userPhone,jdbcType=VARCHAR},
+		    </if>
+		    <if test="idNumber != null" >
+		       #{idNumber,jdbcType=VARCHAR},
+		    </if>
+		    <if test="status != null" >
+		       #{status,jdbcType=INTEGER},
+		    </if>
+		    <if test="remark != null" >
+		       #{remark,jdbcType=VARCHAR},
+		    </if>
+		    <if test="createTime != null" >
+		       #{createTime,jdbcType=TIMESTAMP},
+		    </if>
+		    <if test="userType != null" >
+		       #{userType,jdbcType=INTEGER},
+		    </if>
+        </trim>
+    </insert>
+    
+    
+    <update id="update" parameterType="com.vxianjin.gringotts.web.pojo.UserBlack">
+        update user_black set 
+            user_name = #{userName,jdbcType=VARCHAR},
+
+            user_phone = #{userPhone,jdbcType=VARCHAR},
+
+            id_number = #{idNumber,jdbcType=VARCHAR},
+
+            status = #{status,jdbcType=INTEGER},
+
+            remark = #{remark,jdbcType=VARCHAR},
+
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+
+            user_type = #{userType,jdbcType=INTEGER}
+
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <update id="updateSelective"  parameterType="com.vxianjin.gringotts.web.pojo.UserBlack">
+        update user_black
+          <set>
+            <if test="userName != null and userName != '' ">        
+                user_name = #{userName,jdbcType=VARCHAR},
+                
+            </if>
+            <if test="userPhone != null and userPhone != '' ">        
+                user_phone = #{userPhone,jdbcType=VARCHAR},
+                
+            </if>
+            <if test="idNumber != null and idNumber != '' ">        
+                id_number = #{idNumber,jdbcType=VARCHAR},
+                
+            </if>
+            <if test="status != null and status != '' ">        
+                status = #{status,jdbcType=INTEGER},
+                
+            </if>
+            <if test="remark != null and remark != '' ">        
+                remark = #{remark,jdbcType=VARCHAR},
+                
+            </if>
+            <if test="createTime != null and createTime != '' ">        
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+                
+            </if>
+            <if test="userType != null and userType != '' ">        
+                user_type = #{userType,jdbcType=INTEGER}
+                
+            </if>
+        </set>    
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="findByPrimary" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List" />
+        from user_black
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+	<select id="findSelective" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_black
+        <include refid="searchBy"/> 
+        limit 0,1
+    </select>
+               
+    <select id="listSelective" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_black
+        <include refid="searchBy"/>
+    </select>
+    
+</mapper>

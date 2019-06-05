@@ -279,7 +279,7 @@ public class RepaymentServiceImpl implements RepaymentService {
                         try {
                             // 更新用户额度
                             //userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()));
-                            userQuotaSnapshotService.newUpdateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()), re.getAssetOrderId());
+                            userQuotaSnapshotService.newUpdateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()), re.getAssetOrderId(), re.getLateDay());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -520,7 +520,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         re.setPlanLateFee(0);
         re.setTrueLateFee(0);
         // 还款日期 延后 （上期还款时间 + 逾期天数+续期天数）
-        re.setRepaymentTime(DateUtil.addDay(DateUtil.addDay(repayment.getRepaymentTime(), repayment.getLateDay()), record.getRenewalDay()));
+        re.setRepaymentTime(DateUtil.addDay(DateUtil.addDay(repayment.getRepaymentTime(), repayment.getLateDay()), record.getRenewalDay() - 1));
         re.setLateFeeStartTime(null);
         re.setInterestUpdateTime(null);
         re.setLateDay(0);
@@ -556,7 +556,6 @@ public class RepaymentServiceImpl implements RepaymentService {
             }
         }
     }
-
 
     @Override
     public void updateRenewalByPrimaryKey(Repayment re) {

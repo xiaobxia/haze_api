@@ -84,5 +84,5 @@ public interface IBorrowOrderDao {
 
     List<BorrowOrder> getWaitAiList();
 
-    int getRepaidCount(@Param("userId") int userId);
+    int getRepaidCount(@Param("userId") int userId, @Param("productId") int productId);
 }

@@ -12,6 +12,7 @@ import com.vxianjin.gringotts.util.IdUtil;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
+import com.vxianjin.gringotts.web.dao.IUserBlackDao;
 import com.vxianjin.gringotts.web.dao.IUserDao;
 import com.vxianjin.gringotts.web.pojo.*;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
@@ -43,6 +44,8 @@ public class AutoRiskService implements IAutoRiskService {
     private IRiskOrdersDao riskOrdersDao;
     @Resource
     private IBorrowOrderDao borrowOrderDao;
+    @Resource
+    private IUserBlackDao userBlackDao;
 
     @Resource
     private OrderLogComponent orderLogComponent;
@@ -67,52 +70,58 @@ public class AutoRiskService implements IAutoRiskService {
         }
         boolean advice =false;
         User user = userDao.searchByUserid(borrowOrder.getUserId());
-        StrongRiskResult strongRiskResult = userDao.getStrongRiskResultByUserId(String.valueOf(borrowOrder.getUserId()));
-        if(strongRiskResult!=null ){
-            if("10".equals(strongRiskResult.getResult())){
-                Map<String,Object> map = new HashMap<>();
-                map.put("orderNo", "wr"+DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+IdUtil.generateRandomStr(6));
-                map.put("consumerNo",PropertiesConfigUtil.get("RISK_BUSINESS")+borrowOrder.getUserId());
-                map.put("borrowNo",borrowOrder.getId());
-                map.put("channel",user.getUserFrom()==null?"0":user.getUserFrom());
-                map.put("borrowType",borrowOrder.getLoanTerm());
-                map.put("scene",100);
-//                JSONObject blackData = new JSONObject();
-//                blackData.put("blackBox",tdDevice);
-//                if("android".equals(clientType)){
-//                    blackData.put("appName","sdhb_and");
-//                }else{
-//                    blackData.put("appName","sdhb_ios");
-//                }
-//                map.put("datas",blackData.toJSONString());
-                String result = HttpUtil.postForm(PropertiesConfigUtil.get("risk_url"),map);
-                logger.info("risk result:{}",result);
-                try{
-                    saveCreditReport(result,borrowOrder.getUserId(),assetBorrowId);
 
-                }catch (Exception e){
-                    logger.error("save credit report error:{}",e);
-                }
-                JSONObject jsonObject = JSON.parseObject(result);
+        //黑名单
+        UserBlack userBlack = userBlackDao.findSelective(new HashMap<String, Object>() {{
+            put("userPhone", user.getUserName());
+        }});
 
-                if(jsonObject!=null){
-                    if("0000".equals(jsonObject.getString("code"))){
-                        JSONObject data = jsonObject.getJSONObject("data");
-                        advice = "10".equals(data.getString("result"));
+        Integer sr = 10;
+
+        if (userBlack == null) {
+            StrongRiskResult strongRiskResult = userDao.getStrongRiskResultByUserId(String.valueOf(borrowOrder.getUserId()));
+            if(strongRiskResult != null){
+                sr = Integer.parseInt(strongRiskResult.getResult());
+                if(!"30".equals(strongRiskResult.getResult())){
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("orderNo", "wr"+DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+IdUtil.generateRandomStr(6));
+                    map.put("consumerNo",PropertiesConfigUtil.get("RISK_BUSINESS")+borrowOrder.getUserId());
+                    map.put("borrowNo",borrowOrder.getId());
+                    map.put("channel",user.getUserFrom()==null?"0":user.getUserFrom());
+                    map.put("borrowType",borrowOrder.getLoanTerm());
+                    map.put("scene",100);
+    //                JSONObject blackData = new JSONObject();
+    //                blackData.put("blackBox",tdDevice);
+    //                if("android".equals(clientType)){
+    //                    blackData.put("appName","sdhb_and");
+    //                }else{
+    //                    blackData.put("appName","sdhb_ios");
+    //                }
+    //                map.put("datas",blackData.toJSONString());
+                    String result = HttpUtil.postForm(PropertiesConfigUtil.get("risk_url"),map);
+                    logger.info("risk result:{}",result);
+                    try{
+                        saveCreditReport(result,borrowOrder.getUserId(),assetBorrowId);
+
+                    }catch (Exception e){
+                        logger.error("save credit report error:{}",e);
+                    }
+                    JSONObject jsonObject = JSON.parseObject(result);
+
+                    if(jsonObject!=null){
+                        if("0000".equals(jsonObject.getString("code"))){
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            advice = "10".equals(data.getString("result"));
+                            //re = data.getString("result") != null ? Integer.parseInt(data.getString("result")) : re;
+                        }
                     }
                 }
             }
+        } else {
+            sr = userBlack.getUserType().intValue() == 0 ? 30 : 20;
         }
 
-        adviceExecute(assetBorrowId,borrowOrder.getUserId(),advice);
-
-
-//        orderNo:jqxRI7PG02267222080000  订单号
-//        consumerNo:ad158   首字母小写加字母
-//        borrowNo:jkxUI7PG02267162080000  借款订单号
-//        channel:fx    来源固定
-//        borrowType:7   借款天数
-//        scene:100     场景固定
+        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr);
     }
 
 
@@ -149,7 +158,7 @@ public class AutoRiskService implements IAutoRiskService {
      * @param assetBorrowId     订单号
      * @param userId            用户id
      */
-    public void adviceExecute(Integer assetBorrowId, Integer userId, boolean advice) {
+    public void adviceExecute(Integer assetBorrowId, Integer userId, boolean advice, Integer re) {
         logger.info("adviceExecute start assetBorrowId=" + assetBorrowId);
         BorrowOrder borrowOrderAutoRisk = new BorrowOrder();
         borrowOrderAutoRisk.setId(assetBorrowId);
@@ -164,7 +173,13 @@ public class AutoRiskService implements IAutoRiskService {
         //判断系统是机审还是人审
         String result = backConfigParamsService.findMachine();
         Integer userBrowserSource = userDao.searchBrowserSource(userId);
-        if(StringUtils.isBlank(result) || result.equals("0") || (userBrowserSource != null && userBrowserSource == 0)) {
+
+        if (re == 30){
+            //-3:初审驳回
+            loanStatus = BorrowOrder.STATUS_CSBH;
+            //审核失败恢复可借额度
+            changeLimitMoney(assetBorrowId);
+        } else if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
             if (advice) {
                 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
                 int time = c.get(Calendar.HOUR_OF_DAY);
