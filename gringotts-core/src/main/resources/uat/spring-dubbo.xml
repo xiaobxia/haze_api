@@ -8,7 +8,7 @@
     http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="gringotts-core-online"/>
-    <dubbo:registry protocol="zookeeper" address="47.110.153.34:2181" client="zkclient"/>
+    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181" client="zkclient"/>
     <!-- 用dubbo协议在20881端口暴露服务 -->
     <dubbo:protocol name="dubbo" port="20881"/>
 
