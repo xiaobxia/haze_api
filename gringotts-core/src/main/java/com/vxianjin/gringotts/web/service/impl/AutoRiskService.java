@@ -174,7 +174,7 @@ public class AutoRiskService implements IAutoRiskService {
         String result = backConfigParamsService.findMachine();
         Integer userBrowserSource = userDao.searchBrowserSource(userId);
 
-        if (re == 30){
+        if (StringUtils.isBlank(result) && result.equals("0") && re == 30){
             //-3:初审驳回
             loanStatus = BorrowOrder.STATUS_CSBH;
             //审核失败恢复可借额度
