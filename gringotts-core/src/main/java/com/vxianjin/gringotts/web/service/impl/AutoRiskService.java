@@ -121,7 +121,7 @@ public class AutoRiskService implements IAutoRiskService {
             sr = userBlack.getUserType().intValue() == 0 ? 30 : 20;
         }
 
-        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr);
+        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr, userBlack.getUserType().intValue() == 0);
     }
 
 
@@ -158,7 +158,7 @@ public class AutoRiskService implements IAutoRiskService {
      * @param assetBorrowId     订单号
      * @param userId            用户id
      */
-    public void adviceExecute(Integer assetBorrowId, Integer userId, boolean advice, Integer re) {
+    public void adviceExecute(Integer assetBorrowId, Integer userId, boolean advice, Integer re, boolean isblack) {
         logger.info("adviceExecute start assetBorrowId=" + assetBorrowId);
         BorrowOrder borrowOrderAutoRisk = new BorrowOrder();
         borrowOrderAutoRisk.setId(assetBorrowId);
@@ -174,41 +174,48 @@ public class AutoRiskService implements IAutoRiskService {
         String result = backConfigParamsService.findMachine();
         Integer userBrowserSource = userDao.searchBrowserSource(userId);
 
-        if (StringUtils.isBlank(result) && result.equals("0") && re == 30){
+        if (isblack) {//黑名单直接拒
             //-3:初审驳回
             loanStatus = BorrowOrder.STATUS_CSBH;
             //审核失败恢复可借额度
             changeLimitMoney(assetBorrowId);
-        } else if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
-            if (advice) {
-                Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
-                int time = c.get(Calendar.HOUR_OF_DAY);
-
-
-                //此时系统选择为机审
-                if (time > 20 || time < 9) {
-                    loanStatus = BorrowOrder.STATUS_AI;
-                } else {
-                    loanStatus = BorrowOrder.STATUS_AI;
-
-                    Map<String, String> map = new HashMap<>();
-
-                    User user = userDao.searchByUserid(userId);
-                    map.put("phone", user.getUserPhone());
-                    map.put("name", user.getRealname());
-                    RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
-                }
-                //22:放款中
-                //复审备注信息
-                borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
-                borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
-                //}
-            } else {
+        } else {
+            if (StringUtils.isBlank(result) && result.equals("0") && re == 30){
                 //-3:初审驳回
                 loanStatus = BorrowOrder.STATUS_CSBH;
                 //审核失败恢复可借额度
                 changeLimitMoney(assetBorrowId);
+            } else if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
+                if (advice) {
+                    Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+                    int time = c.get(Calendar.HOUR_OF_DAY);
 
+
+                    //此时系统选择为机审
+                    if (time > 20 || time < 9) {
+                        loanStatus = BorrowOrder.STATUS_AI;
+                    } else {
+                        loanStatus = BorrowOrder.STATUS_AI;
+
+                        Map<String, String> map = new HashMap<>();
+
+                        User user = userDao.searchByUserid(userId);
+                        map.put("phone", user.getUserPhone());
+                        map.put("name", user.getRealname());
+                        RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
+                    }
+                    //22:放款中
+                    //复审备注信息
+                    borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
+                    borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
+                    //}
+                } else {
+                    //-3:初审驳回
+                    loanStatus = BorrowOrder.STATUS_CSBH;
+                    //审核失败恢复可借额度
+                    changeLimitMoney(assetBorrowId);
+
+                }
             }
         }
 
