@@ -230,7 +230,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
 
 
         // 判断是否存在
-        UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, borrowDay);
+        UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, borrowDay, nowLimit);
         // 以前有则跟新，没有则插入
         if (userQuotaSnapshot != null) {
             log.info("update user qupta ,nowProductConfig " + nowProductConfig.getId() + " nowLimit :" + nowLimit + " agoLimit:" + userQuotaSnapshot.getUserAmountLimit() + " lastUpdateTime:" + DateUtil.formatDate(userQuotaSnapshot.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));

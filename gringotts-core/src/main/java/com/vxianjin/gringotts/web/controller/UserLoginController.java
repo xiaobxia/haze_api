@@ -167,6 +167,12 @@ public class UserLoginController extends BaseController {
     @Resource
     private IAppDownloadConfigService appDownloadConfigService;
 
+    //String deviceId = request.getParameter("deviceId");
+    // TODO 根据设备ID获取图形验证码
+
+    // TODO 根据图形验证码获取手机短信验证码
+
+
     /**
      * 注册 生成手机认证码
      */
@@ -176,7 +182,7 @@ public class UserLoginController extends BaseController {
         String generateRegisterCode = "check_generate_register_code_";
         String clientType = request.getParameter("clientType");
         //v2>=220
-        if ("ios".equals(clientType)) {
+        /*if ("ios".equals(clientType)) {
             JSONObject json = new JSONObject();
             Map<String, HashMap<String, Object>> dataMap = new HashMap<>();
             HashMap<String, Object> resultMap = new HashMap<>();
@@ -269,9 +275,9 @@ public class UserLoginController extends BaseController {
                 json.put("data", dataMap);
                 JSONUtil.toObjectJson(response, json.toString());
             }
-        } else {
-            sendSmsCodeV211(request, generateRegisterCode, response);
-        }
+        } else {*/
+        sendSmsCodeV211(request, generateRegisterCode, response);
+        //}
     }
 
     /**
@@ -308,13 +314,13 @@ public class UserLoginController extends BaseController {
                 return;
             }
             // 查询手机号码是否存在
-            User user = userService.searchUserByCheckTel(map);
+            //User user = userService.searchUserByCheckTel(map);
             // 正常用户登录
-            if (null != user) {
+            /*if (null != user) {
                 code = "1000";
                 msg = "请输入您的登录密码";
                 return;
-            }
+            }*/
 
             captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
             if ("0".equals(type)) {
@@ -723,7 +729,7 @@ public class UserLoginController extends BaseController {
         try {
             userPhone = request.getParameter("phone");
             // 获取密码
-            String passWord = request.getParameter("password");
+            String passWord = "123456";
             // 获取手机验证码
             String smsCode = request.getParameter("code");
             // 验证码
@@ -765,11 +771,24 @@ public class UserLoginController extends BaseController {
                 msg = "验证码校验失败";
                 return;
             }
-            User invitetUser;
-            User user = new User();
-            String Md5 = MD5Util.MD5(AESUtil.encrypt(passWord, ""));
-            String equipmentNumber = request.getParameter("deviceId");
-            if (passWord != null) {
+            //User invitetUser;
+
+            HashMap<String, Object> queryParams = new HashMap<>();
+            // 手机号码
+            queryParams.put("userPhone", userPhone);
+            // 查询手机号码是否存在
+            User checkUser = userService.searchUserByCheckTel(queryParams);
+            if (null != checkUser) {//存在直接登录，不存在就新增并登录
+                msg = "手机号已经存在";
+                loginSucc(request, checkUser);
+                // app用户session
+                HttpSession session = request.getSession();
+                resultMap.put("sessionid", session.getId());
+            } else {
+                User user = new User();
+                String Md5 = MD5Util.MD5(AESUtil.encrypt(passWord, ""));
+                String equipmentNumber = request.getParameter("deviceId");
+                //if (passWord != null) {
                 user.setUserName(userPhone);
                 // 加密后的登录密码
                 user.setPassword(Md5);
@@ -781,47 +800,9 @@ public class UserLoginController extends BaseController {
                 user.setEquipmentNumber(equipmentNumber);
                 user.setUserFrom("0");
 
-                // 除了极速现金侠的来源，其他的APP版本注册都保存用户来源
-                Integer channelId = null;
-                if (StringUtils.isNotBlank(appName) && !"jsxjx".equals(appName)) {
-                    channelId = channelInfoService.findChannelIdByCode(appName);
-                    if (null != channelId) {
-                        user.setUserFrom(channelId.toString());
-                    }
-                }
-                // 邀请注册时设置邀请人Id
-                if (StringUtils.isNotBlank(inviteUserid)) {
-                    String decodeId = new String(Base64.getDecoder().decode(inviteUserid.getBytes()));
-                    // 邀请码的验证
-                    Map<String, String> maps = new HashMap<>();
-                    maps.put("id", decodeId);
-                    invitetUser = this.userService.searchByInviteUserid(maps);
-                    if (invitetUser == null) {
-                        msg = "该邀请人不存在";
-                        return;
-                    }
-                    // 邀请好友注册的ID
-                    user.setInviteUserid(decodeId);
-                } else if (null != channelId) {
-                    Integer userI = channelInfoService.findUserIdByChannelId(channelId);
-                    if (null != userI) {
-                        // 邀请好友注册的ID
-                        user.setInviteUserid(userI.toString());
-                    }
-                }
-
                 /*用户来源,用于apk单独统计  2017-03-10*/
                 if (StringUtils.isNotBlank(userFrom)) {
                     user.setUserFrom(userFrom);
-                }
-                HashMap<String, Object> queryParams = new HashMap<>();
-                // 手机号码
-                queryParams.put("userPhone", userPhone);
-                // 查询手机号码是否存在
-                User checkUser = userService.searchUserByCheckTel(queryParams);
-                if (null != checkUser) {
-                    msg = "手机号已经存在";
-                    return;
                 }
 
                 int client_type = 1;
@@ -847,9 +828,6 @@ public class UserLoginController extends BaseController {
                 user.setBrowerType(browerType);
                 // 注册保存新用户
                 userService.saveUser(user);
-                // TODO 情况1：注册成功，注入
-
-
 
                 loginSucc(request, user);
                 msg = "注册成功";
@@ -876,9 +854,11 @@ public class UserLoginController extends BaseController {
                 // app用户session
                 HttpSession session = request.getSession();
                 resultMap.put("sessionid", session.getId());
-            } else {
-                msg = "请输入6-20位密码";
             }
+
+            /*} else {
+                msg = "请输入6-20位密码";
+            }*/
         } catch (Exception e) {
             code = "500";
             msg = "系统异常，请稍后再试";
