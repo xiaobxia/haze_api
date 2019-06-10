@@ -192,9 +192,11 @@
     update user_borrowquota_snapshot
     set borrow_product_id = #{productId} ,
         update_time = now(),
-        user_amount_limit = #{nowLimit}
-    where user_id = #{userId} and borrow_day = #{borrowDay}
+        user_amount_limit = #{nowLimit},
+        borrow_day = #{borrowDay}
+    where user_id = #{userId}
   </update>
+    <!--and borrow_day = #{borrowDay}-->
 
     <insert id="addUserQuota">
     insert into user_borrowquota_snapshot (user_id,borrow_product_id,create_time,update_time,user_amount_limit,borrow_day)
@@ -211,8 +213,9 @@
       update user_borrowquota_snapshot
     set
         user_amount_limit = #{nowLimit},
-        update_time = now()
-    where user_id = #{userId} and borrow_day = #{borrowDay}
+        update_time = now(),
+        borrow_day = #{borrowDay}
+    where user_id = #{userId}
     </update>
 
 
