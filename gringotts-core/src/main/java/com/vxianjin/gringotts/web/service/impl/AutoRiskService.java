@@ -121,7 +121,7 @@ public class AutoRiskService implements IAutoRiskService {
             sr = userBlack.getUserType().intValue() == 0 ? 30 : 20;
         }
 
-        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr, userBlack.getUserType().intValue() == 0);
+        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr, userBlack != null ? userBlack.getUserType().intValue() == 0 : false);
     }
 
 

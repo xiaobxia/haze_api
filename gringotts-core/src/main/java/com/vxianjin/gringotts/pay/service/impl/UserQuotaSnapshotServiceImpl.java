@@ -221,7 +221,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
     }
 
     @Override
-    public boolean addOrUpdateUserQuotaSnapShot(int userId, int productId, int orderId) {
+    public BigDecimal addOrUpdateUserQuotaSnapShot(int userId, int productId, int orderId) {
         // TODO 表设计有问题，不需要这个productId,如果去除逻辑需要修改,也不需要获取产品线，表设计有毒
         // 获取现在额度产品线
         BorrowProductConfig nowProductConfig = borrowProductConfigService.queryProductById(productId);
@@ -257,7 +257,8 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             userQuotaLogService.addUserQuotaLog(userId, borrowProductConfigService.queryByBorrowByStatus(0).getBorrowAmount(), new BigDecimal(nowLimit));
             addUserQuota(userId, nowProductConfig.getId(), new BigDecimal(nowLimit), borrowDay);
         }
-        return true;
+        BigDecimal returnAmount = new BigDecimal(nowLimit);
+        return returnAmount;
     }
 
     private void updateUserLimit(int userId, int borrowDay, BigDecimal nowLimit) {
@@ -473,11 +474,12 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 log.info("query user limits size:" + userLimits.size());
                 log.info("start update user quotasnapshot");
                 String nowLimit = borrowProductConfigService.queryByBorrowByStatus(0).getBorrowAmount().intValue() + "";
+                BigDecimal bigDecimal = null;
                 for (String key : userLimits.keySet()) {
                     // 用户额度
                     String userLimit = userLimits.get(key);
                     // 更新到用户额度表中，并将用户额度信息变更记录存入变更记录表中
-                    addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key), orderId);
+                    bigDecimal = addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key), orderId);
 
                     if (Integer.parseInt(nowLimit) < Integer.parseInt(userLimit)) {
                         nowLimit = userLimit;
@@ -485,7 +487,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 }
                 log.info("end update user quotasnapshot");
                 // 获取用户最高额度
-                BigDecimal bigDecimal = userQuotaSnapshotMapper.queryUserMaxLimit(userId);
+                //BigDecimal bigDecimal = userQuotaSnapshotMapper.queryUserMaxLimit(userId);
                 if (!nowLimit.equals("" + bigDecimal.intValue())) {
                     bigDecimal = BigDecimal.valueOf(Long.parseLong(nowLimit));
                 }

@@ -49,7 +49,7 @@ public interface UserQuotaSnapshotService {
      * @param productId 最新用户可借产品
      * @return
      */
-    boolean addOrUpdateUserQuotaSnapShot(int userId, int productId, int orderId);
+    BigDecimal addOrUpdateUserQuotaSnapShot(int userId, int productId, int orderId);
 
     /**
      * 更新
