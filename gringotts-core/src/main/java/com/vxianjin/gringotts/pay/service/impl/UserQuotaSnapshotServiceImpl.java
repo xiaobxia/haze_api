@@ -474,12 +474,13 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 log.info("query user limits size:" + userLimits.size());
                 log.info("start update user quotasnapshot");
                 String nowLimit = borrowProductConfigService.queryByBorrowByStatus(0).getBorrowAmount().intValue() + "";
-                BigDecimal bigDecimal = null;
+                //BigDecimal bigDecimal = null;
                 for (String key : userLimits.keySet()) {
                     // 用户额度
                     String userLimit = userLimits.get(key);
                     // 更新到用户额度表中，并将用户额度信息变更记录存入变更记录表中
-                    bigDecimal = addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key), orderId);
+                    //bigDecimal = addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key), orderId);
+                    addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key), orderId);
 
                     if (Integer.parseInt(nowLimit) < Integer.parseInt(userLimit)) {
                         nowLimit = userLimit;
@@ -487,7 +488,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 }
                 log.info("end update user quotasnapshot");
                 // 获取用户最高额度
-                //BigDecimal bigDecimal = userQuotaSnapshotMapper.queryUserMaxLimit(userId);
+                BigDecimal bigDecimal = userQuotaSnapshotMapper.queryUserMaxLimit(userId);
                 if (!nowLimit.equals("" + bigDecimal.intValue())) {
                     bigDecimal = BigDecimal.valueOf(Long.parseLong(nowLimit));
                 }

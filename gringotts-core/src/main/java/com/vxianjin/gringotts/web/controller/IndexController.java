@@ -22,6 +22,7 @@ import com.vxianjin.gringotts.web.service.IReportService;
 import com.vxianjin.gringotts.web.service.impl.BorrowOrderService;
 import com.vxianjin.gringotts.web.util.IndexUtil;
 import com.vxianjin.gringotts.web.utils.SpringUtils;
+import com.vxianjin.gringotts.web.utils.SysCacheUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -322,7 +323,8 @@ public class IndexController extends BaseController {
                 JSONObject item = JSONObject.fromObject(data.get("item"));
                 // 可借额度默认1000
                 BorrowProductConfig defaultConfig = borrowProductConfigService.queryByBorrowByStatus(0);//默认
-                String cardAmount = defaultConfig.getBorrowAmount().toString();
+                Map<String, String> keys = SysCacheUtils.getConfigParams(BackConfigParams.SYS_FEE);
+                String cardAmount = keys.get("max_amount_sys");//defaultConfig.getBorrowAmount().toString();
                 if (null != user) {
                     cardAmount = user.getAmountMax();
                 }
