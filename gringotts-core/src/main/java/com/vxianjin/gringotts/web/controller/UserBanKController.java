@@ -121,11 +121,15 @@ public class UserBanKController extends BaseController {
                         if (certi.getUrl() != null && !"".equals(certi.getUrl())) {
                             resultMap.put("url", certi.getUrl());//外链
                         }
+                        String operator = checkCertiPams(cret, certi.getCode());//判断是否已认证：已填写/未完善
                         //银行卡认证页面
                         if (null != telephone && "cardInfo".equals(certi.getCode())) {
-                            resultMap.put("url", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/lianlianBindCard/credit-card/firstUserBank");
+                            if ("未完善".equals(operator)) {
+                                resultMap.put("url", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/fuiouBindCard/credit-card/bindNewCard");
+                            } else {
+                                resultMap.put("url", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/fuiouBindCard/credit-card/firstUserBank");
+                            }
                         }
-                        String operator = checkCertiPams(cret, certi.getCode());//判断是否已认证：已填写/未完善
                         //common/web/images/certification/more_info_logo.png;;common/web/images/certification/more_info_logo2.png
                         String[] logoImg = certi.getLogoImg().split(";;");//认证选项的logo
                         String logoImgStr = "";
@@ -174,9 +178,9 @@ public class UserBanKController extends BaseController {
                                 resultMap.put("operator", "<font color=\"#ff5145\" size=\"3\">已填写</font>");
                             }
                             if (certi.getMustBe() == 1) {  //为必填已填写统计填写认证数量
-                                if (!"收款银行卡".equals(certi.getTitle())) {
+                                //if (!"收款银行卡".equals(certi.getTitle())) {
                                     mustBeCount++;
-                                }
+                                //}
                             }
                             logoImgStr = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" + logoImg[0];
                             resultMap.put("status", 1);
@@ -190,9 +194,9 @@ public class UserBanKController extends BaseController {
                         resultMap.put("logo", logoImgStr);//认证选项logo
                         if (certi.getMustBe() == 1) {
                             resultMap.put("title_mark", "<font color=\"#ff8003\" size=\"3\">(必填)</font>");
-                            if (!"收款银行卡".equals(certi.getTitle())) {  //2.2.0版本认证中心不需要收款银行卡
+                            //if (!"收款银行卡".equals(certi.getTitle())) {  //2.2.0版本认证中心不需要收款银行卡
                                 isMustBeList.add(resultMap);
-                            }
+                            //}
                         } else {
                             resultMap.put("title_mark", "<font color=\"#999999\" size=\"3\">(选填)</font>");
                             noMustBeList.add(resultMap);

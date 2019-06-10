@@ -88,5 +88,5 @@ public interface UserQuotaSnapshotDao {
 
     int updateUserLimitAmount(@Param("userId") int userId, @Param("borrowDay") int borrowDay, @Param("nowLimit") BigDecimal nowLimit);
 
-    UserQuotaSnapshot queryByUserIdBorrowDay(@Param("userId") Integer userId, @Param("borrowDay") int borrowDay);
+    UserQuotaSnapshot queryByUserIdBorrowDay(@Param("userId") Integer userId, @Param("borrowDay") int borrowDay, @Param("nowLimit") String nowLimit);
 }

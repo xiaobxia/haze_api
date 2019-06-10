@@ -178,6 +178,8 @@
     where
       ubs.user_id = #{userId}
       and bpc.borrow_day = #{borrowDay}
+      and bpc.borrow_amount = #{borrowAmount}
+      limit 0,1
   </select>
 
     <select id="queryByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -217,6 +219,6 @@
     <select id="queryByUserIdBorrowDay" resultMap="BaseResultMap">
       select id, user_id, borrow_product_id, deal_flag, remark,user_amount_limit,borrow_day,update_time
       from user_borrowquota_snapshot
-      where user_id = #{userId} and deal_flag = 'n' and borrow_day = #{borrowDay}
+      where user_id = #{userId} and deal_flag = 'n' and borrow_day = #{borrowDay} and borrow_amount = #{nowLimit}
     </select>
 </mapper>
