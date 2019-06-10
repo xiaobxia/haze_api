@@ -196,12 +196,10 @@
         //密码弹窗
         $('#mima-btn-1').click(function(event) {
             if(checkSmsCode() && checkRequestNo()){
-                $('#error_tip_withhold').html("正在支付中，请稍等");
                 show_loading("正在支付中，请稍等")
                 $.post('${path}/yeepay/repayWithholdConfirm', {id:'${bo.id}',smsCode:$("#smsCode").val(),requestNo:$("#requestNo").val(),payPwd:'123456'} , function(data){
                     if(data.code == "-103"){
                         hide_loading();
-                        $('#error_tip_withhold').html(data.msg);
                         $.mvalidateTip(data.msg);
                     }else if(data.code == "0"){
                         //启动轮询
@@ -211,7 +209,6 @@
                         $.mvalidateTip(data.msg);
                     }
                 });
-                $('#error_tip_withhold').html('');
             }
         });
     });
