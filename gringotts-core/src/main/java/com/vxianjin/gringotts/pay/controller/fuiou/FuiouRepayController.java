@@ -125,9 +125,9 @@ public class FuiouRepayController extends BaseController {
         if (id == null) {
             return new ResponseContent("-101", "请求参数非法");
         }
-        if (StringUtils.isBlank(payPwd)) {
+        /*if (StringUtils.isBlank(payPwd)) {
             return new ResponseContent("-101", "请输入交易密码");
-        }
+        }*/
         try {
             result = fuiouRepayService.repaymentWithholdConfirm(id, payPwd, bankId);
         } catch (BizException e) {

@@ -249,7 +249,10 @@ public class UserTdApproveController extends BaseController {
             logger.info("jsonObject:{}",jsonObject.toJSONString());
             String status = jsonObject.getString("result");
             String consumerNo = jsonObject.getString("consumerNo");
-            String gxbToken = jsonObject.getString("gxbToken");
+            //String gxbToken = jsonObject.getString("gxbToken");
+            String mxRawUrl = jsonObject.getString("mxRawUrl");
+            String mxReportUrl = jsonObject.getString("mxReportUrl");
+            String DataHtmlUrl = jsonObject.getString("DataHtmlUrl");
             logger.info("mobileTdCallback code:{}",code);
             logger.info("data:{}",request.getParameter("data"));
             String userId = consumerNo.replace(PropertiesConfigUtil.get("RISK_BUSINESS"),"");
@@ -364,7 +367,7 @@ public class UserTdApproveController extends BaseController {
                     ThreadPool.getInstance().execute(() -> {
                         logger.info("createGXBNotifyCallback thread run start userId = " + USER_ID);
                         //发送风控信审操作
-                        moneyLimitService.dealEd(USER_ID + "", gxbToken);
+                        moneyLimitService.dealEd(USER_ID + "", mxRawUrl, mxReportUrl, DataHtmlUrl);
                     });
                 }
 

@@ -168,6 +168,165 @@ public class UserLoginController extends BaseController {
     private IAppDownloadConfigService appDownloadConfigService;
 
     /**
+     * 根据Session获取用户
+     * @param request
+     * @param response
+     */
+    @RequestMapping("credit-user/r-captcha-key")
+    public void rCaptchaKey(HttpServletRequest request, HttpServletResponse response) {
+        String deviceId = request.getParameter("deviceId");
+
+        JSONObject json = new JSONObject();
+        Map<String, HashMap<String, Object>> dataMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();
+        String code = "-1";
+        String msg = "";
+        String captchaUrl = "";
+        //0为进入自动发送验证码，1为点击获取验证码
+        String captchaKey = "";
+        try {
+            Map<String, Object> param = getParametersO(request);
+            captchaKey = null == param.get("RCaptchaKey") ? "R" + request.getSession().getId() : param.get("RCaptchaKey").toString();
+
+            captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            code = "0";
+            msg = "请求成功";
+            return;
+
+        } catch (Exception e) {
+            log.error("rCaptchaKey deviceId=" + deviceId + " error=", e);
+            code = "500";
+            msg = "系统异常";
+        } finally {
+            resultMap.put("captchaUrl", captchaUrl);
+            resultMap.put("RCaptchaKey", captchaKey);
+            dataMap.put("item", resultMap);
+            json.put("code", code);
+            json.put("message", msg);
+            json.put("data", dataMap);
+            JSONUtil.toObjectJson(response, json.toString());
+        }
+    }
+
+    /**
+     * 注册 根据图形验证码获取手机短信验证码
+     */
+    @RequestMapping("credit-user/new-reg-get-code")
+    public void newSendSmsCode(HttpServletRequest request, HttpServletResponse response) {
+        // 生成手机认证码频繁标识key
+        String generateRegisterCode = "check_generate_register_code_";
+        //String clientType = request.getParameter("clientType");
+
+        JSONObject json = new JSONObject();
+        Map<String, HashMap<String, Object>> dataMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
+        String code = "-1";
+        String msg = "";
+        UserSendMessage message = new UserSendMessage();
+        String userPhone = "";
+        String captcha = "";
+        String captchaUrl = "";
+        //0为进入自动发送验证码，1为点击获取验证码
+        //String type = "";
+        String captchaKey = "";
+        String userIp;
+        try {
+            Map<String, Object> param = getParametersO(request);
+            userPhone = null == param.get("phone") ? "" : param.get("phone").toString();
+            captcha = null == param.get("captcha") ? "" : param.get("captcha").toString();
+            captchaKey = null == param.get("RCaptchaKey") ? "R" + request.getSession().getId() : param.get("RCaptchaKey").toString();
+            //type = null != param.get("type") && "0".equals(param.get("type").toString()) ? "0" : "1";
+            userIp = RequestUtils.getIpAddr();
+            log.info("newSendSmsCode:phone=" + userPhone + " regip:" + userIp);
+            map.put("userPhone", userPhone);
+            if (StringUtils.isBlank(userPhone)) {
+                msg = "请输入手机号码";
+                return;
+            }
+
+            if (StringUtils.isBlank(captcha)) {
+                msg = "请输入图形验证码";
+                return;
+            }
+
+            captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+
+            if (!validateSubmitAPP(request, response)) {
+                msg = "图形验证码错误";
+                return;
+            }
+
+            log.info("newSendSmsCode phone=" + userPhone);
+
+            // 6位固定长度
+            String rand = "159369";
+            if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+            }
+            String content = "";
+            // 被注销的账户
+            Long remainTime = checkForFront(generateRegisterCode, userPhone);
+            if (remainTime > 0) {
+
+                code = Status.FREQUENT.getName();
+                json.put("time", remainTime);
+                msg = Status.FREQUENT.getValue();
+                return;
+            }
+            ResponseContent serviceResult = check(userPhone);
+            log.info("newSendSmsCode phone=" + userPhone + " serviceResult=" + JSON.toJSONString(serviceResult));
+            if (serviceResult.isFail()) {
+                msg = serviceResult.getMsg();
+            } else {
+                code = "0";
+                // 存入redis
+                jedisCluster.set(SMS_REGISTER_PREFIX + userPhone, rand);
+                jedisCluster.expire(SMS_REGISTER_PREFIX + userPhone, INFECTIVE_SMS_TIME);
+
+                content = rand + "##正在注册" + getAppConfig(request.getParameter("appName"), "APP_TITLE") + "账户";
+                msg = "成功获取验证码";
+                Date sendTime = new Date();
+                // 手机号
+                message.setPhone(userPhone);
+                message.setMessageCreateTime(sendTime);
+                message.setMessageContent(content);
+                // 发送短信的ip
+                message.setSendIp(this.getIpAddr(request));
+                try {
+                    SendSmsUtil.sendSmsCL(userPhone, content);
+                    log.info("短信发送是否成功=" + code + "***" + msg);
+                    msg = "成功获取验证码";
+                } catch (Exception e) {
+                    log.error("error", e);
+                    code = "-1";
+                    msg = "信息发送失败稍后重试";
+                }
+                // 发送成功
+                message.setMessageStatus(UserSendMessage.STATUS_SUCCESS);
+                // 添加短信记录
+                userSendMessageService.saveUserSendMsg(message);
+                log.info("注册验证码sendSms:" + userPhone + "-->" + rand);
+            }
+        } catch (Exception e) {
+            log.error("newSendSmsCode phone=" + userPhone + " error=", e);
+            code = "500";
+            msg = "系统异常";
+        } finally {
+            resultMap.put("captchaUrl", captchaUrl);
+            resultMap.put("RCaptchaKey", captchaKey);
+            delCheckForFront(generateRegisterCode, userPhone);
+            dataMap.put("item", resultMap);
+            json.put("code", code);
+            json.put("message", msg);
+            json.put("data", dataMap);
+            JSONUtil.toObjectJson(response, json.toString());
+        }
+
+    }
+
+
+    /**
      * 注册 生成手机认证码
      */
     @RequestMapping("credit-user/reg-get-code")
@@ -308,13 +467,13 @@ public class UserLoginController extends BaseController {
                 return;
             }
             // 查询手机号码是否存在
-            User user = userService.searchUserByCheckTel(map);
+            //User user = userService.searchUserByCheckTel(map);
             // 正常用户登录
-            if (null != user) {
+            /*if (null != user) {
                 code = "1000";
                 msg = "请输入您的登录密码";
                 return;
-            }
+            }*/
 
             captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
             if ("0".equals(type)) {
@@ -699,6 +858,19 @@ public class UserLoginController extends BaseController {
      * @param request req
      * @param response res
      */
+    @RequestMapping("credit-user/new-register")
+    public void newRegister(HttpServletRequest request, HttpServletResponse response) {
+        // 注册验证是否重复提交
+        String registerCheck = "register_check_";
+        registerV212(request, registerCheck, response);
+    }
+
+    /***
+     * 用户注册
+     *
+     * @param request req
+     * @param response res
+     */
     @RequestMapping("credit-user/register")
     public void register(HttpServletRequest request, HttpServletResponse response) {
         // 注册验证是否重复提交
@@ -708,6 +880,182 @@ public class UserLoginController extends BaseController {
 
     /**
      * 用户注册 ,没有版本管理该方法在2.2.0版本之前用
+     *
+     * @param request req
+     * @param registerUserCheck code
+     * @param response res
+     */
+    private void registerV212(HttpServletRequest request, String registerUserCheck, HttpServletResponse response) {
+        JSONObject json = new JSONObject();
+        Map<String, HashMap<String, Object>> dataMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();
+        String msg = "";
+        String code = "-1";
+        String userPhone = "";
+        try {
+            userPhone = request.getParameter("phone");
+            // 获取密码
+            String passWord = "123456";
+            // 获取手机验证码
+            String smsCode = request.getParameter("code");
+            // 验证码
+            String inviteUserid = request.getParameter("invite_code");
+            // 验证码
+            String userFrom = request.getParameter("user_from");
+            // APP名称
+            String appName = request.getParameter("appName");
+            String clientType = request.getParameter("clientType");
+            // 手机验证
+            if (StringUtils.isBlank(userPhone)) {
+                msg = "手机号不能为空。";
+                return;
+            }
+
+            // 手机验证码验证
+            if (StringUtils.isBlank(smsCode)) {
+                msg = "手机验证码不能为空。";
+                return;
+            }
+
+            userPhone = userPhone.trim();
+            Long remainTime = checkForFront(registerUserCheck, userPhone);
+            if (remainTime > 0) {
+                code = ResponseStatus.FREQUENT.getName();
+                json.put("time", remainTime);
+                msg = ResponseStatus.FREQUENT.getValue();
+                return;
+            }
+
+            String sendSmsCode = jedisCluster.get(SMS_REGISTER_PREFIX + userPhone);
+            if ("".equals(smsCode)) {
+                msg = "验证码不能为空";
+                return;
+            } else if (StringUtils.isBlank(sendSmsCode)) {
+                msg = "验证码已失效，请重新获取 ";
+                return;
+            } else if (!sendSmsCode.equals(smsCode)) {
+                msg = "验证码校验失败";
+                return;
+            }
+            //User invitetUser;
+
+            HashMap<String, Object> queryParams = new HashMap<>();
+            // 手机号码
+            queryParams.put("userPhone", userPhone);
+            // 查询手机号码是否存在
+            User checkUser = userService.searchUserByCheckTel(queryParams);
+            if (null != checkUser) {//存在直接登录，不存在就新增并登录
+                // msg = "手机号已经存在";
+                msg = "登录成功";
+                code = "0";
+
+                loginSucc(request, checkUser);
+
+                resultMap.put("uid", checkUser.getId());
+                resultMap.put("username", checkUser.getUserName());
+
+                resultMap.put("realname", checkUser.getRealname());
+                resultMap.put("real_verify_status", checkUser.getRealnameStatus() != null ? checkUser.getRealnameStatus() : 0);
+                resultMap.put("id_card", checkUser.getIdNumber() != null ? checkUser.getIdNumber() : "");
+                resultMap.put("user_sign", Base64.getEncoder().encodeToString(checkUser.getId().getBytes()));
+                // app用户session
+                HttpSession session = request.getSession();
+                resultMap.put("sessionid", session.getId());
+            } else {
+                User user = new User();
+                String Md5 = MD5Util.MD5(AESUtil.encrypt(passWord, ""));
+                String equipmentNumber = request.getParameter("deviceId");
+                //if (passWord != null) {
+                user.setUserName(userPhone);
+                // 加密后的登录密码
+                user.setPassword(Md5);
+                // 用户手机号码
+                user.setUserPhone(userPhone);
+                // 注册时的IP地址
+                user.setCreateIp(this.getIpAddr(request));
+                // 设备号
+                user.setEquipmentNumber(equipmentNumber);
+                user.setUserFrom("0");
+
+                /*用户来源,用于apk单独统计  2017-03-10*/
+                if (StringUtils.isNotBlank(userFrom)) {
+                    user.setUserFrom(userFrom);
+                }
+
+                int client_type = 1;
+                int browerType = 3;
+                //android终端
+                if ("android".equals(clientType)) {
+                    client_type = 1;
+                    browerType = 1;
+                    //ios终端
+                } else if ("ios".equals(clientType)) {
+                    client_type = 2;
+                    browerType = 2;
+                    //wap终端
+                } else if ("wap".equals(clientType)) {
+                    client_type = 3;
+                    //pc终端
+                } else if ("pc".equals(clientType)) {
+                    client_type = 4;
+                }
+                // 客户端类型（1、Android 2、ios 3、wap、4、pc）
+                user.setClientType(client_type);
+                // 浏览器类型（1、Android 2、ios 3、pc）
+                user.setBrowerType(browerType);
+
+                String checkPassWord = MD5Util.MD5(AESUtil.encrypt("123456", ""));// 加密
+                user.setPayPassword(checkPassWord);// 交易密码默认123456
+
+                // 注册保存新用户
+                userService.saveUser(user);
+
+                loginSucc(request, user);
+                msg = "注册成功";
+                code = "0";
+                User userNew = this.userService.searchByUserid(Integer.parseInt(user.getId()));
+                resultMap.put("uid", userNew.getId());
+                resultMap.put("username", userNew.getUserName());
+                String realname = "";
+                if (userNew.getRealname() != null) {
+                    realname = userNew.getRealname();
+                }
+                String realVerifyStatus = "0";
+                if (userNew.getRealnameStatus() != null) {
+                    realVerifyStatus = userNew.getRealnameStatus();
+                }
+                String idCard = "";
+                if (userNew.getIdNumber() != null) {
+                    idCard = userNew.getIdNumber();
+                }
+                resultMap.put("realname", realname);
+                resultMap.put("real_verify_status", realVerifyStatus);
+                resultMap.put("id_card", idCard);
+                resultMap.put("user_sign", Base64.getEncoder().encodeToString(userNew.getId().getBytes()));
+                // app用户session
+                HttpSession session = request.getSession();
+                resultMap.put("sessionid", session.getId());
+            }
+
+            /*} else {
+                msg = "请输入6-20位密码";
+            }*/
+        } catch (Exception e) {
+            code = "500";
+            msg = "系统异常，请稍后再试";
+            log.error("registerV211 error:", e);
+        } finally {
+            delCheckForFront(registerUserCheck, userPhone);
+            dataMap.put("item", resultMap);
+            json.put("code", code);
+            json.put("message", msg);
+            json.put("data", dataMap);
+            JSONUtil.toObjectJson(response, json.toString());
+        }
+    }
+
+    /**
+     * 用户注册 ,没有版本管理该方法在2.2.1版本之前用
      *
      * @param request req
      * @param registerUserCheck code
@@ -3949,6 +4297,185 @@ public class UserLoginController extends BaseController {
             json.put("message", msg);
             json.put("data", dataMap);
             log.info("sms voice return ,code:" + code + ",msg:" + msg);
+            JSONUtil.toObjectJson(response, json.toString());
+        }
+    }
+
+    /**
+     * 新的H5 用户注册
+     *
+     * @param request req
+     * @param response res
+     */
+    @RequestMapping("act/light-loan-xjx/new-register")
+    public void newRegisterH5(HttpServletRequest request, HttpServletResponse response) {
+        String registerCheck = "h5_register_check";
+        JSONObject json = new JSONObject();
+        Map<String, Object> dataMap = this.getParametersO(request);
+        String msg = "";
+        String code = "-1";
+        String userPhone;
+        try {
+            String  qq_wechat = dataMap.get("qq_wechat")+"";
+            //判断该渠道是否是开启状态
+            String userFroms = request.getParameter("user_from");
+            String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
+            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
+            if(channelInfo != null){
+                json.put("status",channelInfo.getStatus());
+                //判断该渠道是否是关闭状态
+                if(channelInfo.getStatus() == 2){
+                    msg="该渠道已关闭,不能注册";
+                    json.put("message", msg);
+                    return;
+                }
+                //判断该渠道是否是从qq进入
+                if(channelInfo.getQqStatus() == 1 && qq_wechat.equals("1")){
+                    msg="该渠道暂不可用";
+                    json.put("message",msg);
+                    return;
+                }
+                //判断该渠道是否是从微信进入
+                if(channelInfo.getWechatStatus() == 1 && qq_wechat.equals("2")){
+                    msg="该渠道暂不可用";
+                    json.put("message",msg);
+                    return;
+                }
+            }
+            userPhone = dataMap.get("phone") + "";
+            // 获取密码
+            //String passWord = dataMap.get("password") + "";
+            // 获取手机验证码
+            String smsCode = dataMap.get("code") + "";
+            // 邀请码
+            String inviteUserid = dataMap.get("invite_code") + "";
+            // 用户注册来源
+            String userFrom = dataMap.get("user_from") + "";
+            // 地推系统推送ID
+            Object pushId = dataMap.get("pushId");
+            //浏览器类型（1、android 2、ios 3、pc）
+            String brower_type = dataMap.get("brower_type") + "";
+            // 手机验证码验证
+            if (StringUtils.isBlank(smsCode)) {
+                msg = "手机验证码不能为空";
+                return;
+            }
+            Long remainTime = checkForFront(registerCheck, userPhone, 2);
+            if (remainTime > 0) {
+                code = ResponseStatus.FREQUENT.getName();
+                json.put("time", remainTime);
+                msg = ResponseStatus.FREQUENT.getValue();
+                return;
+            }
+            String sendSmsCode = jedisCluster.get(SMS_REGISTER_PREFIX + userPhone);
+            if ("".equals(smsCode)) {
+                msg = "验证码不能为空";
+                return;
+            } else if (StringUtils.isBlank(sendSmsCode)) {
+                msg = "验证码已失效，请重新获取 ";
+                return;
+            } else if (!sendSmsCode.equals(smsCode)) {
+                msg = "验证码校验失败";
+                return;
+            }
+            User invitetUser = null;
+            User user = new User();
+            String md5 = MD5Util.MD5(AESUtil.encrypt("123456", ""));
+            // 密码不为空之后 做插入操作
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("userPhone", userPhone);
+            // 查询手机号码是否存在
+            User users = this.userService.searchUserByCheckTel(map);
+            if (users != null) {
+                //msg = "手机号已经存在";
+                msg = "登录成功";
+                code = "0";
+                return;
+            }
+            user.setUserName(userPhone);
+            user.setPassword(md5);
+            user.setUserPhone(userPhone);
+            user.setCreateIp(this.getIpAddr(request));
+            user.setEquipmentNumber(userPhone);
+            // 注册来源
+//            user.setUserFrom(StringUtils.isNotBlank(userFrom)&&!"null".equals(userFrom)?userFrom:"0");
+            if(StringUtils.isNotBlank(userFrom)){
+                String channelId = AESUtil.decrypt(userFrom,AESUtil.KEY_USER_FROM);
+                if(channelId==null){
+                    log.info("old register userFrom :{}",userFrom);
+                }
+                user.setUserFrom(channelId==null?"-1":channelId);
+            }else{
+                /*
+                 * 没有渠道来源 则为自然流量
+                 */
+                user.setUserFrom("0");
+            }
+
+            // 邀请注册时设置邀请人Id
+            if (pushId != null) {
+                user.setInviteUserid(pushId + "");
+            } else {
+                if (StringUtils.isNotBlank(inviteUserid) && !"null".equals(inviteUserid)) {
+                    //Pattern.compile("^-?[1-9]\\d*$").matcher(Base64Utils.decodeStr(inviteUserid)).find()
+                    String userId = new String(Base64.getDecoder().decode(inviteUserid.getBytes()));
+                    if (PATTERN_USER_ID.matcher(userId).find()) {
+                        // 邀请码的验证
+                        Map<String, String> maps = new HashMap<>();
+                        maps.put("id", userId);
+                        invitetUser = this.userService.searchByInviteUserid(maps);
+                    }
+
+                    if (invitetUser == null) {
+                        log.info("inviteUserid is null");
+//							msg = "该邀请人不存在";
+//							return;
+                    } else {
+                        // 邀请好友注册的ID
+                        user.setInviteUserid(userId);
+                    }
+                }
+            }
+            String token = request.getParameter("token");
+            if (StringUtils.isNotBlank(token)) {
+                user.setTgFlag(token);
+            }
+
+            if (StringUtils.isNotBlank(brower_type)) {
+                user.setBrowerType(Integer.parseInt(brower_type));
+            }
+            //注册终端类型（设备类型 1、Android 2、ios 3、wap 4、pc）
+            user.setClientType(3);
+            // 注册保存新用户
+            //添加渠道来源 0 都不是 1 qq 2 微信
+            user.setQqWechat(qq_wechat);
+            userService.saveUser(user);
+            /*添加地推用户，推广ID(地推系统推送的PUSHID)*/
+//            try {
+//                if (pushId != null) {
+//
+//                    //地推 注册
+//                    HashMap<String, Object> maps = new HashMap<>();
+//                    maps.put("userFrom", user.getUserFrom());
+//                    maps.put("pushId", pushId);
+//                    maps.put("userPhone", user.getUserPhone());
+//                    ThreadPool pool = ThreadPool.getInstance();
+//                    pool.execute(new DtThread(UserPushUntil.REGISTER, Integer.parseInt(user.getId()), null, new Date(), userService,
+//                            pushUserService, null, maps));
+//                }
+//            } catch (Exception e) {
+//                log.error("insertChanelUserPush error ", e);
+//            }
+            msg = "注册成功";
+            code = "0";
+        } catch (Exception e) {
+            log.error("registerH5 error:", e);
+            code = "500";
+            msg = "系统异常，请稍后再试";
+        } finally {
+            json.put("code", code);
+            json.put("message", msg);
+            json.put("data", dataMap);
             JSONUtil.toObjectJson(response, json.toString());
         }
     }

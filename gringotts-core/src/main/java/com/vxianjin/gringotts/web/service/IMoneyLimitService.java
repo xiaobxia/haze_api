@@ -4,6 +4,6 @@ public interface IMoneyLimitService {
 
     void dealEd(String userId);
 
-    void dealEd(String userId, String gxbToken);
+    void dealEd(String userId, String mxRawUrl, String mxReportUrl, String DataHtmlUrl);
      void testRiskRecord();
 }

@@ -820,11 +820,11 @@ public class UserloanController extends BaseController {
                 if (serviceResult.isSuccessed()) {
 //                    AESUtil aesEncrypt = new AESUtil();
                     // 加密
-                    String checkPassWord = MD5Util.MD5(AESUtil.encrypt(params.get("pay_password"), ""));
+                    /*String checkPassWord = MD5Util.MD5(AESUtil.encrypt(params.get("pay_password"), ""));
                     if (!isTg && !user.getPayPassword().equals(checkPassWord)) {
                         msg = "支付密码错误";
                         return;
-                    }
+                    }*/
 
                     //【2】保存用户借款信息
                     Map<String, Object> map = borrowOrderService.saveLoanV2(params, user);

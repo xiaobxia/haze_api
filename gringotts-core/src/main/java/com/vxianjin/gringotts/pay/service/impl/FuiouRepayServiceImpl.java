@@ -248,12 +248,12 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
 
 //        AESUtil aesEncrypt = new AESUtil();
         //验证用户是否设置了交易密码
-        if (StringUtils.isBlank(needRepayInfo.getUser().getPayPassword())) {
+        /*if (StringUtils.isBlank(needRepayInfo.getUser().getPayPassword())) {
             return new ResponseContent("-101", "请从个人中心完善支付密码");
-        }
-        if (!needRepayInfo.getUser().getPayPassword().equals(MD5Util.MD5(AESUtil.encrypt(payPwd, "")))) {
+        }*/
+        /*if (!needRepayInfo.getUser().getPayPassword().equals(MD5Util.MD5(AESUtil.encrypt(payPwd, "")))) {
             return new ResponseContent("-103", "支付密码输入错误");
-        }
+        }*/
 
         Integer bankId;
         //如果没传则使用默认卡
@@ -319,9 +319,9 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
         } else {
             bankId = Integer.valueOf(bankIdStr);
         }
-        if (null == needRenewalInfo.getUser().getPayPassword()) {
+        /*if (null == needRenewalInfo.getUser().getPayPassword()) {
             return new ResponseContent("-103", "请从个人中心完善支付密码");
-        }
+        }*/
         // 判断费用是否更新
         if (!needRenewalInfo.getAllCount().equals(money)) {
             return new ResponseContent("-101", "您的费用已更新，请刷新当前页面");
@@ -336,9 +336,9 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                 return new ResponseContent("-101", "参数非法！");
             }
         } else {
-            if (!needRenewalInfo.getUser().getPayPassword().equals(MD5Util.MD5(AESUtil.encrypt(payPwd, "")))) {
+            /*if (!needRenewalInfo.getUser().getPayPassword().equals(MD5Util.MD5(AESUtil.encrypt(payPwd, "")))) {
                 return new ResponseContent("-103", "支付密码输入错误");
-            }
+            }*/
         }
         //支付密码验证失败
 //        if (!isPass) {

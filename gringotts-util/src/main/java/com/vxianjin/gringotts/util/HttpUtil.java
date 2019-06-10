@@ -8,6 +8,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -19,10 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -257,6 +255,25 @@ public class HttpUtil {
         conn.setRequestProperty("Content-Type",
                 "multipart/form-data; boundary=" + BOUNDARY);
         return conn;
+    }
+
+    public static InputStream MxGet(String geturl, String Authorization) {
+        InputStream inputStream = null;
+        URL url = null;
+        try {
+            url = new URL(geturl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Authorization", Authorization);
+            connection.connect();
+            connection.disconnect();
+            inputStream = connection.getInputStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return inputStream;
     }
 
     public static String post(String url,JSONObject params) {

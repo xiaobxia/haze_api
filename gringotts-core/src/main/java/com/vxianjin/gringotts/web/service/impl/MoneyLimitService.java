@@ -15,7 +15,6 @@ import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
 import com.vxianjin.gringotts.web.dao.IUserBlackDao;
 import com.vxianjin.gringotts.web.dao.IUserContactsDao;
 import com.vxianjin.gringotts.web.dao.IUserDao;
-import com.vxianjin.gringotts.web.pojo.BorrowOrder;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserBlack;
 import com.vxianjin.gringotts.web.pojo.UserContacts;
@@ -35,10 +34,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Service
 public class MoneyLimitService implements IMoneyLimitService {
@@ -94,7 +93,7 @@ public class MoneyLimitService implements IMoneyLimitService {
     }
 
     @Override
-    public void dealEd(String userId, String gxbToken) {
+    public void dealEd(String userId, String mxRawUrl, String mxReportUrl, String DataHtmlUrl) {
         logger.info(" MoneyLimitService dealEd start");
         logger.info(" MoneyLimitService dealEd userId = " + userId);
 
@@ -112,7 +111,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 put("userId", user_id);
             }});//用户通讯录列表
 
-            String model_name = "taoqianbao_v1";
+            String model_name = "taoqianbao_v2";
             String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
             String mobile = user.getUserName();
             String name = user.getRealname();
@@ -122,22 +121,29 @@ public class MoneyLimitService implements IMoneyLimitService {
             e_contacts.add(new ZhimiEmergencyContact(user.getFirstContactName(), user.getFirstContactPhone()));
             e_contacts.add(new ZhimiEmergencyContact(user.getSecondContactName(), user.getSecondContactPhone()));
 
-            String GXBREPORT = "https://prod.gxb.io/crawler/data/report/%s?appId=%s&timestamp=%s&sign=%s";
+            /*String GXBREPORT = "https://prod.gxb.io/crawler/data/report/%s?appId=%s&timestamp=%s&sign=%s";
             String GXBRAWDATA = "https://prod.gxb.io/crawler/data/rawdata/%s?appId=%s&timestamp=%s&sign=%s";
 
 
-            String GXBDATALIST = "https://prod.gxb.io/datalist.html?timestamp=%s&appId=%s&sign=%s&token=%s&isReport=true";
-            String timestamp = new Date().getTime()+"";
-            String md5Hex = DigestUtils.md5Hex(String.format("%s%s%s", this.appId, this.appSecret, timestamp));
-            String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
+            String GXBDATALIST = "https://prod.gxb.io/datalist.html?timestamp=%s&appId=%s&sign=%s&token=%s&isReport=true";*/
+            //String timestamp = new Date().getTime()+"";
+            //String md5Hex = DigestUtils.md5Hex(String.format("%s%s%s", this.appId, this.appSecret, timestamp));
+            /*String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
             String rawDataUrl = String.format(GXBRAWDATA, gxbToken, this.appId, timestamp, md5Hex);
-            String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);
-            String gxb_report = HttpUtil.post(reportUrl, null);
-            String gxb_raw = HttpUtil.post(rawDataUrl, null);
+            String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);*/
+            String Authorization = "token f804d496d42c46a5882b1b5f18b6dc7f";
+            String gxb_report = null;
+            String gxb_raw = null;
+            try {
+                gxb_report = ZhimiUtils.uncompress(HttpUtil.MxGet(mxReportUrl, Authorization));
+                gxb_raw = ZhimiUtils.uncompress(HttpUtil.MxGet(mxRawUrl, Authorization));
+            } catch (IOException e) {
+                logger.info("MoneyLimitService dealEd IOException" + e.getMessage());
+            }
 
             Map<String, String> carrier_data = new HashMap<String, String>();
-            carrier_data.put("gxb_report", gxb_report);
-            carrier_data.put("gxb_raw", gxb_raw);
+            carrier_data.put("mx_report", gxb_report);
+            carrier_data.put("mx_raw", gxb_raw);
 
             List<ZhimiContact> contact = userContacts.stream().map(uc -> new ZhimiContact(uc.getContactName(), uc.getContactPhone(), DateUtil.formatDate(uc.getCreateTime(), "yyyy-MM-dd HH:mm:ss"))).collect(Collectors.toList());
 
@@ -169,7 +175,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                     riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
                     riskRecord.setReturnInfo(jsonObject.getString("return_info"));
                     riskRecord.setGxbReportUrl(DataHtmlUrl);
-                    riskRecord.setGxbToken(gxbToken);
+                    riskRecord.setGxbToken("");
                     riskRecord.setScore(jsonObject.getInteger("score"));
                     riskRecord.setCreateTime(new Date());
                     userDao.saveRiskRecord(riskRecord);
@@ -210,6 +216,15 @@ public class MoneyLimitService implements IMoneyLimitService {
 
         logger.info(" MoneyLimitService dealEd end");
     }
+
+    /*public static void main(String[] args) throws IOException {
+        String Authorization = "token f804d496d42c46a5882b1b5f18b6dc7f";
+
+        InputStream authorization = HttpUtil.MxGet("https://api.51datakey.com/carrier/v3/mobiles/15355492802/mxdata-ex?task_id=e1340850-8b57-11e9-b99a-00163e0e5886", Authorization);
+
+        System.out.println("===" + ZhimiUtils.uncompress(authorization));
+
+    }*/
 
     @Override
     public void testRiskRecord(){

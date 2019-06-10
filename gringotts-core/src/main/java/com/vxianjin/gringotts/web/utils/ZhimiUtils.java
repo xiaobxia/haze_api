@@ -16,12 +16,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class ZhimiUtils  {
@@ -47,6 +45,25 @@ public class ZhimiUtils  {
             }
         }
         return out.toByteArray();
+    }
+
+    public static String uncompress(InputStream gzippedResponse) throws IOException {
+
+        InputStream decompressedResponse = new GZIPInputStream(gzippedResponse);
+        Reader reader = new InputStreamReader(decompressedResponse, "UTF-8");
+        StringWriter writer = new StringWriter();
+
+        char[] buffer = new char[10240];
+        for(int length = 0; (length = reader.read(buffer)) > 0;){
+            writer.write(buffer, 0, length);
+        }
+
+        writer.close();
+        reader.close();
+        decompressedResponse.close();
+        gzippedResponse.close();
+
+        return writer.toString();
     }
 
     public static byte[] compress(String str) throws IOException {

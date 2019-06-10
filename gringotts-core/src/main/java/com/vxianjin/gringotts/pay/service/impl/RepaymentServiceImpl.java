@@ -556,6 +556,11 @@ public class RepaymentServiceImpl implements RepaymentService {
             }
         }
     }
+/*
+    public static void main(String[] args) {
+        Date date = DateUtil.addDay(DateUtil.addDay(new Date(), 0), 5 - 1);
+        System.out.println(date.toLocaleString());
+    }*/
 
     @Override
     public void updateRenewalByPrimaryKey(Repayment re) {
