@@ -221,7 +221,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
     }
 
     @Override
-    public boolean addOrUpdateUserQuotaSnapShot(int userId, int productId) {
+    public boolean addOrUpdateUserQuotaSnapShot(int userId, int productId, int orderId) {
         // TODO 表设计有问题，不需要这个productId,如果去除逻辑需要修改,也不需要获取产品线，表设计有毒
         // 获取现在额度产品线
         BorrowProductConfig nowProductConfig = borrowProductConfigService.queryProductById(productId);
@@ -229,8 +229,15 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
         int borrowDay = nowProductConfig.getBorrowDay();
 
 
+        BorrowOrder oneBorrow = borrowOrderService.findOneBorrow(orderId);
+        Integer oldProductId = oneBorrow.getProductId();
+        BorrowProductConfig oldProductConfig = borrowProductConfigService.queryProductById(oldProductId);
+        String oldNowLimit = oldProductConfig.getBorrowAmount().toString();
+        int oldBorrowDay = oldProductConfig.getBorrowDay();
+
         // 判断是否存在
-        UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, borrowDay, nowLimit);
+        //UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, borrowDay, nowLimit);
+        UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, oldBorrowDay, oldNowLimit);
         // 以前有则跟新，没有则插入
         if (userQuotaSnapshot != null) {
             log.info("update user qupta ,nowProductConfig " + nowProductConfig.getId() + " nowLimit :" + nowLimit + " agoLimit:" + userQuotaSnapshot.getUserAmountLimit() + " lastUpdateTime:" + DateUtil.formatDate(userQuotaSnapshot.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
@@ -470,7 +477,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                     // 用户额度
                     String userLimit = userLimits.get(key);
                     // 更新到用户额度表中，并将用户额度信息变更记录存入变更记录表中
-                    addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key));
+                    addOrUpdateUserQuotaSnapShot(userId, Integer.valueOf(key), orderId);
 
                     if (Integer.parseInt(nowLimit) < Integer.parseInt(userLimit)) {
                         nowLimit = userLimit;
