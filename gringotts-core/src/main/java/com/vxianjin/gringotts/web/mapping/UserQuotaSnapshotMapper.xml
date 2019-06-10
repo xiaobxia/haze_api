@@ -219,6 +219,6 @@
     <select id="queryByUserIdBorrowDay" resultMap="BaseResultMap">
       select id, user_id, borrow_product_id, deal_flag, remark,user_amount_limit,borrow_day,update_time
       from user_borrowquota_snapshot
-      where user_id = #{userId} and deal_flag = 'n' and borrow_day = #{borrowDay} and borrow_amount = #{nowLimit}
+      where user_id = #{userId} and deal_flag = 'n' and borrow_day = #{borrowDay} and user_amount_limit = #{nowLimit} order by update_time limit 0,1
     </select>
 </mapper>
