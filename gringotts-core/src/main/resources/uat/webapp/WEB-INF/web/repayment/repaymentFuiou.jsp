@@ -88,24 +88,6 @@
 
 </div>
 
-<div class="popup" id="defray_withhold" style="display:none">
-    <div class="overlay"></div>
-    <div class="dialog">
-        <span class="close"></span>
-        <h2>还款总额</h2><h1><fmt:formatNumber pattern='###,###,##0.00' value="${(repayment.repaymentAmount - repayment.repaymentedAmount) / 100.00}"/>元</h1>
-        <p class="clearfix">
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-        </p>
-        <p class="error-tips" id="error_tip_withhold"></p>
-        <input name="" type="number" value="" pattern="\d*"/>
-    </div>
-</div>
-
 <form action="" method="post"  id="payPath" style="display: none;">
     <input type="text" name="VERSION" id="VERSION">
     <input type="text" name="MCHNTCD" id="MCHNTCD">
@@ -213,70 +195,20 @@
 
         //密码弹窗
         $('#mima-btn-1').click(function(event) {
-            // if(checkSmsCode() && checkRequestNo()){
-            //     $('#defray_withhold').show();
-            //     $('#defray_withhold i').removeClass('point');
-            //     $('#defray_withhold input').val('').focus();
-            //     $('#error_tip_withhold').html('');
-            // }
-            $('#defray_withhold').show();
-            $('#defray_withhold i').removeClass('point');
-            $('#defray_withhold input').val('').focus();
-            $('#error_tip_withhold').html('');
-        });
-
-        $('#defray_withhold .close').click(function(event){
-            $('#defray_withhold').hide();
-        });
-
-        $('#defray_withhold p').click(function(event){
-            $('#defray_withhold input').focus();
-        });
-
-        $('#defray_withhold input').focus(function(){
-            var interval = setInterval(function(){
-                if(document.activeElement.nodeName == 'INPUT'){
-                    $('#defray_withhold .dialog').css({top:0,marginTop:0});
+            show_loading("正在支付中，请稍等")
+            $.post('${path}/fuiou/repayWithholdConfirm', {id:'${bo.id}',bankId: gloabelBank_id,payPwd:'123456'} , function(data){
+                if(data.code == "-103"){
+                    hide_loading();
+                    $.mvalidateTip(data.msg);
+                }else if(data.code == "0"){
+                    //启动轮询
+                    query_result("${bo.id}",data.msg);
                 }else{
-                    $('#defray_withhold .dialog').attr('style','');
-                    if (interval) {
-                        clearInterval(interval);
-                        interval = null;
-                    }
+                    hide_loading();
+                    $.mvalidateTip(data.msg);
                 }
-            },500);
+            });
         });
-
-        $('#defray_withhold input').bind('input',function(event){
-            var input = $(this);
-            var val = input.val();
-            $('#defray_withhold i').removeClass('point');
-            for(var i = 0; i < val.length; i++){
-                $('#defray_withhold i').eq(i).addClass('point');
-            }
-            if (val.length >= 6){
-                input.val(val.slice(0,6));
-                $('#error_tip_withhold').html("正在支付中，请稍等");
-                show_loading("正在支付中，请稍等")
-                $.post('${path}/fuiou/repayWithholdConfirm', {id:'${bo.id}',bankId: gloabelBank_id,payPwd:input.val()} , function(data){
-                    input.val("");
-                    if(data.code == "-103"){
-                        hide_loading();
-                        $('#error_tip_withhold').html(data.msg);
-                        $.mvalidateTip(data.msg);
-                    }else if(data.code == "0"){
-                        $('#defray_withhold').hide();
-                        //启动轮询
-                        query_result("${bo.id}",data.msg);
-                    }else{
-                        $('#defray_withhold').hide();
-                        hide_loading();
-                        $.mvalidateTip(data.msg);
-                    }
-                    $('#defray_withhold i').removeClass('point');
-                });
-            }
-        })
     });
     //判断短信验证码
     function checkSmsCode() {
