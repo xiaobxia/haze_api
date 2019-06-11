@@ -1,5 +1,7 @@
 package com.vxianjin.gringotts.web.controller;
 
+import com.vxianjin.gringotts.pay.model.UserQuotaSnapshot;
+import com.vxianjin.gringotts.pay.service.UserQuotaSnapshotService;
 import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.json.JSONUtil;
@@ -19,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import redis.clients.jedis.JedisCluster;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -41,6 +44,8 @@ public class UserBanKController extends BaseController {
     private IUserService userService;
     @Autowired
     private IUserDao userDao;
+    @Resource
+    private UserQuotaSnapshotService userQuotaSnapshotService;
 
     /**
      * 查询银行列表
@@ -246,6 +251,13 @@ public class UserBanKController extends BaseController {
                         listMap.put("mobile_status", 1);
                     } else {
                         listMap.put("mobile_status", 0);
+                    }
+
+                    List<UserQuotaSnapshot> userQuotaSnapshots = userQuotaSnapshotService.getUserQuotaSnapshotByUser(user);
+                    if (userQuotaSnapshots.size() > 0) {
+                        listMap.put("loan_amount", userQuotaSnapshots.get(0).getUserAmountLimit());
+                        listMap.put("loan_day", userQuotaSnapshots.get(0).getBorrowDay());
+                        listMap.put("loan_productId", userQuotaSnapshots.get(0).getBorrowProductId());
                     }
 
                     map.put("item", listMap);

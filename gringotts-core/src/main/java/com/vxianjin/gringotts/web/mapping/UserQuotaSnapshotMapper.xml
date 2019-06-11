@@ -183,7 +183,7 @@
   </select>
 
     <select id="queryByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
-      select id, user_id, borrow_product_id, deal_flag, remark
+      select id, user_id, borrow_product_id, deal_flag, remark, user_amount_limit, borrow_day
       from user_borrowquota_snapshot
       where user_id = #{userId} and deal_flag = 'n'
   </select>
