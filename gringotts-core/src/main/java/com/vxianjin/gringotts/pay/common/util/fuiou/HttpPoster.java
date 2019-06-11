@@ -284,8 +284,8 @@ public class HttpPoster {
 				Protocol.registerProtocol("https", myhttps);
 			}
 			httpclient = new HttpClient(new HttpClientParams(), new SimpleHttpConnectionManager(true));
-			httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(1000 * 10);
-			httpclient.getHttpConnectionManager().getParams().setSoTimeout(1000 * 10);//设读取数据超时时间
+			httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(1000 * 30);
+			httpclient.getHttpConnectionManager().getParams().setSoTimeout(1000 * 30);//设读取数据超时时间
 			xmlpost = new PostMethod(url);
 			httpclient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, charset);
 			httpclient.getParams().setContentCharset(charset);

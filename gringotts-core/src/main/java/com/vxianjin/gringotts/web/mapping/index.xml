@@ -293,9 +293,8 @@
 			td_status as tdStatus
 			from user_info
 			where id=#{USER_ID}
-			and status=1
 		]]>
-    </select>
+    </select><!--and status=1-->
     <select id="searchUserInfoOld" parameterType="HashMap" resultType="com.vxianjin.gringotts.web.pojo.UserInfoOld">
         <![CDATA[
 			select 
