@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -103,41 +104,46 @@ public class FuiouApiUtil {
      * @return map
      * @throws IOException ex
      */
-    public static Map<String, Object> FuiouOD(String APIFMS, String uri) throws Exception {
+    public static Map<String, Object> FuiouOD(String APIFMS, String uri) {
         Map<String, Object> result = new HashMap<>();
-        Map<String,String> map = new HashMap<String, String>();
-        APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
-        map.put("MCHNTCD",FuiouConstants.API_MCHNT_CD);
-        map.put("APIFMS", APIFMS);
-        String res = new HttpPoster(uri).postStr(map);
-        res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+        try {
+            Map<String,String> map = new HashMap<String, String>();
+            APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+            map.put("MCHNTCD",FuiouConstants.API_MCHNT_CD);
+            map.put("APIFMS", APIFMS);
+            String res = new HttpPoster(uri).postStr(map);
 
-        NewProtocolOrderResponse response = XMapUtil.parseStr2Obj(NewProtocolOrderResponse.class, res);
+            res = DESCoderFUIOU.desDecrypt(res,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
 
-        logger.info("请求FUIOU-OD之后结果：{}",response.toString());
-        // 对结果进行处理
-        if (!"0000".equals(response.getResponseCode()) && !"P000".equals(response.getResponseCode())) {
-            if (response.getResponseMsg() != null){
-                result.put("errorcode", response.getResponseCode());
-                result.put("errormsg", response.getResponseMsg());
-                logger.info("错误明细:{}",response.getResponseMsg());
-                logger.info("系统处理异常结果:{}",result);
-                return result;
+            NewProtocolOrderResponse response = XMapUtil.parseStr2Obj(NewProtocolOrderResponse.class, res);
+
+            logger.info("请求FUIOU-OD之后结果：{}",response.toString());
+            // 对结果进行处理
+            if (!"0000".equals(response.getResponseCode()) && !"P000".equals(response.getResponseCode())) {
+                if (response.getResponseMsg() != null){
+                    result.put("errorcode", response.getResponseCode());
+                    result.put("errormsg", response.getResponseMsg());
+                    logger.info("错误明细:{}",response.getResponseMsg());
+                    logger.info("系统处理异常结果:{}",result);
+                    return result;
+                }
             }
-        }
-        // 成功则进行相关处理
-        if ("P000".equals(response.getResponseCode())) {//支付处理中
-            result.put("status", "P000");
-            result.put("fuiouOrderId", response.getOrderId());
-            result.put("requestNo", response.getMchntOrderId());
-            logger.info("response.getResult:{}",result);
-        }
+            // 成功则进行相关处理
+            if ("P000".equals(response.getResponseCode())) {//支付处理中
+                result.put("status", "P000");
+                result.put("fuiouOrderId", response.getOrderId());
+                result.put("requestNo", response.getMchntOrderId());
+                logger.info("response.getResult:{}",result);
+            }
 
-        if ("0000".equals(response.getResponseCode())) {//直接成功，不用等待回调
-            result.put("status", "0000");
-            result.put("fuiouOrderId", response.getOrderId());
-            result.put("requestNo", response.getMchntOrderId());
-            logger.info("response.getResult:{}",result);
+            if ("0000".equals(response.getResponseCode())) {//直接成功，不用等待回调
+                result.put("status", "0000");
+                result.put("fuiouOrderId", response.getOrderId());
+                result.put("requestNo", response.getMchntOrderId());
+                logger.info("response.getResult:{}",result);
+            }
+        } catch (Exception e) {
+            logger.info("FuiouOD. error:{}, errormsg:{}",result, e);
         }
         return result;
     }
