@@ -1119,6 +1119,7 @@ public class UserLoginController extends BaseController {
             msg = "系统异常，请稍后再试";
             log.error("registerV211 error:", e);
         } finally {
+            //jedisCluster.del(request.getParameter("RCaptchaKey"));
             delCheckForFront(registerUserCheck, userPhone);
             dataMap.put("item", resultMap);
             json.put("code", code);
@@ -4882,7 +4883,7 @@ public class UserLoginController extends BaseController {
             String captcha = jedisCluster.get(captchaKey);
             log.info("RCaptchaKey=" + captchaKey + " captcha1=" + captcha + "   captcha2=" + request.getParameter("captcha").toLowerCase());
             if (captcha != null && captcha.equals(request.getParameter("captcha").toLowerCase())) {
-                jedisCluster.del(captchaKey);
+                //jedisCluster.del(captchaKey);
                 return true;
             } else {
                 return false;
