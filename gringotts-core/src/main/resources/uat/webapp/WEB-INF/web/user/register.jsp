@@ -24,7 +24,7 @@
     body,h4,html,i,li,p,ul,input{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;border:none;}
     *{margin:0;padding:0;-webkit-user-select:auto;outline:none;}
     input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
-    .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;min-height: 100vh;}
+    .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;}
     .regist-bg .register{background-color:#fff;border-radius:10px;padding:20px 30px;}
     .regist-bg .banner-txt{margin:0 0 0;padding-top:7%}
     .regist-bg .banner-txt p{font-size:26px;text-align:center;color:#fff;letter-spacing:.8px}
@@ -33,14 +33,14 @@
     .regist-bg .banner-desc{margin: 35px 0 15px;}
     .regist-bg .banner-desc p{font-size:18px;color:#fff;text-align:center;line-height:36px}
     .regist-bg .banner-desc p span {font-size: 21px;margin: 0 2px;}
-    .regist-bg .register li{position:relative;border:1px solid #c4c4c4;box-shadow:none;border-radius:2px;padding:0 15px;font-size: 16px;}
+    .regist-bg .register li{position:relative;box-shadow:none;border-radius:2px;font-size: 16px;}
     .regist-bg .register li:not(:last-child) {margin-bottom:16px;}
     .regist-bg .register li input::-webkit-input-placeholder {color: #bbb;}
     .regist-bg .register .com-btn{background:#ff7700;display:block;width:200px;height:44px;color:#fff;font-size:16px;line-height:44px;text-align:center;text-decoration:none;border-radius:35px;margin: 0 auto 15px;}
-    .regist-bg .register li input{font-size:14px;font-weight: 300;padding:0;height:45px;line-height:45px;display:block;width:100%}
+    .regist-bg .register li input{font-size:14px;font-weight: 300;padding:0 10px;height:45px;line-height:45px;display:block;width:100%;border: 1px solid #aaa;border-radius: 8px;box-sizing: border-box;}
     .regist-bg .register li .pst00{position:absolute;top:0;right:0}
     .regist-bg .register li .gain-yzm{font-size:16px;color:#FF1400;line-height:45px;right:10px;}
-    .regist-bg .register li .captcha-pic{width:128px;height:auto;position:absolute;top:0;right:0}
+    .regist-bg .register li .captcha-pic{width:40%;height:100%;position:absolute;top:0;right:0}
     .regist-bg .register .odds{font-size:0;text-align:center;display:table;width: 100%;}
     .regist-bg .register .odds>li{display:table-cell;border:none;width:24%;padding:0}
     .regist-bg .register .odds>li:not(:last-child){margin-right:2rem}
@@ -144,19 +144,18 @@
                         <li>
                             <input type="text" placeholder="注册手机号" onfocus="trackEvenUserPhone()" data-role="none" name="userPhone" id="userPhone">
                         </li>
-                        <!--<li style="padding: 0;">
-                            <%--<input type="hidden" name="RCaptchaKey" id="RCaptchaKey" value="${RCaptchaKey}">--%>
-                            <%--<input type="text" placeholder="请输入图形验证码" onclick="trackEvenCaptcha()" data-role="none" name="captcha" id="captcha" style="width: 50%">--%>
-                            <%--<img id="imgCap" class="pst00 captcha-pic" src="<%=path %>/captcha.svl?RCaptchaKey=${RCaptchaKey}" onclick="this.src='<%=request.getContextPath() %>/captcha.svl?RCaptchaKey=${RCaptchaKey}&d='+new Date()*1" valign="bottom" alt="点击更新" title="点击更新">&ndash;%&gt;--%>
-                            <div class="l-captcha" data-site-key="909f06dfef67bd8309dc1b5bdca5ff7f" data-width="100%" data-callback="getResponse"></div>
-                        </li>-->
+                        <li id="imgCodeWrap">
+                            <input type="hidden" name="RCaptchaKey" id="RCaptchaKey">
+                            <input type="text" placeholder="请输入图形验证码" data-role="none" name="captcha" id="captcha" style="width: 60%">
+                            <!--<div class="l-captcha" data-site-key="909f06dfef67bd8309dc1b5bdca5ff7f" data-width="100%" data-callback="getResponse"></div>-->
+                        </li>
                         <li>
                             <input type="text" placeholder="收到的验证码" data-role="none" name="smsCode" id="smsCode">
                             <div class="gain-yzm pst00" id="sendcode">获取验证码</div>
                         </li>
-                        <li>
+                        <!--<li>
                             <input type="password" placeholder="设置密码" data-role="none" name="passWord" id="passWord">
-                        </li>
+                        </li>-->
                     </ul>
                     <input type="hidden" placeholder="邀请码" data-role="none" name="invite_code" id="invite_code" value="${invite_code}">
 
@@ -321,6 +320,25 @@
         return "3"
     }
 
+    function renderImgCode() {
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            timeout: 30000,
+            url: "${path}/credit-user/r-captcha-key",
+            success: function(data) {
+                $('#RCaptchaKey').val(data.data.item.RCaptchaKey)
+                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="'+ data.data.item.captchaUrl+'">')
+                console.log(data)
+            },
+            error: function(error) {
+                showLoader($(".error-popop"),"服务出错",800);
+            }
+        });
+    }
+
+    renderImgCode()
+
     function baseAjax(urlStr,dataParm,callback,asyncFlag){
         if(asyncFlag == undefined || asyncFlag == null){
             asyncFlag = true;
@@ -385,20 +403,12 @@
             showLoader($(".error-popop"),'手机号格式不对',800);
             LUOCAPTCHA.reset();
             return;
-        }else if(!checkVar(passWord)){
-            showLoader($(".error-popop"),'请输入密码',800);
-            LUOCAPTCHA.reset();
-            return;
         }else if(!checkVar(smsCode)){
             showLoader($(".error-popop"),'请输入手机验证码',800);
             LUOCAPTCHA.reset();
             return;
-        }else if(passWord.length<6){
-            showLoader($(".error-popop"),'密码必须大于等于6位!',800);
-            LUOCAPTCHA.reset();
-            return;
         }
-        var url = "${path}/act/light-loan-xjx/register";
+        var url = "${path}/act/light-loan-xjx/new-register";
         var param = {
             phone:userPhone,
             code:smsCode,
@@ -516,13 +526,29 @@
                 LUOCAPTCHA.reset();
                 return;
             }
+            if (!captcha) {
+                showLoader($(".error-popop"),'请输入验证码',800);
+                LUOCAPTCHA.reset();
+            }
             /*else if(!checkVar(validateCode)) {
                 showLoader($(".error-popop"),'请先进行人机验证！',800);
             }*/
             else {
                 var data = {};
                 data.phone = phone;
-                baseAjax('${path}/act/light-loan-xjx/registerCode?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsCallBack);
+                data.captcha = captcha;
+                data.RCaptchaKey = RCaptchaKey;
+                $.ajax({
+                    type: "GET",
+                    dataType: 'json',
+                    timeout: 30000,
+                    url: '${path}/credit-user/new-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode,
+                    success: checksendSmsCallBack,
+                    error: function(error) {
+                        showLoader($(".error-popop"),"服务出错",800);
+                    }
+                });
+                // baseAjax('${path}/credit-user/new-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsCallBack);
             }
         });
 
@@ -533,7 +559,7 @@
             } else{
                 if( data.message == '手机号码已被注册' ) {
                     LUOCAPTCHA.reset();
-//                    $("#imgCap").trigger("click");
+                    // $("#imgCap").trigger("click");
                     $('.registered-popup').fadeIn();
                     $('.registered-popup').find('.data-msg').text(data.message)
                 }else{
@@ -595,7 +621,7 @@
             if (voiceWait != 60) {return;}
             var data = {};
             data.phone = phone;
-            baseAjax('${path}/act/light-loan-xjx/getsmsvoicecode?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsVoiceCallBack);
+            // baseAjax('${path}/act/light-loan-xjx/getsmsvoicecode?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsVoiceCallBack);
         });
         function checksendSmsVoiceCallBack(data) {
             if (data.code == '0') {
