@@ -559,7 +559,6 @@
         }
 
         function checksendSmsCallBack(data){
-            reInitCodeImg()
             if (data.code == '0') {
                 showLoader($(".error-popop"),"短信已发送",800);
                 time();
