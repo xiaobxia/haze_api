@@ -438,7 +438,7 @@ public class RepayService {
         renewalRecord.setStatus(RenewalRecord.STATUS_PAYING);//付款中状态
         renewalRecord.setMoneyAmount(needRenewalInfo.getRepayment().getRepaymentPrincipal() + needRenewalInfo.getRepayment().getRepaymentInterest());//借款总金额
 //        renewalRecord.setRepaymentTime(DateUtil.addDay(re.getRepaymentTime(), bo.getLoanTerm()));//续期后预期还款时间
-        renewalRecord.setRepaymentTime(DateUtil.addDay(DateUtil.addDay(needRenewalInfo.getRepayment().getRepaymentTime(), needRenewalInfo.getRepayment().getLateDay()), renewalRecord.getRenewalDay()));//续期后预期还款时间
+        renewalRecord.setRepaymentTime(DateUtil.addDay(DateUtil.addDay(needRenewalInfo.getRepayment().getRepaymentTime(), needRenewalInfo.getRepayment().getLateDay()), renewalRecord.getRenewalDay() - 1));//续期后预期还款时间
         renewalRecordService.insertSelective(renewalRecord);
         return renewalRecord;
     }
