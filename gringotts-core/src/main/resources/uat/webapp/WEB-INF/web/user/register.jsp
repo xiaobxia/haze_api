@@ -328,7 +328,7 @@
             url: "${path}/credit-user/r-captcha-key",
             success: function(data) {
                 $('#RCaptchaKey').val(data.data.item.RCaptchaKey)
-                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="'+ data.data.item.captchaUrl+'">')
+                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="'+ data.data.item.captchaUrl+'&tp=1">')
                 console.log(data)
             },
             error: function(error) {
@@ -545,6 +545,7 @@
                     url: '${path}/credit-user/new-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode,
                     success: checksendSmsCallBack,
                     error: function(error) {
+                        reInitCodeImg()
                         showLoader($(".error-popop"),"服务出错",800);
                     }
                 });
@@ -552,7 +553,13 @@
             }
         });
 
+        function reInitCodeImg() {
+            var src = $('#imgCap').attr('src')
+            $('#imgCap').attr('src', src + parseInt(Math.random() * 10))
+        }
+
         function checksendSmsCallBack(data){
+            reInitCodeImg()
             if (data.code == '0') {
                 showLoader($(".error-popop"),"短信已发送",800);
                 time();
