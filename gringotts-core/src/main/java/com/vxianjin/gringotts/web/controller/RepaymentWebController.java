@@ -450,7 +450,7 @@ public class RepaymentWebController extends BaseController {
             // 待还总金额
             Long waitRepay = re.getRepaymentAmount() - re.getRepaymentedAmount();
             // 待还滞纳金
-            Long waitLate = Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
+            Long waitLate = productConfig.getLateFee().multiply(BigDecimal.valueOf(re.getLateDay())).longValue();//Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
             // 待还本金
             Long waitAmount = waitRepay - waitLate;
             // 续期费

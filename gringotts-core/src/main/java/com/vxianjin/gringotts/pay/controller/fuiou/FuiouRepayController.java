@@ -150,9 +150,9 @@ public class FuiouRepayController extends BaseController {
         if (id == null || money <= 0) {
             return new ResponseContent("-101", "请求参数非法");
         }
-        if (StringUtils.isBlank(payPwd)) {
+        /*if (StringUtils.isBlank(payPwd)) {
             return new ResponseContent("-101", "请输入交易密码");
-        }
+        }*/
         //成立提示
         if (renewalRecordService.borrowOrderRenewalRecordFlag(id)) {
             return new ResponseContent("-101", "续期次数超过限制");
