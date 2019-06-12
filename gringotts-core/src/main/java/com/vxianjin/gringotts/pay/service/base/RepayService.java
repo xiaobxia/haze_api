@@ -316,7 +316,7 @@ public class RepayService {
         Integer loanApr = extend.getExtendMoney();//bo.getRenewalFee().intValue();
 
         //总服务费（待还总金额 + 待还滞纳金 + 服务费）
-        Long allCount = waitRepay;//extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
+        Long allCount = extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
 
         User user = userService.searchByUserid(bo.getUserId());//借款用户信息
 

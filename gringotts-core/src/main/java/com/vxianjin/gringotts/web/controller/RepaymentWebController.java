@@ -450,13 +450,13 @@ public class RepaymentWebController extends BaseController {
             // 待还总金额
             Long waitRepay = re.getRepaymentAmount() - re.getRepaymentedAmount();
             // 待还滞纳金
-            Long waitLate = productConfig.getLateFee().multiply(BigDecimal.valueOf(re.getLateDay())).longValue();//Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
+            Long waitLate = Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));//productConfig.getLateFee().multiply(BigDecimal.valueOf(re.getLateDay())).longValue();
             // 待还本金
             Long waitAmount = waitRepay - waitLate;
             // 续期费
             Integer loanApr = extend.getExtendMoney();
 
-            Long allCount = waitRepay;//extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
+            Long allCount = extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
             //用户银行卡信息
             UserCardInfo info = userService.findUserBankCard(bo.getUserId());
             info.setCard_no(info.getCard_no().substring(info.getCard_no().length() - 4));

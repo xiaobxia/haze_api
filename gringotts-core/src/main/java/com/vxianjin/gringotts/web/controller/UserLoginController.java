@@ -973,6 +973,7 @@ public class UserLoginController extends BaseController {
             // APP名称
             String appName = request.getParameter("appName");
             String clientType = request.getParameter("clientType");
+            String captcha = request.getParameter("captcha");
             // 手机验证
             if (StringUtils.isBlank(userPhone)) {
                 msg = "手机号不能为空。";
@@ -982,6 +983,11 @@ public class UserLoginController extends BaseController {
             // 手机验证码验证
             if (StringUtils.isBlank(smsCode)) {
                 msg = "手机验证码不能为空。";
+                return;
+            }
+
+            if (!validateSubmitAPP(request, response)) {
+                msg = "图形验证码错误";
                 return;
             }
 
