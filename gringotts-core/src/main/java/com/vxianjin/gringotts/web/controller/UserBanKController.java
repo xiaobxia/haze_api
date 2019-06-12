@@ -103,6 +103,8 @@ public class UserBanKController extends BaseController {
             User logUser = this.loginFrontUserByDeiceId(request);
             if (logUser != null) {
 
+                String bankStatus = "1";
+
                 User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
                 //认证需求列表
                 List<UserCertification> mapList = userService.findCerticationList();
@@ -178,6 +180,7 @@ public class UserBanKController extends BaseController {
                                         idCard = info.getBankName() + "(" + idCard + ")";
                                     }
                                     resultMap.put("operator", "<font color=\"#ff5145\" size=\"3\">" + idCard + "</font>");
+                                    bankStatus = "2";
                                 }
                             } else {
                                 resultMap.put("operator", "<font color=\"#ff5145\" size=\"3\">已填写</font>");
@@ -253,8 +256,15 @@ public class UserBanKController extends BaseController {
                         listMap.put("mobile_status", 0);
                     }
 
+                    if ("2".equals(bankStatus)) {
+                        listMap.put("bank_status", 1);
+                    } else {
+                        listMap.put("bank_status", 0);
+                    }
+
                     List<UserQuotaSnapshot> userQuotaSnapshots = userQuotaSnapshotService.getUserQuotaSnapshotByUser(user);
-                    if (userQuotaSnapshots.size() > 0) {
+
+                    if (Integer.parseInt(user.getAmountAvailable())!=0 && userQuotaSnapshots.size() > 0) {
                         listMap.put("loan_amount", userQuotaSnapshots.get(0).getUserAmountLimit());
                         listMap.put("loan_day", userQuotaSnapshots.get(0).getBorrowDay());
                         listMap.put("loan_productId", userQuotaSnapshots.get(0).getBorrowProductId());
