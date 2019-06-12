@@ -456,7 +456,7 @@ public class RepaymentWebController extends BaseController {
             // 续期费
             Integer loanApr = extend.getExtendMoney();
 
-            Long allCount = extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
+            Long allCount = waitRepay;//extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
             //用户银行卡信息
             UserCardInfo info = userService.findUserBankCard(bo.getUserId());
             info.setCard_no(info.getCard_no().substring(info.getCard_no().length() - 4));
