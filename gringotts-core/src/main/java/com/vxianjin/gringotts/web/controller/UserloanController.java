@@ -103,6 +103,7 @@ public class UserloanController extends BaseController {
         queryMap.put("userId",userId);
         queryMap.put("borrowAmount",String.valueOf(money * 100));
         queryMap.put("borrowDay",period);
+        queryMap.put("borrowProductId",String.valueOf(productId));
 
         //【2】判断该产品线是否存在
         BorrowProductConfig config;
