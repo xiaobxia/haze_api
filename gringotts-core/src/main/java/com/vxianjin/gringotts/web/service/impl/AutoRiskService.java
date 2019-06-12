@@ -183,42 +183,43 @@ public class AutoRiskService implements IAutoRiskService {
             changeLimitMoney(assetBorrowId);
         } else {
             logger.info("userId={}不是黑名单用户，进入下一步，当前是否开启机审{}, re={}", userId, result, re);
-            if (StringUtils.isBlank(result) && result.equals("0") && re == 30){
-                //-3:初审驳回
-                loanStatus = BorrowOrder.STATUS_CSBH;
-                //审核失败恢复可借额度
-                changeLimitMoney(assetBorrowId);
-            } else if(((StringUtils.isBlank(result) && result.equals("0")) || (userBrowserSource != null && userBrowserSource == 0)) && re == 10) {
-                logger.info("userId={}不是黑名单用户，也没有被上一步驳回，进入下一步，当前是否开启机审{},用户来源是否为QQ微信{}, re={}", userId, result, userBrowserSource, re);
-                if (advice) {
-                    Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
-                    int time = c.get(Calendar.HOUR_OF_DAY);
-
-
-                    //此时系统选择为机审
-                    if (time > 20 || time < 9) {
-                        loanStatus = BorrowOrder.STATUS_AI;
-                    } else {
-                        loanStatus = BorrowOrder.STATUS_AI;
-
-                        Map<String, String> map = new HashMap<>();
-
-                        User user = userDao.searchByUserid(userId);
-                        map.put("phone", user.getUserPhone());
-                        map.put("name", user.getRealname());
-                        RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
-                    }
-                    //22:放款中
-                    //复审备注信息
-                    borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
-                    borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
-                    //}
-                } else {
+            if (StringUtils.isBlank(result) && result.equals("0")) {//开启机审
+                if (re == 30){
                     //-3:初审驳回
                     loanStatus = BorrowOrder.STATUS_CSBH;
                     //审核失败恢复可借额度
                     changeLimitMoney(assetBorrowId);
+                } else if(userBrowserSource != null && userBrowserSource == 0 && re == 10) {
+                    logger.info("userId={}不是黑名单用户，也没有被上一步驳回，进入下一步，当前是否开启机审{},用户来源是否为QQ微信{}, re={}", userId, result, userBrowserSource, re);
+                    if (advice) {
+                        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+                        int time = c.get(Calendar.HOUR_OF_DAY);
 
+                        //此时系统选择为机审
+                        if (time > 20 || time < 9) {
+                            loanStatus = BorrowOrder.STATUS_AI;
+                        } else {
+                            loanStatus = BorrowOrder.STATUS_AI;
+
+                            Map<String, String> map = new HashMap<>();
+
+                            User user = userDao.searchByUserid(userId);
+                            map.put("phone", user.getUserPhone());
+                            map.put("name", user.getRealname());
+                            RocketMqUtil.sendAiMessage(JSON.toJSONString(map));
+                        }
+                        //22:放款中
+                        //复审备注信息
+                        borrowOrderAutoRisk.setVerifyReviewUser("自动化信审，机审放款");
+                        borrowOrderAutoRisk.setVerifyReviewTime(nowDate);
+                        //}
+                    } else {
+                        //-3:初审驳回
+                        loanStatus = BorrowOrder.STATUS_CSBH;
+                        //审核失败恢复可借额度
+                        changeLimitMoney(assetBorrowId);
+
+                    }
                 }
             }
         }
