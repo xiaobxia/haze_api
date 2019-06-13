@@ -188,7 +188,8 @@ public class UserLoginController extends BaseController {
             Map<String, Object> param = getParametersO(request);
             captchaKey = null == param.get("RCaptchaKey") ? "R" + request.getSession().getId() : param.get("RCaptchaKey").toString();
 
-            captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            //captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            captchaUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/captcha.svl?RCaptchaKey=" + captchaKey;
             code = "0";
             msg = "请求成功";
             return;
@@ -250,8 +251,8 @@ public class UserLoginController extends BaseController {
                 return;
             }
 
-            captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
-
+            //captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            captchaUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/captcha.svl?RCaptchaKey=" + captchaKey;
             if (!validateSubmitAPP(request, response)) {
                 msg = "图形验证码错误";
                 return;
