@@ -547,10 +547,7 @@ public class IndexUtil {
     public static Object getVerifyLoanPass2(String authSum, String authCount, String authBank) {
         loger.info("获取认证getVerifyLoanPass2-authSum=" + authSum + " authCount=" + authCount + "authBank=" + authBank);
         if (StringUtils.isNotBlank(authSum) && StringUtils.isNotBlank(authCount)) {
-            if (Integer.valueOf(authSum) == 4 && Integer.valueOf(authBank) == 0) {//认证完成(完成除银行卡的必填项4项外)
-                return 1;
-            }
-            if (authSum.equals(authCount)) {
+            if (Integer.valueOf(authSum) == 4) {//认证完成
                 return 1;
             }
         }
