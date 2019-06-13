@@ -400,6 +400,9 @@ public class FuiouServiceImpl implements FuiouService {
             cardInfoSave.setType(UserCardInfo.TYPE_DEBIT);
             cardInfoSave.setUpdateTime(new Date());
             cardInfoSave.setIsBand(1);
+            if (userService.defaultCardCount(Integer.parseInt(userId)) <= 0) {
+                cardInfoSave.setCardDefault(1);
+            }
             boolean flag = userBankService.updateUserBankCard(cardInfoSave);
 
             log.info("FuiouService updateUserBankInfo userId=" + userId + " old flag=" + flag);
