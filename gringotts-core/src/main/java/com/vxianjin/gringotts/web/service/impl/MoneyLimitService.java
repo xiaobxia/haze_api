@@ -131,8 +131,8 @@ public class MoneyLimitService implements IMoneyLimitService {
             /*String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
             String rawDataUrl = String.format(GXBRAWDATA, gxbToken, this.appId, timestamp, md5Hex);
             String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);*/
-            String Authorization = "token f804d496d42c46a5882b1b5f18b6dc7f";//测试
-            //String Authorization = "token c98ee41f2cdf43c3be8318748545a3de";//正式
+            //String Authorization = "token f804d496d42c46a5882b1b5f18b6dc7f";//测试
+            String Authorization = "token c98ee41f2cdf43c3be8318748545a3de";//正式
             String gxb_report = null;
             String gxb_raw = null;
             try {
