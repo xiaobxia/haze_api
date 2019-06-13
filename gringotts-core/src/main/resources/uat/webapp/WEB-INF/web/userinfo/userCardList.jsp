@@ -506,6 +506,14 @@
         // 隐藏加载器
         $.mobile.loading('hide');
     }
+
+    function pop() {
+        var message = {
+            'method' : 'tobackpage'
+        };
+        window.webkit.messageHandlers.webViewApp.postMessage(message);
+    }
+
     function closeSureTc(bankId) {
         $('#sure-tc,.cover').hide();
         var u = navigator.userAgent, app = navigator.appVersion;
@@ -513,13 +521,14 @@
         var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
         show_loading('切换中');
         $.post('${path}/fuiouBindCard/credit-card/switchDefaultCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}',{bankId: gloabelbank_id},function (data) {
-            $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
+            // ("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
             var msg = data.msg;
             if(data.code == "0"){
                 if (isAndroid) {
                     window.nativeMethod.authenticationResult(msg);
                 }else if(isIOS){
-                    $("#tempForm").submit();
+                    pop();
+                    // $("#tempForm").submit();
                 }
             }else{
                 $(".ui-loader.ui-corner-all").hide()

@@ -248,7 +248,12 @@
             openAjax('${path}/fuiouBindCard/credit-card/userBankConfirm?deviceId=${deviceId}&mobilePhone=${mobilePhone}&timestamp='+Math.random(), data,resultSave);
         }
     }
-
+    function pop() {
+        var message = {
+            'method' : 'tobackpage'
+        };
+        window.webkit.messageHandlers.webViewApp.postMessage(message);
+    }
     function resultSave(data){
         if(data.code=="0"){
             var u = navigator.userAgent, app = navigator.appVersion;
@@ -259,7 +264,7 @@
                 nativeMethod.authenticationResult(data.message);
             }else if(isIOS){
                 localStorage.setItem('toggleBindCard', 'true');
-                $("#tempForm").submit();
+                pop();
         }
         }else{
             $.mvalidateTip(data.message);
