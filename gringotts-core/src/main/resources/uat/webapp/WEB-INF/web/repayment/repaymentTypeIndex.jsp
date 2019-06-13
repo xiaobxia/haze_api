@@ -78,10 +78,8 @@
                         <li><img src="${basePath}/images/dh41.png"></li>
                         <li><h3>第二步：点击立即还款</h3></li>
                         <li><img src="${basePath}/images/dh42.png"></li>
-                        <li><h3>第三步：选择银行卡支付</h3></li>
+                        <li><h3>第三步：选择银行卡支付即可还款</h3></li>
                         <li><img src="${basePath}/images/dh43.png"></li>
-                        <li><h3>第四步：输入交易密码即可还款</h3></li>
-                        <li><img src="${basePath}/images/dh44.png"></li>
                     </ul>
                 </div>
                 <h2  id="h_2"><i></i>2.到期自动代扣（推荐）</h2>

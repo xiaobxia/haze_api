@@ -46,7 +46,19 @@
     </script>
     <style>
         body,h4,html,i,li,p,ul{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;font-weight: normal !important;text-shadow: none;}
-        *{margin:0;padding:0;-webkit-user-select:auto;font-weight: normal !important;text-shadow: none;}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-weight: normal !important;
+            text-shadow: none;
+        }
         .f-cb:after{display:block;content:'.';height:0;visibility:hidden;overflow:hidden;clear:both}
         .fl{float:left}
         .card-list-box {

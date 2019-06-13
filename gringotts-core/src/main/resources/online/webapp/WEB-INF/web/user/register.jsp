@@ -22,7 +22,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
     body,h4,html,i,li,p,ul,input{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;border:none;}
-    *{margin:0;padding:0;-webkit-user-select:auto;outline:none;}
+    *{
+        margin:0;
+        padding:0;
+        moz-user-select: -moz-none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        outline:none;
+    }
     input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
     .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;}
     .regist-bg .register{background-color:#fff;border-radius:10px;padding:20px 30px;}
