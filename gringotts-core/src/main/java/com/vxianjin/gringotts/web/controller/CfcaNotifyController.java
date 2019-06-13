@@ -194,7 +194,7 @@ public class CfcaNotifyController extends BaseController {
                 BigDecimal tureMye = new BigDecimal(mye2);
                 //合同金额
                 contractInfo.setContractPrice(allMye);
-                //设置回调URL  RequestUtils.getRequestPath(null)
+                //设置回调URL  PropertiesConfigUtil.get("APP_HOST_API")
                 contractInfo.setLinkedUrl("http://1707m30m34.iok.la:31870" + "/lnkj/sign_status_notify/" + clientType + "/" + deviceId + "/" + user.getId());
                 //借款用途
                 template.setUseage(CfcaCommonUtil.USAGE);

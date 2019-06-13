@@ -161,7 +161,7 @@ public class UserloanDetailController extends BaseController {
                     String textTip = borrowStatusMap_front.get(Integer.parseInt(tMap.get("status").toString()));
                     tMap.put("text_tip", "<font color='#ee4957' size='3'>" + textTip + "</font>");
                     tMap.put("interests", 0);
-                    tMap.put("url", RequestUtils.getRequestPath(null) + "/repayment/detail.do?id=" + tMap.get("asset_order_id"));
+                    tMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/repayment/detail.do?id=" + tMap.get("asset_order_id"));
                     if (null != tMap.get("plan_fee_time")) {
                         tMap.put("plan_fee_time", sdf.format((Date) tMap.get("plan_fee_time")));
                     }
@@ -182,8 +182,8 @@ public class UserloanDetailController extends BaseController {
                 Map<String, Object> mapPay = new HashMap<String, Object>();
                 mapPay.put("type", 1);
                 mapPay.put("title", "银行卡还款(推荐)");
-                mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/union_pay_new.png");
-                mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/gotoRepaymentType?type=1");
+                mapPay.put("img_url", PropertiesConfigUtil.get("APP_HOST_API") + "/common/web/images/union_pay_new.png");
+                mapPay.put("link_url", PropertiesConfigUtil.get("APP_HOST_API") + "/gotoRepaymentType?type=1");
                 payList.add(mapPay);
 
 //				mapPay = new HashMap<String, Object>();
@@ -191,41 +191,41 @@ public class UserloanDetailController extends BaseController {
 //				mapPay.put("title", "自动扣款(银行卡)");
 
 
-//				mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/self_motion.png");
-//				mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/gotoRepaymentType?type=2");
+//				mapPay.put("img_url", PropertiesConfigUtil.get("APP_HOST_API") + "/common/web/images/self_motion.png");
+//				mapPay.put("link_url", PropertiesConfigUtil.get("APP_HOST_API") + "/gotoRepaymentType?type=2");
 //				payList.add(mapPay);
 
                 /*mapPay = new HashMap<String, Object>();
                 mapPay.put("type", 2);
                 mapPay.put("title", "更多还款方式");
-                mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/more_pay.png");
-                mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/gotoAlipayPayType");
+                mapPay.put("img_url", PropertiesConfigUtil.get("APP_HOST_API") + "/common/web/images/more_pay.png");
+                mapPay.put("link_url", PropertiesConfigUtil.get("APP_HOST_API") + "/gotoAlipayPayType");
                 payList.add(mapPay);*/
 
 				/*Map<String, Object> mapPay = new HashMap<String, Object>();
                 mapPay.put("type", 1);
 				mapPay.put("title", "银行卡还款");
-				mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/union_pay.png");
-				mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/repayment/repay-type");
+				mapPay.put("img_url", PropertiesConfigUtil.get("APP_HOST_API") + "/common/web/images/union_pay.png");
+				mapPay.put("link_url", PropertiesConfigUtil.get("APP_HOST_API") + "/repayment/repay-type");
 				payList.add(mapPay);*/
                 /*mapPay = new HashMap<String, Object>();
                 mapPay.put("type", 2);
 				mapPay.put("title", "支付宝转账");
-				mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/alipay_card_info.png");
-				mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/repayment/repay-type");
+				mapPay.put("img_url", PropertiesConfigUtil.get("APP_HOST_API") + "/common/web/images/alipay_card_info.png");
+				mapPay.put("link_url", PropertiesConfigUtil.get("APP_HOST_API") + "/repayment/repay-type");
 				payList.add(mapPay);*/
 //				mapPay = new HashMap<String, Object>();
 //				mapPay.put("type", 3);
 //				mapPay.put("title", "微信转账");
-//				mapPay.put("img_url", RequestUtils.getRequestPath(null) + "/common/web/images/wechat.png");
-//				mapPay.put("link_url", RequestUtils.getRequestPath(null) + "/repayment/repay-type");
+//				mapPay.put("img_url", PropertiesConfigUtil.get("APP_HOST_API") + "/common/web/images/wechat.png");
+//				mapPay.put("link_url", PropertiesConfigUtil.get("APP_HOST_API") + "/repayment/repay-type");
 //				payList.add(mapPay);
 
                 Map<String, Object> item = new HashMap<>();
                 item.put("list", repayments);
                 item.put("pay_title", "支持多种还款方式，方便快捷");
                 item.put("count", repayments.size());
-                item.put("old_path", RequestUtils.getRequestPath(null) + "/content/Olduser");
+                item.put("old_path", PropertiesConfigUtil.get("APP_HOST_API") + "/content/Olduser");
                 item.put("pay_type", payList);
 
                 data.put("item", item);

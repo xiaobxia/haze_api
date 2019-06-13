@@ -417,7 +417,7 @@ public class UserloanController extends BaseController {
             BigDecimal tureMye = new BigDecimal(mye2);
             //合同金额
             contractInfo.setContractPrice(allMye);
-            //设置回调URL  RequestUtils.getRequestPath(null)
+            //设置回调URL  PropertiesConfigUtil.get("APP_HOST_API")
             contractInfo.setLinkedUrl(CfcaCommonUtil.NOTIFY_URL + "/lnkj/sign_status_notify/" + clientType + "/" + deviceId + "/" + user.getId());
             //借款用途
             template.setUseage(CfcaCommonUtil.USAGE);
@@ -460,7 +460,7 @@ public class UserloanController extends BaseController {
                 throw new PayException("生成支付令url 异常");
             }
             if (StringUtils.isNotEmpty(contractInfo.getCfcaContractId())) {
-                json.put("sign_and_view_url", RequestUtils.getRequestPath(null) + "/lnkj" + "/goto_sign" + "/" + contractInfo.getCfcaContractId());
+                json.put("sign_and_view_url", PropertiesConfigUtil.get("APP_HOST_API") + "/lnkj" + "/goto_sign" + "/" + contractInfo.getCfcaContractId());
                 json.put("contract_id", contractInfo.getCfcaContractId());
             }
         }
