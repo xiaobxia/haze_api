@@ -411,6 +411,8 @@
         var brower_type = borrowInfo();//手机浏览器类型（1Android、2ios、4pc）
         // var validateCode = $("input[name='luotest_response']").val();
         var validateCode = 0;
+        var captcha =	$("#captcha").val();
+        var RCaptchaKey =	$("#RCaptchaKey").val();
         if(!checkVar(userPhone)){
             showLoader($(".error-popop"),'请输入手机号码',800);
             LUOCAPTCHA.reset();
@@ -423,9 +425,11 @@
             showLoader($(".error-popop"),'请输入手机验证码',800);
             LUOCAPTCHA.reset();
             return;
+        }else if(!checkVar(captcha)){
+            showLoader($(".error-popop"),'请输入图形验证码',800);
+            LUOCAPTCHA.reset();
+            return;
         }
-        var captcha =	$("#captcha").val();
-        var RCaptchaKey =	$("#RCaptchaKey").val();
         var url = "${path}/act/light-loan-xjx/new-register";
         var param = {
             phone:userPhone,
@@ -547,7 +551,7 @@
                 return;
             }
             if (!captcha) {
-                showLoader($(".error-popop"),'请输入验证码',800);
+                showLoader($(".error-popop"),'请输入图形验证码',800);
                 LUOCAPTCHA.reset();
             }
             /*else if(!checkVar(validateCode)) {
@@ -577,6 +581,7 @@
                 showLoader($(".error-popop"),"短信已发送",800);
                 time();
             } else{
+                reInitCodeImg()
                 if( data.message == '手机号码已被注册' ) {
                     LUOCAPTCHA.reset();
                     // $("#imgCap").trigger("click");
