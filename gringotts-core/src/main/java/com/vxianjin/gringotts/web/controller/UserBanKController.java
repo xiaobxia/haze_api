@@ -13,6 +13,7 @@ import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.pojo.UserCertification;
 import com.vxianjin.gringotts.web.service.IUserBankService;
 import com.vxianjin.gringotts.web.service.IUserService;
+import com.vxianjin.gringotts.web.service.impl.BorrowOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ public class UserBanKController extends BaseController {
     private IUserService userService;
     @Autowired
     private IUserDao userDao;
+    @Resource
+    private BorrowOrderService borrowOrderService;
     @Resource
     private UserQuotaSnapshotService userQuotaSnapshotService;
 
@@ -264,9 +267,14 @@ public class UserBanKController extends BaseController {
 
                     List<UserQuotaSnapshot> userQuotaSnapshots = userQuotaSnapshotService.getUserQuotaSnapshotByUser(user);
 
+
+                    Map<String, String> interval = borrowOrderService
+                            .findAuditFailureOrderByUserId(user.getId());
+                    String nextLoanDay = interval.get("nextLoanDay");
+
                     int amountAvailable = Integer.parseInt(user.getAmountAvailable());
                     if (Integer.parseInt(user.getAmountAvailable()) != 0 && userQuotaSnapshots.size() > 0) {
-                        if (amountAvailable >= userQuotaSnapshots.get(0).getUserAmountLimit().intValue()) {
+                        if (amountAvailable >= userQuotaSnapshots.get(0).getUserAmountLimit().intValue() && "0".equals(nextLoanDay)) {
                             listMap.put("loan_amount", userQuotaSnapshots.get(0).getUserAmountLimit());
                             listMap.put("loan_day", userQuotaSnapshots.get(0).getBorrowDay());
                             listMap.put("loan_productId", userQuotaSnapshots.get(0).getBorrowProductId());
