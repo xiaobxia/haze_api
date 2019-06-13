@@ -60,6 +60,17 @@ public class UserBankDaoImpl extends BaseDao implements IUserBankDao {
         return null;
     }
 
+    @Override
+    public UserCardInfo findUserBankCardNew(Integer id) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        List<UserCardInfo> lsit = getSqlSessionTemplate().selectList("com.vxianjin.gringotts.web.dao.IUserCardInfoDao.selectUserBankCardNew", params);
+        if (lsit != null && lsit.size() > 0) {
+            return lsit.get(0);
+        }
+        return null;
+    }
+
     /**
      * 查询用户非默认银行卡信息
      * @param id

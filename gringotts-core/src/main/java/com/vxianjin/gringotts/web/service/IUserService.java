@@ -93,6 +93,8 @@ public interface IUserService {
      */
     UserCardInfo findUserBankCard(Integer id);
 
+    UserCardInfo findUserBankCardNew(Integer id);
+
     /**
      * 查询实名认证列表
      *

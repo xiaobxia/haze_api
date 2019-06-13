@@ -65,6 +65,8 @@ public interface IUserBankDao {
      */
     UserCardInfo findUserBankCard(Integer id);
 
+    UserCardInfo findUserBankCardNew(Integer id);
+
     /**
      * 查询用户非默认银行卡信息
      * @param id

@@ -170,6 +170,23 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserCardInfo findUserBankCardNew(Integer id) {
+        UserCardInfo userBankCard = userBankDao.findUserBankCardNew(id);
+
+        //如果只有一张卡 且当前为非默认卡 则将其置为默认卡
+        if (null == userBankCard) {
+            List<UserCardInfo> userBankCardNotDefault = userBankDao.findUserBankCardNotDefault(id);
+            if (null != userBankCardNotDefault && 1 == userBankCardNotDefault.size()) {
+                userBankCardNotDefault.get(0).setCardDefault(1);
+                userBankCard = userBankCardNotDefault.get(0);
+                userBankDao.updateUserBankCard(userBankCardNotDefault.get(0));
+
+            }
+        }
+        return userBankCard;
+    }
+
+    @Override
     public PageConfig<Map<String, String>> realNmaeList(HashMap<String, Object> params) {
         params.put(Constant.NAME_SPACE, "User");
         return paginationDao.findPage("selectUserRealNamePage", "selectUserReanlNameCount", params, "web");

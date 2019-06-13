@@ -174,7 +174,7 @@ public class UserBanKController extends BaseController {
 
                         } else {//已填写
                             if ("cardInfo".equals(certi.getCode())) {
-                                UserCardInfo info = userService.findUserBankCard(Integer.parseInt(logUser.getId()));
+                                UserCardInfo info = userService.findUserBankCardNew(Integer.parseInt(logUser.getId()));
                                 if (info != null) {
                                     String idCard = info.getCard_no();
                                     if (idCard.length() > 4) {
