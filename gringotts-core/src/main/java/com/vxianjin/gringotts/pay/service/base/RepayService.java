@@ -9,6 +9,7 @@ import com.vxianjin.gringotts.pay.model.BorrowProductConfig;
 import com.vxianjin.gringotts.pay.model.NeedRenewalInfo;
 import com.vxianjin.gringotts.pay.model.NeedRepayInfo;
 import com.vxianjin.gringotts.pay.pojo.OrderLogModel;
+import com.vxianjin.gringotts.pay.service.BorrowProductConfigService;
 import com.vxianjin.gringotts.pay.service.RenewalRecordService;
 import com.vxianjin.gringotts.pay.service.RepaymentDetailService;
 import com.vxianjin.gringotts.pay.service.impl.RepaymentServiceImpl;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.JedisCluster;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,6 +63,9 @@ public class RepayService {
 
     @Autowired
     private OrderLogComponent orderLogComponent;
+
+    @Autowired
+    private BorrowProductConfigService borrowProductConfigService;
 
     /**
      * 还款缓存key
@@ -287,7 +292,7 @@ public class RepayService {
 
         BorrowOrder bo = borrowOrderService.findOneBorrow(id);//获取借款订单信息
 
-        //BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
+        BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
         BackExtend extend = borrowOrderService.extend(bo.getProductId());
 
         // 续期手续费 分为单位
@@ -304,14 +309,14 @@ public class RepayService {
         // 待还总金额（总还款金额 - 已还款金额）
         Long waitRepay = re.getRepaymentAmount() - re.getRepaymentedAmount();
         // 待还滞纳金（总滞纳金 - 已还滞纳金）
-        Long waitLate = Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
+        Long waitLate = productConfig.getLateFee().multiply(BigDecimal.valueOf(re.getLateDay())).longValue();//Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
         // 待还本金
         Long waitAmount = waitRepay - waitLate;
         // 续期费 分为单位
         Integer loanApr = extend.getExtendMoney();//bo.getRenewalFee().intValue();
 
         //总服务费（待还总金额 + 待还滞纳金 + 服务费）
-        Long allCount = extend.getExtendMoney().longValue();//waitLate + loanApr + renewalFee.longValue();
+        Long allCount = extend.getExtendMoney().longValue() + waitLate;//waitLate + loanApr + renewalFee.longValue();
 
         User user = userService.searchByUserid(bo.getUserId());//借款用户信息
 
@@ -433,7 +438,7 @@ public class RepayService {
         renewalRecord.setStatus(RenewalRecord.STATUS_PAYING);//付款中状态
         renewalRecord.setMoneyAmount(needRenewalInfo.getRepayment().getRepaymentPrincipal() + needRenewalInfo.getRepayment().getRepaymentInterest());//借款总金额
 //        renewalRecord.setRepaymentTime(DateUtil.addDay(re.getRepaymentTime(), bo.getLoanTerm()));//续期后预期还款时间
-        renewalRecord.setRepaymentTime(DateUtil.addDay(DateUtil.addDay(needRenewalInfo.getRepayment().getRepaymentTime(), needRenewalInfo.getRepayment().getLateDay()), renewalRecord.getRenewalDay()));//续期后预期还款时间
+        renewalRecord.setRepaymentTime(DateUtil.addDay(DateUtil.addDay(needRenewalInfo.getRepayment().getRepaymentTime(), needRenewalInfo.getRepayment().getLateDay()), renewalRecord.getRenewalDay() - 1));//续期后预期还款时间
         renewalRecordService.insertSelective(renewalRecord);
         return renewalRecord;
     }

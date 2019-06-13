@@ -177,13 +177,14 @@
     left join borrow_product_config bpc on ubs.borrow_product_id = bpc.id
     where
       ubs.user_id = #{userId}
-      and bpc.borrow_day = #{borrowDay}
-      and bpc.borrow_amount = #{borrowAmount}
+      and ubs.borrow_product_id = #{borrowProductId}
       limit 0,1
   </select>
+    <!--and bpc.borrow_day = #{borrowDay}
+    and bpc.borrow_amount = #{borrowAmount}-->
 
     <select id="queryByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
-      select id, user_id, borrow_product_id, deal_flag, remark
+      select id, user_id, borrow_product_id, deal_flag, remark, user_amount_limit, borrow_day
       from user_borrowquota_snapshot
       where user_id = #{userId} and deal_flag = 'n'
   </select>

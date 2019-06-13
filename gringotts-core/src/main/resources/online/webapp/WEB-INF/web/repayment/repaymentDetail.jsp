@@ -123,7 +123,7 @@
     function toRenewal(){
         $.post("${path}/repayment/renewal-whether", {id:'${repayment.id}'} , function(data){
             if("0" == data.code){
-                window.location.href="${path}/repayment/renewal-choose?id=${bo.id}";
+                window.location.href="${path}/repayment/renewal-pay-fuiou?id=${bo.id}";
             }else if('-101' == data.code){
                 $('.sure-tc p').text(data.msg);
                 $('.sure-tc,.cover').show();

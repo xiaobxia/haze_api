@@ -985,6 +985,11 @@ public class UserLoginController extends BaseController {
                 return;
             }
 
+            if (!validateSubmitAPP(request, response)) {
+                msg = "图形验证码错误";
+                return;
+            }
+
             userPhone = userPhone.trim();
             Long remainTime = checkForFront(registerUserCheck, userPhone);
             if (remainTime > 0) {
@@ -995,6 +1000,7 @@ public class UserLoginController extends BaseController {
             }
 
             String sendSmsCode = jedisCluster.get(SMS_REGISTER_PREFIX + userPhone);
+            log.info("用户输入短信验证码：{}，系统发送验证码：{}", smsCode, sendSmsCode);
             if ("".equals(smsCode)) {
                 msg = "验证码不能为空";
                 return;
@@ -1113,6 +1119,7 @@ public class UserLoginController extends BaseController {
             msg = "系统异常，请稍后再试";
             log.error("registerV211 error:", e);
         } finally {
+            //jedisCluster.del(request.getParameter("RCaptchaKey"));
             delCheckForFront(registerUserCheck, userPhone);
             dataMap.put("item", resultMap);
             json.put("code", code);
@@ -4322,7 +4329,7 @@ public class UserLoginController extends BaseController {
             //判断该渠道是否是开启状态
             String userFroms = request.getParameter("user_from");
             String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
-            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
+            ChannelInfo channelInfo = StringUtils.isNotBlank(channelIds) ? channelInfoService.findById(Integer.valueOf(channelIds)) : null;
             if(channelInfo != null){
                 json.put("status",channelInfo.getStatus());
                 //判断该渠道是否是关闭状态
@@ -4362,6 +4369,12 @@ public class UserLoginController extends BaseController {
                 msg = "手机验证码不能为空";
                 return;
             }
+
+            if (!validateSubmitAPP(request, response)) {
+                msg = "图形验证码错误";
+                return;
+            }
+
             Long remainTime = checkForFront(registerCheck, userPhone, 2);
             if (remainTime > 0) {
                 code = ResponseStatus.FREQUENT.getName();
@@ -4501,7 +4514,7 @@ public class UserLoginController extends BaseController {
             //判断该渠道是否是开启状态
             String userFroms = request.getParameter("user_from");
             String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
-            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
+            ChannelInfo channelInfo = StringUtils.isNotBlank(channelIds) ? channelInfoService.findById(Integer.valueOf(channelIds)) : null;
             if(channelInfo != null){
                 json.put("status",channelInfo.getStatus());
                 //判断该渠道是否是关闭状态
@@ -4876,7 +4889,7 @@ public class UserLoginController extends BaseController {
             String captcha = jedisCluster.get(captchaKey);
             log.info("RCaptchaKey=" + captchaKey + " captcha1=" + captcha + "   captcha2=" + request.getParameter("captcha").toLowerCase());
             if (captcha != null && captcha.equals(request.getParameter("captcha").toLowerCase())) {
-                jedisCluster.del(captchaKey);
+                //jedisCluster.del(captchaKey);
                 return true;
             } else {
                 return false;

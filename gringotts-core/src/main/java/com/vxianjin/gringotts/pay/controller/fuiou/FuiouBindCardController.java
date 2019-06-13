@@ -44,6 +44,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 易宝支付-绑卡处理类
@@ -494,6 +495,17 @@ public class FuiouBindCardController extends BaseController {
                 msg = "银行卡号不能为空";
                 return;
             }
+
+            HashMap<String, Object> bankMap = new HashMap(){{
+                put("userId", Integer.parseInt(user.getId()));
+            }};
+            List<String> cardListr = userBankService.findUserCardByUserId(bankMap).stream().map(userCardInfo -> userCardInfo.getCard_no()).collect(Collectors.toList());
+            if (cardListr.contains(cardNo)) {
+                code = ResponseStatus.FAILD.getName();
+                msg = "银行卡号已存在";
+                return;
+            }
+
             if (null != bankAllInfo
                 && BankAllInfo.BANK_STATUS_NO.equals(bankAllInfo.get("bankStatus"))) {
                 code = ResponseStatus.FAILD.getName();
@@ -579,7 +591,7 @@ public class FuiouBindCardController extends BaseController {
         //【2】请求参数验证
         Map<String, String> pams = this.getParameters(request);
 
-        ResultModel paramsCheck = userBankConfirmReqCheck(pams, response);
+        ResultModel paramsCheck = userBankConfirmReqCheck(pams, response, user.getId());
 
         if (!paramsCheck.isSucc()) {
             JSONUtil.toObjectJson(response, JSON.toJSONString(userInfoCheckResult));
@@ -628,7 +640,7 @@ public class FuiouBindCardController extends BaseController {
     }
 
     private ResultModel userBankConfirmReqCheck(Map<String, String> pams,
-                                                HttpServletResponse response) {
+                                                HttpServletResponse response, String userId) {
 
         ResultModel resultModel = new ResultModel(false);
 
@@ -667,6 +679,16 @@ public class FuiouBindCardController extends BaseController {
         if (StringUtils.isBlank(requestNo)) {
             resultModel.setCode(ResponseStatus.FAILD.getName());
             resultModel.setMessage("请求参数异常，请确认后重试");
+            return resultModel;
+        }
+
+        HashMap<String, Object> bankMap = new HashMap(){{
+            put("userId", Integer.parseInt(userId));
+        }};
+        List<String> cardListr = userBankService.findUserCardByUserId(bankMap).stream().map(userCardInfo -> userCardInfo.getCard_no()).collect(Collectors.toList());
+        if (cardListr.contains(cardNo)) {
+            resultModel.setCode(ResponseStatus.FAILD.getName());
+            resultModel.setMessage("银行卡号已存在");
             return resultModel;
         }
 

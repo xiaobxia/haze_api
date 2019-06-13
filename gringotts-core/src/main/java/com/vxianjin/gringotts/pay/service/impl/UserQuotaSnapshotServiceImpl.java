@@ -192,7 +192,7 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
             Integer limitProductId = backLimit.getLimitProductId();//提额至哪个产品
             BorrowProductConfig newProductConfig = borrowProductConfigService.queryProductById(limitProductId);
 
-            log.info("用户ID{0}，还款成功笔数：{1}，提额配置限制次数{2}", userId, count, limitCount);
+            log.info("用户ID{}，还款成功笔数：{}，提额配置限制次数{}", userId, count, limitCount);
             if (count >= limitCount && lateDay <= 0   ) {//还款成功笔数大于提额配置限制则返回新额度
                 resultMap.put(newProductConfig.getId().toString(), newProductConfig.getBorrowAmount().intValue()+"");
                 HashMap<String, Object> map = new HashMap<>();

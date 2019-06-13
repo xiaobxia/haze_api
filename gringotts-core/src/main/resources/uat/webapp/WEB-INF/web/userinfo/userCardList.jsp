@@ -46,7 +46,19 @@
     </script>
     <style>
         body,h4,html,i,li,p,ul{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;font-weight: normal !important;text-shadow: none;}
-        *{margin:0;padding:0;-webkit-user-select:auto;font-weight: normal !important;text-shadow: none;}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-weight: normal !important;
+            text-shadow: none;
+        }
         .f-cb:after{display:block;content:'.';height:0;visibility:hidden;overflow:hidden;clear:both}
         .fl{float:left}
         .card-list-box {
@@ -494,6 +506,17 @@
         // 隐藏加载器
         $.mobile.loading('hide');
     }
+
+    function pop(msg) {
+        var message = {
+            'method' : 'tobackpage',
+            'params' : {
+                'msg' : msg
+            }
+        };
+        window.webkit.messageHandlers.webViewApp.postMessage(message);
+    }
+
     function closeSureTc(bankId) {
         $('#sure-tc,.cover').hide();
         var u = navigator.userAgent, app = navigator.appVersion;
@@ -501,13 +524,14 @@
         var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
         show_loading('切换中');
         $.post('${path}/fuiouBindCard/credit-card/switchDefaultCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}',{bankId: gloabelbank_id},function (data) {
-            $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
+            // ("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
             var msg = data.msg;
             if(data.code == "0"){
                 if (isAndroid) {
                     window.nativeMethod.authenticationResult(msg);
                 }else if(isIOS){
-                    $("#tempForm").submit();
+                    pop(msg);
+                    // $("#tempForm").submit();
                 }
             }else{
                 $(".ui-loader.ui-corner-all").hide()

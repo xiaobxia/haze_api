@@ -81,7 +81,17 @@
     </script>
     <style>
         body,h4,html,i,li,p,ul,input{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;border:none;}
-        *{margin:0;padding:0;-webkit-user-select:auto}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
         .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;min-height: 100vh;}
         .regist-bg .wrapper-bg{padding:0 0 33%}
@@ -218,7 +228,7 @@
     };
     $(".value").numberRock({
         speed:10,
-        count:10000
+        count:20000
     });
 </script>
 </body>

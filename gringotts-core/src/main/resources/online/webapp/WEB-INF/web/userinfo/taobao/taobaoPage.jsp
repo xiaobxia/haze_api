@@ -36,7 +36,13 @@
         }
         * {
             margin: 0;padding: 0;
-            -webkit-user-select: auto;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .fixed-encrypt-protect p {
             font-size: 18px;

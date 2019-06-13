@@ -118,6 +118,24 @@
 		c.open_bank bankCode
         from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 1 limit 1
     </select>
+    <select id="selectUserBankCardNew" parameterType="map" resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
+        select
+            b.id,
+            b.bank_name bankName,
+            b.card_no card_no,
+            b.phone phone,
+            b.bank_id bank_id,
+            b.type type,
+            b.create_time createTime,
+            b.open_name openName,
+            b.main_card mainCard,
+            b.agreeno,
+            b.is_band isBand,
+            b.card_default cardDefault,
+            b.user_id userId,
+            c.open_bank bankCode
+        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 limit 1
+    </select>
     <select id="selectUserBankCardNotDefault" parameterType="map"
             resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
         select
@@ -137,7 +155,7 @@
         from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 0
     </select>
     <insert id="saveUserCardInfo" parameterType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
-        <![CDATA[
+
 			insert into user_card_info (
 				user_id,
 				bank_id,
@@ -153,7 +171,10 @@
 				type,
 				create_time,
 				agreeno,
-				is_band
+                is_band
+                <if test="cardDefault != null and cardDefault != ''">
+                ,card_default
+                </if>
 			)values(
 			#{userId},
 			#{bank_id},
@@ -170,8 +191,10 @@
 			#{createTime},
 			#{agreeno},
 			#{isBand}
+            <if test="cardDefault != null and cardDefault != ''">
+                ,#{cardDefault}
+            </if>
 			)
-		]]>
     </insert>
     <select id="findUserCardByUserId" parameterType="map" resultMap="BaseResultMap">
         select

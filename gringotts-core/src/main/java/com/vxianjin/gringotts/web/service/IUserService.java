@@ -93,6 +93,8 @@ public interface IUserService {
      */
     UserCardInfo findUserBankCard(Integer id);
 
+    UserCardInfo findUserBankCardNew(Integer id);
+
     /**
      * 查询实名认证列表
      *
@@ -196,4 +198,6 @@ public interface IUserService {
      * @param strongRiskResult strongRiskResult
      */
     void insertUserStrongRiskResult(StrongRiskResult strongRiskResult);
+
+    Integer defaultCardCount(Integer userId);
 }

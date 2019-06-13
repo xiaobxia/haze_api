@@ -566,6 +566,7 @@ border-left: none; border-right: none; }
 	line-height: 2.2rem;
 	text-align: center;
 	color: #fff !important;
+	border-radius: 1rem;
 	/*border-radius: 2.2rem;*/
 	}
 .more-info2 li span{    width:22% !important;}

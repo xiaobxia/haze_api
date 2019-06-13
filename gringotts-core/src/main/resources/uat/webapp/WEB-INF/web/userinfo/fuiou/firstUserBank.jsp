@@ -83,7 +83,7 @@
                 <li>
                     <a rel="external" href="javascript:;">
                         <span>手机号</span>
-                        <input type="number" pattern="\d*" placeholder="请输入银行预留手机号" data-role="none" id="userPhone" value="${userPhone}" />
+                        <input type="number" placeholder="请输入银行预留手机号" data-role="none" id="userPhone" value="${userPhone}" />
                     </a>
                 </li>
                 <li class="nobd gain-yzm gain-yzm1">
@@ -249,17 +249,28 @@
         }
     }
 
+    function pop(msg) {
+        var message = {
+            'method' : 'tobackpage',
+            'params' : {
+                'msg' : msg
+            }
+        };
+        window.webkit.messageHandlers.webViewApp.postMessage(message);
+    }
+
     function resultSave(data){
         if(data.code=="0"){
             var u = navigator.userAgent, app = navigator.appVersion;
             var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
             var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-            $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+data.message);
+            // $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+data.message);
             if (isAndroid) {
                 nativeMethod.authenticationResult(data.message);
             }else if(isIOS){
                 localStorage.setItem('toggleBindCard', 'true');
-                $("#tempForm").submit();
+                pop(data.message)
+                // $("#tempForm").submit();
         }
         }else{
             $.mvalidateTip(data.message);
@@ -332,6 +343,30 @@
             $('#yzm').text(printnr+'s');
             $('#yzm').css({"font-size": "0.875rem","color":"#666"});
         }
+    }
+
+    $('#userPhone').on('input', function () {
+        var number = $(this).val()
+        $(this).val(numberFormat(number, 11))
+    })
+    function numberFormat(number, len) {
+        var rawNumber = number
+        if (!number) {
+            return ''
+        }
+        var notNumberReg = /[^\d]/g
+        //移除非数字
+        if (notNumberReg.test(number)) {
+            number = number.replace(notNumberReg, '')
+        }
+        //不能有012这种
+        if ((number.indexOf('0') === 0)) {
+            number = number.substr(0, 1)
+        }
+        if (number.length > len) {
+            number = number.substr(0, len)
+        }
+        return number
     }
 
 </script>

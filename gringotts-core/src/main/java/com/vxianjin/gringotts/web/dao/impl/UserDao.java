@@ -197,4 +197,9 @@ public class UserDao extends BaseDao implements IUserDao {
     public StrongRiskResult getStrongRiskResultByUserId(String userId) {
         return this.getSqlSessionTemplate().selectOne("getStrongRiskResultByUserId",userId);
     }
+
+    @Override
+    public Integer defaultCardCount(Integer userId) {
+        return this.getSqlSessionTemplate().selectOne("defaultCardCount",userId);
+    }
 }

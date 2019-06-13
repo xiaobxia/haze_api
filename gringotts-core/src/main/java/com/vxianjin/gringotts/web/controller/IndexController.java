@@ -356,7 +356,7 @@ public class IndexController extends BaseController {
                 item.put(
                         "card_verify_step", Constant.CARD_VERIFY_STEP
                                 + (indexInfo.getAuthInfo() + indexInfo.getAuthContacts()
-                                + indexInfo.getAuthMobile() + indexInfo.getAuthSesame())
+                                + indexInfo.getAuthMobile() + indexInfo.getAuthBank())
                                 + "/" + 4);
 
 
@@ -388,6 +388,8 @@ public class IndexController extends BaseController {
                 if (null != user) {
                     Map<String, String> interval = borrowOrderService
                             .findAuditFailureOrderByUserId(user.getId());
+                    BorrowOrder isFirstBorrowOrder = borrowOrderService.selectBorrowOrderUseId(Integer.parseInt(user.getId()));
+                    item.put("loan_is_first", isFirstBorrowOrder == null);
                     item.put("next_loan_day", interval.get("nextLoanDay"));
                 } else {
                     item.put("next_loan_day", 0);

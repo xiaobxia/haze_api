@@ -131,7 +131,8 @@ public class MoneyLimitService implements IMoneyLimitService {
             /*String reportUrl = String.format(GXBREPORT, gxbToken, this.appId, timestamp, md5Hex);
             String rawDataUrl = String.format(GXBRAWDATA, gxbToken, this.appId, timestamp, md5Hex);
             String DataHtmlUrl = String.format(GXBDATALIST, timestamp, this.appId, md5Hex, gxbToken);*/
-            String Authorization = "token c98ee41f2cdf43c3be8318748545a3de";
+            //String Authorization = "token f804d496d42c46a5882b1b5f18b6dc7f";//测试
+            String Authorization = "token c98ee41f2cdf43c3be8318748545a3de";//正式
             String gxb_report = null;
             String gxb_raw = null;
             try {
@@ -175,7 +176,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                     riskRecord.setReturnCode(jsonObject.getInteger("return_code"));
                     riskRecord.setReturnInfo(jsonObject.getString("return_info"));
                     riskRecord.setGxbReportUrl(DataHtmlUrl);
-                    riskRecord.setGxbToken("");
+                    riskRecord.setGxbToken(mxReportUrl);
                     riskRecord.setScore(jsonObject.getInteger("score"));
                     riskRecord.setCreateTime(new Date());
                     userDao.saveRiskRecord(riskRecord);
@@ -194,7 +195,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                     userDao.insertUserStrongRiskResult(riskResult);
                 }
             } catch(IOException e){
-                e.printStackTrace();
+                logger.info("获取排序风控分值异常：" + e.getMessage());
             }
         } else {
             StrongRiskResult riskResult = new StrongRiskResult();
@@ -216,15 +217,6 @@ public class MoneyLimitService implements IMoneyLimitService {
 
         logger.info(" MoneyLimitService dealEd end");
     }
-
-    /*public static void main(String[] args) throws IOException {
-        String Authorization = "token f804d496d42c46a5882b1b5f18b6dc7f";
-
-        InputStream authorization = HttpUtil.MxGet("https://api.51datakey.com/carrier/v3/mobiles/15355492802/mxdata-ex?task_id=e1340850-8b57-11e9-b99a-00163e0e5886", Authorization);
-
-        System.out.println("===" + ZhimiUtils.uncompress(authorization));
-
-    }*/
 
     @Override
     public void testRiskRecord(){

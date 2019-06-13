@@ -1,5 +1,7 @@
 package com.vxianjin.gringotts.web.controller;
 
+import com.vxianjin.gringotts.pay.model.UserQuotaSnapshot;
+import com.vxianjin.gringotts.pay.service.UserQuotaSnapshotService;
 import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.json.JSONUtil;
@@ -11,6 +13,7 @@ import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.pojo.UserCertification;
 import com.vxianjin.gringotts.web.service.IUserBankService;
 import com.vxianjin.gringotts.web.service.IUserService;
+import com.vxianjin.gringotts.web.service.impl.BorrowOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import redis.clients.jedis.JedisCluster;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -41,6 +45,10 @@ public class UserBanKController extends BaseController {
     private IUserService userService;
     @Autowired
     private IUserDao userDao;
+    @Resource
+    private BorrowOrderService borrowOrderService;
+    @Resource
+    private UserQuotaSnapshotService userQuotaSnapshotService;
 
     /**
      * 查询银行列表
@@ -97,6 +105,8 @@ public class UserBanKController extends BaseController {
         try {
             User logUser = this.loginFrontUserByDeiceId(request);
             if (logUser != null) {
+
+                String bankStatus = "1";
 
                 User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
                 //认证需求列表
@@ -173,6 +183,7 @@ public class UserBanKController extends BaseController {
                                         idCard = info.getBankName() + "(" + idCard + ")";
                                     }
                                     resultMap.put("operator", "<font color=\"#ff5145\" size=\"3\">" + idCard + "</font>");
+                                    bankStatus = "2";
                                 }
                             } else {
                                 resultMap.put("operator", "<font color=\"#ff5145\" size=\"3\">已填写</font>");
@@ -246,6 +257,28 @@ public class UserBanKController extends BaseController {
                         listMap.put("mobile_status", 1);
                     } else {
                         listMap.put("mobile_status", 0);
+                    }
+
+                    if ("2".equals(bankStatus)) {
+                        listMap.put("bank_status", 1);
+                    } else {
+                        listMap.put("bank_status", 0);
+                    }
+
+                    List<UserQuotaSnapshot> userQuotaSnapshots = userQuotaSnapshotService.getUserQuotaSnapshotByUser(user);
+
+
+                    Map<String, String> interval = borrowOrderService
+                            .findAuditFailureOrderByUserId(user.getId());
+                    String nextLoanDay = interval.get("nextLoanDay");
+
+                    int amountAvailable = Integer.parseInt(user.getAmountAvailable());
+                    if (Integer.parseInt(user.getAmountAvailable()) != 0 && userQuotaSnapshots.size() > 0) {
+                        if (amountAvailable >= userQuotaSnapshots.get(0).getUserAmountLimit().intValue() && "0".equals(nextLoanDay)) {
+                            listMap.put("loan_amount", userQuotaSnapshots.get(0).getUserAmountLimit());
+                            listMap.put("loan_day", userQuotaSnapshots.get(0).getBorrowDay());
+                            listMap.put("loan_productId", userQuotaSnapshots.get(0).getBorrowProductId());
+                        }
                     }
 
                     map.put("item", listMap);
