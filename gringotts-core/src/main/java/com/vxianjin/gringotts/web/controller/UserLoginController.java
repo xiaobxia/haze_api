@@ -973,7 +973,6 @@ public class UserLoginController extends BaseController {
             // APP名称
             String appName = request.getParameter("appName");
             String clientType = request.getParameter("clientType");
-            String captcha = request.getParameter("captcha");
             // 手机验证
             if (StringUtils.isBlank(userPhone)) {
                 msg = "手机号不能为空。";
@@ -4330,7 +4329,7 @@ public class UserLoginController extends BaseController {
             //判断该渠道是否是开启状态
             String userFroms = request.getParameter("user_from");
             String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
-            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
+            ChannelInfo channelInfo = StringUtils.isNotBlank(channelIds) ? channelInfoService.findById(Integer.valueOf(channelIds)) : null;
             if(channelInfo != null){
                 json.put("status",channelInfo.getStatus());
                 //判断该渠道是否是关闭状态
@@ -4370,6 +4369,12 @@ public class UserLoginController extends BaseController {
                 msg = "手机验证码不能为空";
                 return;
             }
+
+            if (!validateSubmitAPP(request, response)) {
+                msg = "图形验证码错误";
+                return;
+            }
+
             Long remainTime = checkForFront(registerCheck, userPhone, 2);
             if (remainTime > 0) {
                 code = ResponseStatus.FREQUENT.getName();
@@ -4509,7 +4514,7 @@ public class UserLoginController extends BaseController {
             //判断该渠道是否是开启状态
             String userFroms = request.getParameter("user_from");
             String channelIds = AESUtil.decrypt(userFroms,AESUtil.KEY_USER_FROM);
-            ChannelInfo channelInfo = channelInfoService.findById(Integer.valueOf(channelIds));
+            ChannelInfo channelInfo = StringUtils.isNotBlank(channelIds) ? channelInfoService.findById(Integer.valueOf(channelIds)) : null;
             if(channelInfo != null){
                 json.put("status",channelInfo.getStatus());
                 //判断该渠道是否是关闭状态
