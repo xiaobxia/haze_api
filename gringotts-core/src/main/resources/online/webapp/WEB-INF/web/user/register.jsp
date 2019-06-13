@@ -281,6 +281,11 @@
 <%--})();--%>
 <%--</script>--%>
 <script type="text/javascript">
+    function reInitCodeImg() {
+        var src = $('#imgCap').attr('src')
+        $('#imgCap').attr('src', src + parseInt(Math.random() * 10))
+    }
+
     var android_url = '${androidUrl}';
     var ios_url = '${iosUrl}';
     function isQQWechat() {
@@ -339,7 +344,7 @@
             url: "${path}/credit-user/r-captcha-key",
             success: function(data) {
                 $('#RCaptchaKey').val(data.data.item.RCaptchaKey)
-                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="'+ data.data.item.captchaUrl+'&tp=1">')
+                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="'+ data.data.item.captchaUrl+'&tp=1" onclick="reInitCodeImg()">')
                 console.log(data)
             },
             error: function(error) {
@@ -565,12 +570,6 @@
                 // baseAjax('${path}/credit-user/new-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsCallBack);
             }
         });
-
-        function reInitCodeImg() {
-            var src = $('#imgCap').attr('src')
-            $('#imgCap').attr('src', src + parseInt(Math.random() * 10))
-        }
-
         function checksendSmsCallBack(data){
             if (data.code == '0') {
                 showLoader($(".error-popop"),"短信已发送",800);
