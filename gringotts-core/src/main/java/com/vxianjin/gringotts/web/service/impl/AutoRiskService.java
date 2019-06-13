@@ -183,7 +183,7 @@ public class AutoRiskService implements IAutoRiskService {
             changeLimitMoney(assetBorrowId);
         } else {
             logger.info("userId={}不是黑名单用户，进入下一步，当前是否开启机审{}, re={}", userId, result, re);
-            if (StringUtils.isBlank(result) && result.equals("0")) {//开启机审
+            if (StringUtils.isNotBlank(result) && result.equals("0")) {//开启机审
                 if (re == 30){
                     //-3:初审驳回
                     loanStatus = BorrowOrder.STATUS_CSBH;
