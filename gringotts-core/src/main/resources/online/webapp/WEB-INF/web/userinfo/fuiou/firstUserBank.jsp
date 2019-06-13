@@ -83,7 +83,7 @@
                 <li>
                     <a rel="external" href="javascript:;">
                         <span>手机号</span>
-                        <input type="text" placeholder="请输入银行预留手机号" data-role="none" id="userPhone" value="${userPhone}" />
+                        <input type="number" placeholder="请输入银行预留手机号" data-role="none" id="userPhone" value="${userPhone}" />
                     </a>
                 </li>
                 <li class="nobd gain-yzm gain-yzm1">
