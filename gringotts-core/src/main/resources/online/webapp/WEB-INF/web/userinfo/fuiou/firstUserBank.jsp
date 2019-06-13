@@ -248,23 +248,29 @@
             openAjax('${path}/fuiouBindCard/credit-card/userBankConfirm?deviceId=${deviceId}&mobilePhone=${mobilePhone}&timestamp='+Math.random(), data,resultSave);
         }
     }
-    function pop() {
+
+    function pop(msg) {
         var message = {
-            'method' : 'tobackpage'
+            'method' : 'tobackpage',
+            'params' : {
+                'msg' : msg
+            }
         };
         window.webkit.messageHandlers.webViewApp.postMessage(message);
     }
+
     function resultSave(data){
         if(data.code=="0"){
             var u = navigator.userAgent, app = navigator.appVersion;
             var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
             var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-            $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+data.message);
+            // $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+data.message);
             if (isAndroid) {
                 nativeMethod.authenticationResult(data.message);
             }else if(isIOS){
                 localStorage.setItem('toggleBindCard', 'true');
-                pop();
+                pop(data.message)
+                // $("#tempForm").submit();
         }
         }else{
             $.mvalidateTip(data.message);

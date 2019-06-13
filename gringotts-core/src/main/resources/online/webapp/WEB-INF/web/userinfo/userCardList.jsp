@@ -507,9 +507,12 @@
         $.mobile.loading('hide');
     }
 
-    function pop() {
+    function pop(msg) {
         var message = {
-            'method' : 'tobackpage'
+            'method' : 'tobackpage',
+            'params' : {
+                'msg' : msg
+            }
         };
         window.webkit.messageHandlers.webViewApp.postMessage(message);
     }
@@ -527,7 +530,7 @@
                 if (isAndroid) {
                     window.nativeMethod.authenticationResult(msg);
                 }else if(isIOS){
-                    pop();
+                    pop(msg);
                     // $("#tempForm").submit();
                 }
             }else{

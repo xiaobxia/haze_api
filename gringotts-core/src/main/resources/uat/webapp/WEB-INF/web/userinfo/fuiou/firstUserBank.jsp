@@ -249,9 +249,12 @@
         }
     }
 
-    function pop() {
+    function pop(msg) {
         var message = {
-            'method' : 'tobackpage'
+            'method' : 'tobackpage',
+            'params' : {
+                'msg' : msg
+            }
         };
         window.webkit.messageHandlers.webViewApp.postMessage(message);
     }
@@ -266,7 +269,7 @@
                 nativeMethod.authenticationResult(data.message);
             }else if(isIOS){
                 localStorage.setItem('toggleBindCard', 'true');
-                pop()
+                pop(data.message)
                 // $("#tempForm").submit();
         }
         }else{
