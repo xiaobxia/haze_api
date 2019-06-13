@@ -291,4 +291,9 @@ public class UserService implements IUserService {
     public void insertUserStrongRiskResult(StrongRiskResult strongRiskResult) {
         this.userDao.insertUserStrongRiskResult(strongRiskResult);
     }
+
+    @Override
+    public Integer defaultCardCount(Integer userId) {
+        return this.userDao.defaultCardCount(userId);
+    }
 }

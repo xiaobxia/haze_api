@@ -264,10 +264,13 @@ public class UserBanKController extends BaseController {
 
                     List<UserQuotaSnapshot> userQuotaSnapshots = userQuotaSnapshotService.getUserQuotaSnapshotByUser(user);
 
-                    if (Integer.parseInt(user.getAmountAvailable())!=0 && userQuotaSnapshots.size() > 0) {
-                        listMap.put("loan_amount", userQuotaSnapshots.get(0).getUserAmountLimit());
-                        listMap.put("loan_day", userQuotaSnapshots.get(0).getBorrowDay());
-                        listMap.put("loan_productId", userQuotaSnapshots.get(0).getBorrowProductId());
+                    int amountAvailable = Integer.parseInt(user.getAmountAvailable());
+                    if (Integer.parseInt(user.getAmountAvailable()) != 0 && userQuotaSnapshots.size() > 0) {
+                        if (amountAvailable >= userQuotaSnapshots.get(0).getUserAmountLimit().intValue()) {
+                            listMap.put("loan_amount", userQuotaSnapshots.get(0).getUserAmountLimit());
+                            listMap.put("loan_day", userQuotaSnapshots.get(0).getBorrowDay());
+                            listMap.put("loan_productId", userQuotaSnapshots.get(0).getBorrowProductId());
+                        }
                     }
 
                     map.put("item", listMap);

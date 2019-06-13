@@ -156,4 +156,6 @@ public interface IUserDao {
     void saveRiskRecord(RiskRecord riskRecord);
 
     Integer searchBrowserSource(Integer userId);
+
+    Integer defaultCardCount(Integer userId);
 }

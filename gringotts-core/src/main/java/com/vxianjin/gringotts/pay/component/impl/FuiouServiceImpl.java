@@ -363,6 +363,9 @@ public class FuiouServiceImpl implements FuiouService {
             cardInfo.setType(UserCardInfo.TYPE_DEBIT);
             cardInfo.setCreateTime(new Date());
             cardInfo.setIsBand(1);
+            if (userService.defaultCardCount(Integer.parseInt(userId)) <= 0) {
+                cardInfo.setCardDefault(1);
+            }
             cardInfo.setAgreeno(agreeno);
             boolean flag = userBankDao.saveUserbankCard(cardInfo);
             log.info("FuiouService updateUserBankInfo userId=" + userId + " new flag=" + flag);

@@ -1001,6 +1001,7 @@ public class UserLoginController extends BaseController {
             }
 
             String sendSmsCode = jedisCluster.get(SMS_REGISTER_PREFIX + userPhone);
+            log.info("用户输入短信验证码：{}，系统发送验证码：{}", smsCode, sendSmsCode);
             if ("".equals(smsCode)) {
                 msg = "验证码不能为空";
                 return;

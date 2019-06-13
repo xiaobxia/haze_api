@@ -28,6 +28,7 @@ import com.vxianjin.gringotts.web.utils.SysCacheUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import redis.clients.jedis.JedisCluster;
@@ -131,7 +132,12 @@ public class UserloanController extends BaseController {
                 return serviceResult;
             }*/
             userMaxBorrowAmount = borrowProductConfig.getBorrowAmount().divide(BigDecimal.valueOf(100));
-            userQuotaSnapshotDao.addUserQuota(Integer.valueOf(userId),config.getId(),config.getBorrowAmount(),config.getBorrowDay());
+            try {
+                userQuotaSnapshotDao.addUserQuota(Integer.valueOf(userId),config.getId(),config.getBorrowAmount(),config.getBorrowDay());
+            } catch (DuplicateKeyException e) {
+                logger.info("数据库中有该用户的数据，不做异常处理，执行更新，错误信息：{}", e.getMessage());
+                userQuotaSnapshotDao.updateUserQuota(Integer.valueOf(userId), config.getId(), config.getBorrowDay(), config.getBorrowAmount());
+            }
         }else{
             userMaxBorrowAmount =  quotaModel.getBorrowAmount().divide(new BigDecimal("100"));
         }
