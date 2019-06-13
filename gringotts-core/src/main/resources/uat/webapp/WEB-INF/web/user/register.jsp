@@ -29,9 +29,9 @@
         -moz-user-select: none;
         -o-user-select: none;
         -khtml-user-select: none;
-        -webkit-user-select: none;
+        -webkit-user-select: text;
         -ms-user-select: none;
-        user-select: none;
+        user-select: text;
         outline:none;
     }
     input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
