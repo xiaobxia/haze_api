@@ -227,7 +227,7 @@
     };
     $(".value").numberRock({
         speed:10,
-        count:10000
+        count:20000
     });
 </script>
 </body>
