@@ -66,6 +66,9 @@ public class SendSmsUtil {
      */
     public static boolean sendSmsDiyCL(String telephone, String temp, String content){
         loger.info("sendSms:" + telephone + "   sms=" + content);
+        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+            return true;
+        }
         return cloudsp(telephone, temp, content, notify_account, notify_pswd, notify_sign);
     }
 
