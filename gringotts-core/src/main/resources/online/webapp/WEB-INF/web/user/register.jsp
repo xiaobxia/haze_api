@@ -424,6 +424,7 @@
             LUOCAPTCHA.reset();
             return;
         }
+        var captcha =	$("#captcha").val();
         var RCaptchaKey =	$("#RCaptchaKey").val();
         var url = "${path}/act/light-loan-xjx/new-register";
         var param = {
@@ -433,6 +434,7 @@
             invite_code:invite_code,
             user_from:user_from,
             token:token,
+            captcha: captcha,
             brower_type:brower_type,
             qq_wechat: isQQWechat(),
             apply_ins: apply_ins,
