@@ -161,7 +161,7 @@
                             <!--<div class="l-captcha" data-site-key="909f06dfef67bd8309dc1b5bdca5ff7f" data-width="100%" data-callback="getResponse"></div>-->
                         </li>
                         <li>
-                            <input type="number" maxlength="6" placeholder="收到的验证码" data-role="none" name="smsCode" id="smsCode">
+                            <input type="text" placeholder="收到的验证码" data-role="none" name="smsCode" id="smsCode">
                             <div class="gain-yzm pst00" id="sendcode">获取验证码</div>
                         </li>
                         <!--<li>
@@ -669,6 +669,34 @@
             /* 获取不到验证码，语音验证 -end*/
 
     });
+
+    $('#userPhone').on('input', function () {
+        var number = $(this).val()
+        $(this).val(numberFormat(number, 11))
+    })
+    $('#smsCode').on('input', function () {
+        var number = $(this).val()
+        $(this).val(numberFormat(number, 6))
+    })
+    function numberFormat(number, len) {
+        var rawNumber = number
+        if (!number) {
+            return ''
+        }
+        var notNumberReg = /[^\d]/g
+        //移除非数字
+        if (notNumberReg.test(number)) {
+            number = number.replace(notNumberReg, '')
+        }
+        //不能有012这种
+        if ((number.indexOf('0') === 0)) {
+            number = number.substr(0, 1)
+        }
+        if (number.length > len) {
+            number = number.substr(0, len)
+        }
+        return number
+    }
 </script>
 
 </body>
