@@ -161,7 +161,7 @@
                             <!--<div class="l-captcha" data-site-key="909f06dfef67bd8309dc1b5bdca5ff7f" data-width="100%" data-callback="getResponse"></div>-->
                         </li>
                         <li>
-                            <input type="text" placeholder="收到的验证码" data-role="none" name="smsCode" id="smsCode">
+                            <input type="number" maxlength="6" placeholder="收到的验证码" data-role="none" name="smsCode" id="smsCode">
                             <div class="gain-yzm pst00" id="sendcode">获取验证码</div>
                         </li>
                         <!--<li>
