@@ -886,4 +886,8 @@
 	<select id="searchBrowserSource" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select qq_wechat from user_info where id = #{userId}
 	</select>
+
+	<select id="defaultCardCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select COUNT(1) from user_card_info where user_id = #{userId} and status = 1 and card_default = 1
+	</select>
 </mapper>

@@ -196,4 +196,6 @@ public interface IUserService {
      * @param strongRiskResult strongRiskResult
      */
     void insertUserStrongRiskResult(StrongRiskResult strongRiskResult);
+
+    Integer defaultCardCount(Integer userId);
 }
