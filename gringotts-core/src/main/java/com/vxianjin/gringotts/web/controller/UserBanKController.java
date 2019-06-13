@@ -135,9 +135,9 @@ public class UserBanKController extends BaseController {
                         //银行卡认证页面
                         if (null != telephone && "cardInfo".equals(certi.getCode())) {
                             if ("未完善".equals(operator)) {
-                                resultMap.put("url", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/fuiouBindCard/credit-card/bindNewCard");
+                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/fuiouBindCard/credit-card/bindNewCard");
                             } else {
-                                resultMap.put("url", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/fuiouBindCard/credit-card/firstUserBank");
+                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/fuiouBindCard/credit-card/firstUserBank");
                             }
                         }
                         //common/web/images/certification/more_info_logo.png;;common/web/images/certification/more_info_logo2.png
@@ -147,9 +147,9 @@ public class UserBanKController extends BaseController {
                             resultMap.put("status", 0);
                             resultMap.put("operator", operator);
                             if (logoImg.length >= 2) {
-                                logoImgStr = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" + logoImg[1];
+                                logoImgStr = PropertiesConfigUtil.get("APP_HOST_API") + "/" + logoImg[1];
                             } else {
-                                logoImgStr = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" + logoImg[0];
+                                logoImgStr = PropertiesConfigUtil.get("APP_HOST_API") + "/" + logoImg[0];
                             }
 
                             if ("phoneInfo".equals(certi.getCode())) {//手机运营商
@@ -193,7 +193,7 @@ public class UserBanKController extends BaseController {
                                     mustBeCount++;
                                 //}
                             }
-                            logoImgStr = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" + logoImg[0];
+                            logoImgStr = PropertiesConfigUtil.get("APP_HOST_API") + "/" + logoImg[0];
                             resultMap.put("status", 1);
 
                             if ("riskCarditInfo".equals(certi.getCode()) || "phoneInfo".equals(certi.getCode())) {

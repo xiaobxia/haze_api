@@ -495,7 +495,7 @@ public class UserLoginController extends BaseController {
                 }
                 boolean isSend = true;
                 if (StringUtils.isNotBlank(errorCount) && Integer.parseInt(errorCount) >= 3) {
-                    captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=R" + request.getSession().getId();
+                    captchaUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/captcha.svl?RCaptchaKey=R" + request.getSession().getId();
                     if ("1".equals(type2)) {
                         if (!validateSubmitAPP(request, response)) {
                             msg = "图形验证码错误";
@@ -619,7 +619,7 @@ public class UserLoginController extends BaseController {
             }
 
             log.info("resetPwdCodeV211 phone=" + userPhone + " RCaptchaKey=" + captchaKey);
-            captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            captchaUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/captcha.svl?RCaptchaKey=" + captchaKey;
 
             log.info("resetPwdCodeV211 phone=" + userPhone + " type=" + param.get("type") + " type2=" + type2);
             if ("0".equals(type2)) {
@@ -1172,7 +1172,7 @@ public class UserLoginController extends BaseController {
                 return;
             }
 
-            captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            captchaUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/captcha.svl?RCaptchaKey=" + captchaKey;
             if ("0".equals(type)) {
                 code = "0";
                 msg = "请求成功";
