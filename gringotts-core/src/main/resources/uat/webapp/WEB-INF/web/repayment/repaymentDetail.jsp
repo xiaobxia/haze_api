@@ -97,10 +97,10 @@
                     <c:choose>
                     <c:when test="${extendStatus == true}">
                         <a data-ajax="false" onclick="toRenewal()" href="javascript:;">申请续期</a>
-                        <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}">立即还款</a>
+                        <a data-ajax="false" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}">立即还款</a>
                     </c:when>
                     <c:otherwise>
-                        <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}" style="width: 100%">立即还款</a>
+                        <a data-ajax="false" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}" style="width: 100%">立即还款</a>
                     </c:otherwise>
                     </c:choose>
                 </div>
@@ -109,7 +109,7 @@
         <div class="sure-tc">
             <p>您已逾期，不能申请续期，请先去还款</p>
             <div class="btn-both clearfix" style="padding:0 0.5rem;">
-                <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">去还款</a>
+                <a data-ajax="false" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">去还款</a>
                 <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #FF8240; color:#fff !important;height:2rem;line-height:2rem;">取消</a>
             </div>
         </div>
