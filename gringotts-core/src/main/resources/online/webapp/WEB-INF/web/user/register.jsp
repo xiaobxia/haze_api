@@ -29,9 +29,9 @@
         -moz-user-select: none;
         -o-user-select: none;
         -khtml-user-select: none;
-        -webkit-user-select: none;
+        -webkit-user-select: text;
         -ms-user-select: none;
-        user-select: none;
+        user-select: text;
         outline:none;
     }
     input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
@@ -78,7 +78,12 @@
     .voice-popup .btn-box a:first-child{margin-right:15px}
     .voice-popup .btn-box .btn-cancle{background:#aaa;border-radius:50px}
     .voice-popup .btn-box .btn-sure{background:#fe8a3b;border-radius:50px}
-    .banner-pic .banner-logo {width: 80%;margin: 0.3rem auto 0;}
+    .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
+    .banner-pic {
+        position: relative;
+        margin-bottom: -0.7rem;
+        z-index: -100;
+    }
     .banner-pic img {display: block;}
     .banner-pic .text-center{font-size: 0;margin-top: 25px;}
     .banner-pic .text-center .img{margin: 0 auto;}

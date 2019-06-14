@@ -109,7 +109,12 @@
         .success-main1 .success-box .success-info .value{padding:52px 0 5px;text-align:center;color:#ff4f3e;font-weight:400;font-size:48px}
         .success-main1 .success-box .success-info em{display:block;font-size:14px;font-style:normal;color:#666;text-align:center}
         .success-main1 .com-btn{background:#ff7700;width:90%;text-align:center;color:#fff;font-size:16px;margin:0 auto;line-height:45px;height:auto;border-radius:50px;display:block;text-decoration:none}
-        .banner-pic .banner-logo {width: 80%;margin: 0.3rem auto 0;}
+        .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
+        .banner-pic {
+            position: relative;
+            margin-bottom: -0.7rem;
+            z-index: -100;
+        }
         .banner-pic img {display: block;}
         .banner-pic .text-center{font-size: 0;margin-top: 25px;}
         .banner-pic .text-center .img{margin: 0 auto;}
