@@ -309,7 +309,7 @@ public class RepayService {
         // 待还总金额（总还款金额 - 已还款金额）
         Long waitRepay = re.getRepaymentAmount() - re.getRepaymentedAmount();
         // 待还滞纳金（总滞纳金 - 已还滞纳金）
-        Long waitLate = productConfig.getLateFee().multiply(BigDecimal.valueOf(re.getLateDay())).longValue();//Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));
+        Long waitLate = Long.parseLong(String.valueOf(re.getPlanLateFee() - re.getTrueLateFee()));//productConfig.getLateFee().multiply(BigDecimal.valueOf(re.getLateDay())).longValue();
         // 待还本金
         Long waitAmount = waitRepay - waitLate;
         // 续期费 分为单位
