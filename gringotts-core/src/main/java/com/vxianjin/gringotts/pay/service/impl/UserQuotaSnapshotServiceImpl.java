@@ -539,12 +539,12 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
         private void sendSuccessMessage(BigDecimal afterMaxAmount, User user) {
 
             //短信
-            String shortMessage = user.getRealname() + "##" + afterMaxAmount.divide(new BigDecimal(100));
+            String shortMessage = user.getRealname() + "##" + afterMaxAmount.divide(new BigDecimal(100)).intValue();
             //短信消息发送
             SendSmsUtil.sendSmsDiyCL(user.getUserPhone(), SendSmsUtil.templateld46366, shortMessage);
             try {
-                PublishAdapter publishAdapter = PublishFactory.getPublishAdapter(EventTypeEnum.REPAY.getCode());
-                publishAdapter.publishMsg(applicationContext, EventTypeEnum.REPAY.getCode(), shortMessage, user.getUserPhone());
+                /*PublishAdapter publishAdapter = PublishFactory.getPublishAdapter(EventTypeEnum.REPAY.getCode());
+                publishAdapter.publishMsg(applicationContext, EventTypeEnum.REPAY.getCode(), shortMessage, user.getUserPhone());*/
             } catch (PayException e) {
                 log.error(MessageFormat.format("用户{0},还款提示短信发送失败====>e :{1}", user.getUserPhone(), e.getMessage()));
             }
