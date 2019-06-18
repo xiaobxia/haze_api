@@ -687,7 +687,7 @@
     })
     $('#smsCode').on('input', function () {
         var number = $(this).val()
-        $(this).val(numberFormat(number, 6))
+        $(this).val(numberFormatCode(number, 6))
     })
     function numberFormat(number, len) {
         var rawNumber = number
@@ -702,6 +702,21 @@
         //不能有012这种
         if ((number.indexOf('0') === 0)) {
             number = number.substr(0, 1)
+        }
+        if (number.length > len) {
+            number = number.substr(0, len)
+        }
+        return number
+    }
+    function numberFormatCode(number, len) {
+        var rawNumber = number
+        if (!number) {
+            return ''
+        }
+        var notNumberReg = /[^\d]/g
+        //移除非数字
+        if (notNumberReg.test(number)) {
+            number = number.replace(notNumberReg, '')
         }
         if (number.length > len) {
             number = number.substr(0, len)
