@@ -96,13 +96,11 @@ public class OffLinePayImpl implements OffLinePay {
 
 
         BorrowOrder bo = borrowOrderService.findOneBorrow(repayment.getAssetOrderId());
-        if (bo.getProductId() != null) {
-            BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
-            BackExtend extend = borrowOrderService.extend(bo.getProductId());
+        BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
+        BackExtend extend = borrowOrderService.extend(bo.getProductId());
 
-            // 续期手续费
-            BigDecimal renewalFee = productConfig.getRenewalPoundage();
-        }
+        // 续期手续费
+        BigDecimal renewalFee = productConfig.getRenewalPoundage();
 
 
         // 待还总金额
@@ -117,7 +115,7 @@ public class OffLinePayImpl implements OffLinePay {
         rr.setUserId(repayment.getUserId());
         rr.setRepaymentPrincipal(waitAmount);
         rr.setOldRepaymentTime(repayment.getRepaymentTime());
-        rr.setRenewalDay(bo.getLoanTerm());
+        rr.setRenewalDay(Integer.parseInt(extend.getExtendDay()));
         rr.setStatus(RenewalRecord.STATUS_SUCC);
         rr.setRemark(rr.getRemark() + "  操作员:" + serverUser);
         rr.setMoneyAmount(repayment.getRepaymentPrincipal() + repayment.getRepaymentInterest());
@@ -137,18 +135,18 @@ public class OffLinePayImpl implements OffLinePay {
 
                 //用户实际还款时间早于应还款时间 应还款时间上续期
                 if (repayDate1.before(repayment.getRepaymentTime())) {
-                    rr.setRepaymentTime(DateUtil.addDay(repayment.getRepaymentTime(), bo.getLoanTerm()));
+                    rr.setRepaymentTime(DateUtil.addDay(repayment.getRepaymentTime(), Integer.parseInt(extend.getExtendDay()) - 1));
                 }
                 //用户逾期还款或者应还款当天还款 则按照还款日续期
                 if (repayDate2.after(shouldRepayDate) || repayDate2.equals(shouldRepayDate)) {
-                    rr.setRepaymentTime(DateUtil.addDay(repayDate1, bo.getLoanTerm()));
+                    rr.setRepaymentTime(DateUtil.addDay(repayDate1, Integer.parseInt(extend.getExtendDay()) - 1));
                 }
 
             } catch (ParseException e) {
                 log.error("createdAtStr happened error:{}", e);
             }
         } else {
-            rr.setRepaymentTime(DateUtil.addDay(repayment.getRepaymentTime(), repayment.getLateDay() + bo.getLoanTerm()));
+            rr.setRepaymentTime(DateUtil.addDay(repayment.getRepaymentTime(), repayment.getLateDay() + Integer.parseInt(extend.getExtendDay()) - 1));
         }
         renewalRecordService.insertSelective(rr);
         log.info(MessageFormat.format("renewal record=:{0}", JSON.toJSONString(rr)));
