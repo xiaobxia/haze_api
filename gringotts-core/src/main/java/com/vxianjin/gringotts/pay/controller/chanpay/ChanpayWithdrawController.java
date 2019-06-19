@@ -67,6 +67,7 @@ public class ChanpayWithdrawController extends BaseController {
         try {
             return chanpayWithdrawService.payWithdraw(userId, borrowId, uuid, sign);
         } catch (BizException e) {
+            logger.info("ChanPayWithdrawController error:" + e.getErrorMsg() + "message:" + e.getMessage());
             return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
         }
     }
