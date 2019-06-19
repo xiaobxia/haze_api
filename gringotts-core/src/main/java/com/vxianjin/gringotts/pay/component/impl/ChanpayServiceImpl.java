@@ -458,8 +458,9 @@ public class ChanpayServiceImpl implements ChanpayService {
         Map<String,Object> yopresponsemap = new HashMap<>();
         try{
             String result = ChanPayUtil.sendPost(paramMap, BaseConstant.CHARSET, BaseConstant.MERCHANT_PRIVATE_KEY);
+            log.info("ChanPayWithdraw result=" + result);
             yopresponsemap.put("errorCode", "-1");
-            if (ChanPayUtil.verify(result, BaseConstant.MERCHANT_PRIVATE_KEY)) {
+            if (ChanPayUtil.verify(result, BaseConstant.MERCHANT_PUBLIC_KEY)) {
                 JSONObject jsonObject = JSONObject.parseObject(result);
                 jsonObject.get("AppRetcode");//返回码
                 jsonObject.get("AppRetMsg");//返回信息

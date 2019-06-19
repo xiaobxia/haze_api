@@ -22,7 +22,6 @@ import com.vxianjin.gringotts.util.security.AESUtil;
 import com.vxianjin.gringotts.util.security.MD5Util;
 import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
-import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.impl.BorrowOrderService;
 import com.vxianjin.gringotts.web.utils.GsonUtil;
@@ -133,10 +132,10 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         BorrowOrder orderNew = new BorrowOrder();
         orderNew.setId(needPayInfo.getBorrowOrder().getId());
 
+        orderNew.setSerialNo(paramMap.get("OutTradeNo"));
         orderNew.setPaystatus(String.valueOf(resultMap.get("code")));
         orderNew.setPayRemark(String.valueOf(resultMap.get("msg")));
         orderNew.setUpdatedAt(new Date());
-        orderNew.setOutTradeNo(paramMap.get("batchNo"));
 
         //【2】订单日志记录
         OrderLogModel logModel = new OrderLogModel();
@@ -168,7 +167,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
     private Map<String, String> prepareParamsToChanPay(BorrowOrder order, UserCardInfo info) {
         Map<String, String> paramMap = BaseParameter.requestBaseParameter("cjt_dsf");
         paramMap.put("TransCode", "T10000"); // 交易码
-        paramMap.put("OutTradeNo", order.getSerialNo()); // 商户网站唯一订单号
+        paramMap.put("OutTradeNo", ChanPayUtil.generateOutTradeNo()); // 商户网站唯一订单号
         paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
         paramMap.put("BankCommonName", info.getBankName()); // 通用银行名称
         paramMap.put("AcctNo", ChanPayUtil.encrypt(order.getCardNo(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
