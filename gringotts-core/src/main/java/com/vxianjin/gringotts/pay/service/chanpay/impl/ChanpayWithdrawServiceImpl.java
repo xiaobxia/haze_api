@@ -87,6 +87,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
                     } else {
                         logger.info("fangkuan fail borrowOrder:" + orderId + " userId:" + borrowOrder.getUserId()
                                 + " userPhone:" + borrowOrder.getUserPhone() + " msg:" + cjtDsfT10000Notify.getFail_reason(), "fangkuan");
+                        //borrowOrder.setStatus(BorrowOrder.STATUS_FKSB);
                         borrowOrderService.updateLoanNew(borrowOrder, "FAIL", "支付失败");
                     }
                 }
@@ -147,7 +148,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         logModel.setBeforeStatus(String.valueOf(needPayInfo.getBorrowOrder().getStatus()));
 
         if (BorrowOrder.SUB_SUBMIT.equals(String.valueOf(resultMap.get("code")))) {
-            result = new ResponseContent("000000", "支付正在处理中");
+            result = new ResponseContent("0000", "支付正在处理中");
             logModel.setAfterStatus(BorrowOrder.STATUS_FKZ.toString());
             logModel.setRemark("放款中");
         } else {
