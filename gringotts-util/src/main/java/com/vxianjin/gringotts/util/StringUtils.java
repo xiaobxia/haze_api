@@ -324,4 +324,17 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
     }
 
+    /**
+     * 字符串是否为空
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isEmpoty(String str) {
+        if (null != str && !str.trim().equals("")) {
+            return false;
+        }
+        return true;
+    }
+
 }
