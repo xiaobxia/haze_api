@@ -120,6 +120,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
 
         //请求代付参数
         Map<String, String> paramMap = prepareParamsToChanPay(needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
+        logger.info("ChanpayWithdrawServiceImpl payWithdraw 处理后paramMap:{}", JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = null;
         try {
             //发送提现请求
@@ -165,7 +166,9 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
     }
 
     private Map<String, String> prepareParamsToChanPay(BorrowOrder order, UserCardInfo info) {
+        logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay order:{}, userCardInfo:{}", order, info);
         Map<String, String> paramMap = BaseParameter.requestBaseParameter("cjt_dsf");
+        logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay 处理前paramMap:{}", JSON.toJSONString(paramMap));
         paramMap.put("TransCode", "T10000"); // 交易码
         paramMap.put("OutTradeNo", ChanPayUtil.generateOutTradeNo()); // 商户网站唯一订单号
         paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
