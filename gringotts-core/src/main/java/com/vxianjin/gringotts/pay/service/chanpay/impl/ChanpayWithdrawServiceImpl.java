@@ -172,11 +172,11 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay 处理前paramMap:{}", JSON.toJSONString(paramMap));
         try {
             paramMap.put("TransCode", "T10000"); // 交易码
-            paramMap.put("OutTradeNo", ChanPayUtil.generateOutTradeNo()); // 商户网站唯一订单号
+            paramMap.put("OutTradeNo", order.getSerialNo()); // 商户网站唯一订单号
             paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
             paramMap.put("BankCommonName", info.getBankName()); // 通用银行名称
-            paramMap.put("AcctNo", ChanPayUtil.encrypt(info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
-            paramMap.put("AcctName", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账户名称
+            paramMap.put("AcctNo", ChanPayUtil.encrypt(info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET).replaceAll("\r|\n", "")); // 对手人账号(此处需要用真实的账号信息)
+            paramMap.put("AcctName", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET).replaceAll("\r|\n", "")); // 对手人账户名称
             paramMap.put("TransAmt", "0.01");//order.getIntoMoney().toString());
             paramMap.put("CorpPushUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/withdrawCallback");
         } catch (Exception e) {
