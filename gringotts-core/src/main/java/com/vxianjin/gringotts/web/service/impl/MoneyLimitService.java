@@ -197,10 +197,22 @@ public class MoneyLimitService implements IMoneyLimitService {
                 logger.info("获取排序风控分值异常：" + e.getMessage());
             }
         } else {
+            String no = "sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6);
+            RiskRecord riskRecord = new RiskRecord();
+            riskRecord.setRequestId(no);
+            riskRecord.setUserId(Integer.parseInt(userId));
+            riskRecord.setReturnCode(0);
+            riskRecord.setReturnInfo("success");
+            riskRecord.setGxbReportUrl(DataHtmlUrl);
+            riskRecord.setGxbToken(mxReportUrl);
+            riskRecord.setScore(0);
+            riskRecord.setCreateTime(new Date());
+            userDao.saveRiskRecord(riskRecord);
+
             StrongRiskResult riskResult = new StrongRiskResult();
             riskResult.setUserId(userId);
             riskResult.setAmount("1600");
-            riskResult.setOrderNo("sr"+ DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+ IdUtil.generateRandomStr(6));
+            riskResult.setOrderNo(no);
             riskResult.setRiskStatusType("px");
             riskResult.setType("2");
             riskResult.setConsumerNo(PropertiesConfigUtil.get("RISK_BUSINESS") + userId);
