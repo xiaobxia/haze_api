@@ -399,7 +399,7 @@ public class IndexController extends BaseController {
                 // 0 不显示 1显示
                 item.put("risk_status", "0");
                 //贷款超时链接
-                item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL"));
+                item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL") + user.getUserName());
                 BorrowOrder bo = borrowOrderService
                         .selectBorrowOrderNowUseId(Integer.valueOf(user.getId()));
                 if (bo != null) {
@@ -416,7 +416,7 @@ public class IndexController extends BaseController {
                     //驳回情况下显示
                     if (borrowStatusMap_shenheFail.containsKey(bo.getStatus())
                             && "1".equals(offon)) {
-                        item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_FK"));
+                        item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_FK") + user.getUserName());
                         item.put("risk_status", "1");
                     }
                     log.info("bo.getStatus1=" + bo.getStatus());
@@ -435,7 +435,7 @@ public class IndexController extends BaseController {
                         if (null != repayment && "1".equals(offon)
                                 && BorrowOrder.STATUS_YYQ.equals(repayment.getStatus())
                                 && repayment.getLateDay() >= overdueDays) {
-                            item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_YQ"));
+                            item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_YQ") + user.getUserName());
                             item.put("risk_status", "1");
                         }
                     }

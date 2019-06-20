@@ -1441,7 +1441,7 @@ public class UserLoginController extends BaseController {
                 // 如果最近借款被拒绝, 那么就显示问号, 跳转去其他的app
                 // 0 不显示 1显示
                 cardMap.put("risk_status", "0");
-                cardMap.put("shop_url", PropertiesConfigUtil.get("SHOP_URL"));
+                cardMap.put("shop_url", PropertiesConfigUtil.get("SHOP_URL") + user.getUserName());
                 BorrowOrder bo = borrowOrderService.selectBorrowOrderNowUseId(Integer.valueOf(user.getId()));
                 if (bo != null) {
 
@@ -1459,7 +1459,7 @@ public class UserLoginController extends BaseController {
                     //借款审核被拒绝
                     if ((borrowStatusMap_shenheFail.containsKey(bo.getStatus()))
                             && "1".equals(offon)) {
-                        cardMap.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_FK"));
+                        cardMap.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_FK") + user.getUserName());
                         cardMap.put("risk_status", "1");
                     }
                     log.info("bo.getStatus1=" + bo.getStatus());
@@ -1474,7 +1474,7 @@ public class UserLoginController extends BaseController {
                         Integer overdue_days = Integer.parseInt(PropertiesConfigUtil.get("SHOP_URL_OVERDUE_DAYS"));
                         log.info("overdue_days=" + overdue_days + " lateDays=" + repayment.getLateDay() + " flag=" + (repayment.getLateDay() >= overdue_days));
                         if (null != repayment && "1".equals(offon) && BorrowOrder.STATUS_YYQ.equals(repayment.getStatus()) && repayment.getLateDay() >= overdue_days) {
-                            cardMap.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_YQ"));
+                            cardMap.put("shop_url", PropertiesConfigUtil.get("SHOP_URL_YQ") + user.getUserName());
                             cardMap.put("risk_status", "1");
                         }
                     }
