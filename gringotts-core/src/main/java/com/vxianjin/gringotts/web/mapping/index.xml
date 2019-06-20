@@ -280,6 +280,7 @@
         <![CDATA[
 			select 
 			id as id,
+			user_name as userName,
 			amount_min as amountMin,
 			amount_max as amountMax,
 			amount_available as amountAvailable,
