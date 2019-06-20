@@ -122,16 +122,24 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
 
         //请求代付参数
         //Map<String, String> paramMap = prepareParamsToChanPay(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
+        String card_no = needPayInfo.getUserCardInfo().getCard_no();
+        String realname = needPayInfo.getUser().getRealname();
+        String bankName = needPayInfo.getUserCardInfo().getBankName();
+        String random = GenerateNo.generateShortUuid(10);
+        logger.info("AcctNo:{}, AcctName:{}, bankName:{}, random:{}, PUBLICKEY:{}", card_no, realname, bankName, random, BaseConstant.MERCHANT_PUBLIC_KEY);
+        String cardNoEncrypt = ChanPayUtil.encrypt(card_no, BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET);
+        String realNameEncrypt = ChanPayUtil.encrypt(realname, BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET);
+        logger.info("cardNoEncrypt:{}, realNameEncrypt:{}", cardNoEncrypt, realNameEncrypt);
         Map<String, String> paramMap = BaseParameter.requestBaseParameter("cjt_dsf");
         paramMap.put("TransCode", "T10000"); // 交易码
-        paramMap.put("OutTradeNo", GenerateNo.generateShortUuid(10)); // 商户网站唯一订单号
+        paramMap.put("OutTradeNo", random); // 商户网站唯一订单号
         paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
-        paramMap.put("BankCommonName", needPayInfo.getUserCardInfo().getBankName()); // 通用银行名称
-        paramMap.put("AcctNo", ChanPayUtil.encrypt(needPayInfo.getUserCardInfo().getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
-        paramMap.put("AcctName", ChanPayUtil.encrypt(needPayInfo.getUser().getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账户名称
-        paramMap.put("TransAmt", "0.01");//order.getIntoMoney().toString());
+        paramMap.put("BankCommonName", bankName); // 通用银行名称
+        paramMap.put("AcctNo", cardNoEncrypt); // 对手人账号(此处需要用真实的账号信息)
+        paramMap.put("AcctName", realNameEncrypt); // 对手人账户名称
+        paramMap.put("TransAmt", "0.01"); //order.getIntoMoney().toString());
         paramMap.put("CorpPushUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/withdrawCallback");
-        
+
         logger.info("ChanpayWithdrawServiceImpl payWithdraw 处理后paramMap:{}", JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = null;
         try {
