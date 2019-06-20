@@ -75,28 +75,4 @@ public class ChanpayWithdrawController extends BaseController {
         }
     }
 
-    /*public static void main(String[] args) {
-     *//*CjtDsfT10000Notify cjtDsfT10000Notify = new CjtDsfT10000Notify();
-        cjtDsfT10000Notify.setNotify_id("9def501916f648f1ae811c09f4bf3ba8");
-        cjtDsfT10000Notify.setNotify_type("withdrawal_status_sync");
-        cjtDsfT10000Notify.setNotify_time("20190619180258");
-        cjtDsfT10000Notify.set_input_charset("UTF-8");
-        cjtDsfT10000Notify.setVersion("1.0");
-        cjtDsfT10000Notify.setOuter_trade_no("hEjj34RAZ0");
-        cjtDsfT10000Notify.setInner_trade_no("102156093331354582454");
-        cjtDsfT10000Notify.setWithdrawal_amount("0.01");
-        cjtDsfT10000Notify.setWithdrawal_status("WITHDRAWAL_FAIL");
-        cjtDsfT10000Notify.setUid("");
-        cjtDsfT10000Notify.setReturn_code("S0001");
-        cjtDsfT10000Notify.setFail_reason("持卡人身份信息验证失败");
-        cjtDsfT10000Notify.setFail_reason("持卡人身份信息验证失败");
-        cjtDsfT10000Notify.setGmt_withdrawal("20190619163736");
-        cjtDsfT10000Notify.setSign("YOTimhygmANxJmn1Vf5geU1q7HLVjZcVtLILqzolT6Rl+U7ZwEymykoxrcZsXvMHxNjYFDZ7vKxRUnt1snDph+tXEZec71EgTw54j7OqZlEIEkUV3As/Gt6Ogt96g5uLjcHbxAZWRSU+PHNb4VLKQl7KzKOIQSJzm1fVHpEBmI4=");
-        boolean verify = ChanPayUtil.verify(GsonUtil.toJson(cjtDsfT10000Notify), BaseConstant.MERCHANT_PUBLIC_KEY);
-        System.out.println(verify);*//*
-
-        String result = "{\"AcceptStatus\":\"S\",\"AcctName\":\"P398344330\",\"AcctNo\":\"P371937930\",\"AppRetMsg\":\"交易处理中\",\"AppRetcode\":\"01019999\",\"CorpName\":\"畅捷支付测试联调（新代收付）\",\"Fee\":\"0.00\",\"FlowNo\":\"136J25IH2B913A20\",\"InputCharset\":\"UTF-8\",\"OriginalErrorMessage\":\"接收成功\",\"OriginalRetCode\":\"000001\",\"OutTradeNo\":\"2019061920160075508569\",\"PartnerId\":\"200001160096\",\"PlatformErrorMessage\":\"交易受理成功\",\"PlatformRetCode\":\"0000\",\"Sign\":\"owtqWcXkLHxVttdZhFoNp3RN10mQHUVT/W/1Sd1kzzou1yq8g4BtZ5sRB1fwC2sXVOoUFyyOwbbFLSAeJCJXLqTbnzQ78PSzKXKd2qRpsXp7G2njdxynM2OxQnAO/nt0FvHL/BCGkCHpjRjJIxE9qgWXA///47x3k6FY6LAQeIk=\",\"SignType\":\"RSA\",\"TimeStamp\":\"20190619201600\",\"TradeDate\":\"20190619\",\"TradeTime\":\"201600\",\"TransAmt\":\"0.01\",\"TransCode\":\"T10000\"}";
-        boolean verify = ChanPayUtil.verify(result, BaseConstant.MERCHANT_PUBLIC_KEY);
-        System.out.println(verify);
-    }*/
 }

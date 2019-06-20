@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +111,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
      */
     @Transactional(rollbackFor = Exception.class, noRollbackFor = BizException.class)
     @Override
-    public ResponseContent payWithdraw(String userId, String borrowId, String uuid, String sign) throws BizException {
+    public ResponseContent payWithdraw(String userId, String borrowId, String uuid, String sign) throws Exception {
         logger.info("payWithdraw userId=" + userId + " borrowId=" + borrowId + " uuid=" + uuid + " sign=" + sign);
         ResponseContent result;
         //验证签名
@@ -121,24 +122,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         NeedPayInfo needPayInfo = withdrawService.getNeedPayInfo(userId, borrowId);
 
         //请求代付参数
-        //Map<String, String> paramMap = prepareParamsToChanPay(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
-        String card_no = needPayInfo.getUserCardInfo().getCard_no();
-        String realname = needPayInfo.getUser().getRealname();
-        String bankName = needPayInfo.getUserCardInfo().getBankName();
-        String random = GenerateNo.generateShortUuid(10);
-        logger.info("AcctNo:{}, AcctName:{}, bankName:{}, random:{}, PUBLICKEY:{}", card_no, realname, bankName, random, BaseConstant.MERCHANT_PUBLIC_KEY);
-        String cardNoEncrypt = ChanPayUtil.encrypt(card_no, BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET);
-        String realNameEncrypt = ChanPayUtil.encrypt(realname, BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET);
-        logger.info("cardNoEncrypt:{}, realNameEncrypt:{}", cardNoEncrypt, realNameEncrypt);
-        Map<String, String> paramMap = BaseParameter.requestBaseParameter("cjt_dsf");
-        paramMap.put("TransCode", "T10000"); // 交易码
-        paramMap.put("OutTradeNo", random); // 商户网站唯一订单号
-        paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
-        paramMap.put("BankCommonName", bankName); // 通用银行名称
-        paramMap.put("AcctNo", cardNoEncrypt); // 对手人账号(此处需要用真实的账号信息)
-        paramMap.put("AcctName", realNameEncrypt); // 对手人账户名称
-        paramMap.put("TransAmt", "0.01"); //order.getIntoMoney().toString());
-        paramMap.put("CorpPushUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/withdrawCallback");
+        Map<String, String> paramMap = prepareParamsToChanPay(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
 
         logger.info("ChanpayWithdrawServiceImpl payWithdraw 处理后paramMap:{}", JSON.toJSONString(paramMap));
         Map<String, Object> resultMap = null;
@@ -185,7 +169,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         return result;
     }
 
-    private Map<String, String> prepareParamsToChanPay(User user, BorrowOrder order, UserCardInfo info) {
+    private Map<String, String> prepareParamsToChanPay(User user, BorrowOrder order, UserCardInfo info) throws Exception {
         logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay order:{}, userCardInfo:{}", order, info);
         Map<String, String> paramMap = BaseParameter.requestBaseParameter("cjt_dsf");
         paramMap.put("TransCode", "T10000"); // 交易码
@@ -194,7 +178,12 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         paramMap.put("BankCommonName", info.getBankName()); // 通用银行名称
         paramMap.put("AcctNo", ChanPayUtil.encrypt(info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
         paramMap.put("AcctName", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账户名称
-        paramMap.put("TransAmt", "0.01");//order.getIntoMoney().toString());
+        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+            paramMap.put("TransAmt", "0.01");
+        } else {
+            paramMap.put("TransAmt", BigDecimal.valueOf(order.getIntoMoney()).divide(BigDecimal.valueOf(100)).setScale(2).toString());
+        }
+
         paramMap.put("CorpPushUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/withdrawCallback");
         return paramMap;
     }

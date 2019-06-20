@@ -29,6 +29,6 @@ public interface ChanpayWithdrawService {
      * @throws BizException ex
      * @return  ResponseContent res
      */
-    ResponseContent payWithdraw(String userId, String borrowId, String uuid, String sign) throws BizException;
+    ResponseContent payWithdraw(String userId, String borrowId, String uuid, String sign) throws Exception;
 
 }
