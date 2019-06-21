@@ -238,75 +238,85 @@ public class RepaymentServiceImpl implements RepaymentService {
         logModel.setAction(action);
         logModel.setRemark(OrderChangeAction.valueOf(action).getMessage());
 
-        // 判断是否全部还清
-        if (copy.getRepaymentedAmount() >= re.getRepaymentAmount()) {//已还金额 > 还款总金额
-            logger.info("userId:" + user.getId() + " has repay all");
-            boolean overdueStatus = getIsOverdue(re.getId());
-            if (re.getLateDay() > 0) {//逾期天数
-                // 逾期已还款 告知催收
-                //collection(user, re, detail, Repayment.REPAY_COLLECTION);
+        if (copy.getRepaymentedAmount() < re.getRepaymentAmount() && detail.getRepaymentChannel().equals(RepaymentDetail.TYPE_NORMALPAY)) {//正常还款、金额小于应还金额的判定
+            logger.info("userId:" + user.getId() + " has repay all, ");
+            /*boolean overdueStatus = getIsOverdue(re.getId());
+            if (overdueStatus) {
                 pushRepayToCs(re);
-                copy.setStatus(BorrowOrder.STATUS_YQYHK);//逾期还款状态
-                bo.setStatus(BorrowOrder.STATUS_YQYHK);//逾期还款状态
-                logModel.setAfterStatus(BorrowOrder.STATUS_YQYHK.toString());
-            } else {
-                if (overdueStatus) {
+            }*/
+            copy.setStatus(BorrowOrder.STATUS_YHK);
+            bo.setStatus(BorrowOrder.STATUS_YHK);
+            logModel.setAfterStatus(BorrowOrder.STATUS_YHK.toString());
+        } else {
+            if (copy.getRepaymentedAmount() >= re.getRepaymentAmount()){//已还金额 > 还款总金额
+                logger.info("userId:" + user.getId() + " has repay all");
+                boolean overdueStatus = getIsOverdue(re.getId());
+                if (re.getLateDay() > 0) {//逾期天数
+                    // 逾期已还款 告知催收
+                    //collection(user, re, detail, Repayment.REPAY_COLLECTION);
                     pushRepayToCs(re);
+                    copy.setStatus(BorrowOrder.STATUS_YQYHK);//逾期还款状态
+                    bo.setStatus(BorrowOrder.STATUS_YQYHK);//逾期还款状态
+                    logModel.setAfterStatus(BorrowOrder.STATUS_YQYHK.toString());
+                } else {
+                    if (overdueStatus) {
+                        pushRepayToCs(re);
+                    }
+                    copy.setStatus(BorrowOrder.STATUS_YHK);
+                    bo.setStatus(BorrowOrder.STATUS_YHK);
+                    logModel.setAfterStatus(BorrowOrder.STATUS_YHK.toString());
                 }
-                copy.setStatus(BorrowOrder.STATUS_YHK);
-                bo.setStatus(BorrowOrder.STATUS_YHK);
-                logModel.setAfterStatus(BorrowOrder.STATUS_YHK.toString());
-            }
-            if (User.CUSTOMER_NEW.equals(user.getCustomerType())) {
-                logger.info("update user to old,userId: " + user.getId());
-                // 新用户改为老用户
-                userDao.updateUserToOld(user.getId());
-            }
-            logger.info("prepare update user borrow status,userId: " + user.getId());
-            // 全部还款-更新info_user_info borrow_status 状态为不可见
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("USER_ID", user.getId());
-            map.put("BORROW_STATUS", "0");
-            indexDao.updateInfoUserInfoBorrowStatus(map);
+                if (User.CUSTOMER_NEW.equals(user.getCustomerType())) {
+                    logger.info("update user to old,userId: " + user.getId());
+                    // 新用户改为老用户
+                    userDao.updateUserToOld(user.getId());
+                }
+                logger.info("prepare update user borrow status,userId: " + user.getId());
+                // 全部还款-更新info_user_info borrow_status 状态为不可见
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put("USER_ID", user.getId());
+                map.put("BORROW_STATUS", "0");
+                indexDao.updateInfoUserInfoBorrowStatus(map);
 
-            copy.setRepaymentRealTime(null != detail.getCreatedAt() ? detail.getCreatedAt() : new Date());
-            // 防止多个事物问题
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCompletion(int status) {
-                    logger.info("into afterCompletion，status：" + status);
-                    if (STATUS_COMMITTED == status) {
-                        try {
-                            // 更新用户额度
-                            //userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()));
-                            userQuotaSnapshotService.newUpdateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()), re.getAssetOrderId(), re.getLateDay());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                copy.setRepaymentRealTime(null != detail.getCreatedAt() ? detail.getCreatedAt() : new Date());
+                // 防止多个事物问题
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCompletion(int status) {
+                        logger.info("into afterCompletion，status：" + status);
+                        if (STATUS_COMMITTED == status) {
+                            try {
+                                // 更新用户额度
+                                //userQuotaSnapshotService.updateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()));
+                                userQuotaSnapshotService.newUpdateUserQuotaSnapshots(Integer.valueOf(user.getId()),-1, String.valueOf(copy.getRepaymentedAmount()), re.getAssetOrderId(), re.getLateDay());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void afterCommit() {
-                    logger.info("into afterCommit");
-                }
-            });
-        } else {
-            if (re.getLateDay() > 0) {
-                // 逾期部分还款 告知催收
-                try {
-                    //jedisCluster.set("OVERDUE_" + re.getId(), "" + re.getId());
-                    //  通过mq推送消息到cs系统
-                    mqInfoService.sendMq(csMqTopic, csOverDueTarget, String.valueOf(re.getId()));
-                    logger.info("collection repay success OVERDUE " + re.getId());
-                } catch (Exception e) {
-                    logger.error("collection repay error BFHK repaymentId=" + re.getId(), e);
-                }
-                logModel.setAfterStatus(BorrowOrder.STATUS_YYQ.toString());
+                    @Override
+                    public void afterCommit() {
+                        logger.info("into afterCommit");
+                    }
+                });
             } else {
-                copy.setStatus(BorrowOrder.STATUS_BFHK);//部分还款状态
-                bo.setStatus(BorrowOrder.STATUS_BFHK);//部分还款状态
-                logModel.setAfterStatus(BorrowOrder.STATUS_BFHK.toString());
+                if (re.getLateDay() > 0) {
+                    // 逾期部分还款 告知催收
+                    try {
+                        //jedisCluster.set("OVERDUE_" + re.getId(), "" + re.getId());
+                        //  通过mq推送消息到cs系统
+                        mqInfoService.sendMq(csMqTopic, csOverDueTarget, String.valueOf(re.getId()));
+                        logger.info("collection repay success OVERDUE " + re.getId());
+                    } catch (Exception e) {
+                        logger.error("collection repay error BFHK repaymentId=" + re.getId(), e);
+                    }
+                    logModel.setAfterStatus(BorrowOrder.STATUS_YYQ.toString());
+                } else {
+                    copy.setStatus(BorrowOrder.STATUS_BFHK);//部分还款状态
+                    bo.setStatus(BorrowOrder.STATUS_BFHK);//部分还款状态
+                    logModel.setAfterStatus(BorrowOrder.STATUS_BFHK.toString());
+                }
             }
         }
         if (BorrowOrder.STATUS_BFHK.compareTo(re.getStatus()) == 0 || copy.getRepaymentedAmount() < re.getRepaymentAmount()) {
