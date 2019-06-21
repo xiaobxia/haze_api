@@ -178,12 +178,11 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         paramMap.put("BankCommonName", info.getBankName()); // 通用银行名称
         paramMap.put("AcctNo", ChanPayUtil.encrypt(info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
         paramMap.put("AcctName", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账户名称
-        /*if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
+        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
             paramMap.put("TransAmt", "0.01");
         } else {
             paramMap.put("TransAmt", BigDecimal.valueOf(order.getIntoMoney()).divide(BigDecimal.valueOf(100)).setScale(2).toString());
-        }*/
-        paramMap.put("TransAmt", BigDecimal.valueOf(order.getIntoMoney()).divide(BigDecimal.valueOf(100)).setScale(2).toString());
+        }
 
         paramMap.put("CorpPushUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/withdrawCallback");
         return paramMap;
