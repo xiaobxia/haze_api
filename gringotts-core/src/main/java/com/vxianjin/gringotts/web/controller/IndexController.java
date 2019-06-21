@@ -397,6 +397,7 @@ public class IndexController extends BaseController {
                 //获取用户最近借款状态 代替风控
                 // 如果最近借款被拒绝, 那么就显示问号, 跳转去其他的app
                 // 0 不显示 1显示
+                item.put("show_dc_status", "0");
                 item.put("risk_status", "0");
                 //贷款超时链接
                 item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL") + user.getUserName());
@@ -412,6 +413,10 @@ public class IndexController extends BaseController {
                     String offon = "1";
                     if (list.size() == 1) {
                         offon = list.get(0).getSysValue();
+                    }
+
+                    if ("1".equals(offon)) {
+                        item.put("show_dc_status", "1");
                     }
                     //驳回情况下显示
                     if (borrowStatusMap_shenheFail.containsKey(bo.getStatus())
