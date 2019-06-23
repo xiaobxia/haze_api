@@ -291,7 +291,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         // 已付的逾期费 = 所有还款金额 - 借款金额 - 手续费
         /*Long payedOver = re.getRepaymentedAmount() - (re.getRepaymentInterest() + re.getRepaymentPrincipal());
         money = payedOver > 0 ? money - payedOver : money;*/
-        if ((money + re.getRepaymentedAmount()) > re.getPlanLateFee()) {
+        /*if ((money + re.getRepaymentedAmount()) > re.getPlanLateFee()) {
             // 把用户可借额度加上
             logger.info("prepare addAvailableAmount,money:" + money + " nowAvailableAmount" + String.valueOf(Long.valueOf(user.getAmountMax()) + re.getRepaymentedAmount() + detail.getTrueRepaymentMoney() - re.getRepaymentAmount()));
             User userCopy = new User();
@@ -302,7 +302,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         } else {
             // 还款金额小于0时认为有问题(还款金额不能小于0)
             logger.info("user addAvailableAmount fail , because money < 0,money:" + money);
-        }
+        }*/
         if (null != bo.getStatus()) {
             borrowOrderDao.updateByPrimaryKeySelective(bo);
         }
