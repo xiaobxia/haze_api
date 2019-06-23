@@ -337,4 +337,24 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return true;
     }
 
+    public static String getPatternString(String source, String pattern, int index){
+        if(isEmpty(source)) return "";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(source);
+        while (m.find()) {
+            return m.group(index);
+        }
+        return "";
+    }
+
+    /**
+     * 简化方法获取XML的标签值
+     * @param source
+     * @param tag
+     * @return
+     */
+    public static String getTagText(String source, String tag) {
+        return getPatternString(source, "<" + tag + ">(?:<!\\[CDATA\\[)?(.*?)(\\]\\]>)*</" + tag + ">", 1);
+    }
+
 }

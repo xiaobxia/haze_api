@@ -10,6 +10,8 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -350,5 +352,18 @@ public class RSA {
 			throws Exception {
 		Key key = (Key) keyMap.get(PUBLIC_KEY);
 		return Base64.encodeBase64String(key.getEncoded());
+	}
+
+	public static String initAlias(String alias, KeyStore ks) throws Exception {
+		if (alias == null) {
+			ArrayList key = Collections.list(ks.aliases());
+			if (key.size() != 1) {
+				throw new IllegalArgumentException("[Assertion failed] - this String argument[alias] must have text; " +
+						"it must not be null, empty, or blank");
+			}
+
+			alias = (String) key.get(0);
+		}
+		return alias;
 	}
 }
