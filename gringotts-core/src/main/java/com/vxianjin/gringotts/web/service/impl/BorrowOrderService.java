@@ -767,8 +767,8 @@ public class BorrowOrderService implements IBorrowOrderService {
                     User newUser = new User();
                     newUser.setId(user.getId());
                     newUser.setAmountMax(String.valueOf(record.getNewAmountMax()));
-                    //newUser.setAmountAvailable(String.valueOf(record.getNewAmountMax()));
-                    newUser.setAmountAvailable(String.valueOf(Integer.valueOf(user.getAmountAvailable()) + addAmount));
+                    newUser.setAmountAvailable(String.valueOf(record.getNewAmountMax()));
+                    //newUser.setAmountAvailable(String.valueOf(Integer.valueOf(user.getAmountAvailable()) + addAmount));
                     newUser.setAmountAddsum(String.valueOf(Integer.valueOf(user.getAmountAddsum()) + addAmount));
                     newUser.setUpdateTime(nowDate);
 //					userDao.updateByPrimaryKeyUser(newUser);
