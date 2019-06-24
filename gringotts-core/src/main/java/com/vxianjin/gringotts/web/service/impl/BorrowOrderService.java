@@ -851,7 +851,10 @@ public class BorrowOrderService implements IBorrowOrderService {
         params.put("userId", userId);
         params.put("statusList", Arrays.asList(BorrowOrder.STATUS_CSBH, BorrowOrder.STATUS_FSBH, BorrowOrder.STATUS_FKBH));
         BorrowOrder bo = borrowOrderDao.findAuditFailureOrderByUserId(params);
-        if (bo != null) {
+
+        params.remove("statusList");
+        BorrowOrder newBo = borrowOrderDao.findAuditFailureOrderByUserId(params);
+        if (newBo != null && bo != null && newBo.getId() == bo.getId()) {
             Date date = new Date();
             Date smDate = new Date();
             if (bo.getVerifyLoanTime() != null) {
