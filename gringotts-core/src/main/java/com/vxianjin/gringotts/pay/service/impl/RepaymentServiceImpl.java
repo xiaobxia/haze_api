@@ -242,7 +242,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 
         //判断状态是正常还款、逾期还款的话，算全部还清，但要继续判断逾期天数
-        if (detail.getRepaymentChannel() == 1 || detail.getRepaymentChannel() == 2) {
+        if (detail.getRepaymentChannel() != null && (detail.getRepaymentChannel() == 1 || detail.getRepaymentChannel() == 2)) {
             dealWithAllPay(re, detail, bo, copy, user, logModel);
         } else {
             // 判断是否全部还清
