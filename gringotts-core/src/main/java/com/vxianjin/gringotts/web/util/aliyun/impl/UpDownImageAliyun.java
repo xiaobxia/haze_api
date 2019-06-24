@@ -30,11 +30,11 @@ public class UpDownImageAliyun implements UploadAliyun {
     @Value("#{aliyunSettings['accessKeySecret']}")
     private String accessKeySecret;
     //阿里云OSS_ENDPOINT
-    @Value("#{aliyunSettings['endPoint']}")
-    private String endPoint;
+    @Value("#{aliyunSettings['endPointVPC']}")
+    private String endPointVPC;
     //阿里云BUCKET_NAME  OSS
-    @Value("#{aliyunSettings['bucketName']}")
-    private String bucketName;
+    @Value("#{aliyunSettings['bucketNameVPC']}")
+    private String bucketNameVPC;
 
     @Value("#{aliyunSettings['path']}")
     private String path;
@@ -84,7 +84,7 @@ public class UpDownImageAliyun implements UploadAliyun {
      * 获取阿里云OSS客户端对象
      */
     public OSSClient getOSSClient() {
-        return new OSSClient(endPoint, accessKeyId, accessKeySecret);
+        return new OSSClient(endPointVPC, accessKeyId, accessKeySecret);
     }
 
     /**
@@ -98,7 +98,7 @@ public class UpDownImageAliyun implements UploadAliyun {
     @Override
     public String uploadImage(File file, String key) {
         String resultStr = "";
-        logger.info("endPoint = " + endPoint);
+        logger.info("endPoint = " + endPointVPC);
         logger.info("uploadImage start");
         OSSClient ossClient = null;
         try {
@@ -122,7 +122,7 @@ public class UpDownImageAliyun implements UploadAliyun {
             //上传文件
             PutObjectResult putResult = null;
             try {
-                putResult = ossClient.putObject(bucketName, path + key, is, metadata);
+                putResult = ossClient.putObject(bucketNameVPC, path + key, is, metadata);
             } catch (ClientException e) {
                 logger.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
             }
