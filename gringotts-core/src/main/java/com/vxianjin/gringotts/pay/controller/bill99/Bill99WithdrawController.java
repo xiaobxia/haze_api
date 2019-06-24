@@ -26,7 +26,7 @@ import static com.vxianjin.gringotts.pay.common.util.chanpay.Bill99Util.createSe
 
 /**
  * 快钱支付代付相关
- * @author jintian on 2018/7/17.
+ * @author jintian on 2019/6/24.
  */
 @Controller
 @RequestMapping(value = "/bill99")

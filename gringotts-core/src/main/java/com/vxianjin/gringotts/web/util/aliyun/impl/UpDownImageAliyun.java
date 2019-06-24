@@ -1,6 +1,7 @@
 package com.vxianjin.gringotts.web.util.aliyun.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
@@ -119,7 +120,12 @@ public class UpDownImageAliyun implements UploadAliyun {
             metadata.setContentType(getContentType(key));
             metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte");
             //上传文件
-            PutObjectResult putResult = ossClient.putObject(bucketName, path + key, is, metadata);
+            PutObjectResult putResult = null;
+            try {
+                putResult = ossClient.putObject(bucketName, path + key, is, metadata);
+            } catch (ClientException e) {
+                logger.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
+            }
             logger.info("putResult :" + JSON.toJSONString(putResult));
             //解析结果
             resultStr = "success";
