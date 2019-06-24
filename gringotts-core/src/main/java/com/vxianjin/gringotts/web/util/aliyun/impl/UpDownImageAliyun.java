@@ -33,8 +33,8 @@ public class UpDownImageAliyun implements UploadAliyun {
     @Value("#{aliyunSettings['endPointVPC']}")
     private String endPointVPC;
     //阿里云BUCKET_NAME  OSS
-    @Value("#{aliyunSettings['bucketNameVPC']}")
-    private String bucketNameVPC;
+    @Value("#{aliyunSettings['bucketName']}")
+    private String bucketName;
 
     @Value("#{aliyunSettings['path']}")
     private String path;
@@ -122,7 +122,7 @@ public class UpDownImageAliyun implements UploadAliyun {
             //上传文件
             PutObjectResult putResult = null;
             try {
-                putResult = ossClient.putObject(bucketNameVPC, path + key, is, metadata);
+                putResult = ossClient.putObject(bucketName, path + key, is, metadata);
             } catch (ClientException e) {
                 logger.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
             }

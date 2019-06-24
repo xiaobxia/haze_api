@@ -137,7 +137,11 @@ public class RepaymentWebController extends BaseController {
             } else {
                 map.put("body", "经审核您不符合借款要求");
             }
-            map.put("body", "信用评分不足");
+            if (bo.getStatus().equals(BorrowOrder.STATUS_YHQXJK)) {
+                map.put("body", "主动取消申请借款");
+            } else {
+                map.put("body", "信用评分不足");
+            }
             list.add(map);
         } else if(bo.getStatus().equals(BorrowOrder.STATUS_AI)||bo.getStatus().equals(BorrowOrder.STATUS_AI_FAIL)) {
             map.put("tag", "1");

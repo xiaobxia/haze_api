@@ -641,10 +641,28 @@ public class IndexUtil {
                 }
                 map.put("days", scdDays);
                 //-->
+            } else if (bo.getStatus().equals(BorrowOrder.STATUS_YHQXJK)) {
+                map.put("body", bo.getVerifyLoanRemark());
+                buttonMap = new HashMap<String, String>();
+                buttonMap.put("msg", Constant.BUTTON_MSG);
+                buttonMap.put("id", indexInfo.getUserId() + "");
+                //<--
+                /*Date vDate = DateUtil.addDay(bo.getVerifyLoanTime(), Constant.DEFAULT_DAYS);//默认再借时间
+                String scdDays = DateUtil.getDateFormat(DateUtil.addDay(new Date(), Constant.DEFAULT_DAYS), "yyyy-MM-dd");
+                if (null != vDate) {
+                    scdDays = DateUtil.getDateFormat(vDate, "yyyy-MM-dd");
+                }
+                map.put("days", scdDays);
+                intoMoney = bo.getIntoMoney().toString();
+                loanEndTime = DateUtil.getDateFormat(new Date(), "yyyy-MM-dd");*/
             } else {
                 map.put("body", "经审核您不符合借款要求");
             }
-            map.put("body", "信用评分不足");
+            if (bo.getStatus().equals(BorrowOrder.STATUS_YHQXJK)) {
+                map.put("body", "主动取消申请借款");
+            } else {
+                map.put("body", "信用评分不足");
+            }
             list.add(map);
             header_tip = "审核未通过";
 

@@ -104,6 +104,8 @@ public class BorrowOrder implements Serializable {
      * 驳回并拉入黑名单
      */
     public static final Integer STATUS_LHBH = -50;
+
+    public static final Integer STATUS_YHQXJK = -40;
     /**
      * 复审驳回
      */
@@ -258,6 +260,7 @@ public class BorrowOrder implements Serializable {
         borrowStatusMap_front.put(STATUS_YHZ, yiyuqi);
         borrowStatusMap_front.put(STATUS_AI, "待语音验证");
         borrowStatusMap_front.put(STATUS_AI_FAIL, "语音验证未接通");
+        borrowStatusMap_front.put(STATUS_YHQXJK, "取消借款");
     }
 
     //	/**
@@ -282,6 +285,7 @@ public class BorrowOrder implements Serializable {
         borrowStatusMap_shenheFail.put(BorrowOrder.STATUS_FSBH, shenheFail);
         borrowStatusMap_shenheFail.put(BorrowOrder.STATUS_FKBH, shenheFail);
         borrowStatusMap_shenheFail.put(BorrowOrder.STATUS_LHBH, shenheFail);
+        borrowStatusMap_shenheFail.put(BorrowOrder.STATUS_YHQXJK, shenheFail);
 //		//已逾期
 //		borrowStatusMap_yiyuqi.put(BorrowOrder.STATUS_YYQ, yiyuqi);
 //		borrowStatusMap_yiyuqi.put(BorrowOrder.STATUS_YHZ, yiyuqi);
