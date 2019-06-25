@@ -206,7 +206,7 @@
 	</select>
 	
 	<select id="findAuditFailureOrderByUserId" resultType="com.vxianjin.gringotts.web.pojo.BorrowOrder" parameterType="Map">
-	   SELECT verify_trial_time as verifyTrialTime,
+	   SELECT id AS id, verify_trial_time as verifyTrialTime,
 	   verify_review_time as verifyReviewTime,
 	   verify_loan_time as verifyLoanTime
 	   FROM asset_borrow_order WHERE user_id=#{userId} 
