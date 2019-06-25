@@ -399,6 +399,7 @@ public class IndexController extends BaseController {
                 // 0 不显示 1显示
                 item.put("show_dc_status", "0");
                 item.put("risk_status", "0");
+                item.put("promotion_image", PropertiesConfigUtil.get("PROMOTION_IMAGE"));
                 //贷款超时链接
                 item.put("shop_url", PropertiesConfigUtil.get("SHOP_URL") + user.getUserName());
                 BorrowOrder bo = borrowOrderService
