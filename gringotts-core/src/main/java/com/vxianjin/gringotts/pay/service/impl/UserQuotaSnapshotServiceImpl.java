@@ -201,6 +201,10 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 borrowOrderService.changeUserLimit(map);
             } else {
                 resultMap.put(productConfig.getId().toString(), productConfig.getBorrowAmount().intValue()+"");//不达标返回老产品的参数
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("userId", userId);
+                map.put("newAmountMax", productConfig.getBorrowAmount().intValue());
+                borrowOrderService.changeUserLimit(map);
             }
             return resultMap;
         }catch (Exception e){
