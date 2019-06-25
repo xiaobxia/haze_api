@@ -201,10 +201,6 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 borrowOrderService.changeUserLimit(map);
             } else {
                 resultMap.put(productConfig.getId().toString(), productConfig.getBorrowAmount().intValue()+"");//不达标返回老产品的参数
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("userId", userId);
-                map.put("newAmountMax", productConfig.getBorrowAmount().intValue());
-                borrowOrderService.changeUserLimit(map);
             }
             return resultMap;
         }catch (Exception e){
@@ -514,7 +510,8 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
                 } else if (applyId > 0) {
                     userQuotaApplyLogMapper.updateToSuccess(applyId);
                 }
-                userDao.updateUserLimit(userId, bigDecimal.intValue(), bigDecimal.add(new BigDecimal(user.getAmountAvailable())).subtract(new BigDecimal(user.getAmountMax())));
+                //userDao.updateUserLimit(userId, bigDecimal.intValue(), bigDecimal.add(new BigDecimal(user.getAmountAvailable())).subtract(new BigDecimal(user.getAmountMax())));
+                userDao.updateUserLimit(userId, bigDecimal.intValue(), bigDecimal);
                 try {
                     this.sendSuccessMessage(bigDecimal, user);
                 } catch (Exception e) {
