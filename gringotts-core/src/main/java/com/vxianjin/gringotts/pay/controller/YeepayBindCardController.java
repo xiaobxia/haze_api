@@ -577,7 +577,7 @@ public class YeepayBindCardController extends BaseController {
         ResultModel paramsCheck = userBankConfirmReqCheck(pams, response);
 
         if (!paramsCheck.isSucc()) {
-            JSONUtil.toObjectJson(response, JSON.toJSONString(userInfoCheckResult));
+            JSONUtil.toObjectJson(response, JSON.toJSONString(paramsCheck));
             return;
         }
 
