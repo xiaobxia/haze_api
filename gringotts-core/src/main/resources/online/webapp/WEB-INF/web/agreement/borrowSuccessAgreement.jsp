@@ -182,14 +182,6 @@ String basePath = path + "/common/web";
       <p><em>甲方（借款人）：</em><span>${user.realname}</span></p>
       <p><em>乙方（出借人）：</em><span>蔡坤燚</span></p>
       <br>
-      <c:if test="${borrow != null}">
-            <p class="rig">
-            <c:choose>
-      			<c:when test="${borrow.status>=21}">通过</c:when>
-      			<c:otherwise>失败</c:otherwise>
-      		</c:choose></p>
-      <p class="rig"><fmt:formatDate value="${borrow.orderTime}" pattern="yyyy年MM月dd日 "/></p>
-      </c:if>
       <br>
     </div>
   </div>
