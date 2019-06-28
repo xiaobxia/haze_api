@@ -30,7 +30,17 @@
 
     <style>
         body,h4,html,i,li,p,ul{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem}
-        *{margin:0;padding:0;-webkit-user-select:auto}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         .f-cb:after{display:block;content:'.';height:0;visibility:hidden;overflow:hidden;clear:both}
         .fl{float:left}
         .fr{float:right}
@@ -188,7 +198,7 @@
 
 <div data-role="page">
     <section class="g-repayment">
-        <h5 style="display: none;">更多优惠活动、还款方式请关注“多米优”微信公众号</h5>
+        <h5 style="display: none;">更多优惠活动、还款方式请关注“多米优”微信公众号(申请中)</h5>
         <ul>
             <!--<li>
                 <a class="f-cb nav" href="javascript:;">
@@ -198,7 +208,7 @@
                 </a>
                 <div class="content">
                     <div class="ewm bank_desc">
-                        <p>户名：鸾鸟网络科技（上海）有限公司</p>
+                        <p>户名：伟福科技有限公司</p>
                         <p>账号：<span class="content_num" id="card_num">31050180363700000448</span><button id="copy_card_num" class="copy_btn" href="javascript:;">复制</button></p>
                         <p>开户行：中国建设银行上海市分行松江新城支行</p>
                     </div>
@@ -220,31 +230,54 @@
                 </div>
             </li>-->
             <li>
-                <a class="f-cb nav z-active" href="javascript:;">
+                <a class="f-cb nav" href="javascript:;">
                     <img class="sign fl" src="${basePath}/images/icon-alipay.png" alt="">
                     <span class="fl">支付宝还款</span>
-                    <img class="fr direction active" src="${basePath}/images/icon-down.png" alt="">
+                    <img class="fr direction" src="${basePath}/images/icon-down.png" alt="">
                 </a>
-                <div class="content" style="display: block;">
+                <div class="content" style="display: none;">
                     <div class="ewm">
                         <img src="${qr_code}" alt="">
                         <p>支付宝账号<br/></p>
                         <p><span class="content_num" id="content">${pay_account}</span><button class="copy_btn" id="copy" href="javascript:;">复制</button></p>
-                        <%--<p class="company_txt"><p class="company_txt"><span>鸾鸟网络科技(上海)有限公司</span><button class="copy_btn" id="copy_company_txt" href="javascript:;">复制</button></p ></p>--%>
+                        <%--<p class="company_txt"><p class="company_txt"><span>伟福科技(上海)有限公司</span><button class="copy_btn" id="copy_company_txt" href="javascript:;">复制</button></p ></p>--%>
                         <p class="company_txt">收款人姓名:<span>${account_name}</span><button class="copy_btn" id="copy_company_txt" href="javascript:;">复制</button></p>
                     </div>
                     <ul class="warn">
                         <li>1、转账时请务必备注“<i>姓名+手机号</i>”，方便客服妹妹及时帮您核实处理。</li>
                         <li>2、客服热线:&nbsp;&nbsp;<i  class="tel-service" onclick="service_tel()">${service_phone}</i><a class="call-tel tel-service" onclick="service_tel()" href="javascript:;"><img src="${basePath}/images/ic_phone.png" alt=""></a>（${tel_time}）</li>
                         <%--<li>3、QQ客服：<span style="margin-right: 3px;">2583310643</span><button id="copy_qq1_num" class="copy_btn" href="javascript:;">复制</button>（9:00～24:00）</li>--%>
-                        <li class="qqChat">3、QQ客服:&nbsp;&nbsp;<a class="qq_spred" onclick="service_qq()" href="javascript:;">${services_qq}</a>
-                            <a class="qq_spred" onclick="service_qq()" href="javascript:;"><img src="${basePath}/images/ic_qq.png" alt=""></a>（${online_time}）
-                        </li>
+                        <%--<li class="qqChat">3、QQ客服:&nbsp;&nbsp;<a class="qq_spred" onclick="service_qq()" href="javascript:;">${services_qq}</a>--%>
+                            <%--<a class="qq_spred" onclick="service_qq()" href="javascript:;"><img src="${basePath}/images/ic_qq.png" alt=""></a>（${online_time}）--%>
+                        <%--</li>--%>
                         <li class="onlineChat">
-                            <span>3、在线客服:</span>
-                            <a class="iconForChat" onclick="qimoChatClick();">
-                                <img src="${basePath}/images/ic_chat.png" alt="">
-                            </a>
+                            <span>3、在线客服:请去首页联系</span>
+                            <span>工作时间（${online_time}）</span>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a class="f-cb nav" href="javascript:;">
+                    <img class="sign fl" src="${basePath}/images/icon-wepay.png" alt="">
+                    <span class="fl">微信还款</span>
+                    <img class="fr direction" src="${basePath}/images/icon-down.png" alt="">
+                </a>
+                <div class="content" style="display: none;">
+                    <div class="ewm">
+                        <img src="${wechat_code}" alt="">
+                        <p>微信账号<br/></p>
+                        <p class="company_txt">收款人姓名:<span>${we_account_name}</span><button class="copy_btn" id="copy_company_txt_weixin" href="javascript:;">复制</button></p>
+                    </div>
+                    <ul class="warn">
+                        <li>1、转账时请务必备注“<i>姓名+手机号</i>”，方便客服妹妹及时帮您核实处理。</li>
+                        <li>2、客服热线:&nbsp;&nbsp;<i  class="tel-service" onclick="service_tel()">${service_phone}</i><a class="call-tel tel-service" onclick="service_tel()" href="javascript:;"><img src="${basePath}/images/ic_phone.png" alt=""></a>（${tel_time}）</li>
+                        <%--<li>3、QQ客服：<span style="margin-right: 3px;">2583310643</span><button id="copy_qq1_num" class="copy_btn" href="javascript:;">复制</button>（9:00～24:00）</li>--%>
+                        <%--<li class="qqChat">3、QQ客服:&nbsp;&nbsp;<a class="qq_spred" onclick="service_qq()" href="javascript:;">${services_qq}</a>--%>
+                        <%--<a class="qq_spred" onclick="service_qq()" href="javascript:;"><img src="${basePath}/images/ic_qq.png" alt=""></a>（${online_time}）--%>
+                        <%--</li>--%>
+                        <li class="onlineChat">
+                            <span>3、在线客服:请去首页联系</span>
                             <span>工作时间（${online_time}）</span>
                         </li>
                     </ul>
@@ -299,7 +332,7 @@
         var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
         var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
         if (isAndroid) {
-            window.nativeMethod.callQQ('${services_qq}');
+            window.nativeMethod.callQQ("${services_qq}");
         }else if(isIOS){
             window.location.href = "http://wpa.qq.com/msgrd?v=3&uin=${services_qq}&site=qq&menu=yes";
         }
@@ -401,6 +434,11 @@
     // 复制公司户名
     var _copy = document.getElementById('copy_company_txt');
     _copy.addEventListener('click',copyArticle);
+
+    // 复制微信
+    // 复制公司户名
+    var _copy_company_txt_weixin = document.getElementById('copy_company_txt_weixin');
+    _copy_company_txt_weixin.addEventListener('click',copyArticle);
 </script>
 </body>
 </html>

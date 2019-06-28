@@ -32,9 +32,9 @@
             line-height: 2.25rem;
             text-align: center;
             background: transparent !important;
-            color: #31c27c !important;
+            color: #FF8240 !important;
             border-radius: 2.25rem;
-            border: 1px solid #31c27c;
+            border: 1px solid #FF8240;
         }
         .rz-result p,
         .pannel-btn a {
@@ -94,7 +94,7 @@
         <div class="pannel-btn">
 
             <c:if test="${code == 0 || code == 100 || code == 300 || code == 500}">
-                <a href="${mobileUrl}" class="js-btn mt60 yrz" id="bc-btn">立即认证</a>
+                <a href="${mobileUrl}" rel="external" class="js-btn mt60 yrz" id="bc-btn">立即认证</a>
             </c:if>
 
             <c:if test="${code == 200}">
@@ -105,7 +105,7 @@
             </c:if>
             <!--认证失败-->
             <c:if test="${code == -1}">
-                <a href="${mobileUrl}" class="js-btn mt60 yrz" id="bc-btn">重新认证</a>
+                <a href="${mobileUrl}" rel="external" class="js-btn mt60 yrz" id="bc-btn">重新认证</a>
             </c:if>
         </div>
         <span class="safe"><img src="${basePath }/images/dp.png" alt="">银行级数据加密防护</span>

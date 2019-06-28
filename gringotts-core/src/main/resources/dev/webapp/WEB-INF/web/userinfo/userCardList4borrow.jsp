@@ -46,7 +46,17 @@
     </script>
     <style>
         body,h4,html,i,li,p,ul{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem}
-        *{margin:0;padding:0;-webkit-user-select:auto}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         .f-cb:after{display:block;content:'.';height:0;visibility:hidden;overflow:hidden;clear:both}
         .fl{float:left}
         .card-list-box {
@@ -180,8 +190,8 @@
             text-align: center;
             width: 100%;
             margin: 8px 0 0;
-            background: #31c27c;
-            border: 1px solid #31c27c;
+            background: #FF8240;
+            border: 1px solid #FF8240;
             color: #fff;
             font-size: 15px;
             letter-spacing: 1px;
@@ -459,7 +469,7 @@
         document.body.appendChild(form);
         form.submit();
     }*/
-    
+
 
 </script>
 </body>

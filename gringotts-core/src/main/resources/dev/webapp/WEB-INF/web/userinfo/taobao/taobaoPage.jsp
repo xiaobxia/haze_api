@@ -11,9 +11,9 @@
 <head>
 <meta charset="utf-8">
 <title>淘宝授权</title>
-<meta http-equiv="Expires" content="-1">               
+<meta http-equiv="Expires" content="-1">
 <meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Cache-Control" content="no-cache"> 
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -36,7 +36,13 @@
         }
         * {
             margin: 0;padding: 0;
-            -webkit-user-select: auto;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .fixed-encrypt-protect p {
             font-size: 18px;
@@ -72,7 +78,7 @@
         .g-pannel .go-credit a {
             display: block;
             width: 100%;
-            background: #31c27c;
+            background: #FF8240;
             color: #fff;
             padding: 8px 0;
             text-align: center;
@@ -142,10 +148,10 @@
 
               <span style="font-size: 16px;"><img src="${basePath}/images/dp.png" style="vertical-align: -6px;width:25px;margin: -0.2rem 0.15rem 0 0;" alt="">银行级数据加密防护</span>
           </div>
-          
+
         </div>
         <!-- main end -->
-        
+
     </div>
     <script type="text/javascript">
         var flag = true;

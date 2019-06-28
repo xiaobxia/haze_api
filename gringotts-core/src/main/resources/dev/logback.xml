@@ -4,6 +4,7 @@
     <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
     <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
 
+
     <property name="LOG_HOME" value="${catalina.home}/logs/"/>
 
     <!--项目名称-->
@@ -54,7 +55,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${CONTROLLER_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--设置文件最长保留时间为1个月-->
-            <maxHistory>1</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -70,7 +71,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${SERVICE_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--设置文件最长保留时间为1个月-->
-            <maxHistory>1</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -88,7 +89,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${DAL_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--设置文件最长保留时间为1个月-->
-            <maxHistory>1</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -105,7 +106,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-${TASK_LOG}.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--设置文件最长保留时间为1个月-->
-            <maxHistory>1</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -121,7 +122,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_HOME}/${PROJECT_NAME}-error.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--设置文件最长保留时间为1个月-->
-            <maxHistory>1</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
@@ -133,13 +134,6 @@
         <level value="${LOG_LEVEL}" />
         <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
     </logger>
-
-    <!-- DataSourceTransactionManager -->
-    <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="DEBUG" additivity="true">
-        <level value="${LOG_LEVEL}" />
-        <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
-    </logger>
-
     <logger name="com.vxianjin.gringotts.pay.controller" level="INFO" additivity="true">
         <level value="${LOG_LEVEL}" />
         <appender-ref ref="CONTROLLER_ROLLING_INFO"/>
@@ -206,6 +200,6 @@
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"  />
     </root>
 </configuration>

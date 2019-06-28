@@ -11,12 +11,14 @@ import com.vxianjin.gringotts.pay.common.util.CallbackUtils;
 import com.vxianjin.gringotts.pay.common.util.YeepayApiUtil;
 import com.vxianjin.gringotts.pay.common.util.YeepayUtil;
 import com.vxianjin.gringotts.pay.common.util.chanpay.BaseConstant;
+import com.vxianjin.gringotts.pay.common.util.chanpay.BaseParameter;
 import com.vxianjin.gringotts.pay.common.util.chanpay.ChanPayUtil;
 import com.vxianjin.gringotts.pay.common.util.fuiou.FuiouApiUtil;
 import com.vxianjin.gringotts.pay.common.util.fuiou.FuiouUtil;
 import com.vxianjin.gringotts.pay.common.util.fuiou.XMapUtil;
 import com.vxianjin.gringotts.pay.component.ChanpayService;
 import com.vxianjin.gringotts.pay.model.*;
+import com.vxianjin.gringotts.pay.model.chanpay.ChanpayResult;
 import com.vxianjin.gringotts.pay.model.fuiou.FuiouRepayResultModel;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolBindXmlBeanReq;
 import com.vxianjin.gringotts.pay.model.fuiou.NewProtocolCheckResultXmlBeanReq;
@@ -95,90 +97,49 @@ public class ChanpayServiceImpl implements ChanpayService {
         resultMap.put("code", "500");
         resultMap.put("msg", "请求异常");
         //商户编号
-        String merchantNo = FuiouConstants.API_MCHNT_CD;
-        String requestUrl = FuiouConstants.NEW_PROTOCOL_BINDMSG_URL;
-        String requestNo = FuiouApiUtil.formatString(paramMap.get("requestNo"));
         String userId = FuiouApiUtil.formatString(paramMap.get("userId"));
-        String realName = FuiouApiUtil.formatString(paramMap.get("realName"));
-        String idNo = FuiouApiUtil.formatString(paramMap.get("idNo"));
-        String cardNo = FuiouApiUtil.formatString(paramMap.get("cardNo"));
-        String phone = FuiouApiUtil.formatString(paramMap.get("phone"));
 
         log.info("ChanpayService getBindCardRequest userId=" + userId);
         try {
-            NewProtocolBindXmlBeanReq beanReq = new NewProtocolBindXmlBeanReq();
-            beanReq.setVersion("1.0");
-            beanReq.setTradeDate(DateUtil.formatDate(new Date(), "yyyyMMdd"));
-            beanReq.setMchntCd(merchantNo);
-            beanReq.setUserId(PropertiesConfigUtil.get("RISK_BUSINESS")+userId);
-            beanReq.setAccount(realName);
-            beanReq.setCardNo(cardNo);
-            beanReq.setIdType("0");
-            beanReq.setIdCard(idNo);
-            beanReq.setMobileNo(phone);
-            beanReq.setMchntSsn(requestNo);
-            beanReq.setSign(FuiouUtil.getSign(beanReq.sendMsgSignStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
-
-            log.info("ChanpayService getBindCardRequest requestUrl=" + requestUrl);
-            log.info("ChanpayService getBindCardRequest dataMap=" + JSON.toJSONString(beanReq));
+            log.info("ChanpayService getBindCardRequest dataMap=" + JSON.toJSONString(paramMap));
 
             String orderNo = GenerateNo.nextOrdId();
             OutOrders outOrders = new OutOrders();
             outOrders.setUserId(userId);
-            outOrders.setOrderType("FUIOU");
+            outOrders.setOrderType("CHANPAY");
             outOrders.setOrderNo(GenerateNo.nextOrdId());
             outOrders.setAct("BINDCARD_MSG");
-            outOrders.setReqParams(JSON.toJSONString(beanReq));
+            outOrders.setReqParams(JSON.toJSONString(paramMap));
             outOrders.setStatus(OutOrders.STATUS_WAIT);
-
             outOrdersService.insert(outOrders);
 
-            //调用易宝api,获取返回结果
-    //        resultMap = YeepayApiUtil.httpExecuteResult(dataMap, userId, requestUrl, "getBindCardRequest");
-            //Map<String,String> map = new HashMap<String, String>();
-            String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
-            //APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
-            //map.put("MCHNTCD",merchantNo);
-            //map.put("APIFMS", APIFMS);
-            //String result = new HttpPoster(requestUrl).postStr(map);
-            //result = DESCoderFUIOU.desDecrypt(result,DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
-
-            resultMap = FuiouApiUtil.FuiouYOP(APIFMS, requestUrl);
+            String result = ChanPayUtil.sendPost(paramMap, BaseConstant.CHARSET, BaseConstant.MERCHANT_PRIVATE_KEY);
 
             OutOrders newOutOrder = new OutOrders();
             newOutOrder.setOrderNo(orderNo);
 
-            log.info("ChanpayService getBindCardRequest resultMap=" + (resultMap != null ? JSON.toJSONString(resultMap) : "null"));
-            if (resultMap == null) {
-                resultMap = new HashMap<>();
-                resultMap.put("code", "400");
-                resultMap.put("msg", "绑卡失败，请重试");
-                newOutOrder.setStatus(OutOrders.STATUS_OTHER);
-                outOrdersService.updateByOrderNo(newOutOrder);
-                return resultMap;
+            if (ChanPayUtil.verify(result, BaseConstant.MERCHANT_PUBLIC_KEY)) {
+                log.info("chanpayResponseMap :{}",result);
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                jsonObject.get("AppRetcode");//返回码
+                jsonObject.get("AppRetMsg");//返回信息
+                jsonObject.get("AcceptStatus");//返回码
+                if ("S".equals(jsonObject.get("AcceptStatus")) && "S0001".equals(jsonObject.get("RetCode"))) {
+                    resultMap.put("code", "0000");
+                    resultMap.put("msg", "请求成功");
+                    newOutOrder.setStatus(OutOrders.STATUS_SUC);
+                    outOrdersService.updateByOrderNo(newOutOrder);
+                    return resultMap;
+                } else {
+                    resultMap.put("code", "400");
+                    resultMap.put("msg", jsonObject.get("RetMsg"));
+                    newOutOrder.setStatus(OutOrders.STATUS_OTHER);
+                    outOrdersService.updateByOrderNo(newOutOrder);
+                    return resultMap;
+                }
             }
-
-            Object orderStatus = resultMap.get("status");
-            log.info("ChanpayService getBindCardRequest userId=" + userId + " status=" + (orderStatus != null ? orderStatus.toString() : "null"));
-            //待短验
-            if (orderStatus != null && "0000".equals(orderStatus.toString())) {
-                resultMap.put("code", "0000");
-                resultMap.put("msg", "请求成功");
-                newOutOrder.setStatus(OutOrders.STATUS_SUC);
-                outOrdersService.updateByOrderNo(newOutOrder);
-                return resultMap;
-            }
-            log.info("ChanpayService getBindCardRequest userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
-            if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
-                resultMap.put("code", "400");
-                resultMap.put("msg", resultMap.get("errormsg"));
-                newOutOrder.setStatus(OutOrders.STATUS_OTHER);
-                outOrdersService.updateByOrderNo(newOutOrder);
-                return resultMap;
-            }
-
             resultMap.put("code", "400");
-            resultMap.put("msg", "绑卡失败，请重试");
+            resultMap.put("msg", "绑卡请求失败，请重试");
             newOutOrder.setStatus(OutOrders.STATUS_OTHER);
             outOrdersService.updateByOrderNo(newOutOrder);
             return resultMap;
@@ -189,17 +150,17 @@ public class ChanpayServiceImpl implements ChanpayService {
     }
 
     /**
-     * 绑卡确认请求v1.12
+     * 绑卡确认请求
      *
      * @param bindCardConfirmReq req
      * @return result
      */
     @Override
-    public ResultModel<Map<String, Object>> getBindCardConfirm(YPBindCardConfirmReq bindCardConfirmReq) {
+    public ResultModel<String> getBindCardConfirm(YPBindCardConfirmReq bindCardConfirmReq) {
         log.info("ChanpayService getBindCardConfirm start");
         log.info("ChanpayService getBindCardConfirm paramMap=" + JSON.toJSONString(bindCardConfirmReq));
 
-        ResultModel<Map<String, Object>> resultModel = new ResultModel<>(false);
+        ResultModel<String> resultModel = new ResultModel<>(false);
 
         if (bindCardConfirmReq.getDataMap() == null || bindCardConfirmReq.getDataMap().size() <= 0) {
             resultModel.setMessage("datamap不允许为空");
@@ -209,57 +170,42 @@ public class ChanpayServiceImpl implements ChanpayService {
         String userId = bindCardConfirmReq.getUserId();
         log.info("ChanpayService getBindCardConfirm userId=" + userId);
 
-        //请求易宝api,获得返回结果
-//        Map<String, Object> resultMap = YeepayApiUtil.httpExecuteResult(bindCardConfirmReq.getDataMap(), userId, requestUrl, "getBindCardConfirm");
-        Map<String,Object> resultMap = new HashMap<>();
         try{
+            Map<String, String> paramMap = BaseParameter.requestBaseParameter(BaseParameter.NMG_API_AUTH_SMS);
+            paramMap.put("TrxId", bindCardConfirmReq.getOrderNo());
+            paramMap.put("OriAuthTrxId", bindCardConfirmReq.getRequestNo());
+            paramMap.put("SmsCode", bindCardConfirmReq.getSmsCode());
+            paramMap.put("NotifyUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/bindCardCallback");//异步通知url
 
-            User user = userService.searchByUserid(Integer.parseInt(userId));
+            String result = ChanPayUtil.sendPost(paramMap, BaseConstant.CHARSET, BaseConstant.MERCHANT_PRIVATE_KEY);
+            if (ChanPayUtil.verify(result, BaseConstant.MERCHANT_PUBLIC_KEY)) {
+                ChanpayResult chanpayResult = JSONObject.parseObject(result, ChanpayResult.class);
 
-            NewProtocolBindXmlBeanReq beanReq = new NewProtocolBindXmlBeanReq();
-            beanReq.setVersion("1.0");
-            beanReq.setTradeDate(DateUtil.formatDate(new Date(), "yyyyMMdd"));
-            beanReq.setMchntCd(FuiouConstants.API_MCHNT_CD);
-            beanReq.setUserId(PropertiesConfigUtil.get("RISK_BUSINESS")+userId);
-            beanReq.setAccount(user.getRealname());
-            beanReq.setCardNo(bindCardConfirmReq.getCardNo());
-            beanReq.setIdType("0");
-            beanReq.setIdCard(user.getIdNumber());
-            beanReq.setMobileNo(bindCardConfirmReq.getPhone());
-            beanReq.setMchntSsn(bindCardConfirmReq.getRequestNo());
-            beanReq.setMsgCode(bindCardConfirmReq.getSmsCode());
-            beanReq.setSign(FuiouUtil.getSign(beanReq.proBindSignStr(FuiouConstants.API_MCHNT_KEY), "MD5", FuiouConstants.privatekey));
+                if (chanpayResult == null || StringUtils.isBlank(result)) {
+                    resultModel.setCode(ErrorCode.ERROR_400.getCode());
+                    resultModel.setMessage(ErrorCode.ERROR_400.getMsg());
+                    return resultModel;
+                }
 
-            String APIFMS = XMapUtil.toXML(beanReq, FuiouConstants.charset);
-            //APIFMS = DESCoderFUIOU.desEncrypt(APIFMS, DESCoderFUIOU.getKeyLength8(FuiouConstants.API_MCHNT_KEY));
+                resultModel.setData(result);
+                log.info("ChanpayService getBindCardConfirm userId=" + userId + " errorcode=" + chanpayResult.getRetCode() + " errormsg=" + chanpayResult.getRetMsg());
 
-            resultMap = FuiouApiUtil.FuiouYOP(APIFMS,FuiouConstants.NEW_PROTOCOL_BINDCOMMIT_URL);
-
+                String orderStatus = String.valueOf(chanpayResult.getStatus());
+                log.info("ChanpayService getBindCardConfirm userId=" + userId + " status=" + orderStatus);
+                //绑卡
+                if (StringUtils.isNotBlank(orderStatus) && "S".equals(orderStatus) && "S0001".equals(chanpayResult.getRetCode())) {
+                    resultModel.setSucc(true);
+                    resultModel.setCode(ErrorCode.ERROR_0000.getCode());
+                    resultModel.setMessage(ErrorCode.ERROR_0000.getMsg());
+                    return resultModel;
+                } else {
+                    resultModel.setCode(chanpayResult.getRetCode());
+                    resultModel.setMessage(chanpayResult.getRetMsg());
+                    return resultModel;
+                }
+            }
         }catch (Exception e){
             log.error("post bindCard confirm error:{}",e);
-        }
-        if (resultMap == null || resultMap.size() <= 0) {
-            resultModel.setCode(ErrorCode.ERROR_400.getCode());
-            resultModel.setMessage(ErrorCode.ERROR_400.getMsg());
-            return resultModel;
-        }
-
-        resultModel.setData(resultMap);
-        log.info("ChanpayService getBindCardConfirm userId=" + userId + " errorcode=" + resultMap.get("errorcode") + " errormsg=" + resultMap.get("errormsg"));
-        if (resultMap.containsKey("errorcode") && !"".equals(resultMap.get("errorcode"))) {
-            resultModel.setCode(String.valueOf(resultMap.get("errorcode")));
-            resultModel.setMessage(String.valueOf(resultMap.get("errormsg")));
-            return resultModel;
-        }
-
-        String orderStatus = String.valueOf(resultMap.get("status"));
-        log.info("ChanpayService getBindCardConfirm userId=" + userId + " status=" + orderStatus);
-        //绑卡
-        if (!"null".equals(orderStatus) && "0000".equals(orderStatus)) {
-            resultModel.setSucc(true);
-            resultModel.setCode(ErrorCode.ERROR_0000.getCode());
-            resultModel.setMessage(ErrorCode.ERROR_0000.getMsg());
-            return resultModel;
         }
         resultModel.setCode(ErrorCode.ERROR_400.getCode());
         resultModel.setMessage(ErrorCode.ERROR_400.getMsg());
@@ -349,7 +295,7 @@ public class ChanpayServiceImpl implements ChanpayService {
         String cardNo = paramMap.get("card_no");
         String phone = paramMap.get("phone");
         String realName = paramMap.get("real_name");
-        String agreeno = paramMap.get("agreeno");
+        //String agreeno = paramMap.get("agreeno");
 
         UserCardInfo bankCardByCardNo = userService.findBankCardByCardNo(cardNo);
 
@@ -370,7 +316,7 @@ public class ChanpayServiceImpl implements ChanpayService {
             if (userService.defaultCardCount(Integer.parseInt(userId)) <= 0) {
                 cardInfo.setCardDefault(1);
             }
-            cardInfo.setAgreeno(agreeno);
+            cardInfo.setAgreeno("CHANPAY_CARD");
             boolean flag = userBankDao.saveUserbankCard(cardInfo);
             log.info("ChanpayService updateUserBankInfo userId=" + userId + " new flag=" + flag);
 
@@ -385,12 +331,8 @@ public class ChanpayServiceImpl implements ChanpayService {
             map.put("userId", userId);
             //设置状态-第一次绑卡
             infoIndexService.authBank(map);
-            //地推 绑卡
-//            ThreadPool pool = ThreadPool.getInstance();
-//            pool.execute(new DtThread(UserPushUntil.BANKAPPROVE, Integer.valueOf(userId), null, new Date(), userService, pushUserService, borrowOrderService, null));
 
         } else {
-
             UserCardInfo cardInfoSave = new UserCardInfo();
             cardInfoSave.setId(bankCardByCardNo.getId());
             cardInfoSave.setBank_id(Integer.parseInt(bankId));

@@ -7,11 +7,15 @@ import java.util.Map;
 
 public class BaseParameter {
 
+	public final static String CJT_DSF = "cjt_dsf";//代付
+	public final static String NMG_BIZ_API_AUTH_REQ = "nmg_biz_api_auth_req";//绑卡请求
+	public final static String NMG_API_AUTH_SMS = "nmg_api_auth_sms";//绑卡请求
+	public final static String NMG_BIZ_API_QUICK_PAYMENT = "nmg_biz_api_quick_payment";
+
 	/**
 	 * 请求
 	* @Title: requestBaseParam 
-	* @Description: TODO(这里用一句话描述这个方法的作用) 
-	* @param @return    设定文件 
+	* @param @return    设定文件
 	* @return Map<String,String>    返回类型 
 	* @throws
 	 */

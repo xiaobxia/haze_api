@@ -1,6 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:aop="http://www.springframework.org/schema/aop" xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
@@ -11,7 +11,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
     <aop:config>
         <!--<aop:pointcut id="DubboService"-->
-                      <!--expression="execution(* com.vxianjin.gringotts.*..*(..))" />-->
+        <!--expression="execution(* com.vxianjin.gringotts.*..*(..))" />-->
         <!--controller 日志切点-->
         <aop:pointcut id="controllerAopLog"
                       expression="execution(* com.vxianjin.gringotts.*.controller.*Controller.*(..))" />

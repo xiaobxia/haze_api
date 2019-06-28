@@ -94,16 +94,23 @@
         <c:if test="${repayment.status == 21 || repayment.status == 23 || repayment.status == -11}">
             <c:if test="${not applying eq 'true'}">
                 <div class="btn-box clearfix">
-                    <a data-ajax="false" onclick="toRenewal()" href="javascript:;">申请续期</a>
-                    <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}">立即还款</a>
+                    <c:choose>
+                    <c:when test="${extendStatus == true}">
+                        <a data-ajax="false" onclick="toRenewal()" href="javascript:;">申请续期</a>
+                        <a data-ajax="false" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}">立即还款</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a data-ajax="false" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}" style="width: 100%">立即还款</a>
+                    </c:otherwise>
+                    </c:choose>
                 </div>
             </c:if>
         </c:if>
         <div class="sure-tc">
             <p>您已逾期，不能申请续期，请先去还款</p>
             <div class="btn-both clearfix" style="padding:0 0.5rem;">
-                <a data-ajax="false" href="${path}/repayment/repay-choose?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #31c27c;height:2rem;line-height:2rem;">去还款</a>
-                <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #31c27c; color:#fff !important;height:2rem;line-height:2rem;">取消</a>
+                <a data-ajax="false" href="${path}/repayment/repay-pay-fuiou?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">去还款</a>
+                <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #FF8240; color:#fff !important;height:2rem;line-height:2rem;">取消</a>
             </div>
         </div>
         <!-- 遮罩层 -->
@@ -116,7 +123,7 @@
     function toRenewal(){
         $.post("${path}/repayment/renewal-whether", {id:'${repayment.id}'} , function(data){
             if("0" == data.code){
-                window.location.href="${path}/repayment/renewal-choose?id=${bo.id}";
+                window.location.href="${path}/repayment/renewal-pay-fuiou?id=${bo.id}";
             }else if('-101' == data.code){
                 $('.sure-tc p').text(data.msg);
                 $('.sure-tc,.cover').show();

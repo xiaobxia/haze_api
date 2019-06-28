@@ -4,8 +4,8 @@
     String path = request.getContextPath();
     String basePath = path + "/common/web/zmxy";
 %>
-<c:set var="path" value="<%=path%>"></c:set>
-<c:set var="basePath" value="<%=basePath%>"></c:set>
+<c:set var="path" value="<%=path%>"/>
+<c:set var="basePath" value="<%=basePath%>"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -4,7 +4,7 @@
 html { font-size: 40px; }
 
 /**解决页面因网络问题放大问题**/
-@media screen (max-width:319px) {
+@media screen and (max-width:319px) {
 	html { font-size: 17px }
 }
 @media screen and (min-width:320px) and (max-width:335px) {
@@ -73,7 +73,7 @@ html { font-size: 40px; }
 @media screen and (min-width:656px) and (max-width:700px) {
 	html { font-size: 39px }
 }
-@media screen (max-width:750px) {
+@media screen and (max-width:750px) {
 	html { font-size: 40px }
 }
 body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !important; background-color: #f7f7f7; }
@@ -83,7 +83,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .ui-corner-all { border-radius: 0; }
 
 /* 公用btn */
-.com_btn { width: 14.5rem; height: 2.2rem; display: block; background-color: #31c27c; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 0.2rem; margin: 0 auto; }
+.com_btn { width: 14.5rem; height: 2.2rem; display: block; background-color: #FF8240; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 0.2rem; margin: 0 auto; }
 
 /* 公用btn */
 
@@ -115,7 +115,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .user-info-list { height: 1.95rem; line-height: 1.95rem; font-size: 0.95rem; color: #493d00; overflow-y: hidden; }
 .user-info-list img { width: 1.95rem; height: 1.95rem; float: left; }
 .user-info-list span { float: left; width: 4.5rem; text-align: center; }
-.reward-btn { display: block; width: 13.8rem; height: 1.9rem; background-color: #31c27c; font-size: 0.8rem; color: #fff !important; text-align: center; line-height: 1.9rem; margin: 0 auto 0.75rem; border-radius: 1.5rem; border-bottom: 4px solid #c43d3e; }
+.reward-btn { display: block; width: 13.8rem; height: 1.9rem; background-color: #FF8240; font-size: 0.8rem; color: #fff !important; text-align: center; line-height: 1.9rem; margin: 0 auto 0.75rem; border-radius: 1.5rem; border-bottom: 4px solid #c43d3e; }
 #rwd-btn { font-size: 0.7rem; color: #a04a1a; text-align: center; display: block; }
 .reward-middle { width: 100%; padding-top: 2.375rem; background: url(../images/a_05.png) 0 0 no-repeat; -webkit-background-size: 100% auto; background-size: 100% auto; position: relative; }
 .reward-middle .a_14 { width: 6.175rem; position: absolute; top: 0; right: 0.5rem; }
@@ -232,7 +232,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 	line-height: 0.7rem;
 	margin-top: 1.2rem;
 	font-size: 0.5rem;
-	color: #2ebd59;
+	color: #ff2f56;
 }
 .sq-wrap span img{
 	display: inline-block;

@@ -91,8 +91,8 @@
     <div class="sure-tc" style="height: 6.25rem;">
         <p>确认已经支付了吗？</p>
         <div class="btn-both clearfix" style="padding:0 0.5rem;">
-            <a data-ajax="false" href="javascript:;" onclick="querySureTc();" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #31c27c;height:2rem;line-height:2rem;">已支付</a>
-            <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #31c27c; color:#fff !important;height:2rem;line-height:2rem;">未支付</a>
+            <a data-ajax="false" href="javascript:;" onclick="querySureTc();" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">已支付</a>
+            <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #FF8240; color:#fff !important;height:2rem;line-height:2rem;">未支付</a>
         </div>
     </div>
     <!-- 遮罩层 -->

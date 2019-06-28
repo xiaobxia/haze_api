@@ -20,6 +20,12 @@ import java.util.*;
 public class ChanPayUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(ChanPayUtil.class);
+
+	public final static List<String> SUCCESSCODE = new ArrayList(){{
+		add("QT000000");
+		add("QT000001");
+		add("QT100000");
+	}};
 	
 	/**
 	 * 向测试服务器发送post请求

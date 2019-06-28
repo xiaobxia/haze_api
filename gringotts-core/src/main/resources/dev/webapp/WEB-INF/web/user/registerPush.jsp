@@ -80,7 +80,7 @@
             <div class="copyright">
                 <p align="center">投资有风险  请谨慎</p>
                 <p align="center"></p>
-                <p>鸾鸟网络科技（上海）有限公司</p>
+                <p>伟福科技有限公司</p>
                 <p>沪ICP备17021248号-1</p>
             </div>
         </div>

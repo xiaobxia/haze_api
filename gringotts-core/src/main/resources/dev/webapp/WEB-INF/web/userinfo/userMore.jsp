@@ -11,9 +11,9 @@
 <head>
 <meta charset="utf-8">
 <title>更多信息</title>
-<meta http-equiv="Expires" content="-1">               
+<meta http-equiv="Expires" content="-1">
 <meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Cache-Control" content="no-cache"> 
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -56,19 +56,19 @@
                   <input type="text" placeholder="请输入微信账号" data-role="none"  name="wechatAccount" value="${wechatAccount}" id="wechatAccount">
                   </a>
                 </li>
-              </ul> 
+              </ul>
         </div>
-          <a href="javascript:saveMore();" class="js-btn mt60" id="bc-btn" style="background-color: #31c27c">保存</a>
+          <a href="javascript:saveMore();" class="js-btn mt60" id="bc-btn" style="background-color: #FF8240">保存</a>
           <span class="safe"><img src="${basePath }/images/dp.png" alt="">银行级数据加密防护</span>
           <div class="sure-tc">
              <p id="result_code">保存信息成功</p>
-            <a href="javascript:void 0;" class="btn sure-btn" style="background-color: #31c27c">确认</a>
+            <a href="javascript:void 0;" class="btn sure-btn" style="background-color: #FF8240">确认</a>
           </div>
           <!-- 遮罩层 -->
           <div class="cover"></div>
         </div>
         <!-- main end -->
-        
+
     </div>
     <form action="/www.moreInfo.com?msg=保存信息成功" id="tempForm" method="get" data-ajax="false"></form>
 </body>

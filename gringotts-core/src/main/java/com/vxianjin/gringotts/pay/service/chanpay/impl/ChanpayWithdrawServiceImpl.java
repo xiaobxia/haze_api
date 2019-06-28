@@ -171,7 +171,7 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
 
     private Map<String, String> prepareParamsToChanPay(User user, BorrowOrder order, UserCardInfo info) throws Exception {
         logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay order:{}, userCardInfo:{}", order, info);
-        Map<String, String> paramMap = BaseParameter.requestBaseParameter("cjt_dsf");
+        Map<String, String> paramMap = BaseParameter.requestBaseParameter(BaseParameter.CJT_DSF);
         paramMap.put("TransCode", "T10000"); // 交易码
         paramMap.put("OutTradeNo", GenerateNo.generateShortUuid(10)); // 商户网站唯一订单号
         paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公

@@ -23,7 +23,7 @@ public interface ChanpayService {
      * @param bindCardConfirmReq req
      * @return result
      */
-    ResultModel<Map<String, Object>> getBindCardConfirm(YPBindCardConfirmReq bindCardConfirmReq);
+    ResultModel<String> getBindCardConfirm(YPBindCardConfirmReq bindCardConfirmReq);
     /**
      * 发送绑卡短验
      *

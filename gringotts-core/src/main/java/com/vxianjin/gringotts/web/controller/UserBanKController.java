@@ -135,9 +135,9 @@ public class UserBanKController extends BaseController {
                         //银行卡认证页面
                         if (null != telephone && "cardInfo".equals(certi.getCode())) {
                             if ("未完善".equals(operator)) {
-                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/fuiouBindCard/credit-card/bindNewCard");
+                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/"+ PropertiesConfigUtil.get("BIND_CARD_URL") +"/credit-card/bindNewCard");
                             } else {
-                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/fuiouBindCard/credit-card/firstUserBank");
+                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/"+ PropertiesConfigUtil.get("BIND_CARD_URL") +"/credit-card/firstUserBank");
                             }
                         }
                         //common/web/images/certification/more_info_logo.png;;common/web/images/certification/more_info_logo2.png

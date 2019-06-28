@@ -351,6 +351,6 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where card_no = #{cardNo,jdbcType=VARCHAR} AND status=1
+        from user_card_info b where b.card_no = #{cardNo,jdbcType=VARCHAR} AND b.status=1 AND b.agreeno = 'CHANPAY_CARD'
     </select>
 </mapper>

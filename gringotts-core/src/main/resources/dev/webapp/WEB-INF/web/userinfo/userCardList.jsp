@@ -46,7 +46,19 @@
     </script>
     <style>
         body,h4,html,i,li,p,ul{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;font-weight: normal !important;text-shadow: none;}
-        *{margin:0;padding:0;-webkit-user-select:auto;font-weight: normal !important;text-shadow: none;}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-weight: normal !important;
+            text-shadow: none;
+        }
         .f-cb:after{display:block;content:'.';height:0;visibility:hidden;overflow:hidden;clear:both}
         .fl{float:left}
         .card-list-box {
@@ -180,8 +192,8 @@
             text-align: center;
             width: 100%;
             margin: 8px 0 0;
-            background: #31c27c;
-            border: 1px solid #31c27c;
+            background: #FF8240;
+            border: 1px solid #FF8240;
             color: #fff;
             font-size: 15px;
             letter-spacing: 1px;
@@ -494,20 +506,32 @@
         // 隐藏加载器
         $.mobile.loading('hide');
     }
+
+    function pop(msg) {
+        var message = {
+            'method' : 'tobackpage',
+            'params' : {
+                'msg' : msg
+            }
+        };
+        window.webkit.messageHandlers.webViewApp.postMessage(message);
+    }
+
     function closeSureTc(bankId) {
         $('#sure-tc,.cover').hide();
         var u = navigator.userAgent, app = navigator.appVersion;
         var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
         var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
         show_loading('切换中');
-        $.post('${path}/yeepayBindCard/credit-card/switchDefaultCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}',{bankId: gloabelbank_id},function (data) {
-            $("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
+        $.post('${path}/fuiouBindCard/credit-card/switchDefaultCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}',{bankId: gloabelbank_id},function (data) {
+            // ("#tempForm").attr("action","/www.bindcardinfo.com?msg="+msg);
             var msg = data.msg;
             if(data.code == "0"){
                 if (isAndroid) {
                     window.nativeMethod.authenticationResult(msg);
                 }else if(isIOS){
-                    $("#tempForm").submit();
+                    pop(msg);
+                    // $("#tempForm").submit();
                 }
             }else{
                 $(".ui-loader.ui-corner-all").hide()
@@ -519,12 +543,12 @@
     // 添加银行卡，超过3张提示
     $('#add-card').on('click',function () {
         show_loading("");
-        $.post('${path}/yeepayBindCard/credit-card/addCardOrNot?deviceId=${deviceId}&mobilePhone=${mobilePhone}',function (data) {
+        $.post('${path}/fuiouBindCard/credit-card/addCardOrNot?deviceId=${deviceId}&mobilePhone=${mobilePhone}',function (data) {
             var msg = data.msg;
             hideLoader();
             //可以绑卡
             if(data.code == "0"){
-                window.location.href = "${path}/yeepayBindCard/credit-card/bindNewCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}";
+                window.location.href = "${path}/fuiouBindCard/credit-card/bindNewCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}";
             }
             //超过绑卡数量
             else if(data.code == "1"){

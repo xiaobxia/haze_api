@@ -287,6 +287,43 @@ public class RepaymentWebController extends BaseController {
     }
 
     /**
+     * 还款支付页面（富友支付）
+     */
+    @RequestMapping("repay-pay-chanpay")
+    public String repayChanpay(HttpServletRequest request, Model model, Integer id) {
+        BorrowOrder bo = borrowOrderService.findOneBorrow(id);
+        String msg = "";
+        if (bo != null) {
+            UserCardInfo info = userService.findUserBankCard(bo.getUserId());
+            info.setCard_no(info.getCard_no().substring(info.getCard_no().length() - 4));
+            model.addAttribute("info", info);
+            model.addAttribute("bo", bo);
+            Map<String, Object> map = new HashMap<>();
+            map.put("assetOrderId", bo.getId());
+            Repayment repayment = repaymentService.findOneRepayment(map);
+            Gson gson = new Gson();
+            //该用户银行卡列表
+            //List<UserCardInfo> userBankCardList = userService.findUserBankCardList(bo.getUserId());
+            List<UserCardInfo> userBankCardList = userService.findUserBankCardList(bo.getUserId()).stream().map(userCardInfo -> {
+                String cardNo = userCardInfo.getCard_no();
+                userCardInfo.setCard_no(cardNo.substring(cardNo.length() - 4, cardNo.length()));
+                return userCardInfo;
+            }).collect(Collectors.toList());
+
+            String json = "";
+            if (ArrayUtil.isNotEmpty(userBankCardList)) {
+                json = gson.toJson(userBankCardList);
+            }
+            model.addAttribute("repayment", repayment);
+            model.addAttribute("bankCardList", json);
+        } else {
+            msg = "不存在借款订单";
+            model.addAttribute("message", msg);
+        }
+        return "repayment/repaymentChanpay";
+    }
+
+    /**
      * 还款支付页面（易宝支付）
      */
     @RequestMapping("repay-pay-yeepay")

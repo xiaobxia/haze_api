@@ -4,7 +4,7 @@
 <%
     String path = request.getContextPath();
     String basePath = path + "/common/web";
-    String staticBasePath = "https://static.jx-money.com/common/web";
+    String staticBasePath = path + "/common/web";
 %>
 
 <!DOCTYPE html>
@@ -47,16 +47,51 @@
         _czc.push(["_setAccount", "1271438488"]);
     </script>
     <script type="text/javascript">
+        var android_url = '${androidUrl}';
+        var ios_url = '${iosUrl}';
+
         function gotoxjxapp(){
             //location = "http://www.xianjinxia.com:8086/xjx-platform/a/jsaward/awardCenter/drawAwardIndex";
         }
+        function brower_info() {
+            var ua = navigator.userAgent;
+            var brower = {
+                is_android: function () {//是否是安卓终端
+                    return /android/.test(ua.toLowerCase()) ? true : false;
+                },
+                is_iPhone: function () {//是否是苹果终端
+                    return /iphone|ipad|ipod/.test(ua.toLowerCase()) ? true : false;
+                }
+            };
+            return brower;
+        }
         function downApp(){
-            location="http://download.jx-money.com/";
+            var browers = brower_info();
+            // 安卓用户微信打开提示到浏览器下载
+            if (browers.is_android()) {
+                location=android_url;
+
+            } else if (browers.is_iPhone()) {
+                location=ios_url;
+
+            } else {
+                location=android_url;
+            }
         }
     </script>
     <style>
         body,h4,html,i,li,p,ul,input{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;border:none;}
-        *{margin:0;padding:0;-webkit-user-select:auto}
+        *{
+            margin:0;
+            padding:0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
         .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;min-height: 100vh;}
         .regist-bg .wrapper-bg{padding:0 0 33%}
@@ -74,7 +109,12 @@
         .success-main1 .success-box .success-info .value{padding:52px 0 5px;text-align:center;color:#ff4f3e;font-weight:400;font-size:48px}
         .success-main1 .success-box .success-info em{display:block;font-size:14px;font-style:normal;color:#666;text-align:center}
         .success-main1 .com-btn{background:#ff7700;width:90%;text-align:center;color:#fff;font-size:16px;margin:0 auto;line-height:45px;height:auto;border-radius:50px;display:block;text-decoration:none}
-        .banner-pic .banner-logo {width: 80%;margin: 0.3rem auto 0;}
+        .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
+        .banner-pic {
+            position: relative;
+            margin-bottom: -0.7rem;
+            z-index: -100;
+        }
         .banner-pic img {display: block;}
         .banner-pic .text-center{font-size: 0;margin-top: 25px;}
         .banner-pic .text-center .img{margin: 0 auto;}
@@ -143,7 +183,7 @@
         <div class="copyright" style="display: none;">
             <p align="center">投资有风险  请谨慎</p>
             <p align="center"></p>
-            <p>鸾鸟网络科技（上海）有限公司</p>
+            <p>伟福科技有限公司</p>
             <p>沪ICP备17044849号-1</p>
         </div>
     </div>-->
@@ -193,7 +233,7 @@
     };
     $(".value").numberRock({
         speed:10,
-        count:10000
+        count:20000
     });
 </script>
 </body>

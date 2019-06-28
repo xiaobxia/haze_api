@@ -286,7 +286,7 @@ input:focus {
 
 #bank-verify-note {
     font-size: 0.3466666667rem;
-    color: #2ebd59;
+    color: #ff2f56;
     padding: 0 0 0 0.4666666667rem;
     height: 0.4533333333rem;
     width: 3.7333333333rem;
@@ -2585,7 +2585,7 @@ div.bonus div.current-bonus div.list ul li span i {
 }
 
 div.bonus div.current-bonus div.list ul li span em {
-    color: #2ebd59;
+    color: #ff2f56;
 }
 
 div.bonus div.current-bonus div.list ul li span b {
@@ -2691,7 +2691,7 @@ div.bonus div.history ul li span:last-child {
 
 div.bonus div.history ul li span i {
     font-style: normal;
-    color: #2ebd59;
+    color: #ff2f56;
 }
 
 .popup-bonus-success .dialog {

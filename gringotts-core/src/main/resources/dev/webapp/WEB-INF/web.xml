@@ -12,8 +12,8 @@
     <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
   </listener>  
   <context-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:applicationContext.xml,classpath:captcha-context.xml</param-value>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml,classpath:captcha-context.xml</param-value>
   </context-param>
   <filter>
     <filter-name>encodingFilter</filter-name>
