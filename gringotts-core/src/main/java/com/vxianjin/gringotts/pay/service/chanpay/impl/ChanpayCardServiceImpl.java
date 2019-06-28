@@ -76,9 +76,9 @@ public class ChanpayCardServiceImpl implements ChanpayCardService {
             //认证失败次数
             String failCount = jedisCluster.get(CHANPAY_BIND_FAIL_COUNT + currentDate + "_" + userId);
             //失败次数超过3次，则次日再请求
-            if (failCount != null && Integer.parseInt(failCount) >= 3) {
+            if (failCount != null && Integer.parseInt(failCount) >= 10) {
                 resultModel.setCode(ResponseStatus.FAILD.getName());
-                resultModel.setMessage("今日认证失败次数已超过3次，请明日再试");
+                resultModel.setMessage("今日认证失败次数已超过10次，请明日再试");
                 return resultModel;
             }
 
