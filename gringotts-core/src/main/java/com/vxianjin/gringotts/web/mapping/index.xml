@@ -268,7 +268,7 @@
 			status as status
 			from user_card_info
 			where status=1
-			and user_id=#{USER_ID}  and card_default=1
+			and user_id=#{USER_ID}  and card_default=1 and agreeno = 'CHANPAY_CARD'
 		]]>
     </select>
     <update id="updateInfoUserInfoBorrowStatus" parameterType="HashMap">
