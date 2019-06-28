@@ -27,4 +27,6 @@ public interface IBackConfigParamsDao {
     int updateValue(List<BackConfigParams> list);
 
     String  findMachine();
+
+    String findThirdPartyPayment();
 }

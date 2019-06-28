@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -35,24 +36,35 @@ public class ChanpayRepayController extends BaseController {
     /**
      * 畅捷通还款回调--- Chanpay
      */
-    @RequestMapping(value = "withholdCallback/{userId}")
-    public void payWithholdCallback(TradeNotify tradeNotify, @PathVariable String userId) throws Exception {
+    @ResponseBody
+    @RequestMapping(value = "withholdCallback/{userId}", method = RequestMethod.POST)
+    public String payWithholdCallback(TradeNotify tradeNotify, @PathVariable String userId) throws Exception {
         logger.info("ChanpayRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(tradeNotify) + "  userId:" + userId + "】");
-
-        Thread.sleep(2000);//异步回来等一等同步数据入库
-        chanpayRepayService.payWithholdCallback(tradeNotify);
+        try {
+            Thread.sleep(2000);//异步回来等一等同步数据入库
+            tradeNotify.set_input_charset("UTF-8");
+            chanpayRepayService.payWithholdCallback(tradeNotify);
+        } catch (Exception e) {
+            logger.error("还款回调(畅捷通快捷支付)", e);
+        }
+        return "success";
     }
 
     /**
      * 畅捷通续期回调--- Chanpay
      */
     @ResponseBody
-    @RequestMapping(value = "renewalWithholdCallback/{userId}")
-    public void payRenewalWithholdCallback(TradeNotify tradeNotify, @PathVariable String userId) throws Exception {
+    @RequestMapping(value = "renewalWithholdCallback/{userId}", method = RequestMethod.POST)
+    public String payRenewalWithholdCallback(TradeNotify tradeNotify, @PathVariable String userId) throws Exception {
         logger.info("ChanpayRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(tradeNotify) + " userId:" + userId + "】");
-
-        Thread.sleep(2000);//异步回来等一等同步数据入库
-        chanpayRepayService.payRenewalWithholdCallback(tradeNotify);
+        try {
+            Thread.sleep(2000);//异步回来等一等同步数据入库
+            tradeNotify.set_input_charset("UTF-8");
+            chanpayRepayService.payRenewalWithholdCallback(tradeNotify);
+        } catch (Exception e) {
+            logger.error("续期回调(畅捷通快捷支付)", e);
+        }
+        return "success";
     }
 
     /**
@@ -89,9 +101,6 @@ public class ChanpayRepayController extends BaseController {
         if (id == null || money <= 0) {
             return new ResponseContent("-101", "请求参数非法");
         }
-        /*if (StringUtils.isBlank(payPwd)) {
-            return new ResponseContent("-101", "请输入交易密码");
-        }*/
         //成立提示
         if (renewalRecordService.borrowOrderRenewalRecordFlag(id)) {
             return new ResponseContent("-101", "续期次数超过限制");
@@ -159,7 +168,7 @@ public class ChanpayRepayController extends BaseController {
         logger.debug("ChanpayRepayController.collectionWithhold params:【userId:" + userId + " repaymentId:" + repaymentId + " money:" + money + " withholdId:" + withholdId + " sign:" + sign + "】");
         //校验请求参数
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(repaymentId) || StringUtils.isBlank(withholdId) || StringUtils.isBlank(sign)) {
-            return new ResponseContent("-101", "代付失败,请求参数不符合要求");
+            return new ResponseContent("-101", "代扣失败,请求参数不符合要求");
         }
         try {
             return chanpayRepayService.collectionWithhold(userId, repaymentId, money, withholdId, sign);
@@ -167,6 +176,53 @@ public class ChanpayRepayController extends BaseController {
             logger.error("ChanpayRepayController.collectionWithhold params:【userId:" + userId + " repaymentId:" + repaymentId + " money:" + money + " withholdId:" + withholdId + " sign:" + sign + "】,error:", e);
             return new ResponseContent("-101", "系统异常，请稍后重试");
         }
+    }
+
+    /**
+     * 主动支付请求（还款）
+     */
+    @ResponseBody
+    @RequestMapping(value = "directRepayWithholdRequest")
+    public ResponseContent repaymentWithholdRequest(Integer id, String bankId) {
+        logger.debug("ChanpayRepayController.repaymentWithholdRequest params: 【borrowId:{},bankId:{}】", id, bankId);
+        try {
+            return chanpayRepayService.directRepaymentWithholdRequest(id, bankId);
+        } catch (BizException e) {
+            logger.error("ChanpayRepayController.payRenewalWithholdCallback(主动支付请求) has BizException,params: 【borrowId:{},bankId:{}】" + " errorCode" + e.getErrorCode() + " errorMsg:" + e.getErrorMsg(), id, bankId);
+            return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
+        } catch (Exception e) {
+            logger.error("ChanpayRepayController.payRenewalWithholdCallback(主动支付请求) has BizException,params: 【borrowId:{},bankId:{}】,error:{}", id, bankId, e.getMessage());
+            return new ResponseContent("-101", "系统异常，请稍后重试");
+        }
+    }
+
+    /**
+     * 主动支付确认（还款）
+     */
+    @ResponseBody
+    @RequestMapping(value = "directRepayWithholdConfirm")
+    public ResponseContent repaymentWithholdConfirm(Integer id, String smsCode, String requestNo) {
+        logger.debug("ChanpayRepayController.repaymentWithholdConfirm params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + "】");
+        ResponseContent result = null;
+        if (id == null) {
+            return new ResponseContent("-101", "请求参数非法");
+        }
+        if (StringUtils.isBlank(requestNo)) {
+            return new ResponseContent("-101", "请求参数非法");
+        }
+        if (StringUtils.isBlank(smsCode)) {
+            return new ResponseContent("-101", "请输入短信验证码");
+        }
+        try {
+            result = chanpayRepayService.directRepaymentWithholdConfirm(id, smsCode, requestNo);
+        } catch (BizException e) {
+            logger.error("ChanpayRepayController.repaymentWithholdConfirm(主动支付确认) has BizException, params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + "】,errorCode:" + e.getErrorCode() + " eroroMsg:" + e.getErrorMsg());
+            result = new ResponseContent(e.getErrorCode(), e.getErrorMsg());
+        } catch (Exception e) {
+            logger.error("ChanpayRepayController.repaymentWithholdConfirm(主动支付确认) has BizException, params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + "】,error:", e);
+            return new ResponseContent("-101", "系统异常，请稍后重试");
+        }
+        return result;
     }
 
 }

@@ -731,7 +731,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         } finally {
             //交易成功或者失败，删除锁定的该笔还款订单，防止其他渠道不能还款
             repayService.removeRepaymentLock(re.getId() + "");
-            logger.info("UcfpayController withholdCallback end");
+            logger.info("payController withholdCallback end");
         }
     }
 

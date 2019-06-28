@@ -36,69 +36,66 @@
         uc.card_default cardDefault
         from user_card_info uc left join bank_all_info bc on (uc.bank_id=bc.id) left join user_info u
         on(uc.user_id=u.id)
-        <where>
-            <if test="userId !=null and userId !=''">
-                uc.user_id=#{userId}
-            </if>
-            <if test="userName !=null and userName !=''">
-                AND u.open_name=#{userName}
-            </if>
-            <if test="userPhone !=null and userPhone !=''">
-                AND uc.phone=#{userPhone}
-            </if>
-            <if test="cardNo !=null and cardNo !=''">
-                AND uc.card_no=#{cardNo}
-            </if>
-            <if test="status !=null and status !=''">
-                AND uc.status=#{status}
-            </if>
-            <if test="isBand !=null and isBand !=''">
-                AND uc.is_band=#{isBand}
-            </if>
-            <if test="addStartTime !=null and addStartTime !='' and addEndTiem!=null and addEndTiem!='' ">
-                <![CDATA[AND uc.create_time>=#{addStartTime} AND uc.create_time<=#{addEndTiem}]]>
-            </if>
-            <if test="addStartTime !=null and addStartTime !='' and (addEndTiem==null || addEndTiem=='') ">
-                <![CDATA[AND uc.create_time>=#{addStartTime}]]>
-            </if>
-            <if test="addEndTiem!=null and addEndTiem!='' and (addStartTime==null and addStartTime =='')  ">
-                <![CDATA[AND uc.create_time<=#{addEndTiem}]]>
-            </if>
-        </where>
+        WHERE agreeno = 'CHANPAY_CARD'
+        <if test="userId !=null and userId !=''">
+            AND uc.user_id=#{userId}
+        </if>
+        <if test="userName !=null and userName !=''">
+            AND u.open_name=#{userName}
+        </if>
+        <if test="userPhone !=null and userPhone !=''">
+            AND uc.phone=#{userPhone}
+        </if>
+        <if test="cardNo !=null and cardNo !=''">
+            AND uc.card_no=#{cardNo}
+        </if>
+        <if test="status !=null and status !=''">
+            AND uc.status=#{status}
+        </if>
+        <if test="isBand !=null and isBand !=''">
+            AND uc.is_band=#{isBand}
+        </if>
+        <if test="addStartTime !=null and addStartTime !='' and addEndTiem!=null and addEndTiem!='' ">
+            <![CDATA[AND uc.create_time>=#{addStartTime} AND uc.create_time<=#{addEndTiem}]]>
+        </if>
+        <if test="addStartTime !=null and addStartTime !='' and (addEndTiem==null || addEndTiem=='') ">
+            <![CDATA[AND uc.create_time>=#{addStartTime}]]>
+        </if>
+        <if test="addEndTiem!=null and addEndTiem!='' and (addStartTime==null and addStartTime =='')  ">
+            <![CDATA[AND uc.create_time<=#{addEndTiem}]]>
+        </if>
     </select>
     <select id="findUserBankTotal" resultType="Integer" parameterType="HashMap">
         select count(1) from user_card_info uc left join bank_all_info bc on (uc.bank_id=bc.id) left join user_info u
         on(uc.user_id=u.id)
-        <where>
-            <if test="userId !=null and userId !=''">
-                uc.user_id=#{userId}
-            </if>
-            <if test="userName !=null and userName !=''">
-                AND u.user_name=#{userName}
-            </if>
-            <if test="userPhone !=null and userPhone !=''">
-                AND uc.phone=#{userPhone}
-            </if>
-            <if test="cardNo !=null and cardNo !=''">
-                AND uc.card_no=#{cardNo}
-            </if>
-            <if test="status !=null and status !=''">
-                AND uc.status=#{status}
-            </if>
-            <if test="isBand !=null and isBand !=''">
-                AND uc.is_band=#{isBand}
-            </if>
-            <if test="addStartTime !=null and addStartTime !='' and addEndTiem!=null and addEndTiem!='' ">
-                <![CDATA[AND uc.create_time>=#{addStartTime} AND uc.create_time<=#{addEndTiem}]]>
-            </if>
-            <if test="addStartTime !=null and addStartTime !='' and (addEndTiem==null || addEndTiem=='') ">
-                <![CDATA[AND uc.create_time>=#{addStartTime}]]>
-            </if>
-            <if test="addEndTiem!=null and addEndTiem!='' and (addStartTime==null and addStartTime =='')  ">
-                <![CDATA[AND uc.create_time<=#{addEndTiem}]]>
-            </if>
-
-        </where>
+        where agreeno = 'CHANPAY_CARD'
+        <if test="userId !=null and userId !=''">
+            AND uc.user_id=#{userId}
+        </if>
+        <if test="userName !=null and userName !=''">
+            AND u.user_name=#{userName}
+        </if>
+        <if test="userPhone !=null and userPhone !=''">
+            AND uc.phone=#{userPhone}
+        </if>
+        <if test="cardNo !=null and cardNo !=''">
+            AND uc.card_no=#{cardNo}
+        </if>
+        <if test="status !=null and status !=''">
+            AND uc.status=#{status}
+        </if>
+        <if test="isBand !=null and isBand !=''">
+            AND uc.is_band=#{isBand}
+        </if>
+        <if test="addStartTime !=null and addStartTime !='' and addEndTiem!=null and addEndTiem!='' ">
+            <![CDATA[AND uc.create_time>=#{addStartTime} AND uc.create_time<=#{addEndTiem}]]>
+        </if>
+        <if test="addStartTime !=null and addStartTime !='' and (addEndTiem==null || addEndTiem=='') ">
+            <![CDATA[AND uc.create_time>=#{addStartTime}]]>
+        </if>
+        <if test="addEndTiem!=null and addEndTiem!='' and (addStartTime==null and addStartTime =='')  ">
+            <![CDATA[AND uc.create_time<=#{addEndTiem}]]>
+        </if>
     </select>
     <select id="selectUserBankCard" parameterType="map" resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
         select
@@ -116,7 +113,7 @@
         b.card_default cardDefault,
         b.user_id userId,
 		c.open_bank bankCode
-        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 1 limit 1
+        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND agreeno = 'CHANPAY_CARD' AND card_default = 1 limit 1
     </select>
     <select id="selectUserBankCardNew" parameterType="map" resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
         select
@@ -134,7 +131,7 @@
             b.card_default cardDefault,
             b.user_id userId,
             c.open_bank bankCode
-        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 limit 1
+        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND agreeno = 'CHANPAY_CARD' limit 1
     </select>
     <select id="selectUserBankCardNotDefault" parameterType="map"
             resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
@@ -152,7 +149,7 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 0
+        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 0 AND agreeno = 'CHANPAY_CARD'
     </select>
     <insert id="saveUserCardInfo" parameterType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
 
@@ -211,6 +208,7 @@
         b.is_band isBand,
         b.card_default cardDefault
         from user_card_info b where user_id=#{userId}
+        AND agreeno = 'CHANPAY_CARD'
         <if test="type != null and type != ''">
             and type = #{type}
         </if>
@@ -297,6 +295,7 @@
             and user_id = #{userId}
         </if>
         and card_default = 1
+        AND agreeno = 'CHANPAY_CARD'
         ORDER BY uc.`id` ASC LIMIT #{page},#{pageSize}
     </select>
 
@@ -315,7 +314,7 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1
+        from user_card_info b where b.user_id = #{id,jdbcType=INTEGER} AND b.status=1 AND b.agreeno = 'CHANPAY_CARD'
     </select>
 
     <select id="findBankCardByCardId" parameterType="Integer" resultMap="BaseResultMap">
@@ -333,7 +332,7 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where id = #{bankId,jdbcType=INTEGER} AND status=1
+        from user_card_info b where b.id = #{bankId,jdbcType=INTEGER} AND b.status=1 AND b.agreeno = 'CHANPAY_CARD'
     </select>
 
     <select id="findBankCardByCardNo" parameterType="String" resultMap="BaseResultMap">

@@ -1,6 +1,7 @@
 package com.vxianjin.gringotts.pay.service.chanpay;
 
 import com.vxianjin.gringotts.common.ResponseContent;
+import com.vxianjin.gringotts.pay.model.YeepayRepayReq;
 import com.vxianjin.gringotts.pay.model.chanpay.TradeNotify;
 import com.vxianjin.gringotts.web.pojo.RenewalRecord;
 import com.vxianjin.gringotts.web.pojo.Repayment;
@@ -28,7 +29,7 @@ public interface ChanpayRepayService {
      *
      * @return res
      */
-    void payRenewalWithholdCallback(TradeNotify tradeNotify);
+    void payRenewalWithholdCallback(TradeNotify tradeNotify) throws Exception;
 
     /**
      * 主动支付（还款）
@@ -128,4 +129,23 @@ public interface ChanpayRepayService {
      * @throws Exception ex
      */
     ResponseContent newRecharge(String requestNo, Repayment repayment, User user, Long money, String remark, Integer bankId) throws Exception;
+
+    /**
+     * 直接支付请求（还款）
+     *
+     * @param id borrowId
+     * @param bankIdStr 银行卡id
+     */
+    @Transactional(rollbackFor = Exception.class)
+    ResponseContent directRepaymentWithholdRequest(Integer id, String bankIdStr) throws Exception;
+
+    /**
+     * 主动支付确认（还款）
+     *
+     * @param id id
+     * @param smsCode sms
+     * @param requestNo no
+     */
+    @Transactional(rollbackFor = Exception.class)
+    ResponseContent directRepaymentWithholdConfirm(Integer id, String smsCode, String requestNo) throws Exception;
 }

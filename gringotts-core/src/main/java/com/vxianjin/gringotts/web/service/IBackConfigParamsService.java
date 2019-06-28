@@ -21,4 +21,6 @@ public interface IBackConfigParamsService {
     int updateValue(List<BackConfigParams> list, String type);
 
     String findMachine();
+
+    String findThirdPartyPayment();//第三方支付
 }

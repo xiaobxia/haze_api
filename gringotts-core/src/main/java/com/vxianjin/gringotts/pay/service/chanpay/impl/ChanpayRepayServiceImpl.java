@@ -14,6 +14,7 @@ import com.vxianjin.gringotts.pay.common.publish.PublishFactory;
 import com.vxianjin.gringotts.pay.common.util.chanpay.BaseConstant;
 import com.vxianjin.gringotts.pay.common.util.chanpay.BaseParameter;
 import com.vxianjin.gringotts.pay.common.util.chanpay.ChanPayUtil;
+import com.vxianjin.gringotts.pay.component.ChanpayService;
 import com.vxianjin.gringotts.pay.dao.IRenewalRecordDao;
 import com.vxianjin.gringotts.pay.model.NeedRenewalInfo;
 import com.vxianjin.gringotts.pay.model.NeedRepayInfo;
@@ -92,6 +93,9 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
 
     @Resource
     private ApplicationContext applicationContext;
+
+    @Resource
+    private ChanpayService chanpayService;
 
     private final String appCode = PropertiesConfigUtil.get("RISK_BUSINESS");
 
@@ -172,7 +176,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void payRenewalWithholdCallback(TradeNotify tradeNotify) {
+    public void payRenewalWithholdCallback(TradeNotify tradeNotify) throws Exception {
         ResultModel resultModel = new ResultModel(false);
         logger.info("payRenewalWithholdCallback callbackResult=" + (tradeNotify != null ? JSON.toJSONString(tradeNotify) : "null"));
         if (ChanPayUtil.verify(GsonUtil.toJson(tradeNotify), BaseConstant.MERCHANT_PUBLIC_KEY)) {//验签
@@ -182,6 +186,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
             String fuiouOrderId = tradeNotify.getInner_trade_no();
 
             OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
+            if (outOrders == null) throw new Exception("系统异常");
             logger.info("payRenewalWithholdCallback orderNo;" + orderNo + " outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
 
             if (null != outOrders && (!OutOrders.STATUS_SUC.equals(outOrders.getStatus()))) {
@@ -200,6 +205,8 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
                         repayService.continuCallBackHandler(outOrders, renewalRecord, re, false, tradeNotify.getPay_msg(), "畅捷通");
                     }
                 }
+            } else {
+                throw new Exception("该笔订单已经处理");
             }
             logger.info("renewalWithholdCallback end,order " + orderNo + " result : " + JSON.toJSONString(resultModel));
         }
@@ -674,6 +681,105 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
         return serviceResult;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = BizException.class)
+    public ResponseContent directRepaymentWithholdRequest(Integer id, String bankIdStr) throws Exception {
+        logger.info("directRepaymentWithholdRequest params:【borrowId：{}, bankId：{}】", id, bankIdStr);
+        ResponseContent result = null;
+        //绑卡请求编号
+        if (id == null || StringUtils.isBlank(id.toString())) {
+            return new ResponseContent("-101", "请求参数非法");
+        }
+        // 获取还款相关信息
+        NeedRepayInfo needRepayInfo = repayService.getNeedRepayInfo(id);
+
+        Integer bankId;
+        //如果没传则使用默认卡
+        if (StringUtils.isEmpty(bankIdStr)) {
+            UserCardInfo userBankCard = userService.findUserBankCard(needRepayInfo.getBorrowOrder().getUserId());
+            bankId = userBankCard.getId();
+            logger.info("params bankIdStr is null,BankId :" + bankId);
+        } else {
+            bankId = Integer.valueOf(bankIdStr);
+        }
+        logger.info("directRepaymentWithholdRequest bankCardId:" + bankId);
+        //生成还款编号请求号（唯一，且整个还款过程中保持不变）
+        String requestNo = GenerateNo.nextOrdId();
+        //发起主动代扣请求，并获取结果。（参数：还款编号、还款信息、还款用户信息、还款额度、还款操作）
+        ResponseContent serviceResult = newRecharge(requestNo, needRepayInfo.getRepayment(), needRepayInfo.getUser(), needRepayInfo.getMoney(), "主动支付", bankId);
+
+        logger.info("directRepaymentWithholdRequest userId=" + needRepayInfo.getUser().getId() + " serviceResult=" + JSON.toJSONString(serviceResult));
+        if ("0000".equals(serviceResult.getCode())) {
+            result = new ResponseContent("0", requestNo);
+            //存入redis里，避免发送过于频繁
+            checkForFront(WITHHOLD_SMS_CODE, requestNo + needRepayInfo.getUser().getUserPhone(), 60);
+        } else {
+            logger.info("directRepaymentWithholdRequest borrowId:" + id + " fail to request");
+            result = new ResponseContent(serviceResult.getCode(), serviceResult.getMsg());
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = BizException.class)
+    public ResponseContent directRepaymentWithholdConfirm(Integer id, String smsCode, String requestNo) throws Exception {
+        logger.info("repaymentWithholdConfirm params:【id:" + id + " smsCode:" + smsCode + " requestNo:" + requestNo + "】");
+        ResponseContent serviceResult = null;
+        // 获取还款相关信息
+        NeedRepayInfo needRepayInfo = repayService.getNeedRepayInfo(id);
+
+        try {
+            logger.info("prepare send to yeepay , repaymentId " + needRepayInfo.getRepayment().getId());
+            // 占锁
+            repayService.addRepaymentLock(needRepayInfo.getRepayment().getId() + "");
+
+            String orderNo = GenerateNo.nextOrdId();
+            Map<String, String> paramMap = BaseParameter.requestBaseParameter(BaseParameter.NMG_API_QUICK_PAYMENT_SMSCONFIRM);
+            paramMap.put("TrxId", orderNo);
+            paramMap.put("OriPayTrxId", requestNo);
+            paramMap.put("SmsCode", smsCode);
+
+            OutOrders outOrders = new OutOrders();
+            outOrders.setUserId(String.valueOf(needRepayInfo.getBorrowOrder().getUserId()));
+            outOrders.setOrderType("CHANPAY");
+            outOrders.setOrderNo(GenerateNo.nextOrdId());
+            outOrders.setAct("WITHHOLD_CONFIRM");
+            outOrders.setReqParams(JSON.toJSONString(paramMap));
+            outOrders.setStatus(OutOrders.STATUS_WAIT);
+            outOrdersService.insert(outOrders);
+
+            //发起主动支付确认，并获取结果
+            String result = ChanPayUtil.sendPost(paramMap, BaseConstant.CHARSET, BaseConstant.MERCHANT_PRIVATE_KEY);
+
+            logger.info("repaymentWithholdConfirm userId=" + needRepayInfo.getUser().getId() + " serviceResult=" + result);
+
+            if (ChanPayUtil.verify(result, BaseConstant.MERCHANT_PUBLIC_KEY)) {
+
+                ChanpayResult chanpayResult = JSONObject.parseObject(result, ChanpayResult.class);
+
+                // 判断是否成功
+                if (chanpayResult != null && ("S".equals(chanpayResult.getStatus()) || "P".equals(chanpayResult.getStatus())) && ChanPayUtil.SUCCESSCODE.contains(chanpayResult.getAppRetcode())) {
+                    serviceResult = new ResponseContent("0", orderNo);
+                } else {
+                    serviceResult.setCode("400");
+                    if (result == null || chanpayResult == null) {
+                        serviceResult.setMsg("服务器请求失败，请重试");
+                    } else {
+                        serviceResult.setMsg(chanpayResult.getAppRetMsg() != null ? chanpayResult.getAppRetMsg() : "支付失败，请重试");
+                    }
+                    //支付失败状态下，解除该笔订单锁定状态
+                    repayService.removeRepaymentLock(needRepayInfo.getRepayment().getId() + "");
+                    // 更新订单状态为失败
+                    outOrdersService.updateOrderStatus(orderNo, OutOrders.STATUS_OTHER);
+                }
+            }
+        } catch (Exception e) {
+            repayService.removeRepaymentLock(needRepayInfo.getRepayment().getId() + "");
+            throw e;
+        }
+        return serviceResult;
+    }
+
     /**
      * 生成还款详情信息
      *
@@ -738,23 +844,35 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
      * @return treeMap
      */
     private Map<String, String> prepareParams(String orderNo, User user, UserCardInfo info,
-                                                  long money, String callBackUrl) {
+                                                  long money, String callBackUrl) throws Exception {
+        //Map<String, String> paramsMap;
+        //判断银行卡是不是畅捷通的商户签约卡
+        /*if (!"CHANPAY_CARD".equals(info.getAgreeno())) {
+            paramsMap = BaseParameter.requestBaseParameter(BaseParameter.NMG_ZFT_API_QUICK_PAYMENT);
+            paramsMap.put("BkAcctTp", "01");
+            paramsMap.put("IDTp", "01");
+            paramsMap.put("BkAcctNo", ChanPayUtil.encrypt(info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET));
+            paramsMap.put("IDNo", ChanPayUtil.encrypt(user.getIdNumber(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET));
+            paramsMap.put("CstmrNm", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET));
+            paramsMap.put("MobNo", ChanPayUtil.encrypt(user.getUserName(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET));
+        }*/
         Map<String, String> paramsMap = BaseParameter.requestBaseParameter(BaseParameter.NMG_BIZ_API_QUICK_PAYMENT);
+        paramsMap.put("CardBegin", info.getCard_no().substring(0, 6));// 卡号前6位
+        paramsMap.put("CardEnd", info.getCard_no().substring(info.getCard_no().length() - 4));// 卡号后4位
+        paramsMap.put("SmsFlag", "0");
         paramsMap.put("TrxId", orderNo);// 订单号
         paramsMap.put("OrdrName", PropertiesConfigUtil.get("APP_NAME") + "还款");// 商品名称
         paramsMap.put("MerUserId", appCode + user.getId());// 用户标识（测试时需要替换一个新的meruserid）
         paramsMap.put("SellerId", PropertiesConfigUtil.get("PARTNER_ID"));// 子账户号
         paramsMap.put("ExpiredTime", "30m");// 订单有效期
-        paramsMap.put("CardBegin", info.getCard_no().substring(0, 6));// 卡号前6位
-        paramsMap.put("CardEnd", info.getCard_no().substring(info.getCard_no().length() - 4));// 卡号后4位
         if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
             paramsMap.put("TrxAmt", "0.01");
         } else {
             paramsMap.put("TrxAmt", BigDecimal.valueOf(money).divide(BigDecimal.valueOf(100)).setScale(2).toString());
         }
         paramsMap.put("TradeType", "11");// 交易类型
-        paramsMap.put("SmsFlag", "0");
         paramsMap.put("NotifyUrl", PropertiesConfigUtil.get("APP_HOST_API") + callBackUrl + user.getId());
         return paramsMap;
     }
+
 }

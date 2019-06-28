@@ -146,7 +146,7 @@ public class ChanpayBindCardController extends BaseController {
     }
 
     /**
-     * 是否超过三张绑卡
+     * 是否超过十张绑卡
      */
     @RequestMapping(value = "credit-card/addCardOrNot")
     public void addUserCardOrNot(HttpServletRequest request, HttpServletResponse response) {
@@ -159,10 +159,10 @@ public class ChanpayBindCardController extends BaseController {
             List<UserCardInfo> userBankCardList = userService
                 .findUserBankCardList(Integer.parseInt(logUser.getId()));
             if (ArrayUtil.isNotEmpty(userBankCardList)) {
-                if (3 <= userBankCardList.size()) {
+                if (10 <= userBankCardList.size()) {
                     code = "1";
                     map.put("code", code);
-                    map.put("msg", "当前绑卡超过三张或等于三张，无法继续绑卡!");
+                    map.put("msg", "当前绑卡超过十张或等于十张，无法继续绑卡!");
                 }
             }
         } else {
@@ -193,9 +193,9 @@ public class ChanpayBindCardController extends BaseController {
             List<UserCardInfo> userBankCardList = userService
                     .findUserBankCardList(Integer.parseInt(logUser.getId()));
             code = ResponseStatus.SUCCESS.getName();
-            if (ArrayUtil.isNotEmpty(userBankCardList) && userBankCardList.size() >= 3) {
+            if (ArrayUtil.isNotEmpty(userBankCardList) && userBankCardList.size() >= 10) {
                 code = ResponseStatus.FAILD.getName();
-                model.addAttribute("msg", "最多绑定三张卡");
+                model.addAttribute("msg", "最多绑定十张卡");
             }
         } else {
             model.addAttribute("msg", "登录已失效,请重新登录");

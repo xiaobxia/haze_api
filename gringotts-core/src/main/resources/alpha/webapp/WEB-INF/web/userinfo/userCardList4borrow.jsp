@@ -252,7 +252,7 @@
             </li>
         </c:forEach>
     </ul>
-    <p class="warn">温馨提示：最多只能绑3张卡</p>
+    <p class="warn">温馨提示：最多只能绑10张卡</p>
 
     <a id="add-card" data-card-num="${userBankCardcount}" class="button" href="javascript:;">添加银行卡</a>
 
@@ -440,7 +440,7 @@
 //        var cardNum = $(this).attr('data-card-num');
         console.log(cardNum);
         if(cardNum >= 3) {
-            showMsg('最多只能绑3张卡','center');
+            showMsg('最多只能绑10张卡','center');
         }else {
             window.location.href = "${path}/yeepayBindCard/credit-card/bindNewCard?deviceId=${deviceId}&mobilePhone=${mobilePhone}";
         }

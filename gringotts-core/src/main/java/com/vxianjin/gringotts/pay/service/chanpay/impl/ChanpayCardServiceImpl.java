@@ -115,11 +115,11 @@ public class ChanpayCardServiceImpl implements ChanpayCardService {
                     60 * 60 * 24, count + "");
 
                 resultModel.setCode(ResponseStatus.FAILD.getName());
-                if (count == 3) {
+                if (count == 10) {
                     resultModel.setMessage(result.getMessage() + "（请明日再试）");
                 } else {
                     resultModel.setMessage(
-                        result.getMessage() + "（今日剩余可认证次数" + (3 - count) + "次）");
+                        result.getMessage() + "（今日剩余可认证次数" + (10 - count) + "次）");
                 }
             }
             return resultModel;

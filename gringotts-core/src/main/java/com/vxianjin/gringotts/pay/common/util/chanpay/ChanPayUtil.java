@@ -2,6 +2,7 @@ package com.vxianjin.gringotts.pay.common.util.chanpay;
 
 import com.vxianjin.gringotts.pay.common.enums.ErrorCode;
 import com.vxianjin.gringotts.pay.common.exception.PayException;
+import com.vxianjin.gringotts.pay.model.chanpay.TradeNotify;
 import com.vxianjin.gringotts.web.utils.GsonUtil;
 import com.aliyun.openservices.shade.org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Header;
@@ -363,6 +364,26 @@ public class ChanPayUtil {
 		return verify(paramMap, publicKey);
 	}
 
+	public static void main(String[] args) {
+		TradeNotify tradeNotify = new TradeNotify();
+		tradeNotify.setExtension("{\"bankCode\":\"00000\",\"bankMessage\":\"支付成功\",\"unityResultCode\":\"S0001\",\"channelTransTime\":\"20190628\",\"payerId\":\"haze204231\",\"apiResultcode\":\"D\",\"paymentSeqNo\":\"20190628FI178006732\",\"sendBankReq\":\"\",\"apiResultMsg\":\"交易成功\",\"unityResultMessage\":\"交易成功\",\"wjReq\":\"201906282098864161\",\"chnlNo\":\"0400100029\"}");
+		tradeNotify.setTrade_amount("0.01");
+		tradeNotify.setGmt_create("20190628151634");
+		tradeNotify.setGmt_payment("20190628151634");
+		tradeNotify.setInner_trade_no("101156170619070551747");
+		tradeNotify.setNotify_id("e3a5f2624cf24af8971233356148b25a");
+		tradeNotify.setNotify_time("20190628152953");
+		tradeNotify.setNotify_type("trade_status_sync");
+		tradeNotify.setOuter_trade_no("1015617061951917");
+		tradeNotify.setSign("CJsLT35e21yLb61BeiOGBOXdH2uxTRilYaWUAwDjN+Os8QIIUQsFmmJMdY3NZPJZuH/fva41uAo3Jt+JHrSlHhbxyXpvy9pt0jTvLH5+euDVSpqd12/KTa0yFDXNTK2P4M564tljtNUhTQdsRV+LKIz32EGKH7RtJGnAxv/d33A=");
+		tradeNotify.setSign_type("RSA");
+		tradeNotify.set_input_charset("UTF-8");
+		tradeNotify.setTrade_status("TRADE_SUCCESS");
+		tradeNotify.setVersion("1.0");
+		boolean verify = verify(GsonUtil.toJson(tradeNotify), "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDPq3oXX5aFeBQGf3Ag/86zNu0VICXmkof85r+DDL46w3vHcTnkEWVbp9DaDurcF7DMctzJngO0u9OG1cb4mn+Pn/uNC1fp7S4JH4xtwST6jFgHtXcTG9uewWFYWKw/8b3zf4fXyRuI/2ekeLSstftqnMQdenVP7XCxMuEnnmM1RwIDAQAB");
+		System.out.println(verify);
+	}
+
 	/**
 	 * 验签
 	 *
@@ -383,7 +404,9 @@ public class ChanPayUtil {
 					}
 				}
 				String text = createLinkString(paramMap, false);
-				return RSA.verify(text, sign, publicKey, "UTF-8");
+				System.out.println(text);
+				boolean verify = RSA.verify(text, sign, publicKey, "UTF-8");
+				return verify;
 			} else {
 				String sign = (String) paramMap.get("Sign");
 				paramMap.remove("Sign");
@@ -394,7 +417,8 @@ public class ChanPayUtil {
 					}
 				}
 				String text = createLinkString(paramMap, false);
-				return RSA.verify(text, sign, publicKey, "UTF-8");
+				boolean verify = RSA.verify(text, sign, publicKey, "UTF-8");
+				return verify;
 			}
 
 		} catch (Exception e) {

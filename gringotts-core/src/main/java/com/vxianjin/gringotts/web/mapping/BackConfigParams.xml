@@ -43,6 +43,10 @@
         </foreach>
     </update>
     <select id ="findMachine" resultType="java.lang.String">
-        select sys_value from back_config_params where sys_key="MACHINE_OPEN"
+        select sys_value from back_config_params where sys_key= 'MACHINE_OPEN'
+    </select>
+
+    <select id="findThirdPartyPayment" resultType="java.lang.String">
+        select sys_value_big from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'
     </select>
 </mapper>

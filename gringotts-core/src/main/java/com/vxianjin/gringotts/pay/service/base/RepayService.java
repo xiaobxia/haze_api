@@ -292,7 +292,6 @@ public class RepayService {
 
         BorrowOrder bo = borrowOrderService.findOneBorrow(id);//获取借款订单信息
 
-        BorrowProductConfig productConfig = borrowProductConfigService.queryProductById(bo.getProductId());
         BackExtend extend = borrowOrderService.extend(bo.getProductId());
 
         // 续期手续费 分为单位
@@ -305,7 +304,7 @@ public class RepayService {
         Repayment re = repaymentService.findOneRepayment(map);//获取还款订单
         if (re == null) {
             throw new BizException("-101", "没有找到该笔订单的还款信息");
-        }
+        } 
         // 待还总金额（总还款金额 - 已还款金额）
         Long waitRepay = re.getRepaymentAmount() - re.getRepaymentedAmount();
         // 待还滞纳金（总滞纳金 - 已还滞纳金）

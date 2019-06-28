@@ -10,7 +10,9 @@ public class BaseParameter {
 	public final static String CJT_DSF = "cjt_dsf";//代付
 	public final static String NMG_BIZ_API_AUTH_REQ = "nmg_biz_api_auth_req";//绑卡请求
 	public final static String NMG_API_AUTH_SMS = "nmg_api_auth_sms";//绑卡请求
-	public final static String NMG_BIZ_API_QUICK_PAYMENT = "nmg_biz_api_quick_payment";
+	public final static String NMG_BIZ_API_QUICK_PAYMENT = "nmg_biz_api_quick_payment";//协议快捷支付
+	public final static String NMG_ZFT_API_QUICK_PAYMENT = "nmg_zft_api_quick_payment";//直接支付
+	public final static String NMG_API_QUICK_PAYMENT_SMSCONFIRM = "nmg_api_quick_payment_smsconfirm";//直接支付短信确认
 
 	/**
 	 * 请求

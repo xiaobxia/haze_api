@@ -36,4 +36,9 @@ public class BackConfigParamsService implements IBackConfigParamsService {
         String result = backConfigParamsDao.findMachine();
         return result;
     }
+
+    @Override
+    public String findThirdPartyPayment() {
+        return backConfigParamsDao.findThirdPartyPayment();
+    }
 }
