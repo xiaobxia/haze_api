@@ -268,7 +268,7 @@
 			status as status
 			from user_card_info
 			where status=1
-			and user_id=#{USER_ID}  and card_default=1 and agreeno = 'CHANPAY_CARD'
+			and user_id=#{USER_ID}  and card_default=1 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
 		]]>
     </select>
     <update id="updateInfoUserInfoBorrowStatus" parameterType="HashMap">

@@ -113,7 +113,7 @@
         b.card_default cardDefault,
         b.user_id userId,
 		c.open_bank bankCode
-        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND agreeno = 'CHANPAY_CARD' AND card_default = 1 limit 1
+        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card') AND card_default = 1 limit 1
     </select>
     <select id="selectUserBankCardNew" parameterType="map" resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
         select
@@ -131,7 +131,7 @@
             b.card_default cardDefault,
             b.user_id userId,
             c.open_bank bankCode
-        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 AND agreeno = 'CHANPAY_CARD' limit 1
+        from user_card_info b inner join bank_all_info c on b.bank_id =c.id where user_id = #{id,jdbcType=INTEGER} AND status=1 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card') limit 1
     </select>
     <select id="selectUserBankCardNotDefault" parameterType="map"
             resultType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
@@ -149,7 +149,7 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 0 AND agreeno = 'CHANPAY_CARD'
+        from user_card_info b where user_id = #{id,jdbcType=INTEGER} AND status=1 AND card_default = 0 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
     </select>
     <insert id="saveUserCardInfo" parameterType="com.vxianjin.gringotts.web.pojo.UserCardInfo">
 
@@ -208,7 +208,7 @@
         b.is_band isBand,
         b.card_default cardDefault
         from user_card_info b where user_id=#{userId}
-        AND agreeno = 'CHANPAY_CARD'
+        and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
         <if test="type != null and type != ''">
             and type = #{type}
         </if>
@@ -295,7 +295,7 @@
             and user_id = #{userId}
         </if>
         and card_default = 1
-        AND agreeno = 'CHANPAY_CARD'
+        and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
         ORDER BY uc.`id` ASC LIMIT #{page},#{pageSize}
     </select>
 
@@ -314,7 +314,7 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where b.user_id = #{id,jdbcType=INTEGER} AND b.status=1 AND b.agreeno = 'CHANPAY_CARD'
+        from user_card_info b where b.user_id = #{id,jdbcType=INTEGER} AND b.status=1 AND IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(b.agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), b.agreeno != 'chanpay_card')
     </select>
 
     <select id="findBankCardByCardId" parameterType="Integer" resultMap="BaseResultMap">
@@ -332,7 +332,7 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where b.id = #{bankId,jdbcType=INTEGER} AND b.status=1 AND b.agreeno = 'CHANPAY_CARD'
+        from user_card_info b where b.id = #{bankId,jdbcType=INTEGER} AND b.status=1 AND IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(b.agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), b.agreeno != 'chanpay_card')
     </select>
 
     <select id="findBankCardByCardNo" parameterType="String" resultMap="BaseResultMap">
@@ -350,6 +350,6 @@
         b.is_band isBand,
         b.card_default cardDefault,
         b.user_id userId
-        from user_card_info b where b.card_no = #{cardNo,jdbcType=VARCHAR} AND b.status=1 AND b.agreeno = 'CHANPAY_CARD'
+        from user_card_info b where b.card_no = #{cardNo,jdbcType=VARCHAR} AND b.status=1 AND IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(b.agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), b.agreeno != 'chanpay_card')
     </select>
 </mapper>

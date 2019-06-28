@@ -28,7 +28,7 @@
     <!-- 验证用户认证选项 -->
     <select id="userCalendar" resultType="map" parameterType="map">
         <![CDATA[
-		SELECT DISTINCT
+		SELECT
 		if(personal.userName is not null && personal.userName <> '' ,1,0) personalInfo,
 	  	if(emergency.userName is not null && emergency.userName <> '' ,1,0) emergencyInfo,
 	  	if(moremore.userName is not null && moremore.userName <> '',1,0) moreInfo,
@@ -48,7 +48,7 @@
     	ON(1=1) LEFT JOIN
     	(select u.user_name userName from user_info u where u.id=#{id} AND u.company_address IS NOT null AND u.company_address_distinct IS NOT NULL AND u.company_name IS NOT NULL AND u.company_period IS NOT null AND u.company_phone IS NOT null ) company
     	ON(1=1) LEFT JOIN
-    	(select card.bank_id bankId from user_card_info card where card.user_id=#{id} and card.status=1 and card_default=1) bankCard
+    	(select card.bank_id bankId from user_card_info card where card.user_id=#{id} and card.status=1 and card_default=1 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')) bankCard
     	ON(1=1) LEFT JOIN
     	(select u.user_name userName from user_info u where u.id=#{id} AND u.zm_status=2) riskCardit
     	ON(1=1)
