@@ -1486,7 +1486,7 @@ public class UserLoginController extends BaseController {
                 bankUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/";// 已绑定跳转银行卡页面路径
                 if (null != telephone) {
 //					resultMap.put("card_url", bankUrl + "lianlianBindCard/credit-card/firstUserBank");// 银行卡页面
-                    resultMap.put("card_url", bankUrl + PropertiesConfigUtil.get("BIND_CARD_URL") + "/credit-card/firstUserBank");// 银行卡页面
+                    resultMap.put("card_url", bankUrl + backConfigParamsService.findThirdPartyPayment() + "BindCard/credit-card/firstUserBank");// 银行卡页面
                 } else {
                     resultMap.put("card_url", bankUrl + "credit-card/card-list");// 银行卡页面
                 }

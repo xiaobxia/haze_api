@@ -21,6 +21,7 @@ import com.vxianjin.gringotts.web.pojo.*;
 import com.vxianjin.gringotts.web.service.IAutoRiskService;
 import com.vxianjin.gringotts.web.service.IBorrowOrderService;
 import com.vxianjin.gringotts.web.service.ICfcaSignAndViewService;
+import com.vxianjin.gringotts.web.service.impl.BackConfigParamsService;
 import com.vxianjin.gringotts.web.service.impl.UserService;
 import com.vxianjin.gringotts.web.util.cfcautil.CfcaCommonUtil;
 import com.vxianjin.gringotts.web.utils.RequestUtils;
@@ -67,13 +68,13 @@ public class UserloanController extends BaseController {
     @Resource
     private IAutoRiskService autoRiskService;
 
-
     @Resource
     private BorrowProductConfigDao borrowProductConfigDao;
 
-
     @Resource
     private UserQuotaSnapshotDao userQuotaSnapshotDao;
+    @Resource
+    private BackConfigParamsService backConfigParamsService;
     /**
      * H5 借款说明
      */
@@ -397,7 +398,7 @@ public class UserloanController extends BaseController {
         //平台服务协议
         json.put("platformservice_url", PropertiesConfigUtil.get("APP_HOST_API") + "/agreement/platformServiceNew");
         //绑定银行卡H5
-        json.put("firstUserBank_url", PropertiesConfigUtil.get("APP_HOST_API") + "/" + PropertiesConfigUtil.get("BIND_CARD_URL") + "/credit-card/firstUserBank");
+        json.put("firstUserBank_url", PropertiesConfigUtil.get("APP_HOST_API") + "/" + backConfigParamsService.findThirdPartyPayment() + "BindCard/credit-card/firstUserBank");
         json.put("real_pay_pwd_status", StringUtils.isBlank(user.getPayPassword()) ? "0" : "1"); // 支付密码状态；1：已设置支付密码；0：未设置支付密码
         json.put("verify_loan_pass", "1"); // 是否通过认证：1：认证全部通过；0：认证不通过
 

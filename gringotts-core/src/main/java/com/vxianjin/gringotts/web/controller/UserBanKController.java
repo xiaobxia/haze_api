@@ -13,6 +13,7 @@ import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.pojo.UserCertification;
 import com.vxianjin.gringotts.web.service.IUserBankService;
 import com.vxianjin.gringotts.web.service.IUserService;
+import com.vxianjin.gringotts.web.service.impl.BackConfigParamsService;
 import com.vxianjin.gringotts.web.service.impl.BorrowOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,8 @@ public class UserBanKController extends BaseController {
     private BorrowOrderService borrowOrderService;
     @Resource
     private UserQuotaSnapshotService userQuotaSnapshotService;
+    @Resource
+    private BackConfigParamsService backConfigParamsService;
 
     /**
      * 查询银行列表
@@ -135,9 +138,9 @@ public class UserBanKController extends BaseController {
                         //银行卡认证页面
                         if (null != telephone && "cardInfo".equals(certi.getCode())) {
                             if ("未完善".equals(operator)) {
-                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/"+ PropertiesConfigUtil.get("BIND_CARD_URL") +"/credit-card/bindNewCard");
+                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/"+ backConfigParamsService.findThirdPartyPayment() +"BindCard/credit-card/bindNewCard");
                             } else {
-                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/"+ PropertiesConfigUtil.get("BIND_CARD_URL") +"/credit-card/firstUserBank");
+                                resultMap.put("url", PropertiesConfigUtil.get("APP_HOST_API") + "/"+ backConfigParamsService.findThirdPartyPayment() +"BindCard/credit-card/firstUserBank");
                             }
                         }
                         //common/web/images/certification/more_info_logo.png;;common/web/images/certification/more_info_logo2.png
