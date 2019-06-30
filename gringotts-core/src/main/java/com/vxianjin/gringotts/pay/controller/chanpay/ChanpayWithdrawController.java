@@ -75,22 +75,4 @@ public class ChanpayWithdrawController extends BaseController {
         }
     }
 
-    @ResponseBody
-    @RequestMapping(value = "withdraw/{userId}/{borrowId}")
-    public ResponseContent payWithdraw(@PathVariable String userId, @PathVariable String borrowId) {
-        //校验请求参数
-        if (StringUtils.isBlank(userId) || StringUtils.isBlank(borrowId)) {
-            return new ResponseContent("-101", "代付失败,请求参数不符合要求");
-        }
-        try {
-            return chanpayWithdrawService.testPayWithdraw(userId, borrowId);
-        } catch (BizException e) {
-            logger.info("ChanPayWithdrawController error:" + e.getErrorMsg() + "message:" + e.getMessage());
-            return new ResponseContent(e.getErrorCode(), e.getErrorMsg());
-        } catch (Exception e) {
-            logger.info("ChanPayWithdrawController error message:" + e.getMessage());
-            return new ResponseContent("-105", e.getMessage());
-        }
-    }
-
 }

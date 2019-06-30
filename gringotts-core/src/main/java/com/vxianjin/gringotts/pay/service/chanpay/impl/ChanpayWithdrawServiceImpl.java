@@ -176,18 +176,6 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         return result;
     }
 
-    @Override
-    public ResponseContent testPayWithdraw(String userId, String borrowId) throws Exception {
-        // 获取代付相关信息
-        NeedPayInfo needPayInfo = withdrawService.getNeedPayInfo(userId, borrowId);
-
-        //请求代付参数
-        Map<String, String> paramMap = prepareParamsToChanPay(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
-
-        System.out.println(paramMap);
-        return null;
-    }
-
     private Map<String, String> prepareParamsToChanPay(User user, BorrowOrder order, UserCardInfo info) throws Exception {
         logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay order:{}, userCardInfo:{}", order, info);
         BankAllInfo bankInfoByBankNumber = userBankDao.findBankInfoByBankNumber(order.getBankNumber());
