@@ -119,7 +119,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
         logger.info("ChanpayRepayServiceImpl.payWithholdCallback callbackResult=" + (tradeNotify != null ? JSON.toJSONString(tradeNotify) : "null"));
         if (ChanPayUtil.verify(GsonUtil.toJson(tradeNotify), BaseConstant.MERCHANT_PUBLIC_KEY)) {//验签
             String orderNo = tradeNotify.getOuter_trade_no();
-            String fuiouOrderId = tradeNotify.getInner_trade_no();
+            String chanpayOrderId = tradeNotify.getInner_trade_no();
             String orderMoney = tradeNotify.getTrade_amount();
             // 获取外部订单
             OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
@@ -139,7 +139,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
                     final String phone = user.getUserPhone();
                     final String realName = user.getRealname();
                     final long amount = re.getRepaymentAmount();
-                    outOrders.setFuiouOrderId(fuiouOrderId);
+                    outOrders.setFuiouOrderId(chanpayOrderId);
                     if ("trade_status_sync".equals(tradeNotify.getNotify_type()) && "TRADE_SUCCESS".equals(tradeNotify.getTrade_status())) {//交易成功
                         logger.info("ChanpayRepayServiceImpl.payWithholdCallback orderNo:" + orderNo + " pay success");
                         // 还款回调处理
@@ -183,14 +183,14 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
             //支付编号
             String orderNo = tradeNotify.getOuter_trade_no();
             //畅捷通订单号
-            String fuiouOrderId = tradeNotify.getInner_trade_no();
+            String chanpayOrderId = tradeNotify.getInner_trade_no();
 
             OutOrders outOrders = outOrdersService.findByOrderNo(orderNo);
             if (outOrders == null) throw new Exception("系统异常");
             logger.info("payRenewalWithholdCallback orderNo;" + orderNo + " outOrdersStatus=" + (outOrders != null ? outOrders.getStatus() : "null"));
 
             if (null != outOrders && (!OutOrders.STATUS_SUC.equals(outOrders.getStatus()))) {
-                outOrders.setFuiouOrderId(fuiouOrderId);
+                outOrders.setFuiouOrderId(chanpayOrderId);
                 if (null != outOrders.getAssetOrderId()) {
                     logger.info("renewalWithholdCallback orderNo;" + orderNo + " assetOrderId is" + outOrders.getAssetOrderId());
                     //获取还款记录
@@ -238,7 +238,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
         //生成还款编号请求号（唯一，且整个还款过程中保持不变）
         String requestNo = GenerateNo.nextOrdId();
         try {
-            logger.info("prepare send to fuiou , repaymentId " + needRepayInfo.getRepayment().getId());
+            logger.info("prepare send to chanpay , repaymentId " + needRepayInfo.getRepayment().getId());
             // 占锁
             repayService.addRepaymentLock(needRepayInfo.getRepayment().getId() + "");
             Map<String, String> paramMap = new HashMap<>();
@@ -337,7 +337,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
         NeedRepayInfo needRepayInfo = repayService.getNeedRepayInfoByPaymentId(id);
 
         try {
-            logger.info("prepare send to fuiou repaymentId is " + needRepayInfo.getRepayment().getId());
+            logger.info("prepare send to chanpay repaymentId is " + needRepayInfo.getRepayment().getId());
             // 先占锁
             repayService.addRepaymentLock(needRepayInfo.getRepayment().getId() + "");
             //发起定时代扣请求，并获取结果。（参数：还款信息、还款用户信息、定时代扣、还款额度、还款操作）
@@ -467,7 +467,7 @@ public class ChanpayRepayServiceImpl implements ChanpayRepayService {
         }
 
         try {
-            logger.info("prepare send to fuiou repaymentId is " + re.getId());
+            logger.info("prepare send to chanpay repaymentId is " + re.getId());
             //锁定该笔还款，防止其他渠道重复扣款，锁定时间：5分钟
             repayService.addRepaymentLock(re.getId() + "");
 

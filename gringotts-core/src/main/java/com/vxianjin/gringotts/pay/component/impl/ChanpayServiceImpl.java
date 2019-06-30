@@ -175,7 +175,7 @@ public class ChanpayServiceImpl implements ChanpayService {
             paramMap.put("TrxId", bindCardConfirmReq.getOrderNo());
             paramMap.put("OriAuthTrxId", bindCardConfirmReq.getRequestNo());
             paramMap.put("SmsCode", bindCardConfirmReq.getSmsCode());
-            paramMap.put("NotifyUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/bindCardCallback");//异步通知url
+            //paramMap.put("NotifyUrl", PropertiesConfigUtil.get("APP_HOST_API") + "/chanpay/bindCardCallback");//异步通知url
 
             String result = ChanPayUtil.sendPost(paramMap, BaseConstant.CHARSET, BaseConstant.MERCHANT_PRIVATE_KEY);
             if (ChanPayUtil.verify(result, BaseConstant.MERCHANT_PUBLIC_KEY)) {
