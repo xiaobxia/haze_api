@@ -39,10 +39,11 @@ public interface IUserBankDao {
      */
     List<BankAllInfo> findAllBankInfos();
 
+    BankAllInfo findBankInfoByBankNumber(String bankNumber);
+
     /**
      * 更加id查询银行名
      *
-     * @param sqlId
      * @param id
      * @return
      * @throws DataAccessException

@@ -28,6 +28,13 @@ public class UserBankDaoImpl extends BaseDao implements IUserBankDao {
     }
 
     @Override
+    public BankAllInfo findBankInfoByBankNumber(String bankNumber) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("bankNumber", bankNumber);
+        return getSqlSessionTemplate().selectOne("com.vxianjin.gringotts.web.dao.IBankAllInfoDao.selectBankInfoByBankNumber", params);
+    }
+
+    @Override
     public boolean saveUserbankCard(UserCardInfo cardInfo) {
         return getSqlSessionTemplate().insert("com.vxianjin.gringotts.web.dao.IUserCardInfoDao.saveUserCardInfo", cardInfo) > 0;
     }

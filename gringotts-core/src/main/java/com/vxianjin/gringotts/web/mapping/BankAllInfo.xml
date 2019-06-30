@@ -54,4 +54,16 @@
         b.bank_logo_img2 bankLogoImg2
         from bank_all_info b where open_bank = #{openBank,jdbcType=VARCHAR}
     </select>
+    <select id="selectBankInfoByBankNumber" parameterType="map" resultMap="BaseResultMap">
+        select
+            id,
+            bank_name,
+            bank_status,
+            bank_code,
+            bank_number,
+            open_bank,
+            bank_logo_img1,
+            bank_logo_img2
+        from bank_all_info where bank_number = #{bankNumber,jdbcType=VARCHAR}
+    </select>
 </mapper>

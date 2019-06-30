@@ -22,13 +22,17 @@ import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.util.security.AESUtil;
 import com.vxianjin.gringotts.util.security.MD5Util;
 import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
+import com.vxianjin.gringotts.web.dao.IUserBankDao;
+import com.vxianjin.gringotts.web.pojo.BankAllInfo;
 import com.vxianjin.gringotts.web.pojo.BorrowOrder;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.impl.BorrowOrderService;
 import com.vxianjin.gringotts.web.utils.GsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +60,9 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
     private WithdrawService withdrawService;
     @Resource
     private OrderLogComponent orderLogComponent;
+    @Resource
+    @Qualifier("userBankDaoImpl")
+    private IUserBankDao userBankDao;
     /**
      * 用户提现（代付）回调接口
      */
@@ -171,12 +178,13 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
 
     private Map<String, String> prepareParamsToChanPay(User user, BorrowOrder order, UserCardInfo info) throws Exception {
         logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay order:{}, userCardInfo:{}", order, info);
+        BankAllInfo bankInfoByBankNumber = userBankDao.findBankInfoByBankNumber(order.getBankNumber());
         Map<String, String> paramMap = BaseParameter.requestBaseParameter(BaseParameter.CJT_DSF);
         paramMap.put("TransCode", "T10000"); // 交易码
         paramMap.put("OutTradeNo", GenerateNo.generateShortUuid(10)); // 商户网站唯一订单号
         paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
-        paramMap.put("BankCommonName", info.getBankName()); // 通用银行名称
-        paramMap.put("AcctNo", ChanPayUtil.encrypt(info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
+        paramMap.put("BankCommonName", StringUtils.isBlank(info.getBankName()) ? bankInfoByBankNumber.getBankName() : info.getBankName()); // 通用银行名称
+        paramMap.put("AcctNo", ChanPayUtil.encrypt(StringUtils.isBlank(info.getCard_no()) ? order.getCardNo() : info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
         paramMap.put("AcctName", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账户名称
         if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
             paramMap.put("TransAmt", "0.01");

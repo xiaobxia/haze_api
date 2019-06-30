@@ -1,5 +1,7 @@
 package com.vxianjin.gringotts.web.pojo;
 
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,6 +10,7 @@ import java.util.Date;
  *
  * @author user
  */
+@ToString
 public class BankAllInfo implements Serializable {
 
 
@@ -22,6 +25,14 @@ public class BankAllInfo implements Serializable {
     private String bankLogoImg1;
     private String bankLogoImg2;
     private String openBank;
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
 
     public Integer getBankId() {
         return bankId;
