@@ -888,6 +888,6 @@
 	</select>
 
 	<select id="defaultCardCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-		select COUNT(1) from user_card_info where user_id = #{userId} and status = 1 and card_default = 1
+		select COUNT(1) from user_card_info where user_id = #{userId} and status = 1 and card_default = 1 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
 	</select>
 </mapper>

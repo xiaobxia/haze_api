@@ -36,7 +36,7 @@
         uc.card_default cardDefault
         from user_card_info uc left join bank_all_info bc on (uc.bank_id=bc.id) left join user_info u
         on(uc.user_id=u.id)
-        WHERE agreeno = 'CHANPAY_CARD'
+        WHERE 1 = 1 AND IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
         <if test="userId !=null and userId !=''">
             AND uc.user_id=#{userId}
         </if>
@@ -68,7 +68,7 @@
     <select id="findUserBankTotal" resultType="Integer" parameterType="HashMap">
         select count(1) from user_card_info uc left join bank_all_info bc on (uc.bank_id=bc.id) left join user_info u
         on(uc.user_id=u.id)
-        where agreeno = 'CHANPAY_CARD'
+        where 1 = 1 and IF((select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0') = 'chanpay_card', CONVERT(agreeno USING utf8) COLLATE utf8_unicode_ci = (select CONCAT(sys_value_big,'_card') from back_config_params where sys_type = 'THIRDPARTYPAYMENT' AND sys_value = '0'), agreeno != 'chanpay_card')
         <if test="userId !=null and userId !=''">
             AND uc.user_id=#{userId}
         </if>
