@@ -33,6 +33,7 @@ import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.service.IBorrowOrderService;
 import com.vxianjin.gringotts.web.service.IUserBankService;
 import com.vxianjin.gringotts.web.service.IUserService;
+import com.vxianjin.gringotts.web.service.impl.BackConfigParamsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -73,6 +74,8 @@ public class FuiouBindCardController extends BaseController {
     private FuiouCardService    fuiouCardService;
     @Resource
     private OrderLogComponent   orderLogComponent;
+    @Resource
+    private BackConfigParamsService backConfigParamsService;
     /**
      * 当天失败认证次数
      */
@@ -141,6 +144,7 @@ public class FuiouBindCardController extends BaseController {
         } catch (Exception e) {
             logger.error("firstUserBank error", e);
         }
+        model.addAttribute("thirdPartyPayment", backConfigParamsService.findThirdPartyPayment());
         return "userinfo/userCardList";
     }
 
