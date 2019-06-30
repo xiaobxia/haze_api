@@ -176,6 +176,18 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         return result;
     }
 
+    @Override
+    public ResponseContent testPayWithdraw(String userId, String borrowId) throws Exception {
+        // 获取代付相关信息
+        NeedPayInfo needPayInfo = withdrawService.getNeedPayInfo(userId, borrowId);
+
+        //请求代付参数
+        Map<String, String> paramMap = prepareParamsToChanPay(needPayInfo.getUser(), needPayInfo.getBorrowOrder(), needPayInfo.getUserCardInfo());
+
+        System.out.println(paramMap);
+        return null;
+    }
+
     private Map<String, String> prepareParamsToChanPay(User user, BorrowOrder order, UserCardInfo info) throws Exception {
         logger.info("ChanpayWithdrawServiceImpl prepareParamsToChanPay order:{}, userCardInfo:{}", order, info);
         BankAllInfo bankInfoByBankNumber = userBankDao.findBankInfoByBankNumber(order.getBankNumber());
@@ -183,8 +195,8 @@ public class ChanpayWithdrawServiceImpl implements ChanpayWithdrawService {
         paramMap.put("TransCode", "T10000"); // 交易码
         paramMap.put("OutTradeNo", GenerateNo.generateShortUuid(10)); // 商户网站唯一订单号
         paramMap.put("BusinessType", "0"); // 业务类型：0对私 1对公
-        paramMap.put("BankCommonName", StringUtils.isBlank(info.getBankName()) ? bankInfoByBankNumber.getBankName() : info.getBankName()); // 通用银行名称
-        paramMap.put("AcctNo", ChanPayUtil.encrypt(StringUtils.isBlank(info.getCard_no()) ? order.getCardNo() : info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
+        paramMap.put("BankCommonName", info == null || StringUtils.isBlank(info.getBankName()) ? bankInfoByBankNumber.getBankName() : info.getBankName()); // 通用银行名称
+        paramMap.put("AcctNo", ChanPayUtil.encrypt(info == null || StringUtils.isBlank(info.getCard_no()) ? order.getCardNo() : info.getCard_no(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账号(此处需要用真实的账号信息)
         paramMap.put("AcctName", ChanPayUtil.encrypt(user.getRealname(), BaseConstant.MERCHANT_PUBLIC_KEY, BaseConstant.CHARSET)); // 对手人账户名称
         if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
             paramMap.put("TransAmt", "0.01");

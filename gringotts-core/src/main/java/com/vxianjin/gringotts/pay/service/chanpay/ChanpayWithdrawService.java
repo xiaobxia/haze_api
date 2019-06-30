@@ -31,4 +31,6 @@ public interface ChanpayWithdrawService {
      */
     ResponseContent payWithdraw(String userId, String borrowId, String uuid, String sign) throws Exception;
 
+    ResponseContent testPayWithdraw(String userId, String borrowId) throws Exception;
+
 }
