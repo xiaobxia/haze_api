@@ -434,6 +434,50 @@ public class RepaymentWebController extends BaseController {
             SpringUtils.renderJson(response, rest);
             return;
         }
+        UserCardInfo info = userService.findUserBankCard(re.getUserId());
+        if (info == null) {
+            ResponseContent rest = new ResponseContent("-103", "因支付通道更换，请您先绑定银行卡！");
+            SpringUtils.renderJson(response, rest);
+            return;
+        }
+        ResponseContent rest = new ResponseContent("0", "续期成功");
+        SpringUtils.renderJson(response, rest);
+    }
+
+    @RequestMapping("repay-whether")
+    public void repayWhether(HttpServletResponse response, Integer id) {
+
+        if(null == id ){
+            ResponseContent rest = new ResponseContent("-100", "输入信息不合法");
+            SpringUtils.renderJson(response, rest);
+            return;
+        }
+
+        Repayment re = repaymentService.selectByPrimaryKey(id);
+        if (re == null) {
+            ResponseContent rest = new ResponseContent("-100", "无法获取该笔订单信息");
+            SpringUtils.renderJson(response, rest);
+            return;
+        }
+        //最大逾期天数
+        String overdueDays = PropertiesConfigUtil.get("OVERDUE_DAYS");
+
+        if (DateUtil.daysBetween(re.getRepaymentTime(), new Date()) > Integer.parseInt(overdueDays)) {
+            ResponseContent rest = new ResponseContent("-101", "您已逾期超过"+overdueDays+"天，不能续期，请联系客服或先去还款");
+            SpringUtils.renderJson(response, rest);
+            return;
+        }
+        if (re.getRepaymentedAmount() - re.getRepaymentPrincipal() - re.getRepaymentInterest() > 0) {
+            ResponseContent rest = new ResponseContent("-102", "您的本金已还完，不能继续申请续期");
+            SpringUtils.renderJson(response, rest);
+            return;
+        }
+        UserCardInfo info = userService.findUserBankCard(re.getUserId());
+        if (info == null) {
+            ResponseContent rest = new ResponseContent("-103", "因支付通道更换，请您先绑定银行卡！");
+            SpringUtils.renderJson(response, rest);
+            return;
+        }
         ResponseContent rest = new ResponseContent("0", "续期成功");
         SpringUtils.renderJson(response, rest);
     }

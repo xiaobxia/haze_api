@@ -97,19 +97,20 @@
                     <c:choose>
                     <c:when test="${extendStatus == true}">
                         <a data-ajax="false" onclick="toRenewal()" href="javascript:;">申请续期</a>
-                        <a data-ajax="false" href="${path}/repayment/repay-pay-${thirdPartyPayment}?id=${bo.id}">立即还款</a>
+                        <a data-ajax="false" onclick="toRepay()" >立即还款</a>
                     </c:when>
                     <c:otherwise>
-                        <a data-ajax="false" href="${path}/repayment/repay-pay-${thirdPartyPayment}?id=${bo.id}" style="width: 100%">立即还款</a>
+                        <a data-ajax="false" onclick="toRepay()" style="width: 100%">立即还款</a>
                     </c:otherwise>
                     </c:choose>
                 </div>
             </c:if>
         </c:if>
+        <%--href="${path}/repayment/repay-pay-${thirdPartyPayment}?id=${bo.id}"--%>
         <div class="sure-tc">
             <p>您已逾期，不能申请续期，请先去还款</p>
             <div class="btn-both clearfix" style="padding:0 0.5rem;">
-                <a data-ajax="false" href="${path}/repayment/repay-pay-${thirdPartyPayment}?id=${bo.id}" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">去还款</a>
+                <a data-ajax="false" onclick="toRepay()" class="btn sure-btn" style="width:7rem;float:left;border:1px solid #FF8240;height:2rem;line-height:2rem;">去还款</a>
                 <a href="javascript:;" onclick="closeSureTc();" class="btn sure-btn" style="width:7rem;float:right;background:none;border:1px solid #FF8240; color:#fff !important;height:2rem;line-height:2rem;">取消</a>
             </div>
         </div>
@@ -132,6 +133,20 @@
             }
         });
     }
+
+    function toRepay(){
+        $.post("${path}/repayment/repay-whether", {id:'${repayment.id}'} , function(data){
+            if("0" == data.code){
+                window.location.href="${path}/repayment/repay-pay-${thirdPartyPayment}?id=${bo.id}";
+            }else if('-101' == data.code){
+                $('.sure-tc p').text(data.msg);
+                $('.sure-tc,.cover').show();
+            }else{
+                showLoader(data.msg);
+            }
+        });
+    }
+
     function closeSureTc(){
         $('.sure-tc,.cover').hide();
     }
