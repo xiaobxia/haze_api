@@ -410,6 +410,7 @@ public class ChanpayServiceImpl implements ChanpayService {
                 if (jsonObject.get("AcceptStatus").equals("S")) {
                     yopresponsemap.put("errorCode", "0000");
                 }
+                yopresponsemap.put("errorMsg", jsonObject.get("AppRetMsg") == null ? jsonObject.get("Memo") : jsonObject.get("AppRetMsg"));
                 log.info("yopresponseMap :{}",JSON.toJSONString(yopresponsemap));
             }
 
