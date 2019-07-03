@@ -2447,12 +2447,7 @@ public class UserLoginController extends BaseController {
                 params.put("idcard_name", name);
                 params.put("idcard_number", idNumber);
                 params.put("userId", user.getId());
-                params.put("photo1SessionId", photo1SessionId);
-                params.put("photo2SessionId", photo2SessionId);
-                params.put("photo1Url", photo1Url);
-                params.put("photo2Url", photo2Url);
                 ResponseContent result = httpCertification.udFace(user, params);
-
                 log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",result:" + result.toString());
 
                 if ("online".equals(PropertiesConfigUtil.get("profile"))) {//只有正式环境才需要走这段代码

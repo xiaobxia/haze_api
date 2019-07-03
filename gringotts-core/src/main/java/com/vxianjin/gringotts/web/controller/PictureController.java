@@ -11,7 +11,9 @@ import com.vxianjin.gringotts.util.Uploader;
 import com.vxianjin.gringotts.util.json.JSONUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.common.Certification.IHttpCertification;
+import com.vxianjin.gringotts.web.dao.IUserUdcreditInfoDao;
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.UserUdcreditInfo;
 import com.vxianjin.gringotts.web.service.IUserInfoImageService;
 import com.vxianjin.gringotts.web.service.IUserService;
 import com.vxianjin.gringotts.web.util.ConfigLoader;
@@ -31,11 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +78,8 @@ public class PictureController extends BaseController {
     private IHttpCertification httpCertification;
     @Autowired
     private UploadAliyun uploadAliyun;
+    @Resource
+    private IUserUdcreditInfoDao userUdcreditInfoDao;
 
     /**
      * 个人信息-身份证信息识别-身份证图片信息保存至数据库 身份证图片保存至服务器磁盘      ""10""
@@ -152,17 +158,18 @@ public class PictureController extends BaseController {
         try {
             // 判断是否为空 文件大小是否合适
             int type1 = request.getParameter("type") == null ? 0 : Integer.parseInt(request.getParameter("type"));
+            String sessionId = request.getParameter("sessionId");
             switch (type1) {
                 case 20://人脸识别
                     String imageUrl = request.getParameter("recognitionImage");
-                    result = udRecognitionImageUpload(request, imageUrl);
+                    result = udRecognitionImageUpload(request, imageUrl, sessionId);
                     break;
                 case 21://身份证正面
                     String idCardImageZUrl = request.getParameter("idCardZImage");
                     String idCardImageFUrl = request.getParameter("idCardFImage");
                     String udMap = request.getParameter("udMap");
                     Map<String, String> map = JSONObject.parseObject(udMap, Map.class);
-                    result = udIdCardImageUploadZF(request, idCardImageZUrl, idCardImageFUrl, map);
+                    result = udIdCardImageUploadZF(request, idCardImageZUrl, idCardImageFUrl, map, sessionId);
                     break;
                 default:
                     break;
@@ -480,7 +487,7 @@ public class PictureController extends BaseController {
      * @param idCardImageZUrl
      * @return
      */
-    public ResponseContent udIdCardImageUploadZF(HttpServletRequest request, String idCardImageZUrl, String idCardImageFUrl, Map<String, String> map) {
+    public ResponseContent udIdCardImageUploadZF(HttpServletRequest request, String idCardImageZUrl, String idCardImageFUrl, Map<String, String> map, String sessionId) {
         ResponseContent result = new ResponseContent(ResponseStatus.FAILD.getName(), "上传失败");
         // 当前登录用户
         User logUser = this.loginFrontUserByDeiceId(request);
@@ -506,8 +513,8 @@ public class PictureController extends BaseController {
                 String zPath = uploadedIdCardZFile.getPath().replaceAll("\\\\", "\\/");
                 String fPath = uploadedIdCardFFile.getPath().replaceAll("\\\\", "\\/");
 
-                Thumbnails.of(uploadedIdCardZFile).scale(1f).outputQuality(0.1f).toFile(uploadedIdCardZFile);
-                Thumbnails.of(uploadedIdCardFFile).scale(1f).outputQuality(0.1f).toFile(uploadedIdCardFFile);
+                Thumbnails.of(uploadedIdCardZFile).scale(0.2f).toFile(uploadedIdCardZFile);
+                Thumbnails.of(uploadedIdCardFFile).scale(0.2f).toFile(uploadedIdCardFFile);
                 String uploadZResult = uploadAliyun.uploadImage(uploadedIdCardZFile, zPath);
                 String uploadFResult = uploadAliyun.uploadImage(uploadedIdCardFFile, fPath);
 
@@ -547,6 +554,9 @@ public class PictureController extends BaseController {
                         logger.info("userRace = " + user.getUserRace());
                         logger.info("user end :{}",JSON.toJSONString(user));
                         userService.updateByPrimaryKeyUser(user);
+
+                        userService.saveOrUpdateUdcredit(sessionId, user.getId(), 2, null);
+
                         result.setCode(ResponseStatus.SUCCESS.getName());
                         result.setMsg("扫描成功");
                         logger.info("scan success");
@@ -583,7 +593,7 @@ public class PictureController extends BaseController {
      *
      * @return
      */
-    public ResponseContent udRecognitionImageUpload(HttpServletRequest request, String imageUrl) {
+    public ResponseContent udRecognitionImageUpload(HttpServletRequest request, String imageUrl, String sessionId) {
         ResponseContent result = new ResponseContent(ResponseStatus.FAILD.getName(), "上传失败");
         // 当前登录用户
         User logUser = this.loginFrontUserByDeiceId(request);
@@ -612,13 +622,15 @@ public class PictureController extends BaseController {
                     path = File.separator + path;
                 }
 
-                Thumbnails.of(uploadedFile).scale(1f).outputQuality(0.1f).toFile(uploadedFile);
+                Thumbnails.of(uploadedFile).scale(0.2f).toFile(uploadedFile);
                 uploadAliyun.uploadImage(uploadedFile, path);
 
                 JpgThumbnail.getThumbnail(path, path, 150, 110);// 生成APP端的手机缩略图
 
                 user.setHeadPortrait(path);
                 userService.updateByPrimaryKeyUser(user);
+
+                userService.saveOrUpdateUdcredit(sessionId, user.getId(), 1, imageUrl);
                 result.setCode("0");
                 result.setMsg("上传成功");
                 File f = new File(path);//删除压缩前的图片

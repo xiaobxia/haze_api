@@ -3,10 +3,7 @@ package com.vxianjin.gringotts.web.service.impl;
 import com.vxianjin.gringotts.common.PageConfig;
 import com.vxianjin.gringotts.constant.Constant;
 import com.vxianjin.gringotts.web.dao.*;
-import com.vxianjin.gringotts.web.pojo.User;
-import com.vxianjin.gringotts.web.pojo.UserBlack;
-import com.vxianjin.gringotts.web.pojo.UserCardInfo;
-import com.vxianjin.gringotts.web.pojo.UserCertification;
+import com.vxianjin.gringotts.web.pojo.*;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
 import com.vxianjin.gringotts.web.service.IInfoIndexService;
 import com.vxianjin.gringotts.web.service.IUserService;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +38,8 @@ public class UserService implements IUserService {
     private IInfoIndexService infoIndexService;
     @Resource
     private IUserBlackDao userBlackDao;
+    @Resource
+    private IUserUdcreditInfoDao userUdcreditInfoDao;
 
     /**
      * 查询用户是否存在
@@ -313,4 +313,36 @@ public class UserService implements IUserService {
     public Integer defaultCardCount(Integer userId) {
         return this.userDao.defaultCardCount(userId);
     }
+
+    @Override
+    public void saveOrUpdateUdcredit(String sessionId, String userId, Integer type, String livingImageUrl) {
+        Date now = new Date();
+        UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
+            put("userId", userId);
+        }});
+        if (udcreditInfo != null) {
+            UserUdcreditInfo userUdcreditInfo = new UserUdcreditInfo();
+            userUdcreditInfo.setId(udcreditInfo.getId());
+            if (type == 1) {
+                userUdcreditInfo.setLivingSession(sessionId);
+                userUdcreditInfo.setLivingImageUrl(livingImageUrl);
+            } else {
+                userUdcreditInfo.setHeaderSession(sessionId);
+            }
+            userUdcreditInfo.setUpdateTime(now);
+            userUdcreditInfoDao.update(userUdcreditInfo);
+        } else {
+            UserUdcreditInfo userUdcreditInfo = new UserUdcreditInfo();
+            userUdcreditInfo.setUserId(Integer.parseInt(userId));
+            if (type == 1) {
+                userUdcreditInfo.setLivingSession(sessionId);
+                userUdcreditInfo.setLivingImageUrl(livingImageUrl);
+            } else {
+                userUdcreditInfo.setHeaderSession(sessionId);
+            }
+            userUdcreditInfo.setCreateTime(now);
+            userUdcreditInfoDao.saveRecord(userUdcreditInfo);
+        }
+    }
+
 }

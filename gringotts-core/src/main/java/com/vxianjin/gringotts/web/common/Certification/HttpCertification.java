@@ -4,18 +4,20 @@ import com.alibaba.fastjson.JSON;
 import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.constant.FaceConfig;
 import com.vxianjin.gringotts.util.HttpUtil;
+import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.json.JSONUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.web.common.ud.MD5Utils;
+import com.vxianjin.gringotts.web.dao.IUserUdcreditInfoDao;
 import com.vxianjin.gringotts.web.pojo.BackConfigParams;
 import com.vxianjin.gringotts.web.pojo.FaceRecognition;
 import com.vxianjin.gringotts.web.pojo.User;
+import com.vxianjin.gringotts.web.pojo.UserUdcreditInfo;
 import com.vxianjin.gringotts.web.service.IFaceFecogntionService;
 import com.vxianjin.gringotts.web.service.IUserService;
 import com.vxianjin.gringotts.web.utils.SysCacheUtils;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -47,6 +49,8 @@ public class HttpCertification implements IHttpCertification {
     private IFaceFecogntionService faceFecogntionService;
     @Resource
     private IUserService userService;
+    @Resource
+    private IUserUdcreditInfoDao userUdcreditInfoDao;
 
     @Override
     public ResponseContent bankCard(Map<String, String> params) {
@@ -261,24 +265,33 @@ public class HttpCertification implements IHttpCertification {
                 }
             }
             if (toface) {
-                JSONObject reqJson = new JSONObject();
-                reqJson.put("header", getRequestHeader(null));
 
-                JSONObject body = new JSONObject();
-                body.put("photo1", new HashMap<String, String>(){{
-                    put("img_file", params.get("photo1Url"));
-                    put("img_file_source", "1");
-                    put("img_file_type", "0");
+                UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
+                    put("userId", user.getId());
                 }});
-                body.put("photo2", new HashMap<String, String>(){{
-                    put("img_file", params.get("photo2Url"));
-                    put("img_file_source", "1");
-                    put("img_file_type", "1");
-                }});
-                reqJson.put("body", body);
+                String resp_front = "";
+                if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
 
-                String resp_front = doHttpRequest(PropertiesConfigUtil.get("UD_NEW_FACE_COMPARE") +
-                        PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
+                    JSONObject reqJson = new JSONObject();
+                    reqJson.put("header", getRequestHeader(null));
+
+                    JSONObject body = new JSONObject();
+                    body.put("photo1", new HashMap<String, String>(){{
+                        put("img_file", udcreditInfo.getHeaderSession());
+                        put("img_file_source", "0");
+                        put("img_file_type", "0");
+                    }});
+                    body.put("photo2", new HashMap<String, String>(){{
+                        put("img_file", udcreditInfo.getLivingSession());
+                        put("img_file_source", "0");
+                        put("img_file_type", "1");
+                    }});
+                    reqJson.put("body", body);
+
+                    resp_front = doHttpRequest(PropertiesConfigUtil.get("UD_NEW_FACE_COMPARE") +
+                            PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
+                }
+
 
                 logger.info("interface udface return info :" + resp_front);
                 if (StringUtils.isNotBlank(resp_front)) {

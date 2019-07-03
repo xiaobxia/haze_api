@@ -200,4 +200,6 @@ public interface IUserService {
     void insertUserStrongRiskResult(StrongRiskResult strongRiskResult);
 
     Integer defaultCardCount(Integer userId);
+
+    void saveOrUpdateUdcredit(String sessionId, String userId, Integer type, String livingImageUrl);
 }

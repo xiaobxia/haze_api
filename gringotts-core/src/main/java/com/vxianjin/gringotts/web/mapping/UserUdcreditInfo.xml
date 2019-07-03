@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- user_udcredit_info表:黑白名单模块 -->
+<mapper namespace="com.vxianjin.gringotts.web.dao.IUserUdcreditInfoDao">
+    <!--返回Map-->        
+    <resultMap id="BaseResultMap" type="com.vxianjin.gringotts.web.pojo.UserUdcreditInfo">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="living_session" property="livingSession" jdbcType="VARCHAR" />
+        <result column="living_image_url" property="livingImageUrl" jdbcType="VARCHAR" />
+        <result column="header_session" property="headerSession" jdbcType="VARCHAR" />
+        <result column="header_image_url" property="headerImageUrl" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <!--基本的sql查询字段 公共引用...-->
+    <sql id="Base_Column_List">
+        id,user_id,living_session,living_image_url,header_session,header_image_url,create_time,update_time
+    </sql>
+
+    <!-- 基本的sql查询条件公共引用 -->
+    <sql id="searchBy">
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id !=null and id !=''">
+                id  = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="livingSession != null and livingSession != ''">
+                and living_session = #{livingSession,jdbcType=VARCHAR}
+            </if>
+            <if test="livingImageUrl != null and livingImageUrl != ''">
+                and living_image_url = #{livingImageUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="headerSession != null and headerSession != ''">
+                and header_session = #{headerSession,jdbcType=VARCHAR}
+            </if>
+            <if test="headerImageUrl != null and headerImageUrl != ''">
+                and header_image_url = #{headerImageUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime !=null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime !=null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </sql>
+    
+    
+    <insert id="save" parameterType="com.vxianjin.gringotts.web.pojo.UserUdcreditInfo">
+        insert into user_udcredit_info(user_id,living_session,living_image_url,header_session,header_image_url,create_time,update_time)values(#{userId,jdbcType=INTEGER},#{livingSession,jdbcType=VARCHAR},#{livingImageUrl,jdbcType=VARCHAR},#{headerSession,jdbcType=VARCHAR},#{headerImageUrl,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    
+    <insert id="saveRecord" parameterType="com.vxianjin.gringotts.web.pojo.UserUdcreditInfo" keyProperty="id">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        insert into user_udcredit_info
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="livingSession != null">
+                living_session,
+            </if>
+            <if test="livingImageUrl != null">
+                living_image_url,
+            </if>
+            <if test="headerSession != null">
+                header_session,
+            </if>
+            <if test="headerImageUrl != null">
+                header_image_url,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="livingSession != null" >
+                #{livingSession,jdbcType=VARCHAR},
+            </if>
+            <if test="livingImageUrl != null" >
+                #{livingImageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="headerSession != null" >
+                #{headerSession,jdbcType=VARCHAR},
+            </if>
+            <if test="headerImageUrl != null" >
+                #{headerImageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    
+    
+    <update id="update" parameterType="com.vxianjin.gringotts.web.pojo.UserUdcreditInfo">
+        update user_udcredit_info set
+              user_id = #{userId,jdbcType=INTEGER},
+
+              living_session = #{livingSession,jdbcType=VARCHAR},
+
+              living_image_url = #{livingImageUrl,jdbcType=VARCHAR},
+
+              header_session = #{headerSession,jdbcType=VARCHAR},
+
+              header_image_url = #{headerImageUrl,jdbcType=VARCHAR},
+
+              create_time = #{createTime,jdbcType=TIMESTAMP},
+
+              update_time = #{updateTime,jdbcType=TIMESTAMP}
+
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <update id="updateSelective"  parameterType="com.vxianjin.gringotts.web.pojo.UserUdcreditInfo">
+        update user_udcredit_info
+        <set>
+            <if test="userId != null and userId != '' ">
+                user_id = #{userId,jdbcType=INTEGER},
+
+            </if>
+            <if test="livingSession != null and livingSession != '' ">
+                living_session = #{livingSession,jdbcType=VARCHAR},
+
+            </if>
+            <if test="livingImageUrl != null and livingImageUrl != '' ">
+                living_image_url = #{livingImageUrl,jdbcType=VARCHAR},
+
+            </if>
+            <if test="headerSession != null and headerSession != '' ">
+                header_session = #{headerSession,jdbcType=VARCHAR},
+
+            </if>
+            <if test="headerImageUrl != null and headerImageUrl != '' ">
+                header_image_url = #{headerImageUrl,jdbcType=VARCHAR},
+
+            </if>
+            <if test="createTime != null and createTime != '' ">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+
+            </if>
+            <if test="updateTime != null and updateTime != '' ">
+                update_time = #{updateTime,jdbcType=TIMESTAMP}
+
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="findByPrimary" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List" />
+        from user_udcredit_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+	<select id="findSelective" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_udcredit_info
+        <include refid="searchBy"/> 
+        limit 0,1
+    </select>
+               
+    <select id="listSelective" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select
+        <include refid="Base_Column_List" />
+        from user_udcredit_info
+        <include refid="searchBy"/>
+    </select>
+    
+</mapper>
