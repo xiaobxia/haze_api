@@ -121,6 +121,8 @@ public class BackConfigParams implements Serializable {
      * 推广系统与现金侠交互的的sys_type
      */
     public static final String TG_SERVER = "TG_SERVER";
+
+    public static final String UD_THRESHOLD = "UD_THRESHOLD";
     /**
      * 推广系统与现金侠交互的的绑卡
      */

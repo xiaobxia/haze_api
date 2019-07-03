@@ -2193,7 +2193,9 @@ public class UserLoginController extends BaseController {
                 resultMap.put("longitude", longitude);// 纬度
                 resultMap.put("latitude", latitude);// 经度
                 resultMap.put("real_verify_status", user.getRealnameStatus());// 实名认证状态
-                resultMap.put("ud_threshold", PropertiesConfigUtil.get("UD_THRESHOLD"));// 有盾阈值
+                Map<String, String> configMap = SysCacheUtils.getConfigMap(BackConfigParams.UD_THRESHOLD);
+                resultMap.put("ud_threshold", configMap.get("UD_LIVING_THRESHOLD"));// 有盾活体阈值
+                resultMap.put("ud_id_card_threshold", configMap.get("UD_ID_CARD_THRESHOLD"));// 有盾阈值
                 resultMap.put("face_recognition_picture", face_recognition_picture);// 头像
                 resultMap.put("id_number_z_picture", id_number_z_picture);// 身份证正面
                 resultMap.put("id_number_f_picture", id_number_f_picture);// 身份证反面
