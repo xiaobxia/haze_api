@@ -489,10 +489,10 @@ public class PictureController extends BaseController {
                 logger.info("idCardImageUploadZ appCode=" + appCode);
                 User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
 
-                if (!ServletFileUpload.isMultipartContent(request)) {
+                /*if (!ServletFileUpload.isMultipartContent(request)) {
                     result.setMsg("上传图片失败");
                     return result;
-                }
+                }*/
                 // 获取项目的真实路径
                 String realPath = File.separator + Constant.FILEPATH_CORE;
                 // 拼接全路径
@@ -590,10 +590,10 @@ public class PictureController extends BaseController {
 
                 logger.info("recognitionImageUpload appCode=" + appCode);
                 User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
-                if (!ServletFileUpload.isMultipartContent(request)) {
+                /*if (!ServletFileUpload.isMultipartContent(request)) {
                     result.setMsg("上传图片失败");
                     return result;
-                }
+                }*/
                 // 获取项目的真实路径
                 String realPath = File.separator + Constant.FILEPATH_CORE;
                 // 获取文件类型 jpg
