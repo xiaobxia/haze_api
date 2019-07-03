@@ -323,7 +323,7 @@ public class HttpCertification implements IHttpCertification {
                         //resultMap.put("le6", thresholds.get("1e-6").toString());
                         resultMap.put("userId", params.get("userId"));
                         resultMap.put("session_id", resultFaceid.get("session_id").toString());
-                        resultMap.put("partner_order_id", resultFaceid.get("resultFaceid").toString());
+                        resultMap.put("partner_order_id", resultFaceid.get("partner_order_id").toString());
                         resultCode.setParamsMap(resultMap);
                         //保存人脸识别报告
                         saveUdFace(resultMap);

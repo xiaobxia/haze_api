@@ -513,8 +513,8 @@ public class PictureController extends BaseController {
                 String zPath = uploadedIdCardZFile.getPath().replaceAll("\\\\", "\\/");
                 String fPath = uploadedIdCardFFile.getPath().replaceAll("\\\\", "\\/");
 
-                Thumbnails.of(uploadedIdCardZFile).scale(0.2f).toFile(uploadedIdCardZFile);
-                Thumbnails.of(uploadedIdCardFFile).scale(0.2f).toFile(uploadedIdCardFFile);
+                Thumbnails.of(uploadedIdCardZFile).scale(1f).outputQuality(0.1f).toFile(uploadedIdCardZFile);
+                Thumbnails.of(uploadedIdCardFFile).scale(1f).outputQuality(0.1f).toFile(uploadedIdCardFFile);
                 String uploadZResult = uploadAliyun.uploadImage(uploadedIdCardZFile, zPath);
                 String uploadFResult = uploadAliyun.uploadImage(uploadedIdCardFFile, fPath);
 
@@ -622,7 +622,7 @@ public class PictureController extends BaseController {
                     path = File.separator + path;
                 }
 
-                Thumbnails.of(uploadedFile).scale(0.2f).toFile(uploadedFile);
+                Thumbnails.of(uploadedFile).scale(1f).outputQuality(0.1f).toFile(uploadedFile);
                 uploadAliyun.uploadImage(uploadedFile, path);
 
                 JpgThumbnail.getThumbnail(path, path, 150, 110);// 生成APP端的手机缩略图
