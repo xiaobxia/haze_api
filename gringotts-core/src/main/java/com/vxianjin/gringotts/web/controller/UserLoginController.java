@@ -2422,10 +2422,10 @@ public class UserLoginController extends BaseController {
                 String headPortrait = request.getParameter("face_recognition_picture");// 人脸识别
                 String marriage = request.getParameter("marriage");// 婚姻状况
                 String qq = request.getParameter("qq");
-                String photo1SessionId = request.getParameter("photo1_session_id");
-                String photo2SessionId = request.getParameter("photo2_session_id");
-                String photo1Url = request.getParameter("photo1_url");
-                String photo2Url = request.getParameter("photo2_url");
+                //String photo1SessionId = request.getParameter("photo1_session_id");
+                //String photo2SessionId = request.getParameter("photo2_session_id");
+                //String photo1Url = request.getParameter("photo1_url");
+                //String photo2Url = request.getParameter("photo2_url");
                 Map<String, String> params = new HashMap<>();
 
                 log.info("getPersonInfos headPortrait:" + headPortrait + ",name:" + name + ",idNumber:" + idNumber);

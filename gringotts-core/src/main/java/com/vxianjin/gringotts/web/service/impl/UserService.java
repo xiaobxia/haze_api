@@ -323,6 +323,7 @@ public class UserService implements IUserService {
         if (udcreditInfo != null) {
             UserUdcreditInfo userUdcreditInfo = new UserUdcreditInfo();
             userUdcreditInfo.setId(udcreditInfo.getId());
+            userUdcreditInfo.setUserId(Integer.parseInt(userId));
             if (type == 1) {
                 userUdcreditInfo.setLivingSession(sessionId);
                 userUdcreditInfo.setLivingImageUrl(livingImageUrl);
@@ -330,7 +331,7 @@ public class UserService implements IUserService {
                 userUdcreditInfo.setHeaderSession(sessionId);
             }
             userUdcreditInfo.setUpdateTime(now);
-            userUdcreditInfoDao.update(userUdcreditInfo);
+            userUdcreditInfoDao.updateSelective(userUdcreditInfo);
         } else {
             UserUdcreditInfo userUdcreditInfo = new UserUdcreditInfo();
             userUdcreditInfo.setUserId(Integer.parseInt(userId));
