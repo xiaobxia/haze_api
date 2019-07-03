@@ -16,11 +16,13 @@ import com.vxianjin.gringotts.web.service.IUserInfoImageService;
 import com.vxianjin.gringotts.web.service.IUserService;
 import com.vxianjin.gringotts.web.util.ConfigLoader;
 import com.vxianjin.gringotts.web.util.aliyun.UploadAliyun;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import com.vxianjin.gringotts.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +34,11 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-//import org.apache.log4j.Logger;
+
 /**
  * 上传用户图片信息
  *
@@ -142,6 +145,41 @@ public class PictureController extends BaseController {
         }
     }
 
+    @RequestMapping("ud/picture/upload-image")
+    public void udImageUpload(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> json = new HashMap<String, Object>();
+        ResponseContent result = new ResponseContent(ResponseStatus.FAILD.getName(), "上传失败");
+        try {
+            // 判断是否为空 文件大小是否合适
+            int type1 = request.getParameter("type") == null ? 0 : Integer.parseInt(request.getParameter("type"));
+            switch (type1) {
+                case 20://人脸识别
+                    String imageUrl = request.getParameter("recognitionImage");
+                    result = udRecognitionImageUpload(request, imageUrl);
+                    break;
+                case 21://身份证正面
+                    String idCardImageZUrl = request.getParameter("idCardZImage");
+                    String idCardImageFUrl = request.getParameter("idCardFImage");
+                    String udMap = request.getParameter("udMap");
+                    Map<String, String> map = JSONObject.parseObject(udMap, Map.class);
+                    result = udIdCardImageUploadZF(request, idCardImageZUrl, idCardImageFUrl, map);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (result.isSuccessed()) {
+                Map<String, String> map = result.getParamsMap();
+                if (map != null) json.put("data", map);
+            }
+            json.put("code", result.getCode());
+            json.put("message", result.getMsg());
+            JSONUtil.toObjectJson(response, JSONUtil.beanToJson(json));
+        }
+    }
+
     /**
      * 身份证
      *
@@ -184,7 +222,7 @@ public class PictureController extends BaseController {
                 String filePath = Uploader.getQuickPathname(ext);
                 // 拼接全路径
                 File uploadedFile = new File(realPath + "/" + filePath);//
-                org.apache.commons.io.FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+                FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
                 String path = uploadedFile.getPath();
                 String newPath = path.substring(0, path.lastIndexOf(".")) + "_appTh.png";
                 JpgThumbnail.getThumbnail(path, newPath, 150, 110);// 生成APP端的手机缩略图
@@ -248,7 +286,7 @@ public class PictureController extends BaseController {
                 String filePath = Uploader.getQuickPathname(ext);
                 // 拼接全路径
                 File uploadedFile = new File(realPath + FileUtil.createKey() + filePath);//
-                org.apache.commons.io.FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+                FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
                 String path = uploadedFile.getPath().replaceAll("\\\\", "\\/");
                 HashMap<String, String> params = new HashMap<>();
 
@@ -365,7 +403,7 @@ public class PictureController extends BaseController {
                 String filePath = Uploader.getQuickPathname(ext);
                 // 拼接全路径
                 File uploadedFile = new File(realPath + FileUtil.createKey() + filePath);//
-                org.apache.commons.io.FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+                FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
                 String path = uploadedFile.getPath().replaceAll("\\\\", "\\/");
                 HashMap<String, String> params = new HashMap<String, String>();
 
@@ -436,6 +474,165 @@ public class PictureController extends BaseController {
     }
 
     /**
+     * 身份证正反面
+     *
+     * @param request
+     * @param idCardImageZUrl
+     * @return
+     */
+    public ResponseContent udIdCardImageUploadZF(HttpServletRequest request, String idCardImageZUrl, String idCardImageFUrl, Map<String, String> map) {
+        ResponseContent result = new ResponseContent(ResponseStatus.FAILD.getName(), "上传失败");
+        // 当前登录用户
+        User logUser = this.loginFrontUserByDeiceId(request);
+        try {
+            if (logUser != null) {
+                logger.info("idCardImageUploadZ appCode=" + appCode);
+                User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
+
+                if (!ServletFileUpload.isMultipartContent(request)) {
+                    result.setMsg("上传图片失败");
+                    return result;
+                }
+                // 获取项目的真实路径
+                String realPath = File.separator + Constant.FILEPATH_CORE;
+                // 拼接全路径
+                File uploadedIdCardZFile = new File(realPath + FileUtil.createKey() + "_appZ.png");
+                File uploadedIdCardFFile = new File(realPath + FileUtil.createKey() + "_appF.png");
+                FileUtils.copyURLToFile(new URL(idCardImageZUrl), uploadedIdCardZFile);
+                FileUtils.copyURLToFile(new URL(idCardImageFUrl), uploadedIdCardFFile);
+
+                String zPath = uploadedIdCardZFile.getPath().replaceAll("\\\\", "\\/");
+                String fPath = uploadedIdCardFFile.getPath().replaceAll("\\\\", "\\/");
+
+                Thumbnails.of(uploadedIdCardZFile).scale(1f).outputQuality(0.25f).toFile(uploadedIdCardZFile);
+                Thumbnails.of(uploadedIdCardFFile).scale(1f).outputQuality(0.25f).toFile(uploadedIdCardFFile);
+                String uploadZResult = uploadAliyun.uploadImage(uploadedIdCardZFile, zPath);
+                String uploadFResult = uploadAliyun.uploadImage(uploadedIdCardFFile, fPath);
+
+                if (!zPath.startsWith("/")) {
+                    zPath = File.separator + zPath;
+                }
+                if (!fPath.startsWith("/")) {
+                    fPath = File.separator + fPath;
+                }
+                logger.info("idCardImageUploadZ user_id=" + user.getId() + " uploadResult=" + (uploadZResult != null ? JSONObject.toJSONString(uploadZResult) : "null"));
+                logger.info("idCardImageUploadF user_id=" + user.getId() + " uploadResult=" + (uploadFResult != null ? JSONObject.toJSONString(uploadFResult) : "null"));
+
+
+                //判断上传结果
+                if ("success".equals(uploadZResult) && "success".equals(uploadFResult)) {
+                    logger.info("map result:{}",JSON.toJSONString(map));
+                    JpgThumbnail.getThumbnail(zPath, zPath, 250, 210);// 生成APP端的手机缩略图
+                    JpgThumbnail.getThumbnail(fPath, fPath, 250, 210);// 生成APP端的手机缩略图
+                    String idCard = map.get("id_card_number");
+                    String userName = map.get("name");
+                    String gender = map.get("gender");
+                    String race = map.get("race");
+                    String validDate = map.get("valid_date");
+                    User userCard = userService.searchByUserIDCard(idCard);
+                    if (userCard == null) {
+                        if (StringUtils.isNoneEmpty(idCard, userName, gender, race, validDate)) {
+                            user.setIdNumber(idCard);
+                            user.setRealname(userName);
+                            user.setUserSex(gender);
+                            user.setUserRace(race);
+                            user.setRace(validDate);
+                            logger.info("user info :{}", JSON.toJSONString(user));
+                        }
+
+                        user.setIdcardImgZ(zPath);
+                        user.setIdcardImgF(fPath);
+                        logger.info("userRace = " + user.getUserRace());
+                        logger.info("user end :{}",JSON.toJSONString(user));
+                        userService.updateByPrimaryKeyUser(user);
+                        result.setCode(ResponseStatus.SUCCESS.getName());
+                        result.setMsg("扫描成功");
+                        logger.info("scan success");
+                    } else {
+                        result.setMsg("该身份证已扫描绑定过");
+                    }
+                } else {
+                    result.setMsg("图片上传失败");
+                }
+                logger.info("删除Z图片路径1：" + zPath);
+                logger.info("删除F图片路径1：" + fPath);
+                logger.info("删除Z图片路径2：" + uploadedIdCardZFile);
+                logger.info("删除F图片路径2：" + uploadedIdCardFFile);
+                File f1 = new File(zPath);//删除压缩前的图片
+                File f2 = new File(fPath);//删除压缩前的图片
+                if (f1.exists()) f1.delete();
+                if (f2.exists()) f2.delete();
+                if (uploadedIdCardZFile.exists()) uploadedIdCardZFile.delete();
+                if (uploadedIdCardFFile.exists()) uploadedIdCardFFile.delete();
+            } else {
+                result = new ResponseContent(ResponseStatus.LOGIN.getName(), ResponseStatus.LOGIN.getValue());
+            }
+        } catch (Exception e) {
+            logger.error("idCardImageUploadZ user_id="+(logUser != null ? logUser.getId() : "null")+" error:",e);
+            result.setMsg("图片处理失败，请稍后重试");
+        }
+        logger.info("end result:{}",JSON.toJSONString(result));
+        return result;
+
+    }
+
+    /**
+     * 人脸识别
+     *
+     * @return
+     */
+    public ResponseContent udRecognitionImageUpload(HttpServletRequest request, String imageUrl) {
+        ResponseContent result = new ResponseContent(ResponseStatus.FAILD.getName(), "上传失败");
+        // 当前登录用户
+        User logUser = this.loginFrontUserByDeiceId(request);
+        try {
+            if (logUser != null) {
+
+                logger.info("recognitionImageUpload appCode=" + appCode);
+                User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
+                if (!ServletFileUpload.isMultipartContent(request)) {
+                    result.setMsg("上传图片失败");
+                    return result;
+                }
+                // 获取项目的真实路径
+                String realPath = File.separator + Constant.FILEPATH_CORE;
+                // 获取文件类型 jpg
+                String ext = ".jpg";
+                logger.info("获取文件类型：" + ext);
+                // 拼接全路径 2017-05-19
+                File uploadedFile = new File(realPath + FileUtil.createKey() + "_appTx.png");
+
+                FileUtils.copyURLToFile(new URL(imageUrl), uploadedFile);
+
+                String path = uploadedFile.getPath().replaceAll("\\\\", "\\/");
+                if (!path.startsWith("/")) {
+                    path = File.separator + path;
+                }
+
+                Thumbnails.of(uploadedFile).scale(1f).outputQuality(0.25f).toFile(uploadedFile);
+                uploadAliyun.uploadImage(uploadedFile, path);
+
+                JpgThumbnail.getThumbnail(path, path, 150, 110);// 生成APP端的手机缩略图
+
+                user.setHeadPortrait(path);
+                userService.updateByPrimaryKeyUser(user);
+                result.setCode("0");
+                result.setMsg("上传成功");
+                File f = new File(path);//删除压缩前的图片
+                logger.info("上传成功:" + path);
+                if (f.exists()) f.delete();
+                if (uploadedFile.exists()) uploadedFile.delete();
+            } else {
+                result = new ResponseContent(ResponseStatus.LOGIN.getName(), ResponseStatus.LOGIN.getValue());
+            }
+        } catch (Exception e) {
+            logger.error("recognitionImageUpload user_id="+(logUser != null ? logUser.getId() : "null")+" error:", e);
+            result.setMsg("图片处理失败，请稍后重试");
+        }
+        return result;
+    }
+
+    /**
      * 人脸识别
      *
      * @return
@@ -479,7 +676,7 @@ public class PictureController extends BaseController {
                 String filePath = Uploader.getQuickPathname(ext);
                 // 拼接全路径 2017-05-19
                 File uploadedFile = new File(realPath + FileUtil.createKey() + filePath);//
-                org.apache.commons.io.FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+                FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
 
                 String path = uploadedFile.getPath().replaceAll("\\\\", "\\/");
 //                logger.info("recognitionImageUpload path=" + path);
@@ -557,7 +754,7 @@ public class PictureController extends BaseController {
 //                String filePath = Uploader.getQuickPathname(ext);
 //                // 拼接全路径
 //                File uploadedFile = new File(realPath + uploadQn.createKey() + filePath);//
-//                org.apache.commons.io.FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+//                FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
 //
 //                String path = uploadedFile.getPath();
 //                if (!path.startsWith("/")) {
@@ -638,7 +835,7 @@ public class PictureController extends BaseController {
 //                String filePath = Uploader.getQuickPathname(ext);
 //                // 拼接全路径
 //                File uploadedFile = new File(realPath + uploadQn.createKey() + filePath);//
-//                org.apache.commons.io.FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+//                FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
 //                String path = uploadedFile.getPath();
 //                if (!path.startsWith("/")) {
 //                    path = File.separator + path;

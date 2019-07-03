@@ -14,6 +14,8 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updatetime"/>
         <result column="status" property="status"/>
+        <result column="session_id" property="sessionId"/>
+        <result column="partner_order_id" property="partnerOrderId"/>
     </resultMap>
     <!-- 根据用户编号查询是否存在 -->
     <select id="selectByFaceRecognitionUserId" resultType="com.vxianjin.gringotts.web.pojo.FaceRecognition"
@@ -43,7 +45,9 @@
 				le6,
 				confidence,
 				create_time,
-				status
+				status,
+			    session_id,
+                partner_order_id
 			)
 			values(
 				#{userId},
@@ -53,8 +57,9 @@
 				#{le6},
 				#{confidence},
 				NOW(),
-				#{status}
-				
+				#{status},
+				#{sessionId},
+			    #{partnerOrderId}
 			)
 		]]>
     </insert>
@@ -80,6 +85,12 @@
             </if>
             <if test="status != null and status != ''">
                 status =#{status},
+            </if>
+            <if test="sessionId != null and sessionId != ''">
+                session_id =#{sessionId},
+            </if>
+            <if test="partnerOrderId != null and partnerOrderId != ''">
+                partner_order_id =#{partnerOrderId},
             </if>
             total_num=total_num+1
         </set>

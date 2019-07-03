@@ -18,6 +18,9 @@ public class FaceRecognition implements Serializable {
     private String status;
     private Date createTime;
     private Date updatetime;
+    private String sessionId;
+    private String partnerOrderId;
+
 
     public Integer getId() {
         return id;
@@ -99,4 +102,19 @@ public class FaceRecognition implements Serializable {
         this.updatetime = updatetime;
     }
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getPartnerOrderId() {
+        return partnerOrderId;
+    }
+
+    public void setPartnerOrderId(String partnerOrderId) {
+        this.partnerOrderId = partnerOrderId;
+    }
 }

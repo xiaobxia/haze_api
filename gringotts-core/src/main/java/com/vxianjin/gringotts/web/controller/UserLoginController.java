@@ -2193,6 +2193,7 @@ public class UserLoginController extends BaseController {
                 resultMap.put("longitude", longitude);// 纬度
                 resultMap.put("latitude", latitude);// 经度
                 resultMap.put("real_verify_status", user.getRealnameStatus());// 实名认证状态
+                resultMap.put("ud_threshold", PropertiesConfigUtil.get("UD_THRESHOLD"));// 有盾阈值
                 resultMap.put("face_recognition_picture", face_recognition_picture);// 头像
                 resultMap.put("id_number_z_picture", id_number_z_picture);// 身份证正面
                 resultMap.put("id_number_f_picture", id_number_f_picture);// 身份证反面
@@ -2288,6 +2289,7 @@ public class UserLoginController extends BaseController {
 //				params.put("faceImageAttach", domainOfBucket+"/"+user.getHeadPortrait());
                 params.put("faceImageAttach", domainOfBucket + user.getHeadPortrait());
                 params.put("userId", user.getId());
+                //resultMap.put("ud_threshold", PropertiesConfigUtil.get("UD_THRESHOLD"));// 有盾阈值
                 String apiKey = getAppConfig(request.getParameter("appName"), "XJX_API_KEY");
                 String apiSecret = getAppConfig(request.getParameter("appName"), "XJX_API_SECRET");
                 ResponseContent result = httpCertification.face(user, params, apiKey, apiSecret);
@@ -2324,6 +2326,163 @@ public class UserLoginController extends BaseController {
                 usr.setPresentAddressDistinct(addressDistinct);
                 usr.setQq(qq);
                 usr.setEmail(email);
+                int count = this.userService.updateByPrimaryKeyUser(usr);
+
+                if (count <= 0) {
+                    log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",update count < 0,update fail");
+                    code = "-1";
+                    msg = "保存失败";
+                    return;
+                }
+
+                /*
+                 * 保存成功 发送数据到 风控
+                 */
+                verifiedAndPlusRequest(usr,tdDevice,clientType);
+                code = "0";
+                msg = "成功保存身份信息";
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("userId", Integer.parseInt(usr.getId()));
+                // 初始设置
+                this.infoIndexService.authInfo(map);
+
+//                //地推 实名认证
+//                HashMap<String, Object> maps = new HashMap<>();
+//                maps.put("realName", usr.getRealname());
+//                ThreadPool pool = ThreadPool.getInstance();
+//                pool.execute(new DtThread(UserPushUntil.REALNAME, Integer.parseInt(usr.getId()), null, new Date(), userService,
+//                        pushUserService, null, maps));
+
+                User userNow = userService.searchByUserid(Integer.parseInt(logUser.getId()));
+                loginSucc(request, userNow);
+
+            } else {
+                code = "-2";
+                msg = "请先登录";
+            }
+        } catch (Exception e) {
+            log.error("getPersonInfos error:", e);
+            code = "500";
+            msg = "系统异常";
+        } finally {
+            delCheckForFront(GET_PERSON_INFOS_CHECK, deviceId);
+            dataMap.put("item", resultMap);
+            json.put("code", code);
+            json.put("message", msg);
+            json.put("data", dataMap);
+            JSONUtil.toObjectJson(response, json.toString());
+            log.info("credit-card/getPersonInfos end,cost:" + (System.currentTimeMillis() - startTime) / 1000 + "s");
+        }
+    }
+
+    /**
+     * 获取认证列表中--》未实名认证 保存个人信息
+     */
+    @RequestMapping("ud/credit-card/get-person-infos")
+    public void udGetPersonInfos(HttpServletRequest request, HttpServletResponse response) {
+        String GET_PERSON_INFOS_CHECK = "get_person_infos_check_";
+        log.info("credit-card/get-person-infos start");
+        long startTime = System.currentTimeMillis();
+
+        Map<String, HashMap<String, Object>> dataMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();
+        JSONObject json = new JSONObject();
+
+        String code = "-1";
+        String msg = "";
+        String deviceId = request.getParameter("deviceId");
+        String tdDevice = request.getParameter("td_device");
+        String clientType = request.getParameter("clientType");
+        try {
+            Long remainTime = checkForFront(GET_PERSON_INFOS_CHECK, deviceId);
+            if (remainTime > 0) {
+                code = ResponseStatus.FREQUENT.getName();
+                json.put("time", remainTime);
+                msg = ResponseStatus.FREQUENT.getValue();
+                return;
+            }
+            User logUser = this.loginFrontUserByDeiceId(request);
+
+            if (logUser != null) {
+                log.info("credit-card/get-person-infos logUser userId:" + logUser.getId());
+                User user = userService.searchByUserid(Integer.parseInt(logUser.getId()));
+
+                User usr = new User();
+                String name = request.getParameter("name");// 姓名
+                String idNumber = request.getParameter("id_number");// 身份证号码
+//                String status = request.getParameter("real_verify_status");// 认证状态
+//                String education = request.getParameter("degrees");// 学历
+                String address = request.getParameter("address");// 地址
+                String addressDistinct = request.getParameter("address_distinct");// 详细地址
+                String liveTime = request.getParameter("live_time_type");// 居住时长
+                String longitude = request.getParameter("longitude");// 纬度
+                String latitude = request.getParameter("latitude");// 经度
+                String headPortrait = request.getParameter("face_recognition_picture");// 人脸识别
+                String marriage = request.getParameter("marriage");// 婚姻状况
+                String qq = request.getParameter("qq");
+                String photo1SessionId = request.getParameter("photo1_session_id");
+                String photo2SessionId = request.getParameter("photo2_session_id");
+                String photo1Url = request.getParameter("photo1_url");
+                String photo2Url = request.getParameter("photo2_url");
+                Map<String, String> params = new HashMap<>();
+
+                log.info("getPersonInfos headPortrait:" + headPortrait + ",name:" + name + ",idNumber:" + idNumber);
+
+                if (StringUtils.isBlank(user.getHeadPortrait()) || StringUtils.isBlank(user.getIdcardImgZ()) || StringUtils.isBlank(user.getIdcardImgF())) {
+                    log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",required ID card peicture is null");
+                    code = "-1";
+                    msg = "请先上传头像和身份证正反面";
+                    return;
+                }
+
+                if (StringUtils.isBlank(name) || StringUtils.isBlank(idNumber)) {
+                    log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",required name or idNumber is null");
+                    code = "-1";
+                    msg = "请输入完整的信息";
+                    return;
+                }
+
+                params.put("idcard_name", name);
+                params.put("idcard_number", idNumber);
+                params.put("userId", user.getId());
+                params.put("photo1SessionId", photo1SessionId);
+                params.put("photo2SessionId", photo2SessionId);
+                params.put("photo1Url", photo1Url);
+                params.put("photo2Url", photo2Url);
+                ResponseContent result = httpCertification.udFace(user, params);
+
+                log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",result:" + result.toString());
+
+                if ("online".equals(PropertiesConfigUtil.get("profile"))) {//只有正式环境才需要走这段代码
+                    if (!result.isSuccessed()) {
+                        log.info("credit-card/get-person-infos logUser userId:" + logUser.getId() + ",result successed is false");
+                        code = "-1";
+                        msg = result.getMsg();
+                        return;
+                    }
+                }
+
+                // 已认证
+                usr.setRealnameStatus("1");
+                // 实名认证时间
+                usr.setRealnameTime(new Date());
+
+                Integer birthDay = Integer.valueOf(idNumber.substring(6, 10));
+                // 年龄
+                usr.setUserAge(Calendar.getInstance().get(Calendar.YEAR) - birthDay);
+                usr.setId(user.getId());
+                usr.setRealname(name);
+                usr.setIdNumber(idNumber);
+                usr.setPresentAddress(address);
+                // 居住时长
+                usr.setPresentPeriod(liveTime);
+//				usr.setEducation(education);
+                usr.setPresentLongitude(longitude);
+                usr.setPresentLatitude(latitude);
+                usr.setMaritalStatus(marriage);
+                usr.setPresentAddressDistinct(addressDistinct);
+                usr.setQq(qq);
+                usr.setEmail(null);
                 int count = this.userService.updateByPrimaryKeyUser(usr);
 
                 if (count <= 0) {

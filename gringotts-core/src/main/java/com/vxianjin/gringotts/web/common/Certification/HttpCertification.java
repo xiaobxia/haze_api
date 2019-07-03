@@ -7,22 +7,33 @@ import com.vxianjin.gringotts.util.HttpUtil;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.json.JSONUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
+import com.vxianjin.gringotts.web.common.ud.MD5Utils;
 import com.vxianjin.gringotts.web.pojo.BackConfigParams;
 import com.vxianjin.gringotts.web.pojo.FaceRecognition;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.service.IFaceFecogntionService;
 import com.vxianjin.gringotts.web.service.IUserService;
 import com.vxianjin.gringotts.web.utils.SysCacheUtils;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 相关认证服务类
@@ -224,6 +235,158 @@ public class HttpCertification implements IHttpCertification {
         return resultCode;
     }
 
+    @Override
+    public ResponseContent udFace(User user, Map<String, String> params) throws IOException {
+        ResponseContent resultCode = new ResponseContent("-1", "失败");
+        if (StringUtils.isNotBlank(params.get("userId"))) {
+            Map<String, String> interval = SysCacheUtils.getConfigParams(BackConfigParams.INTERVAL);
+            int maxCount = 3;
+            if (interval != null) {
+                maxCount = interval.get("INTERVAL_REAL_COUNT") == null ? 3 : Integer.parseInt(interval.get("INTERVAL_REAL_COUNT"));
+            }
+            boolean toface = false;
+            if (!"1".equals(user.getRealnameStatus())) {
+                if (user.getLastFullTime() != null) {
+                    int day = 0;
+                    day = DateUtil.daysBetween(user.getLastFullTime(), new Date());
+                    if (day >= 1) {
+                        toface = true;
+                    } else if (day == 0) {
+                        if (user.getRealCount() % maxCount != 0) {
+                            toface = true;
+                        }
+                    }
+                } else {
+                    toface = true;
+                }
+            }
+            if (toface) {
+                JSONObject reqJson = new JSONObject();
+                reqJson.put("header", getRequestHeader(null));
+
+                JSONObject body = new JSONObject();
+                body.put("photo1", new HashMap<String, String>(){{
+                    put("img_file", params.get("photo1Url"));
+                    put("img_file_source", "1");
+                    put("img_file_type", "0");
+                }});
+                body.put("photo2", new HashMap<String, String>(){{
+                    put("img_file", params.get("photo2Url"));
+                    put("img_file_source", "1");
+                    put("img_file_type", "1");
+                }});
+                reqJson.put("body", body);
+
+                String resp_front = doHttpRequest(PropertiesConfigUtil.get("UD_NEW_FACE_COMPARE") +
+                        PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
+
+                logger.info("interface udface return info :" + resp_front);
+                if (StringUtils.isNotBlank(resp_front)) {
+
+                    String jsonResult = JSONObject.parseObject(resp_front).getString("result");
+                    String jsonData = JSONObject.parseObject(resp_front).getString("data");
+
+                    Map<String, Object> result = JSONUtil.parseJSON2Map(jsonResult);
+                    if (!result.containsKey("errorcode")) {
+                        // 有源比对时，数据源人脸照片与待验证人脸照的比对结果
+                        Map<String, Object> resultFaceid = JSONUtil.parseJSON2Map(jsonData);
+                        // 	人脸比对接口的返回的误识几率参考值
+                        //	“1e-3”：误识率为千分之一的置信度阈值；
+                        //	“1e-4”：误识率为万分之一的置信度阈值；
+                        //	“1e-5”：误识率为十万分之一的置信度阈值;
+                        //	“1e-6”：误识率为百万分之一的置信度阈值。
+                        Map<String, Object> thresholds = (Map<String, Object>) resultFaceid.get("thresholds");
+                        // 比对率达到十万分之一的才被认为人脸认证通过
+                        resultCode.setMsg("人脸识别实名认证失败！请检查身份证和头像");
+                        if (Float.valueOf(resultFaceid.get("similarity") + "") >= Float.valueOf(thresholds.get("1e-4") + "")) {
+                            resultCode.setCode("0");
+                            resultCode.setMsg("成功");
+                        }
+                        HashMap<String, String> resultMap = new HashMap<>();
+                        resultMap.put("similarity", resultFaceid.get("similarity").toString());
+                        resultMap.put("le3", thresholds.get("1e-3").toString());
+                        resultMap.put("le4", thresholds.get("1e-4").toString());
+                        resultMap.put("le5", thresholds.get("1e-5").toString());
+                        //resultMap.put("le6", thresholds.get("1e-6").toString());
+                        resultMap.put("userId", params.get("userId"));
+                        resultMap.put("session_id", resultFaceid.get("session_id").toString());
+                        resultMap.put("partner_order_id", resultFaceid.get("resultFaceid").toString());
+                        resultCode.setParamsMap(resultMap);
+                        //保存人脸识别报告
+                        saveUdFace(resultMap);
+                        user.setRealCount(user.getRealCount() + 1);
+                        user.setLastFullTime(new Date());
+                        userService.updateRealCount(user);
+                    } else {
+                        logger.info("interface error error_message=" + result.get("message").toString());
+                        resultCode.setCode("-1");
+                        String msg;
+                        msg = User.FACEID_MSG_TYPE.get(result.get("message").toString());
+                        if (msg != null) {
+                            resultCode.setMsg(msg);
+                        } else {
+                            resultCode.setMsg(User.FACEID_MSG_TYPE.get("OTHER"));
+                        }
+                        logger.info("interface error userPhone=" + user.getUserPhone() + " userId=" + user.getId() + " errorMsg return info :" + jsonResult);
+                    }
+                }
+
+            } else {
+                resultCode.setMsg("您当天识别实名失败次数已超过上线");
+            }
+        } else {
+            logger.info("人脸识别的时候需要传入userid编号已便保存人脸识别信息");
+            resultCode.setMsg("请传入用户唯一标识编号");
+        }
+        return resultCode;
+    }
+
+    /**
+     * Http请求
+     */
+    public static String doHttpRequest(String url, JSONObject reqJson) throws IOException {
+        CloseableHttpClient client = HttpClients.createDefault();
+        //设置传入参数
+        StringEntity entity = new StringEntity(reqJson.toJSONString(), "UTF-8");
+        entity.setContentEncoding("UTF-8");
+        entity.setContentType("application/json");
+        System.out.println(url);
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(entity);
+
+        HttpResponse resp = client.execute(httpPost);
+        if (resp.getStatusLine().getStatusCode() == 200) {
+            HttpEntity he = resp.getEntity();
+            String respContent = EntityUtils.toString(he, "UTF-8");
+            //return (JSONObject) JSONObject.parse(respContent);
+            return respContent;
+        }
+        return null;
+    }
+
+    JSONObject getRequestHeader(String session_id) throws IOException {
+        JSONObject header = new JSONObject();
+        if (StringUtils.isNotBlank(session_id)) {
+            header.put("session_id", session_id);
+        }
+        String sign_time = DateUtil.formatDate(new Date(), "yyyyMMddHHmmss");
+        String partner_order_id = UUID.randomUUID().toString();
+        String sign = getMD5Sign(PropertiesConfigUtil.get("UD_PUB_KEY"), partner_order_id, sign_time, PropertiesConfigUtil.get("UD_SECURITY_KEY"));
+        header.put("partner_order_id", partner_order_id);
+        header.put("sign", sign);
+        header.put("sign_time", sign_time);
+        return header;
+    }
+
+    /**
+     * 生成md5签名
+     */
+    public static String getMD5Sign(String pub_key, String partner_order_id, String sign_time, String security_key) throws UnsupportedEncodingException {
+        String signStr = String.format("pub_key=%s|partner_order_id=%s|sign_time=%s|security_key=%s", pub_key, partner_order_id, sign_time, security_key);
+        System.out.println("测试输入签名signField：" + signStr);
+        return MD5Utils.MD5Encrpytion(signStr.getBytes("UTF-8"));
+    }
+
     private String getResult(String arg) {
         Map<String, Object> map = JSONUtil.parseJSON2Map(arg);
         return map.get("result").toString();
@@ -296,6 +459,48 @@ public class HttpCertification implements IHttpCertification {
                 } else {
                     face.setStatus("0");
                 }
+                faceFecogntionService.updateFaceRecognition(face);
+            }
+        }
+    }
+
+    /**
+     * 保存人脸识别信息
+     *
+     * @param parasmMap mao
+     */
+    private void saveUdFace(HashMap<String, String> parasmMap) {
+        if (parasmMap != null) {
+            FaceRecognition face = faceFecogntionService.selectByUserId(Integer.parseInt(parasmMap.get("userId")));
+            if (face == null) {
+                face = new FaceRecognition();
+                face.setConfidence(parasmMap.get("confidence"));
+                face.setUserId(Integer.parseInt(parasmMap.get("userId")));
+                face.setLe3(parasmMap.get("le3"));
+                face.setLe4(parasmMap.get("le4"));
+                face.setLe5(parasmMap.get("le5"));
+                if (Float.valueOf(parasmMap.get("similarity") + "") >= Float.valueOf(parasmMap.get("le4") + "")) {
+                    face.setStatus("1");
+                } else {
+                    face.setStatus("0");
+                }
+                face.setSessionId(parasmMap.get("session_id"));
+                face.setPartnerOrderId(parasmMap.get("partner_order_id"));
+                faceFecogntionService.saveFaceRecognitionDao(face);
+            } else {
+                face.setConfidence(parasmMap.get("confidence"));
+                face.setUserId(Integer.parseInt(parasmMap.get("userId")));
+                face.setLe3(parasmMap.get("le3"));
+                face.setLe4(parasmMap.get("le4"));
+                face.setLe5(parasmMap.get("le5"));
+                face.setId(face.getId());
+                if (Float.valueOf(parasmMap.get("similarity") + "") >= Float.valueOf(parasmMap.get("le4") + "")) {
+                    face.setStatus("1");
+                } else {
+                    face.setStatus("0");
+                }
+                face.setSessionId(parasmMap.get("session_id"));
+                face.setPartnerOrderId(parasmMap.get("partner_order_id"));
                 faceFecogntionService.updateFaceRecognition(face);
             }
         }

@@ -3,6 +3,7 @@ package com.vxianjin.gringotts.web.common.Certification;
 import com.vxianjin.gringotts.common.ResponseContent;
 import com.vxianjin.gringotts.web.pojo.User;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface IHttpCertification {
@@ -33,4 +34,12 @@ public interface IHttpCertification {
      * @return res
      */
     ResponseContent idcardScanning(Map<String, String> params, String apiKey, String apiSecret);
+
+    /**
+     * 人脸识别
+     * @param user user
+     * @param params params
+     * @return res
+     */
+    ResponseContent udFace(User user, Map<String, String> params) throws IOException;
 }
