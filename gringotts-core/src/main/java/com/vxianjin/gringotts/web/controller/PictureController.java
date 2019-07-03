@@ -495,9 +495,11 @@ public class PictureController extends BaseController {
                 }*/
                 // 获取项目的真实路径
                 String realPath = File.separator + Constant.FILEPATH_CORE;
+                String filePath = Uploader.getQuickPathname("jpg");
+
                 // 拼接全路径
-                File uploadedIdCardZFile = new File(realPath + FileUtil.createKey() + "_appZ.png");
-                File uploadedIdCardFFile = new File(realPath + FileUtil.createKey() + "_appF.png");
+                File uploadedIdCardZFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appZ.png");
+                File uploadedIdCardFFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appF.png");
                 FileUtils.copyURLToFile(new URL(idCardImageZUrl), uploadedIdCardZFile);
                 FileUtils.copyURLToFile(new URL(idCardImageFUrl), uploadedIdCardFFile);
 
@@ -597,10 +599,11 @@ public class PictureController extends BaseController {
                 // 获取项目的真实路径
                 String realPath = File.separator + Constant.FILEPATH_CORE;
                 // 获取文件类型 jpg
-                String ext = ".jpg";
+                String ext = "jpg";
                 logger.info("获取文件类型：" + ext);
+                String filePath = Uploader.getQuickPathname(ext);
                 // 拼接全路径 2017-05-19
-                File uploadedFile = new File(realPath + FileUtil.createKey() + "_appTx.png");
+                File uploadedFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appTx.png");
 
                 FileUtils.copyURLToFile(new URL(imageUrl), uploadedFile);
 
