@@ -115,7 +115,8 @@ public class User implements Serializable {
         FACEID_MSG_TYPE.put("AUTHORIZATION_ERROR:Denied", "无此权限，请联系客服");
         FACEID_MSG_TYPE.put("AUTHORIZATION_ERROR:No data source permission", "无此权限，请联系客服");
         FACEID_MSG_TYPE.put("INTERNAL_ERROR", "服务器内部错误，请联系客服");
-        FACEID_MSG_TYPE.put("OTHER", "人脸识别实名认证失败！请检查身份证和头像");
+        FACEID_MSG_TYPE.put("OTHER", "人脸识别认证失败！请检查身份证和头像");
+        FACEID_MSG_TYPE.put("OTHER_UD", "实名人像认证失败！请检查身份证和头像");
     }
 
     private String id;

@@ -240,7 +240,79 @@ public class HttpCertification implements IHttpCertification {
     }
 
     @Override
+    public ResponseContent udIdCardFace(User user, Map<String, String> params) throws IOException {
+        ResponseContent resultCode = new ResponseContent("-1", "失败");
+        if (StringUtils.isNotBlank(params.get("userId"))) {
+
+            UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
+                put("userId", user.getId());
+            }});
+            String resp_front = "";
+            if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
+
+                JSONObject reqJson = new JSONObject();
+                reqJson.put("header", getRequestHeader(null));
+
+                JSONObject body = new JSONObject();
+                body.put("photo", new HashMap<String, String>(){{
+                    put("img_file", udcreditInfo.getLivingSession());
+                    put("img_file_source", "0");
+                    put("img_file_type", "1");
+                }});
+                reqJson.put("body", body);
+
+                resp_front = doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
+                        PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
+            }
+
+
+            logger.info("interface udface return info :" + resp_front);
+            if (StringUtils.isNotBlank(resp_front)) {
+
+                String jsonResult = JSONObject.parseObject(resp_front).getString("result");
+                String jsonData = JSONObject.parseObject(resp_front).getString("data");
+
+                Map<String, Object> result = JSONUtil.parseJSON2Map(jsonResult);
+                if (!result.containsKey("errorcode")) {
+                    // 有源比对时，数据源人脸照片与待验证人脸照的比对结果
+                    Map<String, Object> resultFaceid = JSONUtil.parseJSON2Map(jsonData);
+
+                    if ("1".equals(resultFaceid.get("verify_status").toString()) && "T".equals(resultFaceid.get("suggest_result").toString())) {
+                        resultCode.setCode("0");
+                        resultCode.setMsg("成功");
+                    }
+
+                    user.setRealCount(user.getRealCount() + 1);
+                    user.setLastFullTime(new Date());
+                    userService.updateRealCount(user);
+                } else {
+                    logger.info("interface error error_message=" + result.get("message").toString());
+                    resultCode.setCode("-1");
+                    String msg;
+                    msg = User.FACEID_MSG_TYPE.get(result.get("message").toString());
+                    if (msg != null) {
+                        resultCode.setMsg(msg);
+                    } else {
+                        resultCode.setMsg(User.FACEID_MSG_TYPE.get("OTHER_UD"));
+                    }
+                    logger.info("interface error userPhone=" + user.getUserPhone() + " userId=" + user.getId() + " errorMsg return info :" + jsonResult);
+                }
+            }
+
+        } else {
+            logger.info("人脸识别的时候需要传入userid编号已便保存人脸识别信息");
+            resultCode.setMsg("请传入用户唯一标识编号");
+        }
+        return resultCode;
+    }
+
+    @Override
     public ResponseContent udFace(User user, Map<String, String> params) throws IOException {
+        ResponseContent responseContent = udIdCardFace(user, params);//人脸比对前，先进行实名人像比对
+        if (!responseContent.isSuccessed()) {//没通过的直接返回
+            return responseContent;
+        }
+
         ResponseContent resultCode = new ResponseContent("-1", "失败");
         if (StringUtils.isNotBlank(params.get("userId"))) {
             Map<String, String> interval = SysCacheUtils.getConfigParams(BackConfigParams.INTERVAL);
@@ -324,12 +396,13 @@ public class HttpCertification implements IHttpCertification {
                         resultMap.put("userId", params.get("userId"));
                         resultMap.put("session_id", resultFaceid.get("session_id").toString());
                         resultMap.put("partner_order_id", resultFaceid.get("partner_order_id").toString());
+                        resultMap.put("confidence", resultFaceid.get("similarity").toString());
                         resultCode.setParamsMap(resultMap);
                         //保存人脸识别报告
                         saveUdFace(resultMap);
-                        user.setRealCount(user.getRealCount() + 1);
+                        /*user.setRealCount(user.getRealCount() + 1);
                         user.setLastFullTime(new Date());
-                        userService.updateRealCount(user);
+                        userService.updateRealCount(user);*/
                     } else {
                         logger.info("interface error error_message=" + result.get("message").toString());
                         resultCode.setCode("-1");

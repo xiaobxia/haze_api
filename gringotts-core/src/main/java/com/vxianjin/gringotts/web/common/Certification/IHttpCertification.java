@@ -41,5 +41,13 @@ public interface IHttpCertification {
      * @param params params
      * @return res
      */
+    ResponseContent udIdCardFace(User user, Map<String, String> params) throws IOException;
+
+    /**
+     * 人脸识别
+     * @param user user
+     * @param params params
+     * @return res
+     */
     ResponseContent udFace(User user, Map<String, String> params) throws IOException;
 }
