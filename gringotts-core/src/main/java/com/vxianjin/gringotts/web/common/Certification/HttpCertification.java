@@ -8,7 +8,7 @@ import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.json.JSONUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
-import com.vxianjin.gringotts.web.common.ud.MD5Utils;
+import com.vxianjin.gringotts.web.common.ud.UdRequestUtils;
 import com.vxianjin.gringotts.web.dao.IUserUdcreditInfoDao;
 import com.vxianjin.gringotts.web.pojo.BackConfigParams;
 import com.vxianjin.gringotts.web.pojo.FaceRecognition;
@@ -18,24 +18,15 @@ import com.vxianjin.gringotts.web.service.IFaceFecogntionService;
 import com.vxianjin.gringotts.web.service.IUserService;
 import com.vxianjin.gringotts.web.utils.SysCacheUtils;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 相关认证服务类
@@ -251,7 +242,7 @@ public class HttpCertification implements IHttpCertification {
             if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
 
                 JSONObject reqJson = new JSONObject();
-                reqJson.put("header", getRequestHeader(null));
+                reqJson.put("header", UdRequestUtils.getRequestHeader(null));
 
                 JSONObject body = new JSONObject();
                 body.put("photo", new HashMap<String, String>(){{
@@ -261,7 +252,7 @@ public class HttpCertification implements IHttpCertification {
                 }});
                 reqJson.put("body", body);
 
-                resp_front = doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
+                resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
                         PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
             }
 
@@ -345,7 +336,7 @@ public class HttpCertification implements IHttpCertification {
                 if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
 
                     JSONObject reqJson = new JSONObject();
-                    reqJson.put("header", getRequestHeader(null));
+                    reqJson.put("header", UdRequestUtils.getRequestHeader(null));
 
                     JSONObject body = new JSONObject();
                     body.put("photo1", new HashMap<String, String>(){{
@@ -360,7 +351,7 @@ public class HttpCertification implements IHttpCertification {
                     }});
                     reqJson.put("body", body);
 
-                    resp_front = doHttpRequest(PropertiesConfigUtil.get("UD_NEW_FACE_COMPARE") +
+                    resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_NEW_FACE_COMPARE") +
                             PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
                 }
 
@@ -425,52 +416,6 @@ public class HttpCertification implements IHttpCertification {
             resultCode.setMsg("请传入用户唯一标识编号");
         }
         return resultCode;
-    }
-
-    /**
-     * Http请求
-     */
-    public static String doHttpRequest(String url, JSONObject reqJson) throws IOException {
-        CloseableHttpClient client = HttpClients.createDefault();
-        //设置传入参数
-        StringEntity entity = new StringEntity(reqJson.toJSONString(), "UTF-8");
-        entity.setContentEncoding("UTF-8");
-        entity.setContentType("application/json");
-        System.out.println(url);
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(entity);
-
-        HttpResponse resp = client.execute(httpPost);
-        if (resp.getStatusLine().getStatusCode() == 200) {
-            HttpEntity he = resp.getEntity();
-            String respContent = EntityUtils.toString(he, "UTF-8");
-            //return (JSONObject) JSONObject.parse(respContent);
-            return respContent;
-        }
-        return null;
-    }
-
-    JSONObject getRequestHeader(String session_id) throws IOException {
-        JSONObject header = new JSONObject();
-        if (StringUtils.isNotBlank(session_id)) {
-            header.put("session_id", session_id);
-        }
-        String sign_time = DateUtil.formatDate(new Date(), "yyyyMMddHHmmss");
-        String partner_order_id = UUID.randomUUID().toString();
-        String sign = getMD5Sign(PropertiesConfigUtil.get("UD_PUB_KEY"), partner_order_id, sign_time, PropertiesConfigUtil.get("UD_SECURITY_KEY"));
-        header.put("partner_order_id", partner_order_id);
-        header.put("sign", sign);
-        header.put("sign_time", sign_time);
-        return header;
-    }
-
-    /**
-     * 生成md5签名
-     */
-    public static String getMD5Sign(String pub_key, String partner_order_id, String sign_time, String security_key) throws UnsupportedEncodingException {
-        String signStr = String.format("pub_key=%s|partner_order_id=%s|sign_time=%s|security_key=%s", pub_key, partner_order_id, sign_time, security_key);
-        System.out.println("测试输入签名signField：" + signStr);
-        return MD5Utils.MD5Encrpytion(signStr.getBytes("UTF-8"));
     }
 
     private String getResult(String arg) {

@@ -13,6 +13,7 @@ public class ZhimiRiskRequest {
     private String idcard;
     private String phone_os;
     private String user_address;
+    private String udcredit_portrait;
     private List<ZhimiEmergencyContact> e_contacts;
     private Map<String, String> carrier_data;
     private List<ZhimiContact> contact;
@@ -87,6 +88,14 @@ public class ZhimiRiskRequest {
 
     public void setUser_address(String user_address) {
         this.user_address = user_address;
+    }
+
+    public String getUdcredit_portrait() {
+        return udcredit_portrait;
+    }
+
+    public void setUdcredit_portrait(String udcredit_portrait) {
+        this.udcredit_portrait = udcredit_portrait;
     }
 
     public List<ZhimiEmergencyContact> getE_contacts() {

@@ -3,6 +3,7 @@ package com.vxianjin.gringotts.web.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.google.gson.JsonObject;
 import com.vxianjin.gringotts.risk.dao.IRiskCreditUserDao;
 import com.vxianjin.gringotts.risk.pojo.RiskCreditUser;
 import com.vxianjin.gringotts.risk.utils.ConstantRisk;
@@ -11,6 +12,7 @@ import com.vxianjin.gringotts.util.IdUtil;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
 import com.vxianjin.gringotts.util.security.RsaUtil;
+import com.vxianjin.gringotts.web.common.ud.UdRequestUtils;
 import com.vxianjin.gringotts.web.dao.IBorrowOrderDao;
 import com.vxianjin.gringotts.web.dao.IUserBlackDao;
 import com.vxianjin.gringotts.web.dao.IUserContactsDao;
@@ -111,7 +113,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 put("userId", user_id);
             }});//用户通讯录列表
 
-            String model_name = "taoqianbao_v2";
+            String model_name = "taoqianbao_v4";
             String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
             String mobile = user.getUserName();
             String name = user.getRealname();
@@ -134,12 +136,16 @@ public class MoneyLimitService implements IMoneyLimitService {
             String Authorization = "token " + PropertiesConfigUtil.get("MX_TOKEN");
             String gxb_report = null;
             String gxb_raw = null;
+            String udcredit_portrait = null;
             try {
                 gxb_report = ZhimiUtils.uncompress(HttpUtil.MxGet(mxReportUrl, Authorization));
                 gxb_raw = ZhimiUtils.uncompress(HttpUtil.MxGet(mxRawUrl, Authorization));
-            } catch (IOException e) {
+                JSONObject jsonObject = new JSONObject();
+                udcredit_portrait = UdRequestUtils.dataservice(jsonObject);
+            } catch (Exception e) {
                 logger.info("MoneyLimitService dealEd IOException" + e.getMessage());
             }
+            logger.info("MoneyLimitService udcredit_portrait:" + udcredit_portrait);
 
             Map<String, String> carrier_data = new HashMap<String, String>();
             carrier_data.put("mx_report", gxb_report);
@@ -157,6 +163,8 @@ public class MoneyLimitService implements IMoneyLimitService {
             request.setCarrier_data(carrier_data);
             request.setE_contacts(e_contacts);
             request.setContact(contact);
+
+            request.setUdcredit_portrait(udcredit_portrait);
 
             String requestStr = JSON.toJSONString(request, SerializerFeature.WriteMapNullValue);
 
