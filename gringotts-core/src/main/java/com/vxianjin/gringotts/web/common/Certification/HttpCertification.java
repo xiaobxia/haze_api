@@ -242,7 +242,7 @@ public class HttpCertification implements IHttpCertification {
             if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
 
                 JSONObject reqJson = new JSONObject();
-                reqJson.put("header", UdRequestUtils.getRequestHeader(null));
+                reqJson.put("header", UdRequestUtils.getRequestHeader(udcreditInfo.getHeaderSession()));
 
                 JSONObject body = new JSONObject();
                 body.put("photo", new HashMap<String, String>(){{
@@ -251,13 +251,14 @@ public class HttpCertification implements IHttpCertification {
                     put("img_file_type", "1");
                 }});
                 reqJson.put("body", body);
+                logger.info("udIdCardFace reqJson = 【{}】", reqJson.toString());
 
                 resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
                         PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
             }
 
 
-            logger.info("interface udface return info :" + resp_front);
+            logger.info("interface udIdCardFace return info :" + resp_front);
             if (StringUtils.isNotBlank(resp_front)) {
 
                 String jsonResult = JSONObject.parseObject(resp_front).getString("result");
@@ -277,7 +278,7 @@ public class HttpCertification implements IHttpCertification {
                     user.setLastFullTime(new Date());
                     userService.updateRealCount(user);
                 } else {
-                    logger.info("interface error error_message=" + result.get("message").toString());
+                    logger.info("interface udIdCardFace error error_message=" + result.get("message").toString());
                     resultCode.setCode("-1");
                     String msg;
                     msg = User.FACEID_MSG_TYPE.get(result.get("message").toString());
@@ -286,7 +287,7 @@ public class HttpCertification implements IHttpCertification {
                     } else {
                         resultCode.setMsg(User.FACEID_MSG_TYPE.get("OTHER_UD"));
                     }
-                    logger.info("interface error userPhone=" + user.getUserPhone() + " userId=" + user.getId() + " errorMsg return info :" + jsonResult);
+                    logger.info("interface udIdCardFace error userPhone=" + user.getUserPhone() + " userId=" + user.getId() + " errorMsg return info :" + jsonResult);
                 }
             }
 
@@ -350,6 +351,7 @@ public class HttpCertification implements IHttpCertification {
                         put("img_file_type", "1");
                     }});
                     reqJson.put("body", body);
+                    logger.info("udFace reqJson = 【{}】", reqJson.toString());
 
                     resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_NEW_FACE_COMPARE") +
                             PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
