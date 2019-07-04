@@ -108,13 +108,14 @@ public class AutoRiskService implements IAutoRiskService {
                     }
                     JSONObject jsonObject = JSON.parseObject(result);
 
-                    if(jsonObject!=null){
+                    /*if(jsonObject!=null){
                         if("0000".equals(jsonObject.getString("code"))){
                             JSONObject data = jsonObject.getJSONObject("data");
                             advice = "10".equals(data.getString("result"));
                             //re = data.getString("result") != null ? Integer.parseInt(data.getString("result")) : re;
                         }
-                    }
+                    }*/
+                    advice = true;//过风控，但是不作为判定条件，直接过
                 }
             }
         } else {
