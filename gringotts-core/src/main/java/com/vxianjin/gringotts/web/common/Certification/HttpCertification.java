@@ -277,6 +277,22 @@ public class HttpCertification implements IHttpCertification {
                             resultCode.setMsg("认证未通过，查询无结果");
                             break;
                     }
+                    if (resultFaceid.get("result_status") != null) {
+                        switch (resultFaceid.get("result_status").toString()) {
+                            case "02":
+                                resultCode.setMsg("认证未通过，系统判断为不同人 ");
+                                break;
+                            case "03":
+                                resultCode.setMsg("认证未通过，不能确定是否为同一人");
+                                break;
+                            case "04":
+                                resultCode.setMsg("认证未通过，公安网系统无法比对");
+                                break;
+                            case "05":
+                                resultCode.setMsg("认证未通过，公安库中没有网格照");
+                                break;
+                        }
+                    }
                 }
 
                 user.setRealCount(user.getRealCount() + 1);
