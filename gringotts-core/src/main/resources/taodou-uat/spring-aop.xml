@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+
+    <bean id="serviceIntercept" class="com.vxianjin.gringotts.intercept.ServiceDigestInteceptor"></bean>
+
+    <bean id="dalIntercept" class="com.vxianjin.gringotts.intercept.DalDigestInteceptor"></bean>
+
+    <aop:config>
+        <!--<aop:pointcut id="DubboService"-->
+        <!--expression="execution(* com.vxianjin.gringotts.*..*(..))" />-->
+        <!--controller 日志切点-->
+        <aop:pointcut id="controllerAopLog"
+                      expression="execution(* com.vxianjin.gringotts.*.controller.*Controller.*(..))" />
+        <!--service 日志切点-->
+        <aop:pointcut id="serviceAopLog"
+                      expression="execution(* com.vxianjin.gringotts.*.service.*Service.*(..))" />
+        <!--component 日志切点-->
+        <aop:pointcut id="componentAopLog"
+                      expression="execution(* com.vxianjin.gringotts.pay.component.*.*(..))" />
+
+        <!--DAO 日志切点-->
+        <aop:pointcut id="daoAopLog"
+                      expression="execution(* com.vxianjin.gringotts.*.dao.*Dao.*(..))" />
+
+        <aop:advisor advice-ref="serviceIntercept" pointcut-ref="controllerAopLog"></aop:advisor>
+        <aop:advisor advice-ref="serviceIntercept" pointcut-ref="serviceAopLog"></aop:advisor>
+        <aop:advisor advice-ref="serviceIntercept" pointcut-ref="componentAopLog"></aop:advisor>
+        <aop:advisor advice-ref="dalIntercept" pointcut-ref="daoAopLog"></aop:advisor>
+    </aop:config>
+</beans>

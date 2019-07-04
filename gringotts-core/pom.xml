@@ -119,6 +119,18 @@
                 <profiles.active>online</profiles.active>
             </properties>
         </profile>
+        <profile>
+            <id>taodou-uat</id>
+            <properties>
+                <profiles.active>taodou-uat</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>taodou-online</id>
+            <properties>
+                <profiles.active>taodou-online</profiles.active>
+            </properties>
+        </profile>
         <!--多米优相关end-->
     </profiles>
 

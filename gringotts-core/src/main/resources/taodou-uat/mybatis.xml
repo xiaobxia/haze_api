@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--         延迟加载总开关 -->
+        <setting name="lazyLoadingEnabled" value="true" />
+        <!--         禁止积极主动的加载 -->
+        <setting name="aggressiveLazyLoading" value="false" />
+        <setting name="callSettersOnNulls" value="true" />
+    </settings>
+    <typeAliases>
+        <!--		后台相关-->
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.Advertisement" alias="Advertisement" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackModule" alias="BackModule" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackRole" alias="BackRole" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackRoleModule" alias="BackRoleModule" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackUser" alias="BackUser" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackUserRole" alias="BackUserRole" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackTree" alias="BackTree" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackConfigParams" alias="BackConfigParams" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackNotice" alias="BackNotice" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BackMessageCenter" alias="BackMessageCenter" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.PlatfromAdvise" alias="PlatfromAdvise" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.ObtainUserShortMessage" alias="ObtainUserShortMessage" />
+        <!--		风控相关开始-->
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.RiskManageRule" alias="RiskManageRule" />
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.RiskOrders" alias="RiskOrders" />
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.CreditUser" alias="CreditUser" />
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.RiskCreditUser" alias="RiskCreditUser" />
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.RiskCreditLog" alias="RiskCreditLog" />
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.RiskRuleProperty" alias="RiskRuleProperty" />
+        <typeAlias type="com.vxianjin.gringotts.risk.pojo.RiskRuleCal" alias="RiskRuleCal" />
+        <!--风控相关结束-->
+        <!--		大屏幕展示相关开始-->
+        <typeAlias type="com.vxianjin.gringotts.show.pojo.UserShow" alias="UserShow" />
+        <typeAlias type="com.vxianjin.gringotts.show.pojo.Province" alias="Province" />
+        <typeAlias type="com.vxianjin.gringotts.show.pojo.IndexNum" alias="IndexNum" />
+        <!--大屏幕展示结束-->
+        <!--前台-->
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.OutOrders" alias="OutOrders" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.User" alias="User" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BorrowOrder" alias="UserOrder" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.UserSendMessage" alias="UserSendMessage" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.UserLoginLog" alias="UserLoginLog" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.UserContacts" alias="UserContacts" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.Content" alias="Content" />
+
+
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BorrowOrder" alias="BorrowOrder" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BorrowOrderDevice" alias="BorrowOrderDevice" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BorrowOrderTdDevice" alias="BorrowOrderTdDevice" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.ChannelInfo" alias="ChannelInfo" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.ChannelReport" alias="ChannelReport" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.Repayment" alias="Repayment" />
+
+
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.JsAwardRecord" alias="JsAwardRecord" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.JsDrawrollsRecord" alias="JsDrawrollsRecord" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.JsLoanPerson" alias="JsLoanPerson" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.JsStepConfig" alias="JsStepConfig" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.JsStepRecord" alias="JsStepRecord" />
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.YouGetMoneyMeRepayInfo" alias="YouGetMoneyMeRepayInfo" />
+
+        <typeAlias type="com.vxianjin.gringotts.web.pojo.BorrowContractInfo" alias="BorrowContractInfo" />
+
+        <!-- 用户坐标信息 -->
+        <typeAlias type="com.vxianjin.gringotts.attach.pojo.UserInfoTude" alias="UserInfoTude" />
+
+    </typeAliases>
+    <plugins>
+        <plugin interceptor="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
+            <property name="dialectClass"
+                      value="com.github.miemiedev.mybatis.paginator.dialect.MySQLDialect" />
+        </plugin>
+    </plugins>
+</configuration>
