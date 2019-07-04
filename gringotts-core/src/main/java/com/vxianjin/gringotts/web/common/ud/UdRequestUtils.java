@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.vxianjin.gringotts.util.StringUtils;
 import com.vxianjin.gringotts.util.date.DateUtil;
 import com.vxianjin.gringotts.util.properties.PropertiesConfigUtil;
+import lombok.Synchronized;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -24,19 +25,20 @@ public class UdRequestUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(UdRequestUtils.class);
 
+    @Synchronized
     public static String dataservice(JSONObject jsonObject) throws Exception {
         String signature = getMd5(jsonObject, PropertiesConfigUtil.get("UD_SECURITY_KEY"));
         String url = String.format(PropertiesConfigUtil.get("UD_DATASERVICE_URL"), PropertiesConfigUtil.get("UD_PUB_KEY"), "Y1001005",
                 DateUtil.formatDate(new Date(), "yyyyMMddHHmmss"), signature);
         logger.info("url地址为：" + url);
         String response = doHttpRequest(url, jsonObject);
-        logger.info("输出结果：" + JSON.toJSONString(response, true));
-        return null;
+        return response;
     }
 
     /**
      * Http请求
      */
+    @Synchronized
     public static String doHttpRequest(String url, JSONObject reqJson) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
         //设置传入参数
@@ -57,6 +59,7 @@ public class UdRequestUtils {
         return null;
     }
 
+    @Synchronized
     public static JSONObject getRequestHeader(String session_id) throws IOException {
         JSONObject header = new JSONObject();
         if (StringUtils.isNotBlank(session_id)) {
@@ -74,6 +77,7 @@ public class UdRequestUtils {
     /**
      * 生成md5签名
      */
+    @Synchronized
     public static String getMD5Sign(String pub_key, String partner_order_id, String sign_time, String security_key) throws UnsupportedEncodingException {
         String signStr = String.format("pub_key=%s|partner_order_id=%s|sign_time=%s|security_key=%s", pub_key, partner_order_id, sign_time, security_key);
         logger.info("认证比对阶段输入签名signField：" + signStr);
@@ -87,6 +91,7 @@ public class UdRequestUtils {
      * @return
      * @throws UnsupportedEncodingException
      */
+    @Synchronized
     public static String getMd5(JSONObject jsonObject, String secretkey) throws UnsupportedEncodingException {
         String sign = String.format("%s|%s", jsonObject, secretkey);
         logger.info("获取用户画像数据阶段输入签名：" + sign);

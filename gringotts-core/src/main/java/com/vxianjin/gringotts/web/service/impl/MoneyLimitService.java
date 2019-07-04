@@ -3,7 +3,6 @@ package com.vxianjin.gringotts.web.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.google.gson.JsonObject;
 import com.vxianjin.gringotts.risk.dao.IRiskCreditUserDao;
 import com.vxianjin.gringotts.risk.pojo.RiskCreditUser;
 import com.vxianjin.gringotts.risk.utils.ConstantRisk;
@@ -23,7 +22,6 @@ import com.vxianjin.gringotts.web.pojo.UserContacts;
 import com.vxianjin.gringotts.web.pojo.risk.*;
 import com.vxianjin.gringotts.web.service.IMoneyLimitService;
 import com.vxianjin.gringotts.web.utils.ZhimiUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -141,6 +138,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                 gxb_report = ZhimiUtils.uncompress(HttpUtil.MxGet(mxReportUrl, Authorization));
                 gxb_raw = ZhimiUtils.uncompress(HttpUtil.MxGet(mxRawUrl, Authorization));
                 JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id_no", user.getIdNumber());
                 udcredit_portrait = UdRequestUtils.dataservice(jsonObject);
             } catch (Exception e) {
                 logger.info("MoneyLimitService dealEd IOException" + e.getMessage());
