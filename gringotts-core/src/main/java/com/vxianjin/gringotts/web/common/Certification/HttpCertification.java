@@ -230,83 +230,85 @@ public class HttpCertification implements IHttpCertification {
         return resultCode;
     }
 
-    @Override
-    public ResponseContent udIdCardFace(User user, Map<String, String> params) throws IOException {
+    private ResponseContent udIdCardFace(User user, Map<String, String> params, UserUdcreditInfo udcreditInfo) throws IOException {
         ResponseContent resultCode = new ResponseContent("-1", "失败");
-        if (StringUtils.isNotBlank(params.get("userId"))) {
+        String resp_front = "";
+        if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
 
-            UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
-                put("userId", user.getId());
+            JSONObject reqJson = new JSONObject();
+            reqJson.put("header", UdRequestUtils.getRequestHeader(udcreditInfo.getHeaderSession()));
+
+            JSONObject body = new JSONObject();
+            body.put("id_name", params.get("idcard_name"));
+            body.put("id_number", params.get("idcard_number"));
+            body.put("photo", new HashMap<String, String>(){{
+                put("img_file", udcreditInfo.getLivingSession());
+                put("img_file_source", "0");
+                put("img_file_type", "1");
             }});
-            String resp_front = "";
-            if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
+            reqJson.put("body", body);
+            logger.info("udIdCardFace reqJson = 【{}】", reqJson.toString());
 
-                JSONObject reqJson = new JSONObject();
-                reqJson.put("header", UdRequestUtils.getRequestHeader(udcreditInfo.getHeaderSession()));
-
-                JSONObject body = new JSONObject();
-                body.put("photo", new HashMap<String, String>(){{
-                    put("img_file", udcreditInfo.getLivingSession());
-                    put("img_file_source", "0");
-                    put("img_file_type", "1");
-                }});
-                reqJson.put("body", body);
-                logger.info("udIdCardFace reqJson = 【{}】", reqJson.toString());
-
-                resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
-                        PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
-            }
+            resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
+                    PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
+        }
 
 
-            logger.info("interface udIdCardFace return info :" + resp_front);
-            if (StringUtils.isNotBlank(resp_front)) {
+        logger.info("interface udIdCardFace return info :" + resp_front);
+        if (StringUtils.isNotBlank(resp_front)) {
 
-                String jsonResult = JSONObject.parseObject(resp_front).getString("result");
-                String jsonData = JSONObject.parseObject(resp_front).getString("data");
+            String jsonResult = JSONObject.parseObject(resp_front).getString("result");
+            String jsonData = JSONObject.parseObject(resp_front).getString("data");
 
-                Map<String, Object> result = JSONUtil.parseJSON2Map(jsonResult);
-                if (!result.containsKey("errorcode")) {
-                    // 有源比对时，数据源人脸照片与待验证人脸照的比对结果
-                    Map<String, Object> resultFaceid = JSONUtil.parseJSON2Map(jsonData);
+            Map<String, Object> result = JSONUtil.parseJSON2Map(jsonResult);
+            if (!result.containsKey("errorcode")) {
+                // 有源比对时，数据源人脸照片与待验证人脸照的比对结果
+                Map<String, Object> resultFaceid = JSONUtil.parseJSON2Map(jsonData);
 
-                    if ("1".equals(resultFaceid.get("verify_status").toString()) && "T".equals(resultFaceid.get("suggest_result").toString())) {
-                        resultCode.setCode("0");
-                        resultCode.setMsg("成功");
-                    }
-
-                    user.setRealCount(user.getRealCount() + 1);
-                    user.setLastFullTime(new Date());
-                    userService.updateRealCount(user);
+                if ("1".equals(resultFaceid.get("verify_status").toString()) && "T".equals(resultFaceid.get("suggest_result").toString())) {
+                    resultCode.setCode("0");
+                    resultCode.setMsg("成功");
                 } else {
-                    logger.info("interface udIdCardFace error error_message=" + result.get("message").toString());
-                    resultCode.setCode("-1");
-                    String msg;
-                    msg = User.FACEID_MSG_TYPE.get(result.get("message").toString());
-                    if (msg != null) {
-                        resultCode.setMsg(msg);
-                    } else {
-                        resultCode.setMsg(User.FACEID_MSG_TYPE.get("OTHER_UD"));
+                    switch (resultFaceid.get("verify_status").toString()) {
+                        case "2":
+                            resultCode.setMsg("认证未通过，姓名与号码不一致 ");
+                            break;
+                        case "3":
+                            resultCode.setMsg("认证未通过，查询无结果");
+                            break;
                     }
-                    logger.info("interface udIdCardFace error userPhone=" + user.getUserPhone() + " userId=" + user.getId() + " errorMsg return info :" + jsonResult);
                 }
-            }
 
-        } else {
-            logger.info("人脸识别的时候需要传入userid编号已便保存人脸识别信息");
-            resultCode.setMsg("请传入用户唯一标识编号");
+                user.setRealCount(user.getRealCount() + 1);
+                user.setLastFullTime(new Date());
+                userService.updateRealCount(user);
+            } else {
+                logger.info("interface udIdCardFace error error_message=" + result.get("message").toString());
+                resultCode.setCode("-1");
+                String msg;
+                msg = User.FACEID_MSG_TYPE.get(result.get("message").toString());
+                if (msg != null) {
+                    resultCode.setMsg(msg);
+                } else {
+                    resultCode.setMsg(User.FACEID_MSG_TYPE.get("OTHER_UD"));
+                }
+                logger.info("interface udIdCardFace error userPhone=" + user.getUserPhone() + " userId=" + user.getId() + " errorMsg return info :" + jsonResult);
+            }
         }
         return resultCode;
     }
 
     @Override
     public ResponseContent udFace(User user, Map<String, String> params) throws IOException {
-        ResponseContent responseContent = udIdCardFace(user, params);//人脸比对前，先进行实名人像比对
-        if (!responseContent.isSuccessed()) {//没通过的直接返回
-            return responseContent;
-        }
-
         ResponseContent resultCode = new ResponseContent("-1", "失败");
         if (StringUtils.isNotBlank(params.get("userId"))) {
+            UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
+                put("userId", user.getId());
+            }});
+            ResponseContent responseContent = udIdCardFace(user, params, udcreditInfo);//人脸比对前，先进行实名人像比对
+            if (!responseContent.isSuccessed()) {//没通过的直接返回
+                return responseContent;
+            }
             Map<String, String> interval = SysCacheUtils.getConfigParams(BackConfigParams.INTERVAL);
             int maxCount = 3;
             if (interval != null) {
@@ -329,10 +331,6 @@ public class HttpCertification implements IHttpCertification {
                 }
             }
             if (toface) {
-
-                UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
-                    put("userId", user.getId());
-                }});
                 String resp_front = "";
                 if (udcreditInfo != null && StringUtils.isNoneBlank(udcreditInfo.getHeaderSession(), udcreditInfo.getLivingSession())) {
 

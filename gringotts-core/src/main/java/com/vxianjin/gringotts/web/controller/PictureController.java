@@ -505,16 +505,16 @@ public class PictureController extends BaseController {
                 String filePath = Uploader.getQuickPathname("jpg");
 
                 // 拼接全路径
-                File uploadedIdCardZFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appZ.png");
-                File uploadedIdCardFFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appF.png");
+                File uploadedIdCardZFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appZ.jpg");
+                File uploadedIdCardFFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appF.jpg");
                 FileUtils.copyURLToFile(new URL(idCardImageZUrl), uploadedIdCardZFile);
                 FileUtils.copyURLToFile(new URL(idCardImageFUrl), uploadedIdCardFFile);
 
                 String zPath = uploadedIdCardZFile.getPath().replaceAll("\\\\", "\\/");
                 String fPath = uploadedIdCardFFile.getPath().replaceAll("\\\\", "\\/");
 
-                Thumbnails.of(uploadedIdCardZFile).scale(1f).outputQuality(0.1f).toFile(uploadedIdCardZFile);
-                Thumbnails.of(uploadedIdCardFFile).scale(1f).outputQuality(0.1f).toFile(uploadedIdCardFFile);
+                Thumbnails.of(uploadedIdCardZFile).scale(1f).outputQuality(0.15f).outputFormat("jpg").toFile(uploadedIdCardZFile);
+                Thumbnails.of(uploadedIdCardFFile).scale(1f).outputQuality(0.15f).outputFormat("jpg").toFile(uploadedIdCardFFile);
                 String uploadZResult = uploadAliyun.uploadImage(uploadedIdCardZFile, zPath);
                 String uploadFResult = uploadAliyun.uploadImage(uploadedIdCardFFile, fPath);
 
@@ -531,8 +531,8 @@ public class PictureController extends BaseController {
                 //判断上传结果
                 if ("success".equals(uploadZResult) && "success".equals(uploadFResult)) {
                     logger.info("map result:{}",JSON.toJSONString(map));
-                    JpgThumbnail.getThumbnail(zPath, zPath, 250, 210);// 生成APP端的手机缩略图
-                    JpgThumbnail.getThumbnail(fPath, fPath, 250, 210);// 生成APP端的手机缩略图
+                    //JpgThumbnail.getThumbnail(zPath, zPath, 250, 210);// 生成APP端的手机缩略图
+                    //JpgThumbnail.getThumbnail(fPath, fPath, 250, 210);// 生成APP端的手机缩略图
                     String idCard = map.get("id_card_number");
                     String userName = map.get("name");
                     String gender = map.get("gender");
@@ -613,7 +613,7 @@ public class PictureController extends BaseController {
                 logger.info("获取文件类型：" + ext);
                 String filePath = Uploader.getQuickPathname(ext);
                 // 拼接全路径 2017-05-19
-                File uploadedFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appTx.png");
+                File uploadedFile = new File(realPath + FileUtil.createKey() + filePath.substring(0, filePath.lastIndexOf(".")) + "_appTx.jpg");
 
                 FileUtils.copyURLToFile(new URL(imageUrl), uploadedFile);
 
@@ -622,7 +622,7 @@ public class PictureController extends BaseController {
                     path = File.separator + path;
                 }
 
-                Thumbnails.of(uploadedFile).scale(1f).outputQuality(0.1f).toFile(uploadedFile);
+                Thumbnails.of(uploadedFile).scale(1f).outputQuality(0.15f).outputFormat("jpg").toFile(uploadedFile);
                 uploadAliyun.uploadImage(uploadedFile, path);
 
                 JpgThumbnail.getThumbnail(path, path, 150, 110);// 生成APP端的手机缩略图
