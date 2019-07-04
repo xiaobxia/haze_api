@@ -110,7 +110,8 @@ public class MoneyLimitService implements IMoneyLimitService {
                 put("userId", user_id);
             }});//用户通讯录列表
 
-            String model_name = "taoqianbao_v4";
+            String model_name = PropertiesConfigUtil.get("ZHIMI_MODEL_NAME");
+            int model_version_code = Integer.parseInt(model_name.substring(model_name.length() - 1));
             String apply_time = DateUtil.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss");
             String mobile = user.getUserName();
             String name = user.getRealname();
@@ -139,7 +140,9 @@ public class MoneyLimitService implements IMoneyLimitService {
                 gxb_raw = ZhimiUtils.uncompress(HttpUtil.MxGet(mxRawUrl, Authorization));
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id_no", user.getIdNumber());
-                udcredit_portrait = UdRequestUtils.dataservice(jsonObject);
+                if (model_version_code >= 4) {
+                    udcredit_portrait = UdRequestUtils.dataservice(jsonObject);
+                }
             } catch (Exception e) {
                 logger.info("MoneyLimitService dealEd IOException" + e.getMessage());
             }
@@ -161,8 +164,9 @@ public class MoneyLimitService implements IMoneyLimitService {
             request.setCarrier_data(carrier_data);
             request.setE_contacts(e_contacts);
             request.setContact(contact);
-
-            request.setUdcredit_portrait(udcredit_portrait);
+            if (model_version_code >= 4) {
+                request.setUdcredit_portrait(udcredit_portrait);
+            }
 
             String requestStr = JSON.toJSONString(request, SerializerFeature.WriteMapNullValue);
 
@@ -184,6 +188,7 @@ public class MoneyLimitService implements IMoneyLimitService {
                     riskRecord.setGxbToken(mxReportUrl);
                     riskRecord.setScore(jsonObject.getInteger("score"));
                     riskRecord.setCreateTime(new Date());
+                    riskRecord.setHistoryApply(jsonObject.getString("history_apply"));
                     userDao.saveRiskRecord(riskRecord);
 
                     //原有的强风控回调储存改为同步得到结果判断结果，进行持久化

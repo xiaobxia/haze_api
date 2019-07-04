@@ -106,9 +106,8 @@ public class AutoRiskService implements IAutoRiskService {
                     }catch (Exception e){
                         logger.error("save credit report error:{}",e);
                     }
-                    JSONObject jsonObject = JSON.parseObject(result);
-
-                    /*if(jsonObject!=null){
+                    /*JSONObject jsonObject = JSON.parseObject(result);
+                    if(jsonObject!=null){
                         if("0000".equals(jsonObject.getString("code"))){
                             JSONObject data = jsonObject.getJSONObject("data");
                             advice = "10".equals(data.getString("result"));

@@ -15,6 +15,7 @@ public class RiskRecord {
     private String gxbToken;//公信宝运营商报告URL
     private Integer score;//风控分数
     private Date createTime;//创建时间
+    private String historyApply;
 
     public Integer getId() {
         return id;
@@ -88,6 +89,14 @@ public class RiskRecord {
         this.createTime = createTime;
     }
 
+    public String getHistoryApply() {
+        return historyApply;
+    }
+
+    public void setHistoryApply(String historyApply) {
+        this.historyApply = historyApply;
+    }
+
     @Override
     public String toString() {
         return "RiskRecord{" +
@@ -100,6 +109,7 @@ public class RiskRecord {
                 ", gxbToken='" + gxbToken + '\'' +
                 ", score=" + score +
                 ", createTime=" + createTime +
+                ", historyApply='" + historyApply + '\'' +
                 '}';
     }
 }

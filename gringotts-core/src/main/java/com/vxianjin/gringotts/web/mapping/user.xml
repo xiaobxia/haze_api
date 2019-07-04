@@ -869,7 +869,8 @@
 		gxb_report_url,
 		gxb_token,
 		score,
-		create_time
+		create_time,
+		history_apply
 		)VALUES (
 		#{id},
 		#{userId},
@@ -879,7 +880,8 @@
 		#{gxbReportUrl},
 		#{gxbToken},
 		#{score},
-		#{createTime}
+		#{createTime},
+		#{historyApply}
 		)
 	</insert>
 
