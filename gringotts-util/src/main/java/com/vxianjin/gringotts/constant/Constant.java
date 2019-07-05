@@ -213,8 +213,8 @@ public class Constant {
     public static final String CACHE_INDEX_INFO_KEY = "INDEX_INFO_";// 动态缓存KEY
 
     public static final int FOR_BASE = 10000;// 默认基数
-    public static final int AMOUNT_MAX = 100000;// 默认最大金额
-    public static final int AMOUNT_MIN = 20000;// 默认最小金额
+    public static final int AMOUNT_MAX = 2000000;// 默认最大金额
+    public static final int AMOUNT_MIN = 200000;// 默认最小金额
 
     public static final double RATE_MIN = 0.098;// 默认7天-1000利率
     public static final double RATE_MAX = 0.15;// 默认14天1500利率

@@ -153,7 +153,7 @@ public class FuiouRepayServiceImpl implements FuiouRepayService {
                 final long amount = re.getRepaymentAmount();
                 outOrders.setFuiouOrderId(fuiouOrderId);
                 //支付成功
-                if ("0000".equals(status)) {
+                    if ("0000".equals(status)) {
                     logger.info("FuiouRepayServiceImpl.payWithholdCallback orderNo:" + orderNo + " pay success");
                     // 还款回调处理
                     repayService.repayCallBackHandler(re, detail, outOrders, orderMoney, true, "", "富友",user);

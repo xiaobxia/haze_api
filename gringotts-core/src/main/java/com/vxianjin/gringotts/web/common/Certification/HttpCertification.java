@@ -447,7 +447,7 @@ public class HttpCertification implements IHttpCertification {
      */
     private int checkIdPhoto(Map<String, Object> checkResult) {
         try {
-            JSONObject legalityJson = (JSONObject) checkResult.get("legality");
+            net.sf.json.JSONObject legalityJson = (net.sf.json.JSONObject) checkResult.get("legality");
             if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
                 return 1;//测试环境下直接返回为正式身份证
             }
