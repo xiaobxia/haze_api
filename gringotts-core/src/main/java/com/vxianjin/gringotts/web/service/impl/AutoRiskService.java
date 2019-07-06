@@ -61,68 +61,75 @@ public class AutoRiskService implements IAutoRiskService {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void dealRemoteCreditReport(Integer assetBorrowId) {
-        logger.info("dealRemoteCreditReport start");
-        logger.info("dealRemoteCreditReport assetBorrowId=" + assetBorrowId);
-        BorrowOrder borrowOrder = borrowOrderDao.selectByPrimaryKey(assetBorrowId);
-        if(borrowOrder.getStatus() != 0){
-            logger.error("adviceExecute failure borrowId = " + assetBorrowId);
-            throw new RuntimeException("adviceExecute failure borrowId = " + assetBorrowId);
-        }
-        boolean advice =false;
-        User user = userDao.searchByUserid(borrowOrder.getUserId());
-
-        //黑名单
-        UserBlack userBlack = userBlackDao.findSelective(new HashMap<String, Object>() {{
-            put("userPhone", user.getUserName());
-        }});
-
-        Integer sr = 10;
-
-        if (userBlack == null) {
-            StrongRiskResult strongRiskResult = userDao.getStrongRiskResultByUserId(String.valueOf(borrowOrder.getUserId()));
-            if(strongRiskResult != null){
-                sr = Integer.parseInt(strongRiskResult.getResult());
-                if(!"30".equals(strongRiskResult.getResult())){
-                    Map<String,Object> map = new HashMap<>();
-                    map.put("orderNo", "wr"+DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+IdUtil.generateRandomStr(6));
-                    map.put("consumerNo",PropertiesConfigUtil.get("RISK_BUSINESS")+borrowOrder.getUserId());
-                    map.put("borrowNo",borrowOrder.getId());
-                    map.put("channel",user.getUserFrom()==null?"0":user.getUserFrom());
-                    map.put("borrowType",borrowOrder.getLoanTerm());
-                    map.put("scene",100);
-    //                JSONObject blackData = new JSONObject();
-    //                blackData.put("blackBox",tdDevice);
-    //                if("android".equals(clientType)){
-    //                    blackData.put("appName","sdhb_and");
-    //                }else{
-    //                    blackData.put("appName","sdhb_ios");
-    //                }
-    //                map.put("datas",blackData.toJSONString());
-                    String result = HttpUtil.postForm(PropertiesConfigUtil.get("risk_url"),map);
-                    logger.info("risk result:{}",result);
-                    try{
-                        saveCreditReport(result,borrowOrder.getUserId(),assetBorrowId);
-
-                    }catch (Exception e){
-                        logger.error("save credit report error:{}",e);
-                    }
-                    /*JSONObject jsonObject = JSON.parseObject(result);
-                    if(jsonObject!=null){
-                        if("0000".equals(jsonObject.getString("code"))){
-                            JSONObject data = jsonObject.getJSONObject("data");
-                            advice = "10".equals(data.getString("result"));
-                            //re = data.getString("result") != null ? Integer.parseInt(data.getString("result")) : re;
-                        }
-                    }*/
-                    advice = true;//过风控，但是不作为判定条件，直接过
-                }
+        try {
+            Thread.sleep(2000);//目前没有其他解决方案，只能先挂起2秒，等待上一个线程走完
+            logger.info("dealRemoteCreditReport start");
+            logger.info("dealRemoteCreditReport assetBorrowId=" + assetBorrowId);
+            BorrowOrder borrowOrder = borrowOrderDao.selectByPrimaryKey(assetBorrowId);
+            if(borrowOrder.getStatus() != 0){
+                logger.error("adviceExecute failure borrowId = " + assetBorrowId);
+                throw new RuntimeException("adviceExecute failure borrowId = " + assetBorrowId);
             }
-        } else {
-            sr = userBlack.getUserType().intValue() == 0 ? 30 : 20;
+            boolean advice =false;
+            User user = userDao.searchByUserid(borrowOrder.getUserId());
+
+            //黑名单
+            UserBlack userBlack = userBlackDao.findSelective(new HashMap<String, Object>() {{
+                put("userPhone", user.getUserName());
+            }});
+
+            Integer sr;
+
+            if (userBlack == null) {
+                StrongRiskResult strongRiskResult = userDao.getStrongRiskResultByUserId(String.valueOf(borrowOrder.getUserId()));
+                if(strongRiskResult != null){
+                    sr = Integer.parseInt(strongRiskResult.getResult());
+                    if(!"30".equals(strongRiskResult.getResult())){
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("orderNo", "wr"+DateUtil.formatDateNow("yyyyMMddHHmmssSSS")+IdUtil.generateRandomStr(6));
+                        map.put("consumerNo",PropertiesConfigUtil.get("RISK_BUSINESS")+borrowOrder.getUserId());
+                        map.put("borrowNo",borrowOrder.getId());
+                        map.put("channel",user.getUserFrom()==null?"0":user.getUserFrom());
+                        map.put("borrowType",borrowOrder.getLoanTerm());
+                        map.put("scene",100);
+        //                JSONObject blackData = new JSONObject();
+        //                blackData.put("blackBox",tdDevice);
+        //                if("android".equals(clientType)){
+        //                    blackData.put("appName","sdhb_and");
+        //                }else{
+        //                    blackData.put("appName","sdhb_ios");
+        //                }
+        //                map.put("datas",blackData.toJSONString());
+                        String result = HttpUtil.postForm(PropertiesConfigUtil.get("risk_url"),map);
+                        logger.info("risk result:{}",result);
+                        try{
+                            saveCreditReport(result,borrowOrder.getUserId(),assetBorrowId);
+
+                        }catch (Exception e){
+                            logger.error("save credit report error:{}",e);
+                        }
+                        /*JSONObject jsonObject = JSON.parseObject(result);
+                        if(jsonObject!=null){
+                            if("0000".equals(jsonObject.getString("code"))){
+                                JSONObject data = jsonObject.getJSONObject("data");
+                                advice = "10".equals(data.getString("result"));
+                                //re = data.getString("result") != null ? Integer.parseInt(data.getString("result")) : re;
+                            }
+                        }*/
+                        advice = true;//过风控，但是不作为判定条件，直接过
+                    }
+                } else {
+                    sr = 20;
+                }
+            } else {
+                sr = userBlack.getUserType().intValue() == 0 ? 30 : 20;
+            }
+            boolean blackFlag = userBlack != null ? userBlack.getUserType().intValue() == 0 : false;
+            logger.info("请求执行建议方法，参数值：{},{},{},{},{}", assetBorrowId, borrowOrder.getUserId(), advice, sr, blackFlag);
+            adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr, blackFlag);
+        } catch (Exception e) {
+            logger.info("dealRemoteCreditReport error：{}", e.getMessage());
         }
-        boolean blackFlag = userBlack != null ? userBlack.getUserType().intValue() == 0 : false;
-        logger.info("请求执行建议方法，参数值：{},{},{},{},{}", assetBorrowId, borrowOrder.getUserId(), advice, sr, blackFlag);
-        adviceExecute(assetBorrowId, borrowOrder.getUserId(), advice, sr, blackFlag);
     }
 
 
