@@ -184,7 +184,7 @@
     and bpc.borrow_amount = #{borrowAmount}-->
 
     <select id="queryByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
-      select id, user_id, borrow_product_id, deal_flag, remark, user_amount_limit, borrow_day
+      select id, user_id, borrow_product_id, deal_flag, remark, user_amount_limit, borrow_day, update_time
       from user_borrowquota_snapshot
       where user_id = #{userId} and deal_flag = 'n'
   </select>
