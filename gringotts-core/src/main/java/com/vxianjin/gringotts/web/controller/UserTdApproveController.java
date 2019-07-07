@@ -336,9 +336,6 @@ public class UserTdApproveController extends BaseController {
                 if ("2".equals(newUser.getTdStatus())) {
                     //更新newFlag
                     userDao.updateUserNewFlagById(newUser);
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("userId", user.getId());
-                    map.put("newAmountMax", borrowProductConfig.getBorrowAmount().intValue());
 
                     if ("1".equals(user.getNewFlag())) {
                         // 用户额度更新 认证完
@@ -353,13 +350,18 @@ public class UserTdApproveController extends BaseController {
                             params.put("borrowDay","7");*/
                             logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + borrowProductConfig.getId() + ";moneyLimit:" + borrowProductConfig.getBorrowAmount());
                             userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),borrowProductConfig.getId(),borrowProductConfig.getBorrowAmount(),borrowProductConfig.getBorrowDay());
-
-                            logger.info("createGXBNotifyCallback changeUserLimit start userId=" + userId);
-                            borrowOrderService.changeUserLimit(map);
-                            logger.info("createGXBNotifyCallback changeUserLimit end userId=" + userId);
                         }catch (Exception e){
                             logger.error("addUserQuota has error:{}" , e);
                         }
+
+                        BigDecimal userMaxLimit = userQuotaSnapshotDao.queryUserMaxLimit(Integer.parseInt(userId));
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("userId", user.getId());
+                        map.put("newAmountMax", userMaxLimit.intValue());
+                        logger.info("createGXBNotifyCallback changeUserLimit start userId=" + userId);
+                        borrowOrderService.changeUserLimit(map);
+                        logger.info("createGXBNotifyCallback changeUserLimit end userId=" + userId);
+
                     }
                     logger.info("createGXBNotifyCallback success");
 
