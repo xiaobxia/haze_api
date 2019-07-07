@@ -346,9 +346,6 @@ public class UserTdApproveController extends BaseController {
                         quotaSnapshotService.updateUserQuotaSnapshots(user);
                         logger.info("update user quotaSnapShot end userId: " + user.getId());*/
 
-                        logger.info("createGXBNotifyCallback changeUserLimit start userId=" + userId);
-                        borrowOrderService.changeUserLimit(map);
-                        logger.info("createGXBNotifyCallback changeUserLimit end userId=" + userId);
                         try{
                             //初始化用户额度配置
                             /*HashMap<String, String> params = new HashMap<>();
@@ -356,6 +353,10 @@ public class UserTdApproveController extends BaseController {
                             params.put("borrowDay","7");*/
                             logger.info("addUserQuota params:userId" + user.getId() + ";configId:" + borrowProductConfig.getId() + ";moneyLimit:" + borrowProductConfig.getBorrowAmount());
                             userQuotaSnapshotDao.addUserQuota(Integer.valueOf(user.getId()),borrowProductConfig.getId(),borrowProductConfig.getBorrowAmount(),borrowProductConfig.getBorrowDay());
+
+                            logger.info("createGXBNotifyCallback changeUserLimit start userId=" + userId);
+                            borrowOrderService.changeUserLimit(map);
+                            logger.info("createGXBNotifyCallback changeUserLimit end userId=" + userId);
                         }catch (Exception e){
                             logger.error("addUserQuota has error:{}" , e);
                         }
