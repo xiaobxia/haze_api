@@ -229,17 +229,18 @@ public class UserQuotaSnapshotServiceImpl implements UserQuotaSnapshotService, I
         int borrowDay = nowProductConfig.getBorrowDay();
 
 
-        BorrowOrder oneBorrow = borrowOrderService.findOneBorrow(orderId);
-        Integer oldProductId = oneBorrow.getProductId();
-        BorrowProductConfig oldProductConfig = borrowProductConfigService.queryProductById(oldProductId);
-        String oldNowLimit = oldProductConfig.getBorrowAmount().toString();
-        int oldBorrowDay = oldProductConfig.getBorrowDay();
+        //BorrowOrder oneBorrow = borrowOrderService.findOneBorrow(orderId);
+        //Integer oldProductId = oneBorrow.getProductId();
+        //BorrowProductConfig oldProductConfig = borrowProductConfigService.queryProductById(oldProductId);
+        //String oldNowLimit = oldProductConfig.getBorrowAmount().toString();
+        //int oldBorrowDay = oldProductConfig.getBorrowDay();
 
         // 判断是否存在
         //UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, borrowDay, nowLimit);
-        UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshotMapper.queryByUserIdBorrowDay(userId, oldBorrowDay, oldNowLimit);
+        List<UserQuotaSnapshot> userQuotaSnapshots = userQuotaSnapshotMapper.queryByUserId(String.valueOf(userId));
         // 以前有则跟新，没有则插入
-        if (userQuotaSnapshot != null) {
+        if (userQuotaSnapshots != null && userQuotaSnapshots.size() > 0) {
+            UserQuotaSnapshot userQuotaSnapshot = userQuotaSnapshots.get(0);
             log.info("update user qupta ,nowProductConfig " + nowProductConfig.getId() + " nowLimit :" + nowLimit + " agoLimit:" + userQuotaSnapshot.getUserAmountLimit() + " lastUpdateTime:" + DateUtil.formatDate(userQuotaSnapshot.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
             // 是否需要跟新最大
             if (userQuotaSnapshot.getBorrowProductId().equals(nowProductConfig.getId())) {
