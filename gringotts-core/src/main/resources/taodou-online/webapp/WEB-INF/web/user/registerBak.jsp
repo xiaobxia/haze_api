@@ -56,7 +56,7 @@
 
                 <input type="hidden" placeholder="来源" data-role="none" name="user_from" id="user_from" value="${user_from}">
                 <input type="hidden" data-role="none" name="token" id="token" value="${token}">
-                <p>注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《多米优注册协议》</a>
+                <p>注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《淘豆钱包注册协议》</a>
                     <a rel="external" href="${path}/agreement/creditExtension.do?appName=${appKey}" class="ui-link">《信用授权协议》</a></p>
                 <a rel="external" href="#" onclick="nextStep();" class="com-btn ui-link">立即注册 极速借款</a>
             </div>
@@ -67,7 +67,7 @@
                 <!-- 2016-12-22添加 -->
                 <h3>简单的借款流程</h3>
                 <img src="${basePath}/images/c_01.png" alt="">
-                <h3>多米优优势</h3>
+                <h3>淘豆钱包优势</h3>
                 <p>1、无需抵押，无需担保，纯信用线上借贷。</p>
                 <p>2、五分钟资料填写，最快三分钟到账。</p>
                 <p>3、银行级数据保护，为您保驾护航。</p>

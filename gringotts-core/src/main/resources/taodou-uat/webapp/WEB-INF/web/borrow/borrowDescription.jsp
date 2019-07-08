@@ -31,7 +31,7 @@ String basePath = path + "/common/web";
     <div class="ui-page ui-page-theme-a ui-page-active" data-role="page"  style="background:#fff;">
        <%-- <div class="header">
             <a class="back_arr" href="javascript:void(0);"></a>
-            <h1>多米优-纯信用小额借钱极速放贷</h1>
+            <h1>淘豆钱包-纯信用小额借钱极速放贷</h1>
         </div>--%>
         <!-- main start -->
         <div class="wrapper">

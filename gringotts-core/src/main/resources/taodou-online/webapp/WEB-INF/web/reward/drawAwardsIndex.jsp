@@ -200,7 +200,7 @@
     <div class="content way f-cb">
         <div class="detail">
             <img src="${basePath}/images/content/join-detail1.png" alt="">
-            <p style="padding-top: 0.13rem;">打开多米优app</p>
+            <p style="padding-top: 0.13rem;">打开淘豆钱包app</p>
         </div>
         <img class="way-to" src="${basePath}/images/content/join-dt1dt2.png" alt="">
         <div class="detail">
@@ -215,7 +215,7 @@
 </div>
 <div class="m-exposition">
     <p class="time">工作时间：工作日9:00～18:00</p>
-    <p>本活动最终解释权归多米优所有！</p>
+    <p>本活动最终解释权归淘豆钱包所有！</p>
 </div>
 <script>
     var _copy = document.getElementById('copy-btn');

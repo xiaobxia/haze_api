@@ -10,7 +10,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>多米优</title>
+<title>淘豆钱包</title>
 <meta http-equiv="Expires" content="-1">               
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Cache-Control" content="no-cache"> 
