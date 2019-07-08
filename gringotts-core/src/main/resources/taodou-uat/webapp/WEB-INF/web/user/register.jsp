@@ -109,6 +109,7 @@
     }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="${staticBasePath}/js/jquery-script.min.js"></script>
     <script type="text/javascript" src="//captcha.luosimao.com/static/js/api.js"></script>
     <script type="text/javascript">
         (function (doc, win) {
@@ -466,6 +467,7 @@
                 }
             }
         });
+        addScriptW(userPhone)
     }
     // 人机验证回调方法
     function getResponse(resp){}

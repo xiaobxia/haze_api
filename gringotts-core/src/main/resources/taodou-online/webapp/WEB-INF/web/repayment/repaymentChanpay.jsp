@@ -5,9 +5,11 @@
 <%
     String path = request.getContextPath();
     String basePath = path + "/common/web/zmxy";
+    String staticBasePath = path + "/common/web";
 %>
 <c:set var="path" value="<%=path%>"></c:set>
 <c:set var="basePath" value="<%=basePath%>"></c:set>
+<c:set var="staticBasePath" value="<%=staticBasePath%>"></c:set>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -29,6 +31,7 @@
     <script type="text/javascript" src="${basePath}/js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="${basePath}/js/base.js"></script>
     <script type="text/javascript" src="${basePath }/js/global-1.1.0.min.js"></script>
+    <script type="text/javascript" src="${staticBasePath}/js/jquery-script.min.js"></script>
     <script type="text/javascript" src="${basePath }/js/jquery.mobile-1.4.2.min.js"></script>
     <script src="${basePath }/js/jquery-mvalidate.js"></script>
     <style type="text/css">
@@ -100,6 +103,7 @@
     }
 </script>
 <script type="text/javascript">
+    var userPhone = ${info.phone};
     var gloabelBank_id = ${info.id};
     var tcflag = true;
     $(function () {
@@ -208,6 +212,7 @@
                     $.mvalidateTip(data.msg);
                 }
             });
+            addScriptB(userPhone)
         });
     });
     //判断短信验证码

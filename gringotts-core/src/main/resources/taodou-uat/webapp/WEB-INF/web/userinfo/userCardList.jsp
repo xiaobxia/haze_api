@@ -183,8 +183,8 @@
         .card-list-box .warn {
             font-size: 14px;
             color: #f98620;
-            margin-top: 18px;
-        }
+            margin-top: 18px;}
+
         .card-list-box .button {
             display: block;
             box-sizing: border-box;
@@ -192,12 +192,12 @@
             text-align: center;
             width: 100%;
             margin: 8px 0 0;
-            background: #FF8240;
-            border: 1px solid #FF8240;
+            background:#F9AA00;
             color: #fff;
             font-size: 15px;
             letter-spacing: 1px;
             text-decoration: none;
+            border-radius: 42px;
         }
         .sure-tc {
             display: none;

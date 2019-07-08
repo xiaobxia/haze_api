@@ -226,8 +226,6 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .sum-box p { float: left; }
 .sum-box p strong { color: #eba220; font-weight: bold; }
 .sum-box a { float: right; color: #eba220; }
-.js-btn { width: 17.5rem; height: 2.2rem; display: block;
-	background-color: #ff5145; font-size: 0.85rem; line-height: 2.2rem; text-align: center; color: #fff !important; border-radius: 2.2rem; margin: 2.2rem auto 0; }
 
 /* 还款成功&失败 */
 .repayment-result { font-size: 1.2rem; color: #555; text-align: center; font-weight: bold; }
@@ -263,7 +261,7 @@ body { width: 100%; margin: 0 auto; font-weight: 300; text-shadow: none !importa
 .jk-list li p { font-size: 0.85rem; line-height: 0.85rem; color: #333; margin-bottom: 0.25rem; }
 .jk-list li p span { margin-left: 0.5rem; color: #666; }
 .btn-box { position: fixed; bottom: 0; width: 17.75rem; padding: 0.5rem; background-color: #fff; }
-.btn-box a { float: right; display: block; width: 8.6rem; height: 2.2rem; background-color: #FF8240; font-size: 0.9rem; color: #fff; line-height: 2.2rem; text-align: center; border-radius: 0.25rem; }
+.btn-box a { float: right; display: block; width: 8.6rem; height: 2.2rem; background-color: #F9AA00; font-size: 0.9rem; color: #fff; line-height: 2.2rem; text-align: center; border-radius: 0.25rem; }
 .btn-box a:first-child { float: left; }
 .jk-step { position: relative; }
 .jk-step dd { overflow: hidden; }

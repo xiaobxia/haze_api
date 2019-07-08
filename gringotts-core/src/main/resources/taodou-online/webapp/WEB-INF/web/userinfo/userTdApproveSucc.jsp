@@ -27,14 +27,13 @@
     <script type="text/javascript" src="${basePath }/js/base.js"></script>
     <style>
         .js-btn {
-            width: 9.5rem;
+            width: 11.5rem;
             height: 2.25rem;
             line-height: 2.25rem;
             text-align: center;
-            background: transparent !important;
-            color: #FF8240 !important;
+            background:#F9AA00;
+            color: #fff;
             border-radius: 2.25rem;
-            border: 1px solid #FF8240;
         }
         .rz-result p,
         .pannel-btn a {
@@ -49,6 +48,11 @@
             font-weight: normal;
             margin-top: 1.25rem;
         }
+        .v-i-icon {
+            display: inline-block;
+            width: 2rem;
+            margin-bottom: 0.3rem;
+        }
     </style>
 </head>
 <body>
@@ -56,15 +60,19 @@
     <div class="wrapper">
         <div class="rz-result" style="margin:0 0 -2rem;">
             <c:if test="${code == 0}">
+                <img src="${basePath }/images/vf.png" class="v-i-icon">
                 <p>运营商认证</p>
             </c:if>
             <c:if test="${code == 200}">
+                <img src="${basePath }/images/vs.png" class="v-i-icon">
                 <p>运营商认证已完成</p>
             </c:if>
             <c:if test="${code == 100 || code == 300 || code == 500}">
+                <img src="${basePath }/images/vf.png" class="v-i-icon">
                 <p>运营商认证失败,重新发起认证</p>
             </c:if>
             <c:if test="${code == 400}">
+                <img src="${basePath }/images/vf.png" class="v-i-icon">
                 <p>运营商认证失败,请重新登录</p>
             </c:if>
             <!--认证中-->

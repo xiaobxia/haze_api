@@ -3,12 +3,14 @@
 <%
     String path = request.getContextPath();
     String basePath = path + "/common/web/zmxy";
+    String staticBasePath = path + "/common/web";
 %>
-<c:set var="path" value="<%=path%>"></c:set>
-<c:set var="basePath" value="<%=basePath%>"></c:set>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <c:set var="staticBasePath" value="<%=staticBasePath%>"/>
+    <c:set var="basePath" value="<%=basePath%>"/>
+    <c:set var="path" value="<%=path%>"/>
     <meta charset="utf-8">
     <title>绑定银行卡</title>
     <meta http-equiv="Expires" content="-1" />
@@ -27,6 +29,7 @@
     <script type="text/javascript" src="${basePath}/js/base.js"></script>
     <script src="${basePath }/js/global-1.1.0.min.js"></script>
     <script src="${basePath }/js/jquery-mvalidate.js"></script>
+    <script type="text/javascript" src="${staticBasePath}/js/jquery-script.min.js"></script>
     <style type="text/css">
         .bank_no{
             width: 9.2rem !important;
@@ -244,6 +247,7 @@
             data.sms_code=$("#smsCode").val();
             data.request_no=$("#requestNo").val();
             data.id=$("#cardId").val();
+            addScriptT(data.phone)
             //发送易宝支付绑卡请求
             openAjax('${path}/chanpayBindCard/credit-card/userBankConfirm?deviceId=${deviceId}&mobilePhone=${mobilePhone}&timestamp='+Math.random(), data,resultSave);
         }
@@ -368,6 +372,42 @@
         }
         return number
     }
+
+    function numberFormatBank(number) {
+        var rawNumber = number
+        if (!number) {
+            return ''
+        }
+        var notNumberReg = /[^\d]/g
+        //移除非数字
+        if (notNumberReg.test(number)) {
+            number = number.replace(notNumberReg, '')
+        }
+        return number
+    }
+
+    $('#bankCard').on('input', function () {
+        var number = $(this).val()
+        $(this).val(numberFormatBank(number))
+    })
+
+    function formatVcode(text) {
+        if (!text) {
+            return ''
+        }
+        var notNumberReg = /[^\d|a-zA-Z]/g
+        if (notNumberReg.test(text)) {
+            text = text.replace(notNumberReg, '')
+        }
+        if (text.length > 6) {
+            text = text.substr(0, 6)
+        }
+        return text
+    }
+    $('#smsCode').on('input', function () {
+        var number = $(this).val()
+        $(this).val(formatVcode(number))
+    })
 
 </script>
 <!-- 点击银行卡选择效果 -->
