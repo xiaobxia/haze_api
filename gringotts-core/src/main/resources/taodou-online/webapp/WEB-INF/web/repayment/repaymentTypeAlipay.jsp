@@ -208,7 +208,7 @@
                 </a>
                 <div class="content">
                     <div class="ewm bank_desc">
-                        <p>户名：伟福科技有限公司</p>
+                        <p>户名：杭州浩瀚网络科技有限公司</p>
                         <p>账号：<span class="content_num" id="card_num">31050180363700000448</span><button id="copy_card_num" class="copy_btn" href="javascript:;">复制</button></p>
                         <p>开户行：中国建设银行上海市分行松江新城支行</p>
                     </div>

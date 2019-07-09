@@ -183,7 +183,7 @@
         <div class="copyright" style="display: none;">
             <p align="center">投资有风险  请谨慎</p>
             <p align="center"></p>
-            <p>伟福科技有限公司</p>
+            <p>杭州浩瀚网络科技有限公司</p>
             <p>沪ICP备17044849号-1</p>
         </div>
     </div>-->
