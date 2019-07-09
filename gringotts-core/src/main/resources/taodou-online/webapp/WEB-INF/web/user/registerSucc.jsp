@@ -102,17 +102,17 @@
         .regist-bg .banner-desc{margin:35px 0 50px}
         .regist-bg .banner-desc p{font-size:18px;color:#fff;text-align:center;line-height:36px}
         .regist-bg .banner-desc p span {font-size: 21px;margin: 0 2px;}
-        .success-main1{background-color:#fff;width:90%;margin:20px auto 0;border-radius:10px;padding:6% 5%;box-sizing:border-box}
+        .success-main1{background-color:#FFF7F0;width:90%;margin:20px auto 0;border-radius:10px;padding:6% 5%;box-sizing:border-box}
         .success-main1 .success-info{background:url("${basePath }/images/e_01.png") 0 0 no-repeat;background-size:100%}
         .success-main1 .success-box p{color:#333;font-size:16px;text-align:center;margin-bottom:30px}
         .success-main1 .success-box .success-info{width:180px;height:140px;margin:30px auto;}
         .success-main1 .success-box .success-info .value{padding:52px 0 5px;text-align:center;color:#ff4f3e;font-weight:400;font-size:48px}
         .success-main1 .success-box .success-info em{display:block;font-size:14px;font-style:normal;color:#666;text-align:center}
-        .success-main1 .com-btn{background:#ff7700;width:90%;text-align:center;color:#fff;font-size:16px;margin:0 auto;line-height:45px;height:auto;border-radius:50px;display:block;text-decoration:none}
+        .success-main1 .com-btn{background:#FFA720;width:90%;text-align:center;color:#fff;font-size:16px;margin:0 auto;line-height:45px;height:auto;border-radius:50px;display:block;text-decoration:none}
         .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
         .banner-pic {
             position: relative;
-            margin-bottom: -0.7rem;
+            margin-top: 0.7rem;
             z-index: -100;
         }
         .banner-pic img {display: block;}

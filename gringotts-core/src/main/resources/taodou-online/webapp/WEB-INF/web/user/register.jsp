@@ -36,7 +36,7 @@
     }
     input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
     .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;}
-    .regist-bg .register{background-color:#fff;border-radius:10px;padding:20px 30px;}
+    .regist-bg .register{background-color:#FFF7F0;border-radius:10px;padding:20px 30px;}
     .regist-bg .banner-txt{margin:0 0 0;padding-top:7%}
     .regist-bg .banner-txt p{font-size:26px;text-align:center;color:#fff;letter-spacing:.8px}
     .regist-bg .banner-txt p span{font-size:45px;color:#ffcf00}
@@ -47,17 +47,23 @@
     .regist-bg .register li{position:relative;box-shadow:none;border-radius:2px;font-size: 16px;}
     .regist-bg .register li:not(:last-child) {margin-bottom:16px;}
     .regist-bg .register li input::-webkit-input-placeholder {color: #bbb;}
-    .regist-bg .register .com-btn{background:#ff7700;display:block;width:200px;height:44px;color:#fff;font-size:16px;line-height:44px;text-align:center;text-decoration:none;border-radius:35px;margin: 0 auto 15px;}
-    .regist-bg .register li input{font-size:14px;font-weight: 300;padding:0 10px;height:45px;line-height:45px;display:block;width:100%;border: 1px solid #aaa;border-radius: 8px;box-sizing: border-box;}
+    .regist-bg .register .com-btn{background:#FFA720;display:block;height:44px;color:#fff;font-size:16px;line-height:44px;text-align:center;text-decoration:none;border-radius:35px;margin: 0 auto 15px;}
+    .regist-bg .register li input{font-size:14px;font-weight: 300;padding:0 10px 0 30px;height:45px;line-height:45px;display:block;width:100%;border: 1px solid #DBDBDB;border-radius: 45px;box-sizing: border-box;background-color: #FFF7F0;}
     .regist-bg .register li .pst00{position:absolute;top:0;right:0}
-    .regist-bg .register li .gain-yzm{font-size:16px;color:#FF1400;line-height:45px;right:10px;}
-    .regist-bg .register li .captcha-pic{width:40%;height:100%;position:absolute;top:0;right:0}
+    .regist-bg .register li .gain-yzm{font-size:14px;color:#FFA720;line-height:45px;right:20px;}
+    .regist-bg .register li .captcha-pic{
+        width: 20%;
+        height: 30px;
+        position: absolute;
+        top: 7px;
+        right: 20px;
+    }
     .regist-bg .register .odds{font-size:0;text-align:center;display:table;width: 100%;}
     .regist-bg .register .odds>li{display:table-cell;border:none;width:24%;padding:0}
     .regist-bg .register .odds>li:not(:last-child){margin-right:2rem}
     .regist-bg .register .odds>li img{width:85px;margin:0 auto}
     p.beizhu{text-align:left;color:#BBB;font-size:12px;color: #b1b1b1;}
-    .regist-bg .wrapper-bg{padding: 8px 15px 25px;}
+    .regist-bg .wrapper-bg{padding: 8px 40px 25px;}
     /*.error-popop{font-size:16px;display:none;text-align:center;position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;z-index:100;color:#fff;background:rgba(0,0,0,.6);max-width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}*/
     .error-popop{font-size:16px;display:none;text-align:center;position: fixed;top: 50%;left: 50%;transform: translate(-50%,-50%);z-index:100;color:#fff;background:rgba(0,0,0,.6);width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}
     .loading-popop{font-size:16px;display:none;text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:0 10px;z-index:100;color:#fff;background:rgba(0,0,0,.6);width:30%;padding:0 10px;height:60px;line-height:60px;border-radius:8px}
@@ -81,7 +87,7 @@
     .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
     .banner-pic {
         position: relative;
-        margin-bottom: -0.7rem;
+        margin-top: 0.7rem;
         z-index: -100;
     }
     .banner-pic img {display: block;}
@@ -106,6 +112,12 @@
         color: #fff;
         text-align: center;
         font-size: 30px;
+    }
+    .input-icon {
+        position: absolute;
+        height: 15px;
+        left: 10px;
+        top: 15px;
     }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>
@@ -160,14 +172,17 @@
                     <ul class="info-list">
                         <li>
                             <input type="text" placeholder="注册手机号" onfocus="trackEvenUserPhone()" data-role="none" name="userPhone" id="userPhone">
+                            <img src="${basePath}/zmxy/images/sj.png" alt="" class="input-icon">
                         </li>
                         <li id="imgCodeWrap">
                             <input type="hidden" name="RCaptchaKey" id="RCaptchaKey">
-                            <input type="text" placeholder="请输入图形验证码" data-role="none" name="captcha" id="captcha" style="width: 60%">
+                            <img src="${basePath}/zmxy/images/tyzm.png" alt="" class="input-icon" style="width: 15px;height: auto">
+                            <input type="text" placeholder="请输入图形验证码" data-role="none" name="captcha" id="captcha">
                             <!--<div class="l-captcha" data-site-key="909f06dfef67bd8309dc1b5bdca5ff7f" data-width="100%" data-callback="getResponse"></div>-->
                         </li>
                         <li>
                             <input type="text" placeholder="收到的验证码" data-role="none" name="smsCode" id="smsCode">
+                            <img src="${basePath}/zmxy/images/yzm.png" alt="" class="input-icon" style="width: 15px;height: auto">
                             <div class="gain-yzm pst00" id="sendcode">获取验证码</div>
                         </li>
                         <!--<li>
@@ -182,7 +197,7 @@
                     <p style="display:none;" >注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《淘豆钱包注册协议》</a>
                         <a rel="external" href="${path}/agreement/creditExtension.do?appName=${appKey}" class="ui-link">《信用授权协议》</a></p>
                     <a style="margin-top: 0.5rem;" rel="external" id="registerClick" onclick="nextStep()" href="javascript:;" class="com-btn ui-link">注册即可领取</a>
-                    <p class="beizhu">*注：注册下载淘豆钱包app后即可申请领取</p>
+                    <p class="beizhu" style="text-align: center;">注：注册下载<span style="color: #FFA720;">淘豆钱包</span>app后即可申请领取</p>
                     <!-- <ul class="odds">
                         <li><img src="${basePath}/images/pic_01.png" alt=""></li>
                         <li><img src="${basePath}/images/pic_02.png" alt=""></li>
