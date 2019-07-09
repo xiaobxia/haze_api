@@ -359,7 +359,7 @@
         </ul>
         <p class="warn">温馨提示：最多只能绑10张卡</p>
 
-        <c:if test="${userBankCardcount<3||userBankCardcount==null}">
+        <c:if test="${userBankCardcount<10||userBankCardcount==null}">
             <a id="add-card" data-card-num="${userBankCardcount}" class="button" href="javascript:;">添加银行卡</a>
         </c:if>
 
