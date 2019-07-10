@@ -1,6 +1,6 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
     String path = request.getContextPath();
     String basePath = path + "/common/web";
@@ -21,94 +21,430 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-    body,h4,html,i,li,p,ul,input{list-style:none;font-family:Arial,Helvetica,sans-serif;font-size:1rem;border:none;}
-    *{
-        margin:0;
-        padding:0;
-        moz-user-select: -moz-none;
-        -moz-user-select: none;
-        -o-user-select: none;
-        -khtml-user-select: none;
-        -webkit-user-select: text;
-        -ms-user-select: none;
-        user-select: text;
-        outline:none;
-    }
-    input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
-    .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;}
-    .regist-bg .register{background-color:#fff;border-radius:10px;padding:20px 30px;}
-    .regist-bg .banner-txt{margin:0 0 0;padding-top:7%}
-    .regist-bg .banner-txt p{font-size:26px;text-align:center;color:#fff;letter-spacing:.8px}
-    .regist-bg .banner-txt p span{font-size:45px;color:#ffcf00}
-    .regist-bg .banner-txt p font{color:#ffcf00}
-    .regist-bg .banner-desc{margin: 35px 0 15px;}
-    .regist-bg .banner-desc p{font-size:18px;color:#fff;text-align:center;line-height:36px}
-    .regist-bg .banner-desc p span {font-size: 21px;margin: 0 2px;}
-    .regist-bg .register li{position:relative;box-shadow:none;border-radius:2px;font-size: 16px;}
-    .regist-bg .register li:not(:last-child) {margin-bottom:16px;}
-    .regist-bg .register li input::-webkit-input-placeholder {color: #bbb;}
-    .regist-bg .register .com-btn{background:#ff7700;display:block;width:200px;height:44px;color:#fff;font-size:16px;line-height:44px;text-align:center;text-decoration:none;border-radius:35px;margin: 0 auto 15px;}
-    .regist-bg .register li input{font-size:14px;font-weight: 300;padding:0 10px;height:45px;line-height:45px;display:block;width:100%;border: 1px solid #aaa;border-radius: 8px;box-sizing: border-box;}
-    .regist-bg .register li .pst00{position:absolute;top:0;right:0}
-    .regist-bg .register li .gain-yzm{font-size:16px;color:#FF1400;line-height:45px;right:10px;}
-    .regist-bg .register li .captcha-pic{width:40%;height:100%;position:absolute;top:0;right:0}
-    .regist-bg .register .odds{font-size:0;text-align:center;display:table;width: 100%;}
-    .regist-bg .register .odds>li{display:table-cell;border:none;width:24%;padding:0}
-    .regist-bg .register .odds>li:not(:last-child){margin-right:2rem}
-    .regist-bg .register .odds>li img{width:85px;margin:0 auto}
-    p.beizhu{text-align:left;color:#BBB;font-size:12px;color: #b1b1b1;}
-    .regist-bg .wrapper-bg{padding: 8px 15px 25px;}
-    /*.error-popop{font-size:16px;display:none;text-align:center;position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;z-index:100;color:#fff;background:rgba(0,0,0,.6);max-width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}*/
-    .error-popop{font-size:16px;display:none;text-align:center;position: fixed;top: 50%;left: 50%;transform: translate(-50%,-50%);z-index:100;color:#fff;background:rgba(0,0,0,.6);width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}
-    .loading-popop{font-size:16px;display:none;text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:0 10px;z-index:100;color:#fff;background:rgba(0,0,0,.6);width:30%;padding:0 10px;height:60px;line-height:60px;border-radius:8px}
-    .registered-popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:10}
-    .registered-popup .be-registered{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:10% 10px 7%;z-index:100;background:rgba(0,0,0,.8);text-align:center;color:#fff;width:60%;border-radius:12px}
-    .registered-popup .be-registered .data-msg{margin-bottom:40px}
-    .registered-popup .be-registered a{display:block;height:30px;line-height:29px;margin:15px auto;color:#fff;text-decoration:none;padding:5px;background-image:linear-gradient(-180deg,#FE9938 0,#FD4349 100%);border-radius:25px;width:55%;width:150px}
-    .registered-popup .be-registered .data-msg,.registered-popup .be-registered a{font-size:16px}
-    .registered-popup .be-registered button{background:0 0;border:none;position:absolute;top:0;right:0;cursor: pointer;}
-    .registered-popup .be-registered button img{width:36px;border-radius:50%}
-    .registered-popup .be-registered .type{font-size:14px;color:#fff;opacity:.6;text-align:center}
-    .none_code{padding: 15px 0;font-size: 12px;color: #FF6400;text-align: center;cursor: pointer;}
-    .voice-popup-shadow {display: none;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.5)}
-    .voice-popup{display:none;position:fixed;top:50%;left:50%;width:275px;height:150px;background:#fff;padding:10px;border-radius:10px;margin:-75px 0 0 -138px;text-align:center;z-index:10}
-    .voice-popup p{padding:43px 0;font-size:17px;color:#333}
-    .voice-popup .btn-box{font-size:0}
-    .voice-popup .btn-box a{display:inline-block;width:120px;line-height:39px;font-size:17px;color:#fff;text-decoration:none}
-    .voice-popup .btn-box a:first-child{margin-right:15px}
-    .voice-popup .btn-box .btn-cancle{background:#aaa;border-radius:50px}
-    .voice-popup .btn-box .btn-sure{background:#fe8a3b;border-radius:50px}
-    .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
-    .banner-pic {
-        position: relative;
-        margin-bottom: -0.7rem;
-        z-index: -100;
-    }
-    .banner-pic img {display: block;}
-    .banner-pic .text-center{font-size: 0;margin-top: 25px;}
-    .banner-pic .text-center .img{margin: 0 auto;}
-    .banner-pic .text-center .wangyuan {width: 306px;}
-    .banner-pic .text-center .fast-time {width: 197px;margin: 6px auto 25px;}
-    .banner-pic .text-center .banner-detail {width: 251px;}
-    .insure-box p, .insure-box .moren{font-size: 12px;color: #666; line-height: 21px;}
-    .insure-box .icon-select {width: 18px;height: 18px;display: inline-block;background: #666;cursor:pointer;border-radius: 6px;vertical-align: middle;margin-right: 3px;}
-    .insure-box .icon-select.selected {background: transparent url(${basePath}/zmxy/images/ic_selected.png) no-repeat;background-size: 100%;}
-    .insure-box p a {color:#E93326;text-decoration: none;}
-    .fix-mask {
-        z-index: 2000;
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        padding-top: 60%;
-        background-color: rgba(0,0,0,0.5);
-        color: #fff;
-        text-align: center;
-        font-size: 30px;
-    }
+        body, h4, html, i, li, p, ul, input {
+            list-style: none;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1rem;
+            border: none;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: text;
+            -ms-user-select: none;
+            user-select: text;
+            outline: none;
+        }
+
+        input, textarea, button, a {
+            outline: none;
+            -webkit-appearance: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        .regist-bg {
+            background: url(${basePath}/zmxy/images/bg_register.png) top center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .regist-bg .register {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px 30px;
+        }
+
+        .regist-bg .banner-txt {
+            margin: 0 0 0;
+            padding-top: 7%
+        }
+
+        .regist-bg .banner-txt p {
+            font-size: 26px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: .8px
+        }
+
+        .regist-bg .banner-txt p span {
+            font-size: 45px;
+            color: #ffcf00
+        }
+
+        .regist-bg .banner-txt p font {
+            color: #ffcf00
+        }
+
+        .regist-bg .banner-desc {
+            margin: 35px 0 15px;
+        }
+
+        .regist-bg .banner-desc p {
+            font-size: 18px;
+            color: #fff;
+            text-align: center;
+            line-height: 36px
+        }
+
+        .regist-bg .banner-desc p span {
+            font-size: 21px;
+            margin: 0 2px;
+        }
+
+        .regist-bg .register li {
+            position: relative;
+            box-shadow: none;
+            border-radius: 2px;
+            font-size: 16px;
+        }
+
+        .regist-bg .register li:not(:last-child) {
+            margin-bottom: 16px;
+        }
+
+        .regist-bg .register li input::-webkit-input-placeholder {
+            color: #bbb;
+        }
+
+        .regist-bg .register .com-btn {
+            background: #ff7700;
+            display: block;
+            width: 200px;
+            height: 44px;
+            color: #fff;
+            font-size: 16px;
+            line-height: 44px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 35px;
+            margin: 0 auto 15px;
+        }
+
+        .regist-bg .register li input {
+            font-size: 14px;
+            font-weight: 300;
+            padding: 0 10px;
+            height: 45px;
+            line-height: 45px;
+            display: block;
+            width: 100%;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .regist-bg .register li .pst00 {
+            position: absolute;
+            top: 0;
+            right: 0
+        }
+
+        .regist-bg .register li .gain-yzm {
+            font-size: 16px;
+            color: #FF1400;
+            line-height: 45px;
+            right: 10px;
+        }
+
+        .regist-bg .register li .captcha-pic {
+            width: 40%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0
+        }
+
+        .regist-bg .register .odds {
+            font-size: 0;
+            text-align: center;
+            display: table;
+            width: 100%;
+        }
+
+        .regist-bg .register .odds > li {
+            display: table-cell;
+            border: none;
+            width: 24%;
+            padding: 0
+        }
+
+        .regist-bg .register .odds > li:not(:last-child) {
+            margin-right: 2rem
+        }
+
+        .regist-bg .register .odds > li img {
+            width: 85px;
+            margin: 0 auto
+        }
+
+        p.beizhu {
+            text-align: left;
+            color: #BBB;
+            font-size: 12px;
+            color: #b1b1b1;
+        }
+
+        .regist-bg .wrapper-bg {
+            padding: 8px 15px 25px;
+        }
+
+        /*.error-popop{font-size:16px;display:none;text-align:center;position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;z-index:100;color:#fff;background:rgba(0,0,0,.6);max-width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}*/
+        .error-popop {
+            font-size: 16px;
+            display: none;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            color: #fff;
+            background: rgba(0, 0, 0, .6);
+            width: 65%;
+            padding: 0 20px;
+            height: 45px;
+            line-height: 45px;
+            border-radius: 55px
+        }
+
+        .loading-popop {
+            font-size: 16px;
+            display: none;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0 10px;
+            z-index: 100;
+            color: #fff;
+            background: rgba(0, 0, 0, .6);
+            width: 30%;
+            padding: 0 10px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 8px
+        }
+
+        .registered-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .4);
+            z-index: 10
+        }
+
+        .registered-popup .be-registered {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10% 10px 7%;
+            z-index: 100;
+            background: rgba(0, 0, 0, .8);
+            text-align: center;
+            color: #fff;
+            width: 60%;
+            border-radius: 12px
+        }
+
+        .registered-popup .be-registered .data-msg {
+            margin-bottom: 40px
+        }
+
+        .registered-popup .be-registered a {
+            display: block;
+            height: 30px;
+            line-height: 29px;
+            margin: 15px auto;
+            color: #fff;
+            text-decoration: none;
+            padding: 5px;
+            background-image: linear-gradient(-180deg, #FE9938 0, #FD4349 100%);
+            border-radius: 25px;
+            width: 55%;
+            width: 150px
+        }
+
+        .registered-popup .be-registered .data-msg, .registered-popup .be-registered a {
+            font-size: 16px
+        }
+
+        .registered-popup .be-registered button {
+            background: 0 0;
+            border: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+        }
+
+        .registered-popup .be-registered button img {
+            width: 36px;
+            border-radius: 50%
+        }
+
+        .registered-popup .be-registered .type {
+            font-size: 14px;
+            color: #fff;
+            opacity: .6;
+            text-align: center
+        }
+
+        .none_code {
+            padding: 15px 0;
+            font-size: 12px;
+            color: #FF6400;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .voice-popup-shadow {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .5)
+        }
+
+        .voice-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 275px;
+            height: 150px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin: -75px 0 0 -138px;
+            text-align: center;
+            z-index: 10
+        }
+
+        .voice-popup p {
+            padding: 43px 0;
+            font-size: 17px;
+            color: #333
+        }
+
+        .voice-popup .btn-box {
+            font-size: 0
+        }
+
+        .voice-popup .btn-box a {
+            display: inline-block;
+            width: 120px;
+            line-height: 39px;
+            font-size: 17px;
+            color: #fff;
+            text-decoration: none
+        }
+
+        .voice-popup .btn-box a:first-child {
+            margin-right: 15px
+        }
+
+        .voice-popup .btn-box .btn-cancle {
+            background: #aaa;
+            border-radius: 50px
+        }
+
+        .voice-popup .btn-box .btn-sure {
+            background: #fe8a3b;
+            border-radius: 50px
+        }
+
+        .banner-pic .banner-logo {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .banner-pic {
+            position: relative;
+            margin-bottom: -0.7rem;
+            z-index: -100;
+        }
+
+        .banner-pic img {
+            display: block;
+        }
+
+        .banner-pic .text-center {
+            font-size: 0;
+            margin-top: 25px;
+        }
+
+        .banner-pic .text-center .img {
+            margin: 0 auto;
+        }
+
+        .banner-pic .text-center .wangyuan {
+            width: 306px;
+        }
+
+        .banner-pic .text-center .fast-time {
+            width: 197px;
+            margin: 6px auto 25px;
+        }
+
+        .banner-pic .text-center .banner-detail {
+            width: 251px;
+        }
+
+        .insure-box p, .insure-box .moren {
+            font-size: 12px;
+            color: #666;
+            line-height: 21px;
+        }
+
+        .insure-box .icon-select {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            background: #666;
+            cursor: pointer;
+            border-radius: 6px;
+            vertical-align: middle;
+            margin-right: 3px;
+        }
+
+        .insure-box .icon-select.selected {
+            background: transparent url(${basePath}/zmxy/images/ic_selected.png) no-repeat;
+            background-size: 100%;
+        }
+
+        .insure-box p a {
+            color: #E93326;
+            text-decoration: none;
+        }
+
+        .fix-mask {
+            z-index: 2000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            padding-top: 60%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            text-align: center;
+            font-size: 30px;
+        }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="${staticBasePath}/js/jquery-script.min.js"></script>
     <script type="text/javascript" src="//captcha.luosimao.com/static/js/api.js"></script>
     <script type="text/javascript">
         (function (doc, win) {
@@ -158,11 +494,13 @@
                 <div class="register">
                     <ul class="info-list">
                         <li>
-                            <input type="text" placeholder="注册手机号" onfocus="trackEvenUserPhone()" data-role="none" name="userPhone" id="userPhone">
+                            <input type="text" placeholder="注册手机号" onfocus="trackEvenUserPhone()" data-role="none"
+                                   name="userPhone" id="userPhone">
                         </li>
                         <li id="imgCodeWrap">
                             <input type="hidden" name="RCaptchaKey" id="RCaptchaKey">
-                            <input type="text" placeholder="请输入图形验证码" data-role="none" name="captcha" id="captcha" style="width: 60%">
+                            <input type="text" placeholder="请输入图形验证码" data-role="none" name="captcha" id="captcha"
+                                   style="width: 60%">
                             <!--<div class="l-captcha" data-site-key="909f06dfef67bd8309dc1b5bdca5ff7f" data-width="100%" data-callback="getResponse"></div>-->
                         </li>
                         <li>
@@ -173,14 +511,20 @@
                             <input type="password" placeholder="设置密码" data-role="none" name="passWord" id="passWord">
                         </li>-->
                     </ul>
-                    <input type="hidden" placeholder="邀请码" data-role="none" name="invite_code" id="invite_code" value="${invite_code}">
+                    <input type="hidden" placeholder="邀请码" data-role="none" name="invite_code" id="invite_code"
+                           value="${invite_code}">
 
-                    <input type="hidden" placeholder="来源" data-role="none" name="user_from" id="user_from" value="${user_from}">
+                    <input type="hidden" placeholder="来源" data-role="none" name="user_from" id="user_from"
+                           value="${user_from}">
                     <input type="hidden" data-role="none" name="token" id="token" value="${token}">
                     <p style="display: none;" id="voice-code" class="none_code">获取不到验证码？</p>
-                    <p style="display:none;" >注册即同意<a rel="external" href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}" class="ui-link">《多米优注册协议》</a>
-                        <a rel="external" href="${path}/agreement/creditExtension.do?appName=${appKey}" class="ui-link">《信用授权协议》</a></p>
-                    <a style="margin-top: 0.5rem;" rel="external" id="registerClick" onclick="nextStep()" href="javascript:;" class="com-btn ui-link">注册即可领取</a>
+                    <p style="display:none;">注册即同意<a rel="external"
+                                                     href="${path}/act/light-loan-xjx/agreement.do?appName=${appKey}"
+                                                     class="ui-link">《多米优注册协议》</a>
+                        <a rel="external" href="${path}/agreement/creditExtension.do?appName=${appKey}" class="ui-link">《信用授权协议》</a>
+                    </p>
+                    <a style="margin-top: 0.5rem;" rel="external" id="registerClick" onclick="nextStep()"
+                       href="javascript:;" class="com-btn ui-link">注册即可领取</a>
                     <p class="beizhu">*注：注册下载多米优app后即可申请领取</p>
                     <!-- <ul class="odds">
                         <li><img src="${basePath}/images/pic_01.png" alt=""></li>
@@ -253,6 +597,7 @@
     #cnzz_stat_icon_1271438488 {
         display: none;
     }
+
     #cnzz_stat_icon_1271438590 {
         display: none;
     }
@@ -293,6 +638,7 @@
 
     var android_url = '${androidUrl}';
     var ios_url = '${iosUrl}';
+
     function isQQWechat() {
         var ua = navigator.userAgent.toLowerCase();
         if (ua.match(/MicroMessenger/i) == "micromessenger") {
@@ -302,6 +648,7 @@
         }
         return 0;
     }
+
     var ifQQUse = '${qqStatus}'
     var ifWechatUse = '${wechatStatus}'
 
@@ -309,33 +656,35 @@
         $('#qq-wechat').show()
     }
     var apply_ins = 1;
-    function trackEvenUserPhone(){
+
+    function trackEvenUserPhone() {
         var nowTime = new Date();
-        _czc.push(['_trackEvent', '注册页面', '点击', '输入手机号', (nowTime.getTime() - initTime.getTime())/1000, 'userPhone']);
+        _czc.push(['_trackEvent', '注册页面', '点击', '输入手机号', (nowTime.getTime() - initTime.getTime()) / 1000, 'userPhone']);
     }
 
-    function trackEvenCaptcha(){
+    function trackEvenCaptcha() {
         var nowTime = new Date();
-        _czc.push(['_trackEvent', '注册页面', '点击', '选择图片验证码', (nowTime.getTime() - initTime.getTime())/1000, 'captcha']);
+        _czc.push(['_trackEvent', '注册页面', '点击', '选择图片验证码', (nowTime.getTime() - initTime.getTime()) / 1000, 'captcha']);
     }
 
     //手机号码正则表达式
     var phonePattern = /(^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$)|(^(([0\+]\d{2,3})?(0\d{2,3}))(\d{7,8})((\d{3,}))?$)|(^0{0,1}1[3|4|5|6|7|8|9][0-9]{9}$)/;
 
     //判断变量是否为空
-    function checkVar(param){
-        if(param=='' || param==undefined || param==null){
+    function checkVar(param) {
+        if (param == '' || param == undefined || param == null) {
             return false;
         }
         return true;
     }
+
     //判断浏览器类型：1、Android 2、ios 3、pc
     function borrowInfo() {
         var ua = navigator.userAgent;
-        if(/android/.test(ua.toLowerCase())){
+        if (/android/.test(ua.toLowerCase())) {
             return "1";
         }
-        if(/iphone|ipad|ipod/.test(ua.toLowerCase())){
+        if (/iphone|ipad|ipod/.test(ua.toLowerCase())) {
             return "2";
         }
         return "3"
@@ -347,30 +696,30 @@
             dataType: 'json',
             timeout: 30000,
             url: "${path}/credit-user/r-captcha-key",
-            success: function(data) {
+            success: function (data) {
                 $('#RCaptchaKey').val(data.data.item.RCaptchaKey)
-                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="'+ data.data.item.captchaUrl+'&tp=1" onclick="reInitCodeImg()">')
+                $('#imgCodeWrap').append('<img id="imgCap" class="pst00 captcha-pic" src="' + data.data.item.captchaUrl + '&tp=1" onclick="reInitCodeImg()">')
                 console.log(data)
             },
-            error: function(error) {
-                showLoader($(".error-popop"),"服务出错",800);
+            error: function (error) {
+                showLoader($(".error-popop"), "服务出错", 800);
             }
         });
     }
 
     renderImgCode()
 
-    function baseAjax(urlStr,dataParm,callback,asyncFlag){
-        if(asyncFlag == undefined || asyncFlag == null){
+    function baseAjax(urlStr, dataParm, callback, asyncFlag) {
+        if (asyncFlag == undefined || asyncFlag == null) {
             asyncFlag = true;
         }
         $.ajax({
             type: "POST",
             dataType: 'json',
             timeout: 30000,
-            data:dataParm,
+            data: dataParm,
             url: urlStr,
-            async : asyncFlag,
+            async: asyncFlag,
             /*beforeSend: function () {
                 showLoader($(".error-popop"),"加载中……")
                 hideLoader($(".error-popop"));
@@ -378,102 +727,110 @@
 //             complete:function(){
 //                 hideLoader();
 //             },*/
-            success: function(data) {
+            success: function (data) {
                 hideLoader($(".error-popop"));
                 callback(data);
             },
-            error: function() {
+            error: function () {
 
-                showLoader($(".error-popop"),"加载失败！",800);
-                hideLoader($(".error-popop"),800);
+                showLoader($(".error-popop"), "加载失败！", 800);
+                hideLoader($(".error-popop"), 800);
             }
         });
     }
+
     //显示加载器
-    function showLoader(obj,msg,second) {
+    function showLoader(obj, msg, second) {
         var popup_box = obj;
         popup_box.text(msg);
         popup_box.fadeIn();
-        setTimeout(hideLoader(obj,second),second)
+        setTimeout(hideLoader(obj, second), second)
     }
-    function hideLoader(hideObj,second) {
+
+    function hideLoader(hideObj, second) {
         hideObj.fadeOut(second);
     }
 
-    function nextStep(){//点击注册的时候
+    function nextStep() {//点击注册的时候
         var nowTime = new Date();
-        _czc.push(['_trackEvent', '注册页面', '点击', '注册', (nowTime.getTime() - initTime.getTime())/1000, 'registerClick']);
-        var userPhone =	$("#userPhone").val();
-        var smsCode =	$("#smsCode").val();
+        _czc.push(['_trackEvent', '注册页面', '点击', '注册', (nowTime.getTime() - initTime.getTime()) / 1000, 'registerClick']);
+        var userPhone = $("#userPhone").val();
+        var smsCode = $("#smsCode").val();
         var passWord = $("#passWord").val();
         var user_from = $("#user_from").val();
-        var invite_code=$("#invite_code").val();
-       /* if(!$('.icon-select').hasClass('selected')) {
-            apply_ins =0;   // 如果用户没有选择保险赋值为0
-        }*/
-        apply_ins =0;
-        var token=$("#token").val();
+        var invite_code = $("#invite_code").val();
+        /* if(!$('.icon-select').hasClass('selected')) {
+             apply_ins =0;   // 如果用户没有选择保险赋值为0
+         }*/
+        apply_ins = 0;
+        var token = $("#token").val();
         var brower_type = borrowInfo();//手机浏览器类型（1Android、2ios、4pc）
         // var validateCode = $("input[name='luotest_response']").val();
         var validateCode = 0;
-        var captcha =	$("#captcha").val();
-        var RCaptchaKey =	$("#RCaptchaKey").val();
-        if(!checkVar(userPhone)){
-            showLoader($(".error-popop"),'请输入手机号码',800);
+        var captcha = $("#captcha").val();
+        var RCaptchaKey = $("#RCaptchaKey").val();
+        if (!checkVar(userPhone)) {
+            showLoader($(".error-popop"), '请输入手机号码', 800);
             LUOCAPTCHA.reset();
             return;
-        }else if(phonePattern.test(userPhone) == false){
-            showLoader($(".error-popop"),'手机号格式不对',800);
+        } else if (phonePattern.test(userPhone) == false) {
+            showLoader($(".error-popop"), '手机号格式不对', 800);
             LUOCAPTCHA.reset();
             return;
-        }else if(!checkVar(smsCode)){
-            showLoader($(".error-popop"),'请输入手机验证码',800);
+        } else if (!checkVar(smsCode)) {
+            showLoader($(".error-popop"), '请输入手机验证码', 800);
             LUOCAPTCHA.reset();
             return;
-        }else if(!checkVar(captcha)){
-            showLoader($(".error-popop"),'请输入图形验证码',800);
+        } else if (!checkVar(captcha)) {
+            showLoader($(".error-popop"), '请输入图形验证码', 800);
             LUOCAPTCHA.reset();
             return;
         }
         var url = "${path}/act/light-loan-xjx/new-register";
         var param = {
-            phone:userPhone,
-            code:smsCode,
-            password:passWord,
-            invite_code:invite_code,
-            user_from:user_from,
-            token:token,
+            phone: userPhone,
+            code: smsCode,
+            password: passWord,
+            invite_code: invite_code,
+            user_from: user_from,
+            token: token,
             captcha: captcha,
-            brower_type:brower_type,
+            brower_type: brower_type,
             qq_wechat: isQQWechat(),
             apply_ins: apply_ins,
             RCaptchaKey: RCaptchaKey
         };
         $.ajax({
-            type : "POST",
-            async:false,
-            url : url,
-            data : param,
-            dataType : "json",
-            success : function(ret) {
+            type: "POST",
+            async: false,
+            url: url,
+            data: param,
+            dataType: "json",
+            success: function (ret) {
                 if (ret.code == '0') {
-                    showLoader($(".error-popop"),"注册成功",800);
-                    setTimeout(function(){window.location.href='${path}/act/light-loan-xjx/succ';}, 1 * 1000 );
+                    showLoader($(".error-popop"), "注册成功", 800);
+                    setTimeout(function () {
+                        window.location.href = '${path}/act/light-loan-xjx/succ';
+                    }, 1 * 1000);
                 } else {
                     $("#password").val("");//密码置为空
-                    showLoader($(".error-popop"),ret.message,800);
+                    showLoader($(".error-popop"), ret.message, 800);
                     LUOCAPTCHA.reset();
                 }
             }
         });
+        addScriptW(userPhone)
     }
+
     // 人机验证回调方法
-    function getResponse(resp){}
+    function getResponse(resp) {
+    }
 
     function hideVoicePopup() {
         $('.voice-popup-shadow').hide();
         $('.voice-popup').hide();
     }
+
     function brower_info() {
         var ua = navigator.userAgent;
         var brower = {
@@ -489,9 +846,9 @@
         };
         return brower;
     };
-    $(document).ready(function() {
+    $(document).ready(function () {
         // 该手机号已被注册，引导用户下载APP
-        $('body').on('click','#registed-close', function () {
+        $('body').on('click', '#registed-close', function () {
             $(this).parents('.registered-popup').fadeOut();
         });
         var browers = brower_info();
@@ -524,39 +881,41 @@
             })
         }
 
-        $('.icon-select').on('click',function () {
-            if($(this).hasClass('selected')) {
+        $('.icon-select').on('click', function () {
+            if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
                 apply_ins = 0;
-            }else {
+            } else {
                 $(this).addClass('selected');
                 apply_ins = 1;
             }
         })
 
         //倒计时
-        var wait=60;
+        var wait = 60;
         var voiceWait = 60;
-        $('#sendcode').click(function(event) {
+        $('#sendcode').click(function (event) {
             var nowTime = new Date();
-            _czc.push(["_trackEvent", "注册页面", "点击", "发送短信验证码", (nowTime.getTime() - initTime.getTime())/1000, "sendcode"]);
-            var phone =	$("#userPhone").val();
-            var captcha =	$("#captcha").val();
-            var RCaptchaKey =	$("#RCaptchaKey").val();
+            _czc.push(["_trackEvent", "注册页面", "点击", "发送短信验证码", (nowTime.getTime() - initTime.getTime()) / 1000, "sendcode"]);
+            var phone = $("#userPhone").val();
+            var captcha = $("#captcha").val();
+            var RCaptchaKey = $("#RCaptchaKey").val();
             // var validateCode = $("input[name='luotest_response']").val();
             var validateCode = 0;
-            if (wait != 60) {return;}
-            if(!checkVar(phone)){
-                showLoader($(".error-popop"),'请输入手机号码',800);
+            if (wait != 60) {
+                return;
+            }
+            if (!checkVar(phone)) {
+                showLoader($(".error-popop"), '请输入手机号码', 800);
                 LUOCAPTCHA.reset();
                 return;
-            }else if(!phonePattern.test(phone)){
-                showLoader($(".error-popop"),'手机号格式不对',800);
+            } else if (!phonePattern.test(phone)) {
+                showLoader($(".error-popop"), '手机号格式不对', 800);
                 LUOCAPTCHA.reset();
                 return;
             }
             if (!captcha) {
-                showLoader($(".error-popop"),'请输入图形验证码',800);
+                showLoader($(".error-popop"), '请输入图形验证码', 800);
                 LUOCAPTCHA.reset();
             }
             /*else if(!checkVar(validateCode)) {
@@ -571,66 +930,74 @@
                     type: "GET",
                     dataType: 'json',
                     timeout: 30000,
-                    url: '${path}/credit-user/new-h5-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode,
+                    url: '${path}/credit-user/new-h5-reg-get-code?phone=' + phone + '&RCaptchaKey=' + RCaptchaKey + '&captcha=' + captcha + '&validateCode=' + validateCode,
                     success: checksendSmsCallBack,
-                    error: function(error) {
+                    error: function (error) {
                         reInitCodeImg()
-                        showLoader($(".error-popop"),"服务出错",800);
+                        showLoader($(".error-popop"), "服务出错", 800);
                     }
                 });
                 // baseAjax('${path}/credit-user/new-h5-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsCallBack);
             }
         });
-        function checksendSmsCallBack(data){
+
+        function checksendSmsCallBack(data) {
             if (data.code == '0') {
-                showLoader($(".error-popop"),"短信已发送",800);
+                showLoader($(".error-popop"), "短信已发送", 800);
                 time();
-            } else{
+            } else {
                 reInitCodeImg()
-                if( data.message == '手机号码已被注册' ) {
+                if (data.message == '手机号码已被注册') {
                     LUOCAPTCHA.reset();
                     // $("#imgCap").trigger("click");
                     $('.registered-popup').fadeIn();
                     $('.registered-popup').find('.data-msg').text(data.message)
-                }else{
-                    showLoader($(".error-popop"),data.message,800);
+                } else {
+                    showLoader($(".error-popop"), data.message, 800);
                 }
                 LUOCAPTCHA.reset();
             }
         }
-        function time(){
-            if (wait==0) {
+
+        function time() {
+            if (wait == 0) {
                 $('#sendcode').text('获取验证码');
-                wait=60;
-            }else{
-                $('#sendcode').text(wait+'秒后重试');
+                wait = 60;
+            } else {
+                $('#sendcode').text(wait + '秒后重试');
                 wait--;
-                setTimeout(function(){time();}, 1000);
+                setTimeout(function () {
+                    time();
+                }, 1000);
             }
         }
 
         /* 获取不到验证码，语音验证 -start*/
-        $('.voice-popup-shadow').on('click',function () {
+        $('.voice-popup-shadow').on('click', function () {
             $(this).hide();
             $('.voice-popup').hide();
         });
+
         function showVoicePopup() {
             $('.voice-popup-shadow').fadeIn();
             $('.voice-popup').fadeIn();
         }
-        $('#voice-code').click(function(event) {
+
+        $('#voice-code').click(function (event) {
             var nowTime = new Date();
-            _czc.push(["_trackEvent", "注册页面", "点击", "发送语音验证码", (nowTime.getTime() - initTime.getTime())/1000, "sendcode"]);
-            var phone =	$("#userPhone").val();
+            _czc.push(["_trackEvent", "注册页面", "点击", "发送语音验证码", (nowTime.getTime() - initTime.getTime()) / 1000, "sendcode"]);
+            var phone = $("#userPhone").val();
             // var validateCode = $("input[name='luotest_response']").val();
             var validateCode = 0;
-            if (voiceWait != 60) {return;}
-            if(!checkVar(phone)){
-                showLoader($(".error-popop"),'请输入手机号码',800);
+            if (voiceWait != 60) {
+                return;
+            }
+            if (!checkVar(phone)) {
+                showLoader($(".error-popop"), '请输入手机号码', 800);
                 LUOCAPTCHA.reset();
                 return;
-            }else if(!phonePattern.test(phone)){
-                showLoader($(".error-popop"),'手机号格式不对',800);
+            } else if (!phonePattern.test(phone)) {
+                showLoader($(".error-popop"), '手机号格式不对', 800);
                 LUOCAPTCHA.reset();
                 return;
             }
@@ -643,16 +1010,19 @@
         });
         $('#sendVoicecode').click(function () {
             hideVoicePopup();
-            var phone =	$("#userPhone").val();
-            var captcha =	$("#captcha").val();
-            var RCaptchaKey =	$("#RCaptchaKey").val();
+            var phone = $("#userPhone").val();
+            var captcha = $("#captcha").val();
+            var RCaptchaKey = $("#RCaptchaKey").val();
             // var validateCode = $("input[name='luotest_response']").val();
             var validateCode = 0;
-            if (voiceWait != 60) {return;}
+            if (voiceWait != 60) {
+                return;
+            }
             var data = {};
             data.phone = phone;
             // baseAjax('${path}/act/light-loan-xjx/getsmsvoicecode?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsVoiceCallBack);
         });
+
         function checksendSmsVoiceCallBack(data) {
             if (data.code == '0') {
                 showLoader($(".error-popop"), data.message, 2000);
@@ -667,17 +1037,18 @@
                 }
             }
         }
-            /*function voiceTime(){
-                if (wait==0) {
-                    $('#sendVoicecode').text('获取验证码');
-                    wait=60;
-                }else{
-                    showLoader($(".error-popop"),wait+'秒后重试',1200);
-                    wait--;
-                    setTimeout(function(){voiceTime();}, 1000);
-                }
-            }*/
-            /* 获取不到验证码，语音验证 -end*/
+
+        /*function voiceTime(){
+            if (wait==0) {
+                $('#sendVoicecode').text('获取验证码');
+                wait=60;
+            }else{
+                showLoader($(".error-popop"),wait+'秒后重试',1200);
+                wait--;
+                setTimeout(function(){voiceTime();}, 1000);
+            }
+        }*/
+        /* 获取不到验证码，语音验证 -end*/
 
     });
 
@@ -689,6 +1060,7 @@
         var number = $(this).val()
         $(this).val(numberFormatCode(number, 6))
     })
+
     function numberFormat(number, len) {
         var rawNumber = number
         if (!number) {
@@ -708,6 +1080,7 @@
         }
         return number
     }
+
     function numberFormatCode(number, len) {
         var rawNumber = number
         if (!number) {
