@@ -56,8 +56,8 @@ String basePath = path + "/common/web";
       <p><em>编号：</em><span>${borrow.id}</span></p>
       <p><em>甲方（借款人）：</em><span>${user.realname}</span></p>
       <p><em>身份证号码：</em><span>${user.idNumber}</span></p>
-      <p><em>乙方（出借人）：</em><span>蔡坤燚</span></p>
-      <p><em>身份证号码：</em><span>31010****0414</span></p>
+      <p><em>乙方（出借人）：</em><span>司空媛</span></p>
+      <p><em>身份证号码：</em><span>330101******9035</span></p>
       <br>
       <p>借款标的明细</p>
       <br>
@@ -180,7 +180,7 @@ String basePath = path + "/common/web";
       </div>
       <br>
       <p><em>甲方（借款人）：</em><span>${user.realname}</span></p>
-      <p><em>乙方（出借人）：</em><span>蔡坤燚</span></p>
+      <p><em>乙方（出借人）：</em><span>司空媛</span></p>
       <br>
       <br>
     </div>
