@@ -36,7 +36,7 @@
     }
     input,textarea,button,a {outline: none;-webkit-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
     .regist-bg{background:url(${basePath}/zmxy/images/bg_register.png) top center;background-repeat: no-repeat;background-size: cover;}
-    .regist-bg .register{background-color:#FFF7F0;border-radius:10px;padding:20px 30px;}
+    .regist-bg .register{background-color:#FFF7F0;border-radius:10px;padding:30px 20px;}
     .regist-bg .banner-txt{margin:0 0 0;padding-top:7%}
     .regist-bg .banner-txt p{font-size:26px;text-align:center;color:#fff;letter-spacing:.8px}
     .regist-bg .banner-txt p span{font-size:45px;color:#ffcf00}
@@ -63,7 +63,7 @@
     .regist-bg .register .odds>li:not(:last-child){margin-right:2rem}
     .regist-bg .register .odds>li img{width:85px;margin:0 auto}
     p.beizhu{text-align:left;color:#BBB;font-size:12px;color: #b1b1b1;}
-    .regist-bg .wrapper-bg{padding: 8px 40px 25px;}
+    .regist-bg .wrapper-bg{padding: 8px 30px 25px;}
     /*.error-popop{font-size:16px;display:none;text-align:center;position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;z-index:100;color:#fff;background:rgba(0,0,0,.6);max-width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}*/
     .error-popop{font-size:16px;display:none;text-align:center;position: fixed;top: 50%;left: 50%;transform: translate(-50%,-50%);z-index:100;color:#fff;background:rgba(0,0,0,.6);width:65%;padding:0 20px;height:45px;line-height:45px;border-radius:55px}
     .loading-popop{font-size:16px;display:none;text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:0 10px;z-index:100;color:#fff;background:rgba(0,0,0,.6);width:30%;padding:0 10px;height:60px;line-height:60px;border-radius:8px}
@@ -118,6 +118,9 @@
         height: 15px;
         left: 10px;
         top: 15px;
+    }
+    body {
+        background-color: rgb(255, 48, 58);
     }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>

@@ -297,6 +297,8 @@ public class BorrowOrderService implements IBorrowOrderService {
         paying.add(0);
         paying.add(22);
         paying.add(25);
+        paying.add(666);
+        paying.add(667);
         for (BorrowOrder bo : boList) {
             if (paying.contains(bo.getStatus())) {
                 logger.info("saveLoan userId=" + userId + "已存在借款订单");
