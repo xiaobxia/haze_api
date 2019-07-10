@@ -119,6 +119,9 @@
         left: 10px;
         top: 15px;
     }
+    body {
+        background-color: rgb(255, 48, 58);
+    }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-script.min.js"></script>
