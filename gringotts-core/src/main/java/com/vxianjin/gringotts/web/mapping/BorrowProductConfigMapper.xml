@@ -303,12 +303,12 @@
         t.deal_flag,
         t.remark
     from borrow_product_config t
-    left join borrow_product_config t1
-      on t.borrow_day = t1.borrow_day
-      and t.borrow_amount <![CDATA[ <= ]]> t1.borrow_amount
-    where t.deal_flag = 'n' and t1.id = #{borrowProductId}
+    where t.deal_flag = 'n' and t.id = #{borrowProductId}
     order by t.borrow_amount
   </select>
+  <!--left join borrow_product_config t1
+  on t.borrow_day = t1.borrow_day
+  and t.id <![CDATA[ <= ]]> t1.id-->
 
   <select id="queryUserConfigByUserIdAndDay" resultMap="BaseResultMap">
     select t.id,
