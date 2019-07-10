@@ -339,7 +339,7 @@ public class IndexController extends BaseController {
                     amountDaysList = borrowProductConfigService.queryIndexUserAllowAmountDayList(userQuotaSnapshots);
                 }else if(userQuotaSnapshots.size() == 0){
                     // 没有则插入一条初始为后台默认的数据
-                    //userQuotaSnapshotService.addUserQuota(Integer.valueOf(user.getId()), defaultConfig.getId(), defaultConfig.getBorrowAmount(), defaultConfig.getBorrowDay());
+                    userQuotaSnapshotService.addUserQuota(Integer.valueOf(user.getId()), defaultConfig.getId(), defaultConfig.getBorrowAmount(), defaultConfig.getBorrowDay());
                     String amountDaysListStr = "[{\"day\":"+ defaultConfig.getBorrowDay() +",\"amount_free\":[{\"amount\":"+ defaultConfig.getBorrowAmount() +",\"totalFee\":"+ defaultConfig.getTotalFeeRate() +",\"arrivalMoney" +
                             "\":"+ defaultConfig.getBorrowAmount().subtract(defaultConfig.getTotalFeeRate()) +",\"creditVet\":"+ defaultConfig.getTurstTrial() +",\"accountManage\":"+
                             defaultConfig.getAccountManagerFee() +",\"accrual\":" + defaultConfig.getBorrowInterest() + ",\"platformUse\":"+ defaultConfig.getPlatformLicensing() +
