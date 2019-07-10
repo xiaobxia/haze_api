@@ -326,6 +326,133 @@ public class UserLoginController extends BaseController {
 
     }
 
+    /**
+     * 注册 根据图形验证码获取手机短信验证码
+     */
+    @RequestMapping("credit-user/new-h5-reg-get-code")
+    public void newH5SendSmsCode(HttpServletRequest request, HttpServletResponse response) {
+        // 生成手机认证码频繁标识key
+        String generateRegisterCode = "check_generate_register_code_";
+        //String clientType = request.getParameter("clientType");
+
+        JSONObject json = new JSONObject();
+        Map<String, HashMap<String, Object>> dataMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
+        String code = "-1";
+        String msg = "";
+        UserSendMessage message = new UserSendMessage();
+        String userPhone = "";
+        String captcha = "";
+        String captchaUrl = "";
+        //0为进入自动发送验证码，1为点击获取验证码
+        //String type = "";
+        String captchaKey = "";
+        String userIp;
+        try {
+            Map<String, Object> param = getParametersO(request);
+            userPhone = null == param.get("phone") ? "" : param.get("phone").toString();
+            captcha = null == param.get("captcha") ? "" : param.get("captcha").toString();
+            captchaKey = null == param.get("RCaptchaKey") ? "R" + request.getSession().getId() : param.get("RCaptchaKey").toString();
+            //type = null != param.get("type") && "0".equals(param.get("type").toString()) ? "0" : "1";
+            userIp = RequestUtils.getIpAddr();
+            log.info("newSendSmsCode:phone=" + userPhone + " regip:" + userIp);
+            map.put("userPhone", userPhone);
+            if (StringUtils.isBlank(userPhone)) {
+                msg = "请输入手机号码";
+                return;
+            }
+
+            if (StringUtils.isBlank(captcha)) {
+                msg = "请输入图形验证码";
+                return;
+            }
+
+            //captchaUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            captchaUrl = PropertiesConfigUtil.get("APP_HOST_API") + "/captcha.svl?RCaptchaKey=" + captchaKey;
+            if (!validateSubmitAPP(request, response)) {
+                msg = "图形验证码错误";
+                return;
+            }
+
+            // 查询手机号码是否存在
+            String finalUserPhone = userPhone;
+            User users = userService.searchUserByCheckTel(new HashMap(){{
+                put("userPhone", finalUserPhone);
+            }});
+            if (users != null) {
+                msg = "手机号码已被注册";
+                return;
+            }
+
+            log.info("newSendSmsCode phone=" + userPhone);
+
+            // 6位固定长度
+            String rand = "159369";
+            if ("online".equals(PropertiesConfigUtil.get("profile"))) {
+                rand = String.valueOf(Math.random()).substring(2).substring(0, 6);
+            }
+            String content = "";
+            // 被注销的账户
+            Long remainTime = checkForFront(generateRegisterCode, userPhone);
+            if (remainTime > 0) {
+
+                code = Status.FREQUENT.getName();
+                json.put("time", remainTime);
+                msg = Status.FREQUENT.getValue();
+                return;
+            }
+            ResponseContent serviceResult = check(userPhone);
+            log.info("newSendSmsCode phone=" + userPhone + " serviceResult=" + JSON.toJSONString(serviceResult));
+            if (serviceResult.isFail()) {
+                msg = serviceResult.getMsg();
+            } else {
+                code = "0";
+                // 存入redis
+                jedisCluster.set(SMS_REGISTER_PREFIX + userPhone, rand);
+                jedisCluster.expire(SMS_REGISTER_PREFIX + userPhone, INFECTIVE_SMS_TIME);
+
+                content = rand + "##正在注册" + getAppConfig(request.getParameter("appName"), "APP_TITLE") + "账户";
+                msg = "成功获取验证码";
+                Date sendTime = new Date();
+                // 手机号
+                message.setPhone(userPhone);
+                message.setMessageCreateTime(sendTime);
+                message.setMessageContent(content);
+                // 发送短信的ip
+                message.setSendIp(this.getIpAddr(request));
+                try {
+                    SendSmsUtil.sendSmsCL(userPhone, content);
+                    log.info("短信发送是否成功=" + code + "***" + msg);
+                    msg = "成功获取验证码";
+                } catch (Exception e) {
+                    log.error("error", e);
+                    code = "-1";
+                    msg = "信息发送失败稍后重试";
+                }
+                // 发送成功
+                message.setMessageStatus(UserSendMessage.STATUS_SUCCESS);
+                // 添加短信记录
+                userSendMessageService.saveUserSendMsg(message);
+                log.info("注册验证码sendSms:" + userPhone + "-->" + rand);
+            }
+        } catch (Exception e) {
+            log.error("newSendSmsCode phone=" + userPhone + " error=", e);
+            code = "500";
+            msg = "系统异常";
+        } finally {
+            resultMap.put("captchaUrl", captchaUrl);
+            resultMap.put("RCaptchaKey", captchaKey);
+            delCheckForFront(generateRegisterCode, userPhone);
+            dataMap.put("item", resultMap);
+            json.put("code", code);
+            json.put("message", msg);
+            json.put("data", dataMap);
+            JSONUtil.toObjectJson(response, json.toString());
+        }
+
+    }
+
 
     /**
      * 注册 生成手机认证码
