@@ -410,7 +410,7 @@ public class BorrowOrderService implements IBorrowOrderService {
 
         Integer loanInterest = config.getTotalFeeRate().intValue();
         //借款利率,万分之一
-        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 2, BigDecimal.ROUND_DOWN).multiply(new BigDecimal("10000")).intValue();
+        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
         Integer intoMoney = money - config.getTotalFeeRate().intValue();//借款金额 - 服务费金额
 
         Date date = new Date();
