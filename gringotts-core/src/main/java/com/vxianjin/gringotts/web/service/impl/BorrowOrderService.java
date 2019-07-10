@@ -413,8 +413,8 @@ public class BorrowOrderService implements IBorrowOrderService {
         Integer loanInterest = config.getTotalFeeRate().intValue();
         //借款利率,万分之一
         Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
+        logger.info("新加服务费率是："+borrowRate);
         Integer intoMoney = money - config.getTotalFeeRate().intValue();//借款金额 - 服务费金额
-
         Date date = new Date();
         BorrowOrder bo = new BorrowOrder();
         bo.setUserId(Integer.parseInt(user.getId()));//用户ID
@@ -1016,5 +1016,13 @@ public class BorrowOrderService implements IBorrowOrderService {
     public BackExtend extend(Integer productId) {
         BackExtend backExtend = backExtendDao.selectByProductId(productId);
         return backExtend;
+    }
+
+
+    public static void main(String[] args){
+        BigDecimal totalFeeRate = BigDecimal.valueOf(500);
+        BigDecimal borrowAmount = BigDecimal.valueOf(1600);
+        Integer borrowRate = totalFeeRate.divide(borrowAmount, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
+        System.out.println("服务费率是:"+borrowRate);
     }
 }
