@@ -1019,10 +1019,10 @@ public class BorrowOrderService implements IBorrowOrderService {
     }
 
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         BigDecimal totalFeeRate = BigDecimal.valueOf(500);
         BigDecimal borrowAmount = BigDecimal.valueOf(1600);
         Integer borrowRate = totalFeeRate.divide(borrowAmount, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
         System.out.println("服务费率是:"+borrowRate);
-    }
+    }*/
 }
