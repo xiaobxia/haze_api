@@ -571,14 +571,14 @@
                     type: "GET",
                     dataType: 'json',
                     timeout: 30000,
-                    url: '${path}/credit-user/new-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode,
+                    url: '${path}/credit-user/new-h5-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode,
                     success: checksendSmsCallBack,
                     error: function(error) {
                         reInitCodeImg()
                         showLoader($(".error-popop"),"服务出错",800);
                     }
                 });
-                // baseAjax('${path}/credit-user/new-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsCallBack);
+                // baseAjax('${path}/credit-user/new-h5-reg-get-code?phone='+phone+'&RCaptchaKey='+RCaptchaKey+'&captcha='+captcha+'&validateCode='+validateCode, data, checksendSmsCallBack);
             }
         });
         function checksendSmsCallBack(data){
