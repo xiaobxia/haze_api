@@ -87,7 +87,7 @@
     .banner-pic .banner-logo {width: 80%;margin: 0 auto;}
     .banner-pic {
         position: relative;
-        margin-top: 0.7rem;
+        padding-top: 0.7rem;
         z-index: -100;
     }
     .banner-pic img {display: block;}
@@ -121,6 +121,7 @@
     }
     body {
         background-color: rgb(255, 48, 58);
+        min-height: 100vh;
     }
     </style>
     <script type="text/javascript" src="${staticBasePath}/js/jquery-1.9.1.min.js"></script>
