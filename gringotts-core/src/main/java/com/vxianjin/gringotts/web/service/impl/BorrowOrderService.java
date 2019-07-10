@@ -412,9 +412,9 @@ public class BorrowOrderService implements IBorrowOrderService {
 
         Integer loanInterest = config.getTotalFeeRate().intValue();
         //借款利率,万分之一
-        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
+        Integer borrowRate = config.getTotalFeeRate().divide(config.getBorrowAmount(), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
+        logger.info("新加服务费率是："+borrowRate);
         Integer intoMoney = money - config.getTotalFeeRate().intValue();//借款金额 - 服务费金额
-
         Date date = new Date();
         BorrowOrder bo = new BorrowOrder();
         bo.setUserId(Integer.parseInt(user.getId()));//用户ID
@@ -581,7 +581,6 @@ public class BorrowOrderService implements IBorrowOrderService {
         Integer normAmount = 0;// 累计还款金额
         try {
             if (user != null) {
-
                 Map<String, String> keys = SysCacheUtils.getConfigParams(BackConfigParams.SYS_FEE);
                 // 7天借款额度增加比例
                 Integer sevenAmountaddFee = Integer.parseInt(keys.get("seven_amountadd_fee"));
@@ -596,6 +595,7 @@ public class BorrowOrderService implements IBorrowOrderService {
                 //获取用户正常已还款的总借款记录
                 List<BorrowOrder> normOrders = borrowOrderDao.findParams(params);
                 if (normOrders != null && normOrders.size() > 0) {
+                //if(normOrders != null && normOrders.size() >= 0){
                     // tgApr = normOrders.get(0).getLoanTerm() == 7 ? 3 : 5;
                     //最新一期成功借款的借款期限，并获取借款额度增加比例
                     tgApr = normOrders.get(0).getLoanTerm() == 7 ? sevenAmountaddFee : fourteenAmountaddFee;// 2017-02-15
@@ -623,10 +623,9 @@ public class BorrowOrderService implements IBorrowOrderService {
                         }
                     }
                     // 历史提额等级中不包含本次提额等级 且 本次提额百分比 > 0 且 本次提额等级 > 0 然后进行提额操作
-                    if (!hasTe.contains(tgMoneyType) && tgApr > 0 && tgMoneyType > 0) {
+                   if (!hasTe.contains(tgMoneyType) && tgApr > 0 && tgMoneyType > 0) {
                         sucAmount = normAmount;//累计成功借款金额
                         sucCount = normCount;//累计成功借款次数
-
                         params.clear();
                         params.put("userId", user.getId());
                         params.put("statusList", Arrays.asList(BorrowOrder.STATUS_YQYHK));
@@ -1018,4 +1017,12 @@ public class BorrowOrderService implements IBorrowOrderService {
         BackExtend backExtend = backExtendDao.selectByProductId(productId);
         return backExtend;
     }
+
+
+    /*public static void main(String[] args){
+        BigDecimal totalFeeRate = BigDecimal.valueOf(500);
+        BigDecimal borrowAmount = BigDecimal.valueOf(1600);
+        Integer borrowRate = totalFeeRate.divide(borrowAmount, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("10000")).intValue();
+        System.out.println("服务费率是:"+borrowRate);
+    }*/
 }
