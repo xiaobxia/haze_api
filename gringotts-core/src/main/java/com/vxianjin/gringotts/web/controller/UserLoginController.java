@@ -2323,6 +2323,10 @@ public class UserLoginController extends BaseController {
                 Map<String, String> configMap = SysCacheUtils.getConfigMap(BackConfigParams.UD_THRESHOLD);
                 resultMap.put("ud_threshold", configMap.get("UD_LIVING_THRESHOLD"));// 有盾活体阈值
                 resultMap.put("ud_id_card_threshold", configMap.get("UD_ID_CARD_THRESHOLD"));// 有盾阈值
+
+                UserUdcreditInfo udcreditInfo = userService.findUdcreditInfoByUserId(Integer.parseInt(user.getId()));
+                Integer udcreditFlag = udcreditInfo != null && StringUtils.isNotBlank(udcreditInfo.getLivingSession()) ? 1 : 0;
+                resultMap.put("ud_flag", udcreditFlag);// 头像
                 resultMap.put("face_recognition_picture", face_recognition_picture);// 头像
                 resultMap.put("id_number_z_picture", id_number_z_picture);// 身份证正面
                 resultMap.put("id_number_f_picture", id_number_f_picture);// 身份证反面

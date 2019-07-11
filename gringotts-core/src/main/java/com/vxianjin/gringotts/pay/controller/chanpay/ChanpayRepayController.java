@@ -41,7 +41,7 @@ public class ChanpayRepayController extends BaseController {
     public String payWithholdCallback(TradeNotify tradeNotify, @PathVariable String userId) throws Exception {
         logger.info("ChanpayRepayController.payWithholdCallback params: 【req:" + JSON.toJSONString(tradeNotify) + "  userId:" + userId + "】");
         try {
-            Thread.sleep(2000);//异步回来等一等同步数据入库
+            Thread.sleep(5000);//异步回来等一等同步数据入库
             tradeNotify.set_input_charset("UTF-8");
             chanpayRepayService.payWithholdCallback(tradeNotify);
         } catch (Exception e) {
@@ -58,7 +58,7 @@ public class ChanpayRepayController extends BaseController {
     public String payRenewalWithholdCallback(TradeNotify tradeNotify, @PathVariable String userId) throws Exception {
         logger.info("ChanpayRepayController.payRenewalWithholdCallback params: 【req：" + JSON.toJSONString(tradeNotify) + " userId:" + userId + "】");
         try {
-            Thread.sleep(2000);//异步回来等一等同步数据入库
+            Thread.sleep(5000);//异步回来等一等同步数据入库
             tradeNotify.set_input_charset("UTF-8");
             chanpayRepayService.payRenewalWithholdCallback(tradeNotify);
         } catch (Exception e) {

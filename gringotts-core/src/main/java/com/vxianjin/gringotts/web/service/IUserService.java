@@ -4,6 +4,7 @@ import com.vxianjin.gringotts.common.PageConfig;
 import com.vxianjin.gringotts.web.pojo.User;
 import com.vxianjin.gringotts.web.pojo.UserCardInfo;
 import com.vxianjin.gringotts.web.pojo.UserCertification;
+import com.vxianjin.gringotts.web.pojo.UserUdcreditInfo;
 import com.vxianjin.gringotts.web.pojo.risk.StrongRiskResult;
 
 import java.util.HashMap;
@@ -202,4 +203,6 @@ public interface IUserService {
     Integer defaultCardCount(Integer userId);
 
     void saveOrUpdateUdcredit(String sessionId, String userId, Integer type, String livingImageUrl);
+
+    UserUdcreditInfo findUdcreditInfoByUserId(Integer userId);
 }

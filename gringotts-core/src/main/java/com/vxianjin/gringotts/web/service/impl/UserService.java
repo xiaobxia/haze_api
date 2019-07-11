@@ -346,4 +346,11 @@ public class UserService implements IUserService {
         }
     }
 
+    @Override
+    public UserUdcreditInfo findUdcreditInfoByUserId(Integer userId) {
+        UserUdcreditInfo udcreditInfo = userUdcreditInfoDao.findSelective(new HashMap() {{
+            put("userId", userId);
+        }});
+        return udcreditInfo;
+    }
 }

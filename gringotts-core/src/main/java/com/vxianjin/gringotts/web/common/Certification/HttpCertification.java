@@ -251,8 +251,9 @@ public class HttpCertification implements IHttpCertification {
 
             resp_front = UdRequestUtils.doHttpRequest(PropertiesConfigUtil.get("UD_FACE_GRID_COMPARE") +
                     PropertiesConfigUtil.get("UD_PUB_KEY"), reqJson);
+        } else {
+            resultCode.setMsg("请重新进行活体检测与身份证扫描");
         }
-
 
         logger.info("interface udIdCardFace return info :" + resp_front);
         if (StringUtils.isNotBlank(resp_front)) {
