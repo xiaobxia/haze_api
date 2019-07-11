@@ -265,33 +265,37 @@ public class HttpCertification implements IHttpCertification {
             if (!result.containsKey("errorcode")) {
                 // 有源比对时，数据源人脸照片与待验证人脸照的比对结果
                 Map<String, Object> resultFaceid = JSONUtil.parseJSON2Map(jsonData);
-
-                if ("1".equals(resultFaceid.get("verify_status").toString()) && "T".equals(resultFaceid.get("suggest_result").toString())) {
+                if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
                     resultCode.setCode("0");
                     resultCode.setMsg("成功");
                 } else {
-                    switch (resultFaceid.get("verify_status").toString()) {
-                        case "2":
-                            resultCode.setMsg("认证未通过，姓名与号码不一致 ");
-                            break;
-                        case "3":
-                            resultCode.setMsg("认证未通过，查询无结果");
-                            break;
-                    }
-                    if (resultFaceid.get("result_status") != null) {
-                        switch (resultFaceid.get("result_status").toString()) {
-                            case "02":
-                                resultCode.setMsg("认证未通过，系统判断为不同人 ");
+                    if ("1".equals(resultFaceid.get("verify_status").toString()) && "T".equals(resultFaceid.get("suggest_result").toString())) {
+                        resultCode.setCode("0");
+                        resultCode.setMsg("成功");
+                    } else {
+                        switch (resultFaceid.get("verify_status").toString()) {
+                            case "2":
+                                resultCode.setMsg("认证未通过，姓名与号码不一致 ");
                                 break;
-                            case "03":
-                                resultCode.setMsg("认证未通过，不能确定是否为同一人");
+                            case "3":
+                                resultCode.setMsg("认证未通过，查询无结果");
                                 break;
-                            case "04":
-                                resultCode.setMsg("认证未通过，公安网系统无法比对");
-                                break;
-                            case "05":
-                                resultCode.setMsg("认证未通过，公安库中没有网格照");
-                                break;
+                        }
+                        if (resultFaceid.get("result_status") != null) {
+                            switch (resultFaceid.get("result_status").toString()) {
+                                case "02":
+                                    resultCode.setMsg("认证未通过，系统判断为不同人 ");
+                                    break;
+                                case "03":
+                                    resultCode.setMsg("认证未通过，不能确定是否为同一人");
+                                    break;
+                                case "04":
+                                    resultCode.setMsg("认证未通过，公安网系统无法比对");
+                                    break;
+                                case "05":
+                                    resultCode.setMsg("认证未通过，公安库中没有网格照");
+                                    break;
+                            }
                         }
                     }
                 }
@@ -391,10 +395,17 @@ public class HttpCertification implements IHttpCertification {
                         Map<String, Object> thresholds = (Map<String, Object>) resultFaceid.get("thresholds");
                         // 比对率达到十万分之一的才被认为人脸认证通过
                         resultCode.setMsg("人脸识别实名认证失败！请检查身份证和头像");
-                        if (Float.valueOf(resultFaceid.get("similarity") + "") >= Float.valueOf(thresholds.get("1e-4") + "")) {
+
+                        if (!"online".equals(PropertiesConfigUtil.get("profile"))) {
                             resultCode.setCode("0");
                             resultCode.setMsg("成功");
+                        } else {
+                            if (Float.valueOf(resultFaceid.get("similarity") + "") >= Float.valueOf(thresholds.get("1e-4") + "")) {
+                                resultCode.setCode("0");
+                                resultCode.setMsg("成功");
+                            }
                         }
+
                         HashMap<String, String> resultMap = new HashMap<>();
                         resultMap.put("similarity", resultFaceid.get("similarity").toString());
                         resultMap.put("le3", thresholds.get("1e-3").toString());
