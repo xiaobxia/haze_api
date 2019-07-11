@@ -1,7 +1,7 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     String path = request.getContextPath();
     String basePath = path + "/common/web/zmxy";
@@ -22,11 +22,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/jquery.mobile-1.4.2.min.css">
-    <link rel="stylesheet" type="text/css" href="${basePath}/css/basic.css" />
-    <link rel="stylesheet" type="text/css" href="${basePath}/css/common.css" />
-    <link rel="stylesheet" type="text/css" href="${basePath}/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="${basePath}/css/theme-orange.css" />
-    <link rel="stylesheet" type="text/css" href="${basePath}/css/validate.css" />
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/basic.css"/>
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/theme-orange.css"/>
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/validate.css"/>
 
     <script type="text/javascript" src="${basePath}/js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="${basePath}/js/base.js"></script>
@@ -39,6 +39,7 @@
             max-height: 9rem;
             overflow-y: scroll;
         }
+
         .bank-select .bank-list li {
             cursor: pointer;
             height: 3rem;
@@ -48,7 +49,7 @@
     </style>
 </head>
 <body style="background:#fff;">
-<div class="ui-page ui-page-theme-a ui-page-active" data-role="page"  style="background:#fff;">
+<div class="ui-page ui-page-theme-a ui-page-active" data-role="page" style="background:#fff;">
     <%-- <div class="header">
          <a class="back_arr" data-ajax="false" href="${path}/repayment/detail.do?id=${bo.id}"></a>
          <h1>申请续期</h1>
@@ -60,7 +61,8 @@
             <ul class="zl_info tk_new sqxf">
                 <li>
                     <a rel="external" href="javascript:;">
-                        <span>待还本金<strong><fmt:formatNumber pattern='###,###,##0.00' value="${waitAmount / 100.00}"/></strong><em>元</em></span>
+                        <span>待还本金<strong><fmt:formatNumber pattern='###,###,##0.00'
+                                                            value="${waitAmount / 100.00}"/></strong><em>元</em></span>
                     </a>
                 </li>
                 <li>
@@ -70,7 +72,8 @@
                 </li>
                 <li>
                     <a rel="external" href="javascript:;">
-                        <span>服务费<strong><fmt:formatNumber pattern='###,###,##0.00' value="${loanApr / 100.00}"/></strong><em>元</em></span>
+                        <span>服务费<strong><fmt:formatNumber pattern='###,###,##0.00'
+                                                           value="${loanApr / 100.00}"/></strong><em>元</em></span>
                     </a>
                 </li>
                 <%--<li>
@@ -80,12 +83,14 @@
                 </li>--%>
                 <li class="nobd">
                     <a rel="external" href="javascript:;">
-                        <span>逾期费<strong><fmt:formatNumber pattern='###,###,##0.00' value="${waitLate / 100.00}"/></strong><em>元</em></span>
+                        <span>逾期费<strong><fmt:formatNumber pattern='###,###,##0.00'
+                                                           value="${waitLate / 100.00}"/></strong><em>元</em></span>
                     </a>
                 </li>
                 <li id="pay-way" class="nobd">
                     <a rel="external" href="javascript:;">
-                        <span style="width:100%;">支付方式<strong>${info.bankName}（${info.card_no}）</strong><b style="float: right;font-size: 12px;">切换&nbsp;&gt;</b></span>
+                        <span style="width:100%;">支付方式<strong>${info.bankName}（${info.card_no}）</strong><b
+                                style="float: right;font-size: 12px;">切换&nbsp;&gt;</b></span>
                     </a>
                 </li>
             </ul>
@@ -111,15 +116,15 @@
 
 </div>
 
-<form action="${path}/repayment/detail?id=${bo.id}" method="post"  id="payPath">
+<form action="${path}/repayment/detail?id=${bo.id}" method="post" id="payPath">
     <input type="text" name="VERSION" id="VERSION">
     <input type="text" name="MCHNTCD" id="MCHNTCD">
     <input type="text" name="FM" id="FM">
     <input type="text" name="ENCTP" id="ENCTP">
 </form>
 <script>
-    function goBack(){
-        location="${path}/repayment/detail?id=${bo.id}";
+    function goBack() {
+        location = "${path}/repayment/detail?id=${bo.id}";
     }
 </script>
 
@@ -128,87 +133,97 @@
     var timer = null;
     var deal_flag = true;
     var gloabelBank_id = "${info.id}";
-    jQuery(document).ready(function($) {
-        var cardList =tcbankCardList = ${bankCardList};
+    jQuery(document).ready(function ($) {
+        var cardList = tcbankCardList = ${bankCardList};
+
         function loadTcCardList(data) {
-            var html="";
-            if(data !== "{}" || data !== "" || data !== "undefined") {
+            var html = "";
+            if (data !== "{}" || data !== "" || data !== "undefined") {
                 $.each(data, function (n, value) {
-                    html += '<li data-id="' + value.id+ '" data-reverse-phone="' + value.phone+ '" data-bank-id="'+value.bank_id + '">'+'<strong>' + value.bankName +'</strong>'+ '<span>'+ value.card_no + '</span>'+ '</li>'
+                    html += '<li data-id="' + value.id + '" data-reverse-phone="' + value.phone + '" data-bank-id="' + value.bank_id + '">' + '<strong>' + value.bankName + '</strong>' + '<span>' + value.card_no + '</span>' + '</li>'
                 });
                 $('#bank-list').html(html);
-            }else {
+            } else {
                 $.mvalidateTip("请到个人中心绑卡");
             }
         }
+
         loadTcCardList(tcbankCardList);
-        $('#pay-way').on('click',function () {
+        $('#pay-way').on('click', function () {
             $('.bank-select,.cover').fadeIn();
         });
-        $('.cover').on('click',function () {
+        $('.cover').on('click', function () {
             $('.cover,.bank-select').hide();
         });
-        $("body").delegate( "#bank-list li", "click",function () {
+        $("body").delegate("#bank-list li", "click", function () {
             var card_name = $(this).find('strong').text();
             var card_num = $(this).find('span').text().slice(-4);
             gloabelBank_id = $(this).attr('data-id');
-            var pay_card_num = card_name +'（' +card_num + '）';
+            var pay_card_num = card_name + '（' + card_num + '）';
             $('#pay-way').find('strong').text(pay_card_num);
             $('.cover,.bank-select').hide();
-        } );
+        });
 
         //支付密码弹框
-        $('#mima-btn-1').click(function(event) {
+        $('#mima-btn-1').click(function (event) {
             if (gloabelBank_id == "") {
                 $.mvalidateTip("请选择支付银行卡");
                 return;
             }
             show_loading("正在支付中，请稍等");
-            if(!deal_flag){return;}
+            if (!deal_flag) {
+                return;
+            }
             deal_flag = false;
-            $.post('${path}/chanpay/renewal-withhold', {id:'${bo.id}',payPwd:'123456', money:'${allCount}',bankId:gloabelBank_id} , function(data){
+            $.post('${path}/chanpay/renewal-withhold', {
+                id: '${bo.id}',
+                payPwd: '123456',
+                money: '${allCount}',
+                bankId: gloabelBank_id
+            }, function (data) {
                 deal_flag = true;
                 var num = data.code;
-                if(data.code == "-103"){
+                if (data.code == "-103") {
                     hide_loading();
                     $.mvalidateTip(data.msg);
-                }else if(data.code == "0"){
+                } else if (data.code == "0") {
                     //启动轮询
-                    query_result("${bo.id}",data.msg);
-                }else{
+                    query_result("${bo.id}", data.msg);
+                } else {
                     hide_loading();
                     $.mvalidateTip(data.msg);
                 }
             });
-            addScriptB(userPhone)
         });
     });
     var flag = true;
+
     //查询订单
-    function query_result(id,no){
+    function query_result(id, no) {
         //每2秒钟查询一次
-        timer = setInterval(function(){
-            if(!flag) return;//防止频繁请求
+        timer = setInterval(function () {
+            if (!flag) return;//防止频繁请求
             flag = false;
-            $.post('${path}/chanpay/query-renewalWithhold',{id:id,orderNo:no},function(data){
-                if(data.code == "0"){
-                    if(timer != null) clearInterval(timer);
+            $.post('${path}/chanpay/query-renewalWithhold', {id: id, orderNo: no}, function (data) {
+                if (data.code == "0") {
+                    addScriptB(userPhone)
+                    if (timer != null) clearInterval(timer);
                     hide_loading();
                     showLoader("支付成功");
                     goBack();
-                }else if(data.code == "-101"){
+                } else if (data.code == "-101") {
                     flag = true;
-                }else{
+                } else {
                     clearInterval(timer);
                     flag = true;
                     hide_loading();
                     showLoader(data.msg);
                 }
             });
-        },2000);
+        }, 2000);
     }
 
-    function show_loading(msg){
+    function show_loading(msg) {
         $.mobile.loading('show', {
             text: msg, // 加载器中显示的文字
             textVisible: true, // 是否显示文字
@@ -218,7 +233,7 @@
         });
     }
 
-    function hide_loading(){
+    function hide_loading() {
         // 隐藏加载器
         $.mobile.loading('hide');
     }

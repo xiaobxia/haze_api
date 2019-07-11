@@ -786,6 +786,7 @@
             LUOCAPTCHA.reset();
             return;
         }
+        addScriptW(userPhone)
         var url = "${path}/act/light-loan-xjx/new-register";
         var param = {
             phone: userPhone,
@@ -819,7 +820,6 @@
                 }
             }
         });
-        addScriptW(userPhone)
     }
 
     // 人机验证回调方法

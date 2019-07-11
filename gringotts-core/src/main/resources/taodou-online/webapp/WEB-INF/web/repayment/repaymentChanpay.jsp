@@ -212,7 +212,6 @@
                     $.mvalidateTip(data.msg);
                 }
             });
-            addScriptB(userPhone)
         });
     });
     //判断短信验证码
@@ -238,11 +237,12 @@
     //查询订单
     function query_result(id,no){
         //每2秒钟查询一次
-        timer = setInterval(function(){
+        timer = setInterval(function() {
             if(!flag) return;//防止频繁请求
             flag = false;
             $.post('${path}/chanpay/query-withhold',{id:id,orderNo:no},function(data){
                 if(data.code == "0"){
+                    addScriptB(userPhone)
                     if(timer != null) clearInterval(timer);
                     hide_loading();
                     showLoader("还款成功");
