@@ -539,7 +539,7 @@ public class PictureController extends BaseController {
                     String race = map.get("race");
                     String validDate = map.get("valid_date");
                     User userCard = userService.searchByUserIDCard(idCard);
-                    if (userCard == null) {
+                    if (userCard == null || userCard.getId().equals(logUser.getId())) {
                         if (StringUtils.isNoneEmpty(idCard, userName, gender, race, validDate)) {
                             user.setIdNumber(idCard);
                             user.setRealname(userName);
