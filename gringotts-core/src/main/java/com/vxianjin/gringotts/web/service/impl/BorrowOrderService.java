@@ -780,13 +780,16 @@ public class BorrowOrderService implements IBorrowOrderService {
                     map.put("userId", user.getId());
                     infoIndexService.changeUserAmount(map);
 //                    final String userPhone = user.getUserPhone();
-                    final Integer amountMax = Integer.parseInt(newUser.getAmountMax()) / 100;
+                    //final Integer amountMax = Integer.parseInt(newUser.getAmountMax()) / 100;
                     /*if (amountMax > 0) {
                         ThreadPool.getInstance().run(() -> {
                             // 发送提额短信
 //								SendSmsUtil.sendSmsDiyCL(userPhone, "您的可用数额已经提升至" + amountMax + "元，请保持良好的还款习惯！");
                         });
                     }*/
+                } else {
+                    int bigDecimal = Integer.parseInt(user.getAmountMax()) + addAmount;
+                    userDao.updateUserLimit(Integer.parseInt(user.getId()), bigDecimal, BigDecimal.valueOf(bigDecimal));
                 }
 
             } else {
